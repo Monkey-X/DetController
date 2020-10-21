@@ -34,9 +34,15 @@
     <string name="user_profile">用戶信息</string>
     <string name="log" formatted="false">%1$tR:%1$tS.%1$tL</string>
     <string name="uart_empty">数据为空</string>
-    <string name="title_activity_personal_info">信息设置</string>
-    <string name="title_activity_settings">设备设置</string>
+    <string name="title_activity_personal_info">用户信息</string>
+    <string name="title_activity_connecttest">连接检测</string>
+    <string name="activity_network">雷管组网</string>
+    <string name="activity_delay_download">延时下载</string>
+    <string name="activity_assist">辅助功能</string>
     <string name="title_activity_baidu_map">地图页面</string>
+    <string name="title_activity_settings">设备设置</string>
+    <string name="title_offline_apply">离线申请</string>
+    <string name="title_online_apply">在线申请</string>
 
 
     <string name="messageRecieved">Received message %1$s &lt;br/&gt; &lt;small&gt;Topic: %2$s &lt;/small&gt; </string>
@@ -62,7 +68,7 @@
     <string name="notifyTitle">MQTT Message Received</string>
     <string name="notifyTitle_connectionLost">MQTT Client Has Lost Connection</string>
 
-    <string name="title_activity_home" >主页</string>
+    <string name="title_activity_home">主页</string>
     <string name="title_activity_dfu">固件升级</string>
     <string name="about_version">版本号: %1$s 序号: %2$s</string>
     <string name="scrolling_animations">卷动动画</string>
@@ -73,7 +79,7 @@
     <string name="about_title">关于</string>
     <string name="app_update">软件更新</string>
     <string name="without_update">没有更新版本，不需要更新。</string>
-    <string name="has_update" >有更新版本 请更新！</string>
+    <string name="has_update">有更新版本 请更新！</string>
     <string name="user_account">用户帐户信息</string>
     <string name="title_other">其他</string>
     <string name="download_firmware">固件下载</string>
@@ -109,7 +115,7 @@
     <string name="version">版本号:</string>
     <string name="office_site">官网:</string>
     <string name="office_site_data">www.etek.com.cn</string>
-    <string name="zhongbao_server" >中爆服务器</string>
+    <string name="zhongbao_server">中爆服务器</string>
     <string name="title_activity_checkout">规则检查</string>
     <string name="scan_device">扫描起爆器</string>
     <string name="title_activity_log">日志查询</string>
@@ -161,6 +167,7 @@
     <string name="title_activity_download">固件下载</string>
     <string name="log_info">查看日志</string>
     <string name="title_activity_report">数据上报</string>
+    <string name="activity_auth_bomb">授权起爆</string>
     <string name="ble_list">蓝牙设备列表</string>
     <string name="btn_sure">确认</string>
     <string name="btn_cancel">取消</string>
@@ -178,7 +185,7 @@
     <string name="delete">删除</string>
     <string name="server_sim">模拟</string>
     <string name="zhongbao_address">中爆地址</string>
-    <string name="show_version" >版本号: %1$s</string>
+    <string name="show_version">版本号: %1$s</string>
     <string name="rpt_det_list">上报雷管列表</string>
     <string name="activity_det_report">数据上报</string>
     <string name="stop_scan">停止扫描</string>

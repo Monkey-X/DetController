@@ -2,40 +2,32 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.etek.controller">
-
     <!-- Permissions the Application Requires -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-    <!--    网络权限-->
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" /> <!-- 网络权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <!--    <uses-permission android:name="com.etek.controller.receiver.NetworkConnectChangedReceiver" />-->
-    <!--<uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
-    <!--    蓝牙权限-->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- <uses-permission android:name="com.etek.controller.receiver.NetworkConnectChangedReceiver" /> -->
+    <!-- <uses-permission android:name="android.permission.WRITE_SETTINGS" /> -->
+    <!-- 蓝牙权限 -->
     <!-- Android6.0 蓝牙扫描才需要 -->
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -51,26 +43,28 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.DelayDownloadActivity"></activity>
+        <activity android:name=".activity.AssistActivity" />
+        <activity android:name=".activity.NetWorkActivity" />
+        <activity android:name=".activity.AuthBombActivity" />
+        <activity android:name=".activity.ConnectTestActivity" />
+
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="GjtgaRTTLbe08cF9iOZC6Vo30QE4NjVW" />
-<!--        android:value="3FzxApmMfecp6LxKsy0CGakG4dUVmwHe"  sommer 小机器-->
-<!--        GjtgaRTTLbe08cF9iOZC6Vo30QE4NjVW ETEK 现有机器-->
+            android:value="GjtgaRTTLbe08cF9iOZC6Vo30QE4NjVW" /> <!-- android:value="3FzxApmMfecp6LxKsy0CGakG4dUVmwHe"  sommer 小机器 -->
+        <!-- GjtgaRTTLbe08cF9iOZC6Vo30QE4NjVW ETEK 现有机器 -->
         <activity
             android:name=".activity.UserInfoActivity"
             android:label="@string/title_activity_personal_info" />
-
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".activity.ProMapActivity"
             android:label="@string/title_activity_settings" />
-
         <activity
             android:name=".activity.OfflineCheckActivity"
             android:label="@string/title_activity_settings" />
-
         <activity
             android:name=".activity.OnlineCheckActivity"
             android:label="@string/title_activity_settings" />
@@ -94,17 +88,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.DetInfoDetailActivity"
             android:label="@string/title_activity_det_detail"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".activity.ProDetailActivity"
             android:label="@string/title_activity_pro_detail" />
-
-
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home"
@@ -124,37 +114,19 @@
         <activity
             android:name=".activity.AuthorizeActivity"
             android:label="@string/title_activity_authority" />
-
         <activity
             android:name=".activity.SelectMapActivity"
             android:label="@string/title_activity_selete_map" />
-
         <activity
             android:name=".activity.SettingsMoreActivity"
             android:label="@string/title_activity_settings_more"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
-        <activity
-            android:name=".activity.UpdateActivity"
-            />
-
-
-
-        <!--        <service android:name=".service.BLeSerialPortService" />-->
+        <activity android:name=".activity.UpdateActivity" /> <!-- <service android:name=".service.BLeSerialPortService" /> -->
         <service android:name=".service.DownLoadAppService" />
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-
-<!--        <receiver android:name=".receiver.BootCompletedReceiver">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
-
-
     </application>
 
 </manifest>
