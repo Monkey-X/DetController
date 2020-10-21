@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/message_item_auto"
+
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/user_name"
+            android:textColor="@color/gray" />
+
+        <EditText
+            android:id="@+id/personal_info_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_name"
+
+            android:textColor="@color/eighty_per_trans_black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/personal_sex_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/message_item_auto"
+
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_sex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/user_sex"
+            android:textColor="@color/gray" />
+
+        <EditText
+            android:id="@+id/personal_info_sex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_sex"
+
+            android:textColor="@color/eighty_per_trans_black" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/personal_age_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/message_item_auto"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/user_age"
+            android:textColor="@color/gray" />
+
+        <EditText
+            android:id="@+id/personal_info_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_age"
+
+            android:inputType="number"
+            android:textColor="@color/eighty_per_trans_black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/personal_id_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/message_item_auto"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_id_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/user_id_code"
+            android:textColor="@color/gray" />
+
+        <EditText
+            android:id="@+id/personal_id_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_id_code"
+
+            android:textColor="@color/eighty_per_trans_black" />
+    </RelativeLayout>
+
+    <RelativeLayout
+
+        android:id="@+id/company_name_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/message_item_auto"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_company_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/company_name"
+            android:textColor="@color/gray" />
+
+        <EditText
+            android:id="@+id/company_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_company_name"
+
+            android:textColor="@color/eighty_per_trans_black" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/company_code_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/message_item_auto"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_company_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/company_code"
+            android:textColor="@color/gray" />
+
+        <com.etek.controller.widget.ClearableAutoCompleteTextview
+            android:id="@+id/company_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_company_code"
+
+            android:inputType="number"
+            android:textColor="@color/eighty_per_trans_black" />
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/personal_info_modify"
+            style="@style/style_button_normal_big"
+            android:focusable="true"
+            android:text="@string/modify" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_authority"
+            android:icon="@drawable/ic_archive_black_24dp"
+            android:title="@string/title_activity_authority" />
+        <item
+            android:id="@+id/nav_checkout"
+            android:icon="@drawable/ic_youtube_searched_for_black_24dp"
+            android:title="@string/title_activity_checkout" />
+
+        <item
+            android:id="@+id/nav_report"
+            android:icon="@drawable/ic_cloud_upload_black_24dp"
+            android:title="@string/title_activity_report" />
+    </group>
+
+    <item android:title="@string/user_account">
+        <menu>
+            <item
+                android:id="@+id/nav_user"
+                android:icon="@drawable/ic_account_circle_black_24dp"
+                android:title="@string/user_profile" />
+
+        </menu>
+    </item>
+
+    <item android:title="@string/app_tools">
+        <menu>
+            <item
+                android:id="@+id/nav_dfu"
+                android:icon="@drawable/ic_cached_black_24dp"
+                android:title="@string/title_activity_dfu" />
+            <item
+                android:id="@+id/nav_detinfo"
+                android:icon="@drawable/ic_reorder_black_24dp"
+                android:title="@string/title_activity_detinfo" />
+
+
+        </menu>
+    </item>
+
+    <item android:title="@string/title_other">
+        <menu>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_info_outline_black_24dp"
+                android:title="@string/title_activity_settings" />
+
+        </menu>
+    </item>
+
+
+</menu>

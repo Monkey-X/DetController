@@ -1,0 +1,80 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+//    packagingOptions {
+//        exclude 'META-INF/DEPENDENCIES'
+//        exclude 'META-INF/NOTICE'
+//        exclude 'META-INF/LICENSE'
+//        exclude 'META-INF/LICENSE.txt'
+//        exclude 'META-INF/NOTICE.txt'
+//    }
+    buildToolsVersion '28.0.3'
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:$supportVersion",
+            "com.android.support:recyclerview-v7:$supportVersion",
+            "com.android.support:cardview-v7:$supportVersion"
+
+//    implementation files('libs/universal-image-loader-1.8.6.jar')
+//    implementation 'com.android.support:appcompat-v7:$supportVersion'
+//    implementation 'com.android.support:recyclerview-v7:$supportVersion'
+    implementation 'com.google.zxing:core:3.3.2'
+
+    implementation 'org.apache.commons.io:commonsIO:2.5.0'
+    // button ui
+    implementation 'com.github.maning0303:MNProgressHUD:V1.1.4'
+
+    // TableView
+    implementation "com.evrencoskun.library:tableview:$tableview_version"
+
+//    api  'com.jakewharton.timber:timber:4.7.1'
+    api 'com.elvishew:xlog:1.6.1'
+//    api 'org.slf4j:slf4j-api:1.7.21'
+//    api 'com.github.tony19:logback-android-core:1.1.1-6'
+//    api 'com.github.tony19:logback-android-classic:1.1.1-6'
+
+
+//    api 'com.jakewharton:butterknife:8.8.1'
+
+//    annotationProcessor 'com.jakewharton:butterknife:8.8.1'
+    // database
+//    implementation 'com.j256.ormlite:ormlite-android:5.0'
+//    implementation 'com.j256.ormlite:ormlite-core:5.0'
+
+    //switcher recyclerview
+    api 'com.github.jkwiecien:Switcher:2.1.5'
+//    implementation 'com.yanzhenjie:recyclerview-swipe:1.2.2'
+    implementation 'com.yanzhenjie.recyclerview:support:1.3.2'
+    testImplementation 'junit:junit:4.12'
+
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_18"
+
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/contrl_sn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="起爆器:F380000189"/>
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@id/det_size"
+                        android:layout_marginEnd="@dimen/dp_12"
+                        android:text="@string/det_countName"/>
+
+                    <TextView
+                        android:id="@+id/det_size"
+                        android:layout_width="@dimen/dp_36"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/dp_12"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/dark_orange"
+                        android:text="3"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/rpt_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:maxEms="20"
+                        android:ellipsize="end"
+                        android:text=""/>
+
+                    <TextView
+                        android:id="@+id/contrl_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/dp_12"
+                        android:textStyle="bold"
+                        android:textColor="@color/eighty_per_trans_black"
+                        android:text="@string/un_report"/>
+
+
+                </RelativeLayout>
+
+
+
+
+
+
+            </LinearLayout>
+
+
+
+</LinearLayout>
+

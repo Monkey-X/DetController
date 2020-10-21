@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.maning0303:MNProgressHUD:V1.1.4@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b99403e399040ccc0639bd2461329e0f/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b99403e399040ccc0639bd2461329e0f/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b99403e399040ccc0639bd2461329e0f/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

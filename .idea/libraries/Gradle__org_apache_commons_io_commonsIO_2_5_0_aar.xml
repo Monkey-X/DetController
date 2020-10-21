@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.commons.io:commonsIO:2.5.0@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/317a21b951920ce75490be4daf77813e/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/317a21b951920ce75490be4daf77813e/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/317a21b951920ce75490be4daf77813e/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons.io/commonsIO/2.5.0/8470d2ed9a38dcd7ca1bed99c0aecdde4689dc0b/commonsIO-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
