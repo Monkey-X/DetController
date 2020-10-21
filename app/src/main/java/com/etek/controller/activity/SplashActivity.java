@@ -59,8 +59,6 @@ public class SplashActivity extends BaseActivity {
         version.setText(getString( R.string.show_version, SommerUtils.getVersionName(this)));
         globalInit();
         requestPermission();
-
-
     }
 
     private void globalInit() {
@@ -236,7 +234,6 @@ public class SplashActivity extends BaseActivity {
                 Looper.prepare();
                 startMain();
                 Looper.loop();
-
             }
         });
 
