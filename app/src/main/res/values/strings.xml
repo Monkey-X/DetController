@@ -223,6 +223,12 @@
     <string name="action_verify">校验</string>
     <string name="title_act_offline_checkout">离线检查</string>
     <string name="title_act_online_authorize">在线授权</string>
+    <string name="title_act_assist_function">辅助功能</string>
+    <string name="title_act_single_check">单颗检测</string>
+    <string name="title_act_line_check">线路检测</string>
+    <string name="pipe_code">管码：</string>
+    <string name="uid">U I D：</string>
+    <string name="delayed">延时：</string>
 
 
 </resources>

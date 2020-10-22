@@ -43,7 +43,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.DelayDownloadActivity"></activity>
+        <activity android:name=".activity.LineCheckActivity"></activity>
+        <activity android:name=".activity.SingleCheckActivity" />
+        <activity android:name=".activity.DelayDownloadActivity" />
         <activity android:name=".activity.AssistActivity" />
         <activity android:name=".activity.NetWorkActivity" />
         <activity android:name=".activity.AuthBombActivity" />
