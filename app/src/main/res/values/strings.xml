@@ -229,6 +229,5 @@
     <string name="pipe_code">管码：</string>
     <string name="uid">U I D：</string>
     <string name="delayed">延时：</string>
-
-
+    <string name="title_act_connect_state">连接状态</string>
 </resources>
