@@ -64,4 +64,32 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/power_bomb"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_weight="1"
+        android:background="@drawable/seleted_status"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/power" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp_10"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:text="@string/title_power_bomb"
+            android:textColor="#48495F"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </LinearLayout>

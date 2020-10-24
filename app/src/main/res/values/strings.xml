@@ -34,15 +34,8 @@
     <string name="user_profile">用戶信息</string>
     <string name="log" formatted="false">%1$tR:%1$tS.%1$tL</string>
     <string name="uart_empty">数据为空</string>
-    <string name="title_activity_personal_info">用户信息</string>
-    <string name="title_activity_connecttest">连接检测</string>
-    <string name="activity_network">雷管组网</string>
-    <string name="activity_delay_download">延时下载</string>
-    <string name="activity_assist">辅助功能</string>
     <string name="title_activity_baidu_map">地图页面</string>
     <string name="title_activity_settings">设备设置</string>
-    <string name="title_offline_apply">离线申请</string>
-    <string name="title_online_apply">在线申请</string>
 
 
     <string name="messageRecieved">Received message %1$s &lt;br/&gt; &lt;small&gt;Topic: %2$s &lt;/small&gt; </string>
@@ -230,4 +223,17 @@
     <string name="uid">U I D：</string>
     <string name="delayed">延时：</string>
     <string name="title_act_connect_state">连接状态</string>
+
+
+    <!--2020.10.21-->
+    <string name="title_activity_personal_info">用户信息</string>
+    <string name="title_activity_connecttest">连接检测</string>
+    <string name="activity_network">雷管组网</string>
+    <string name="activity_delay_download">延时下载</string>
+    <string name="activity_assist">辅助功能</string>
+    <string name="title_offline_apply">离线申请</string>
+    <string name="title_online_apply">在线申请</string>
+    <string name="title_power_bomb">充电起爆</string>
+    <string name="create_project">创建项目</string>
+    <string name="project_detail">工程详情</string>
 </resources>

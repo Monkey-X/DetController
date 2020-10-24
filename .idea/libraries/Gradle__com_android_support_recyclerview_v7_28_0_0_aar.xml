@@ -2,11 +2,15 @@
   <library name="Gradle: com.android.support:recyclerview-v7:28.0.0@aar">
     <ANNOTATIONS>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/84653f50743741827ce7528df7c9a28e/annotations.zip!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d2106b18fe9d1ecfd9008c3eb9c511dd/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/84653f50743741827ce7528df7c9a28e/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/84653f50743741827ce7528df7c9a28e/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/84653f50743741827ce7528df7c9a28e/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d2106b18fe9d1ecfd9008c3eb9c511dd/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d2106b18fe9d1ecfd9008c3eb9c511dd/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d2106b18fe9d1ecfd9008c3eb9c511dd/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

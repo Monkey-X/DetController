@@ -15,6 +15,7 @@ public class AuthBombActivity extends BaseActivity implements View.OnClickListen
 
     private View mOnlineApply;
     private View mOfflineApply;
+    private View powerBomb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +28,10 @@ public class AuthBombActivity extends BaseActivity implements View.OnClickListen
     private void initView() {
         mOnlineApply = findViewById(R.id.onlineApply);
         mOfflineApply = findViewById(R.id.offlineApply);
+        powerBomb = findViewById(R.id.power_bomb);
         mOfflineApply.setOnClickListener(this);
         mOnlineApply.setOnClickListener(this);
+        powerBomb.setOnClickListener(this);
     }
 
     @Override
@@ -39,6 +42,9 @@ public class AuthBombActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.offlineApply:
                 startActivity(new Intent(this,OfflineCheckActivity.class));
+                break;
+            case R.id.power_bomb:
+                // todo 充电起爆业务
                 break;
         }
         finish();

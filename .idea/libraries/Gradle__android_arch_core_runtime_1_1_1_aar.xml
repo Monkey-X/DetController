@@ -4,10 +4,14 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4ae22ad932c7b0e6ebc8598d849a662c/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4ae22ad932c7b0e6ebc8598d849a662c/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4ae22ad932c7b0e6ebc8598d849a662c/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/312abe303e67a016b8df5e6bacb7d8ce/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/312abe303e67a016b8df5e6bacb7d8ce/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/312abe303e67a016b8df5e6bacb7d8ce/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/android/arch/core/runtime/1.1.1/runtime-1.1.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/android.arch.core/runtime/1.1.1/25df553df10af32bede9dd768a2d15299543d84/runtime-1.1.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

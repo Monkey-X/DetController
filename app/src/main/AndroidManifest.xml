@@ -43,11 +43,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.LineCheckActivity"></activity>
+        <activity android:name=".activity.ProjectDetailActivity"
+            android:theme="@style/activity_theme"></activity>
+        <activity android:name=".activity.LineCheckActivity" />
         <activity android:name=".activity.SingleCheckActivity" />
         <activity android:name=".activity.DelayDownloadActivity" />
         <activity android:name=".activity.AssistActivity" />
-        <activity android:name=".activity.NetWorkActivity" />
+        <activity android:name=".activity.NetWorkActivity"
+            android:theme="@style/activity_theme"/>
         <activity android:name=".activity.AuthBombActivity" />
         <activity android:name=".activity.ConnectTestActivity" />
 

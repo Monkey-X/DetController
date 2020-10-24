@@ -21,30 +21,30 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
-        ReportEntityDao.createTable(db, ifNotExists);
         ChkControllerEntityDao.createTable(db, ifNotExists);
-        DetonatorEntityDao.createTable(db, ifNotExists);
-        PermissibleZoneEntityDao.createTable(db, ifNotExists);
         ChkDetonatorEntityDao.createTable(db, ifNotExists);
-        RptDetonatorEntityDao.createTable(db, ifNotExists);
-        ForbiddenZoneEntityDao.createTable(db, ifNotExists);
         ControllerEntityDao.createTable(db, ifNotExists);
-        ProjectInfoEntityDao.createTable(db, ifNotExists);
+        DetonatorEntityDao.createTable(db, ifNotExists);
         DetReportEntityDao.createTable(db, ifNotExists);
+        ForbiddenZoneEntityDao.createTable(db, ifNotExists);
+        PermissibleZoneEntityDao.createTable(db, ifNotExists);
+        ProjectInfoEntityDao.createTable(db, ifNotExists);
+        ReportEntityDao.createTable(db, ifNotExists);
+        RptDetonatorEntityDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
-        ReportEntityDao.dropTable(db, ifExists);
         ChkControllerEntityDao.dropTable(db, ifExists);
-        DetonatorEntityDao.dropTable(db, ifExists);
-        PermissibleZoneEntityDao.dropTable(db, ifExists);
         ChkDetonatorEntityDao.dropTable(db, ifExists);
-        RptDetonatorEntityDao.dropTable(db, ifExists);
-        ForbiddenZoneEntityDao.dropTable(db, ifExists);
         ControllerEntityDao.dropTable(db, ifExists);
-        ProjectInfoEntityDao.dropTable(db, ifExists);
+        DetonatorEntityDao.dropTable(db, ifExists);
         DetReportEntityDao.dropTable(db, ifExists);
+        ForbiddenZoneEntityDao.dropTable(db, ifExists);
+        PermissibleZoneEntityDao.dropTable(db, ifExists);
+        ProjectInfoEntityDao.dropTable(db, ifExists);
+        ReportEntityDao.dropTable(db, ifExists);
+        RptDetonatorEntityDao.dropTable(db, ifExists);
     }
 
     /**
@@ -63,16 +63,16 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
-        registerDaoClass(ReportEntityDao.class);
         registerDaoClass(ChkControllerEntityDao.class);
-        registerDaoClass(DetonatorEntityDao.class);
-        registerDaoClass(PermissibleZoneEntityDao.class);
         registerDaoClass(ChkDetonatorEntityDao.class);
-        registerDaoClass(RptDetonatorEntityDao.class);
-        registerDaoClass(ForbiddenZoneEntityDao.class);
         registerDaoClass(ControllerEntityDao.class);
-        registerDaoClass(ProjectInfoEntityDao.class);
+        registerDaoClass(DetonatorEntityDao.class);
         registerDaoClass(DetReportEntityDao.class);
+        registerDaoClass(ForbiddenZoneEntityDao.class);
+        registerDaoClass(PermissibleZoneEntityDao.class);
+        registerDaoClass(ProjectInfoEntityDao.class);
+        registerDaoClass(ReportEntityDao.class);
+        registerDaoClass(RptDetonatorEntityDao.class);
     }
 
     public DaoSession newSession() {
