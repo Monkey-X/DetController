@@ -4,12 +4,22 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/37d68c8ad9232e2183b67ae6e7f73ebf/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/37d68c8ad9232e2183b67ae6e7f73ebf/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/37d68c8ad9232e2183b67ae6e7f73ebf/res" />
+<<<<<<< HEAD
+=======
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/112383a80d693d2af064abf0b78601eb/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/112383a80d693d2af064abf0b78601eb/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/112383a80d693d2af064abf0b78601eb/res" />
+>>>>>>> 806c842... 雷管组网
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/com/android/support/test/espresso/espresso-core/3.0.2/espresso-core-3.0.2-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/com/android/support/test/espresso/espresso-core/3.0.2/espresso-core-3.0.2-sources.jar!/" />
+<<<<<<< HEAD
+=======
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.support.test.espresso/espresso-core/3.0.2/433f4f601a3f3835691d80838dd7ff9414931b05/espresso-core-3.0.2-sources.jar!/" />
+>>>>>>> 806c842... 雷管组网
     </SOURCES>
   </library>
 </component>

@@ -4,10 +4,20 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/23efffe6cc530ea8dbf2cb05f60abcd5/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/23efffe6cc530ea8dbf2cb05f60abcd5/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/23efffe6cc530ea8dbf2cb05f60abcd5/res" />
+<<<<<<< HEAD
+=======
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/81126cea50b8f7ba1df8a5ef86573ef5/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/81126cea50b8f7ba1df8a5ef86573ef5/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/81126cea50b8f7ba1df8a5ef86573ef5/res" />
+>>>>>>> 806c842... 雷管组网
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/android/arch/lifecycle/livedata-core/1.1.1/livedata-core-1.1.1-sources.jar!/" />
+<<<<<<< HEAD
+=======
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/livedata-core/1.1.1/c38818e006ea7a408c05e3090364332d46494ef/livedata-core-1.1.1-sources.jar!/" />
+>>>>>>> 806c842... 雷管组网
     </SOURCES>
   </library>
 </component>

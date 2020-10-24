@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -66,4 +67,74 @@
     android:orientation="horizontal"
     app:layout_constraintGuide_percent="0.5"/>
 
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:onClick="myItemClick"
+    android:paddingBottom="@dimen/list_item_padding_vertical"
+    android:paddingLeft="@dimen/list_item_padding_horizontal"
+    android:paddingRight="@dimen/list_item_padding_horizontal"
+    android:paddingTop="@dimen/list_item_padding_vertical">
+
+    <!--<ImageView-->
+        <!--android:id="@+id/Detail_icon"-->
+        <!--android:layout_width="@dimen/list_icon"-->
+        <!--android:layout_height="@dimen/list_icon"-->
+        <!--tools:src="@drawable/detonator_ico"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/Detail_guideline"-->
+        <!--app:layout_constraintTop_toTopOf="@+id/Detail_guideline"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--/>-->
+
+    <TextView
+        android:id="@+id/Detail_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/list_item_date_left_margin"
+        android:layout_marginStart="@dimen/list_item_date_start_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        app:layout_constraintBottom_toTopOf="@+id/Detail_guideline"
+
+        tools:text="Białystok"
+        />
+
+    <TextView
+        android:id="@+id/Detail_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/list_item_date_left_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/secondary_text"
+        app:layout_constraintTop_toTopOf="@+id/Detail_guideline"
+
+        tools:text="Słonecznie"
+        />
+
+    <TextView
+        android:id="@+id/Detail_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginRight="@dimen/temperature_space"
+        app:layout_constraintBottom_toTopOf="@+id/Detail_guideline"
+        app:layout_constraintTop_toTopOf="@+id/Detail_guideline"
+        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="end"
+        android:textSize="@dimen/det_text_size"
+        tools:text="0"
+        />
+
+<android.support.constraint.Guideline
+    android:id="@+id/Detail_guideline"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.5"/>
+
+>>>>>>> 806c842... 雷管组网
 </android.support.constraint.ConstraintLayout>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package com.etek.controller.exception;
 
 /**
@@ -12,3 +13,19 @@ public enum BleExceptionCode {
     INITIATED_ERR,  //初始化异常
     OTHER_ERR   //其他异常
 }
+=======
+package com.etek.controller.exception;
+
+/**
+ * @Description: BLE异常Code
+ * @author:  sommer 190119
+ * @date: 16/8/14 10:43.
+ */
+public enum BleExceptionCode {
+    TIMEOUT,    //超时
+    CONNECT_ERR,    //连接异常
+    GATT_ERR,   //GATT异常
+    INITIATED_ERR,  //初始化异常
+    OTHER_ERR   //其他异常
+}
+>>>>>>> 806c842... 雷管组网

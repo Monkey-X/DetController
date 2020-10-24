@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <resources>
 
 
@@ -89,3 +90,96 @@
     <dimen name="activity_detail_content_height">30dp</dimen>
     <dimen name="margin_info">100dp</dimen>
 </resources>
+=======
+<resources>
+
+
+    <dimen name="fab_margin">16dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+
+    <dimen name="activity_vertical_margin">0dp</dimen>
+    <dimen name="dfu_feature_title_long_margin">-186dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin_bottom">32dp</dimen>
+    <dimen name="activity_vertical_margin_bottom_narrow">16dp</dimen>
+    <dimen name="feature_horizontal_margin">50dp</dimen>
+    <dimen name="feature_vertical_margin_top">50dp</dimen>
+    <dimen name="feature_vertical_margin_top_narrow">26dp</dimen>
+    <dimen name="feature_section_padding">8dp</dimen>
+    <dimen name="feature_device_name_margin_top">8dp</dimen>
+    <dimen name="feature_grid_margin_top">0dp</dimen>
+    <dimen name="feature_uart_buttons_pane_width">256dp</dimen>
+    <dimen name="feature_uart_buttons_pane_height">256dp</dimen>
+
+    <dimen name="navdrawer_width">260dp</dimen>
+    <dimen name="navdrawer_padding_top">30dp</dimen>
+    <dimen name="navdrawer_padding_horiz">16dp</dimen>
+
+    <dimen name="alert_dialog_padding">24dp</dimen>
+    <dimen name="alert_dialog_padding_top">18dp</dimen>
+    <dimen name="alert_dialog_padding_bottom">0dp</dimen>
+
+    <dimen name="button_padding">10dp</dimen>
+    <dimen name="button_padding_up_down">10dp</dimen>
+    <dimen name="button_padding_left_right">20dp</dimen>
+    <dimen name="button_radius">20dp</dimen>
+    <dimen name="button_radius_big">64dp</dimen>
+
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_96">96dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
+    <dimen name="dp_28">28dp</dimen>
+
+    <dimen name="dp_168">168dp</dimen>
+    <dimen name="dp_196">196dp</dimen>
+    <dimen name="dp_56">56dp</dimen>
+    <dimen name="dp_48">48dp</dimen>
+    <dimen name="dp_72">72dp</dimen>
+    <dimen name="dp_320">320dp</dimen>
+    <dimen name="dp_64">64dp</dimen>
+    <dimen name="dp_4">4dp</dimen>
+    <dimen name="dp_24">24dp</dimen>
+    <dimen name="dp_36">36dp</dimen>
+    <dimen name="dp_18">18dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_6">6dp</dimen>
+
+    <dimen name="sp_18">18sp</dimen>
+
+    <dimen name="det_detail_horizontal_padding">32dp</dimen>
+    <dimen name="det_detail_vertical_padding">16dp</dimen>
+    <dimen name="det_primary_detail_padding">16dp</dimen>
+    <dimen name="temperature_space">8dp</dimen>
+    <dimen name="list_item_padding_vertical">12dp</dimen>
+    <dimen name="list_item_padding_horizontal">16dp</dimen>
+    <dimen name="list_icon">40dp</dimen>
+    <dimen name="list_item_date_left_margin">16dp</dimen>
+    <dimen name="list_item_date_start_margin">@dimen/list_item_date_left_margin</dimen>
+
+    <dimen name="suffix_size">16dp</dimen>
+
+    <dimen name="det_text_size">16sp</dimen>
+    <dimen name="det_text_big_size">20sp</dimen>
+    <dimen name="det_text_normal_size">16sp</dimen>
+    <dimen name="det_text_small_size">8sp</dimen>
+    <dimen name="det_index_size">24sp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">164dp</dimen>
+    <dimen name="nav_drawer_max_width">304dp</dimen>
+    <dimen name="divider_normal">1dp</dimen>
+    <dimen name="toolbar_height">64dp</dimen><!-- 56 + 8 small margin top -->
+    <dimen name="margin_left">16dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_right">16dp</dimen>
+    <dimen name="margin_bottom_small">8dp</dimen>
+    <dimen name="rl_mtop_small">0.5dp</dimen>
+    <dimen name="rl_mtop_normal">20dp</dimen>
+    <dimen name="activity_pro_margintop">1dp</dimen>
+    <dimen name="tableview_padding">10dp</dimen>
+    <dimen name="activity_pro_height">36dp</dimen>
+    <dimen name="activity_index_height">35dp</dimen>
+    <dimen name="activity_detail_content_height">30dp</dimen>
+    <dimen name="margin_info">100dp</dimen>
+</resources>
+>>>>>>> 806c842... 雷管组网

@@ -4,10 +4,20 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f1f32d4a998ea825dd8c1f87f606fc26/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f1f32d4a998ea825dd8c1f87f606fc26/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f1f32d4a998ea825dd8c1f87f606fc26/res" />
+<<<<<<< HEAD
+=======
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3536b2d329ffdf28782e6eef1eb3d1df/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3536b2d329ffdf28782e6eef1eb3d1df/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3536b2d329ffdf28782e6eef1eb3d1df/jars/classes.jar!/" />
+>>>>>>> 806c842... 雷管组网
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/com/android/support/support-media-compat/26.1.0/support-media-compat-26.1.0-sources.jar!/" />
+<<<<<<< HEAD
+=======
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.support/support-media-compat/26.1.0/774fd1164ec32514eec562953f723a1920a7fef7/support-media-compat-26.1.0-sources.jar!/" />
+>>>>>>> 806c842... 雷管组网
     </SOURCES>
   </library>
 </component>

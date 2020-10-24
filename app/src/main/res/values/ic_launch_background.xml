@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launch_background">#2E7BBB</color>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launch_background">#2E7BBB</color>
+>>>>>>> 806c842... 雷管组网
 </resources>

@@ -4,10 +4,20 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58be59ddd6d55f0444328e3533da5d7e/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58be59ddd6d55f0444328e3533da5d7e/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58be59ddd6d55f0444328e3533da5d7e/res" />
+<<<<<<< HEAD
+=======
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d06a6b8f40865bbd1f30e81285f4747f/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d06a6b8f40865bbd1f30e81285f4747f/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d06a6b8f40865bbd1f30e81285f4747f/res" />
+>>>>>>> 806c842... 雷管组网
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/android/arch/persistence/db/1.0.0/db-1.0.0-sources.jar!/" />
+<<<<<<< HEAD
+=======
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/android.arch.persistence/db/1.0.0/13f5b8ce90d89fed2c8c1a95eaf37fedaa75ba9c/db-1.0.0-sources.jar!/" />
+>>>>>>> 806c842... 雷管组网
     </SOURCES>
   </library>
 </component>

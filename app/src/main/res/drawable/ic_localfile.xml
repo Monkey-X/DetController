@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="256dp"
     android:height="256dp"
@@ -7,3 +8,14 @@
       android:fillColor="#FFffffff"
       android:pathData="M496,256.1l-64,-112L128,144.1c-57,-3 -64,32 -64,48l0,688 896,0 0,-624L496,256.1zM112,192.1l288,0 37.3,64L112,256.1 112,192.1zM912,832.1 L112,832.1l0,-528 800,0L912,832.1z"/>
 </vector>
+=======
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="256dp"
+    android:height="256dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+  <path
+      android:fillColor="#FFffffff"
+      android:pathData="M496,256.1l-64,-112L128,144.1c-57,-3 -64,32 -64,48l0,688 896,0 0,-624L496,256.1zM112,192.1l288,0 37.3,64L112,256.1 112,192.1zM912,832.1 L112,832.1l0,-528 800,0L912,832.1z"/>
+</vector>
+>>>>>>> 806c842... 雷管组网

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
@@ -8,3 +9,15 @@
 
         app:showAsAction="always" />
 </menu>
+=======
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:title="@string/action_refresh"
+
+        app:showAsAction="always" />
+</menu>
+>>>>>>> 806c842... 雷管组网

@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="id" name="context"></item>
     <item type="id" name="ble_message"></item>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="context"></item>
+    <item type="id" name="ble_message"></item>
+>>>>>>> 806c842... 雷管组网
 </resources>

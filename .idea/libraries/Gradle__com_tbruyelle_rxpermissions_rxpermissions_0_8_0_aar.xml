@@ -4,6 +4,12 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/11bfce917be1d8c8f0e8f674b9da9da9/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/11bfce917be1d8c8f0e8f674b9da9da9/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/11bfce917be1d8c8f0e8f674b9da9da9/res" />
+<<<<<<< HEAD
+=======
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/098565928d0c032f2553407a5b6c1081/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/098565928d0c032f2553407a5b6c1081/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/098565928d0c032f2553407a5b6c1081/jars/classes.jar!/" />
+>>>>>>> 806c842... 雷管组网
     </CLASSES>
     <JAVADOC />
     <SOURCES>

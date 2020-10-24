@@ -4,12 +4,22 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58dd21652ca03c6cb4bd0d6197532447/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58dd21652ca03c6cb4bd0d6197532447/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58dd21652ca03c6cb4bd0d6197532447/res" />
+<<<<<<< HEAD
+=======
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9325615d7082fce7a773657b53edc587/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9325615d7082fce7a773657b53edc587/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9325615d7082fce7a773657b53edc587/res" />
+>>>>>>> 806c842... 雷管组网
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/com/android/support/test/espresso/espresso-idling-resource/3.0.2/espresso-idling-resource-3.0.2-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.android/manual-offline-m2/gmaven_stable/com/android/support/test/espresso/espresso-idling-resource/3.0.2/espresso-idling-resource-3.0.2-sources.jar!/" />
+<<<<<<< HEAD
+=======
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.support.test.espresso/espresso-idling-resource/3.0.2/6071e2b310c16836ba475a94df377e2f75928546/espresso-idling-resource-3.0.2-sources.jar!/" />
+>>>>>>> 806c842... 雷管组网
     </SOURCES>
   </library>
 </component>

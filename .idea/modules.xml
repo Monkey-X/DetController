@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DET_CONTROLLER.iml" filepath="$PROJECT_DIR$/.idea/modules/DET_CONTROLLER.iml" group="DET_CONTROLLER" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="DET_CONTROLLER/app" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/sommerlibrary/sommerlibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/sommerlibrary/sommerlibrary.iml" group="DET_CONTROLLER/sommerlibrary" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DetController-master.iml" filepath="$PROJECT_DIR$/.idea/modules/DetController-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DetController-master.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DetController-master.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sommerlibrary/DetController-master.sommerlibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/sommerlibrary/DetController-master.sommerlibrary.iml" />
+>>>>>>> 806c842... 雷管组网
     </modules>
   </component>
 </project>
