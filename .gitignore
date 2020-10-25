@@ -2,4 +2,6 @@
 app/build/
 *.iml
 .idea/
+local.properties
 
+sommerlibrary/build/
