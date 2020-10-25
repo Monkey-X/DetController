@@ -1,12 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.jkwiecien:Switcher:2.1.5@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0d4afe449963ef48c3cec1d51e53c25e/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0d4afe449963ef48c3cec1d51e53c25e/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0d4afe449963ef48c3cec1d51e53c25e/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a0f72404159b7fa57db1d29c40c40d7a/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a0f72404159b7fa57db1d29c40c40d7a/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a0f72404159b7fa57db1d29c40c40d7a/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/19d459f48189615476cbb4cc3d20a927/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/19d459f48189615476cbb4cc3d20a927/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

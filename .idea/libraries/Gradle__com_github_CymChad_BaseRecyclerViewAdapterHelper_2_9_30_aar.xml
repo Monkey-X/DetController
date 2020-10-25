@@ -1,16 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30@aar">
     <ANNOTATIONS>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d4cc1b64e0d3903e72d951b56fe96edb/annotations.zip!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9929567abc27407b5fe327585e1fc9f6/annotations.zip!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6817eebe034480e419c146b04275ed8b/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d4cc1b64e0d3903e72d951b56fe96edb/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d4cc1b64e0d3903e72d951b56fe96edb/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d4cc1b64e0d3903e72d951b56fe96edb/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9929567abc27407b5fe327585e1fc9f6/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9929567abc27407b5fe327585e1fc9f6/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9929567abc27407b5fe327585e1fc9f6/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6817eebe034480e419c146b04275ed8b/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6817eebe034480e419c146b04275ed8b/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

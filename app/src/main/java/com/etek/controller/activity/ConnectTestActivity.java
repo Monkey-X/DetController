@@ -2,79 +2,151 @@ package com.etek.controller.activity;
 
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
+import com.etek.controller.adapter.ConnectTestAdapter;
+import com.etek.controller.persistence.DBManager;
+import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.widget.TableView;
-import static com.etek.sommerlibrary.widget.TableView.MODE_ALL_UNIT_EVENT;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 连接检测
  */
-public class ConnectTestActivity extends BaseActivity {
+public class ConnectTestActivity extends BaseActivity implements View.OnClickListener {
 
-    private TableView mTable;
-    private String[][] mDetData;
-    private int[][] mDetColor;
+    private RelativeLayout noDataView;
+    private LinearLayout backImag;
+    private TextView textTitle;
+    private TextView textBtn;
+    private RecyclerView recycleView;
+    private ConnectTestAdapter connectTestAdapter;
+    private List<DetonatorEntity> connectData = new ArrayList<>();
+    private PopupWindow popWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_test);
-        initSupportActionBar(R.string.title_act_connect_state);
-        initDate();
         initView();
-    }
-
-    /**
-     * 初始化ViewR.id.
-     */
-    private void initView() {
-        int width = getWindowWidth();
-        mTable = findViewById(R.id.connect_state_table);
-        mTable.setHeaderNames("序号", "管码", "孔位", "连接");
-        width = width - 30;
-        mTable.setColumnWidth(0, width / 6);
-        mTable.setColumnWidth(1, width / 2);
-        mTable.setColumnWidth(2, width / 6);
-        mTable.setColumnWidth(3, width / 6);
-
-        //设置项
-        mTable.setmUnitTextColors(mDetColor);
-        mTable.setUnitSelectable(false);//单元格处理事件的时候是否可以选中
-        mTable.setUnitDownColor(R.color.red);//单元格处理事件的时候，按下态的颜色
-        mTable.setTableData(mDetData);
-        mTable.notifyAttributesChanged();
-        mTable.setEventMode(MODE_ALL_UNIT_EVENT);
-
-        mTable.setOnUnitClickListener(new TableView.OnUnitClickListener() {
-            @Override
-            public void onUnitClick(int row, int column, String unitText) {
-                if (3 == column){
-                    String[] rowData = mTable.getRowData(row);
-                    showStatusDialog("是否对 " + rowData[1] + " 进行删除？");
-                }
-
-                Log.e("onItemClick","row: " + row + "   column:" + column + "   unitText: " + unitText);
-            }
-        });
+        initDate();
     }
 
     /**
      * 页面展示的数据
      */
     private void initDate() {
-        mDetData = new String[8][4];
-        mDetColor = new int[8][4];
-        for (int i = 0; i < 8; i++) {
-            mDetData[i][0] = "" + (i+1);
-            mDetColor[i][0] = R.color.black;
-            mDetData[i][1] = "" + ("6000612500169");
-            mDetColor[i][1] = R.color.black;
-            mDetData[i][2] = "" + ("1-2");
-            mDetColor[i][2] = R.color.black;
-            mDetData[i][3] = "" + ("失败");
-            mDetColor[i][3] = R.color.dimgray;
+        //展示数据
+        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao().loadAll();
+//        if (detonatorEntities != null && detonatorEntities.size()== 0){
+//            //模拟增加10条数据
+//            for (int i = 0; i < 10; i++) {
+//                DetonatorEntity detonatorEntitie = new DetonatorEntity();
+//                detonatorEntitie.setCode("123456789" + i);
+//                detonatorEntitie.setHolePosition("1-" + (1 + i));
+//                detonatorEntitie.setStatus(i % 2);
+//                DBManager.getInstance().getDetonatorEntityDao().insert(detonatorEntitie);
+//            }
+//        }
+
+        if (detonatorEntities != null && detonatorEntities.size() != 0) {
+            connectData.addAll(detonatorEntities);
+            connectTestAdapter.notifyDataSetChanged();
+        } else {
+            noDataView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 初始化ViewR.id.
+     */
+    private void initView() {
+        noDataView = findViewById(R.id.no_data_view);
+        backImag = findViewById(R.id.back_img);
+        backImag.setOnClickListener(this);
+        textTitle = findViewById(R.id.text_title);
+        textTitle.setText(R.string.title_act_connect_state);
+        textBtn = findViewById(R.id.text_btn);
+        textBtn.setText(R.string.connect_filtrate);
+        textBtn.setOnClickListener(this);
+        recycleView = findViewById(R.id.recycleView);
+        recycleView.setLayoutManager(new LinearLayoutManager(this));
+        connectTestAdapter = new ConnectTestAdapter(R.layout.connect_test_item, connectData);
+        recycleView.setAdapter(connectTestAdapter);
+        connectTestAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Log.e("initView", "索引： " + position);
+                Toast.makeText(ConnectTestActivity.this, "点击了第" + (position + 1) + "条目", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * 筛选框
+     */
+    private void showPopWindow() {
+        View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
+        popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        popWindow.setContentView(contentView);
+        WindowManager.LayoutParams parms = this.getWindow().getAttributes();
+        parms.alpha = 0.5f;
+        this.getWindow().setAttributes(parms);
+        popWindow.showAsDropDown(textBtn, 0, 25);
+        popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                bgAlpha();
+            }
+        });
+        TextView outContact = contentView.findViewById(R.id.out_contact);
+        TextView misconnection = contentView.findViewById(R.id.misconnection);
+        outContact.setOnClickListener(this);
+        misconnection.setOnClickListener(this);
+    }
+
+    /**
+     * showPopWindow消失后取消背景色
+     */
+    private void bgAlpha() {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = (float) 1.0; //0.0-1.0
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getWindow().setAttributes(lp);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.back_img://返回
+                finish();
+                break;
+
+            case R.id.text_btn://筛选
+                showPopWindow();
+                break;
+
+            case R.id.out_contact://失联
+                popWindow.dismiss();
+                break;
+
+            case R.id.misconnection://误接
+                popWindow.dismiss();
+                break;
         }
     }
 }

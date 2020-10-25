@@ -1,12 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.flyco.animation:FlycoAnimation_Lib:1.0.0@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/853d602e4c40e17cd0539943529cd830/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/853d602e4c40e17cd0539943529cd830/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/853d602e4c40e17cd0539943529cd830/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/7fc7a69fbfd9d1acdaaf71691bdad7f9/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/7fc7a69fbfd9d1acdaaf71691bdad7f9/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/7fc7a69fbfd9d1acdaaf71691bdad7f9/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c30216ccb3465473970437bdcfa25c10/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c30216ccb3465473970437bdcfa25c10/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
