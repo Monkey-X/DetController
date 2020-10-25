@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DetController.iml" filepath="$PROJECT_DIR$/.idea/modules/DetController.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DetController.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DetController.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sommerlibrary/DetController.sommerlibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/sommerlibrary/DetController.sommerlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DetController.iml" filepath="$PROJECT_DIR$/DetController.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sommerlibrary/sommerlibrary.iml" filepath="$PROJECT_DIR$/sommerlibrary/sommerlibrary.iml" />
     </modules>
   </component>
 </project>

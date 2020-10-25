@@ -1,12 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.jakewharton:butterknife:8.8.1@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/25cde5a3567bd822c9c2f7eb2f42dfe4/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/25cde5a3567bd822c9c2f7eb2f42dfe4/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/25cde5a3567bd822c9c2f7eb2f42dfe4/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/657331562d5e53a062705b275514e145/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/657331562d5e53a062705b275514e145/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/657331562d5e53a062705b275514e145/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcda42697fe0db65e643521b6c9ee3ae/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcda42697fe0db65e643521b6c9ee3ae/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

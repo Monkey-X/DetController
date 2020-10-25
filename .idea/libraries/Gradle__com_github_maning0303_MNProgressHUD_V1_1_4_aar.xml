@@ -1,12 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.maning0303:MNProgressHUD:V1.1.4@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b99403e399040ccc0639bd2461329e0f/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b99403e399040ccc0639bd2461329e0f/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b99403e399040ccc0639bd2461329e0f/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/07331e8b169ea67ffee9e7d44d643794/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/07331e8b169ea67ffee9e7d44d643794/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/07331e8b169ea67ffee9e7d44d643794/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/cb9ac723cfbf6560f58c004bf1739209/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/cb9ac723cfbf6560f58c004bf1739209/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

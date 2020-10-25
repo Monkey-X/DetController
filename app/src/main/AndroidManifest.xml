@@ -52,7 +52,8 @@
         <activity android:name=".activity.NetWorkActivity"
             android:theme="@style/activity_theme"/>
         <activity android:name=".activity.AuthBombActivity" />
-        <activity android:name=".activity.ConnectTestActivity" />
+        <activity android:name=".activity.ConnectTestActivity"
+            android:theme="@style/activity_theme"/>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

@@ -1,12 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.evrencoskun.library:tableview:0.8.8@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/7ebb43adf45f3688b55daf566d7d049f/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/7ebb43adf45f3688b55daf566d7d049f/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/7ebb43adf45f3688b55daf566d7d049f/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d570db531fd102616d4ccdb0b67deed9/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d570db531fd102616d4ccdb0b67deed9/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d570db531fd102616d4ccdb0b67deed9/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/928b598d047c133e2ff92869b80a14d7/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/928b598d047c133e2ff92869b80a14d7/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
