@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".activity.ConnectTestActivity">
 
-    <include layout="@layout/actionbar_custom_view"/>
+    <include layout="@layout/actionbar_custom_view" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -102,6 +102,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/line" />
+
+        <RelativeLayout
+            android:id="@+id/no_data_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/line"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="暂无数据"
+                android:textSize="18sp" />
+        </RelativeLayout>
 
     </RelativeLayout>
 

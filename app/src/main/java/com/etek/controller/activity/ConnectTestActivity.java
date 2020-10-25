@@ -10,13 +10,15 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ConnectTestAdapter;
-import com.etek.controller.entity.ConnectTestItem;
+import com.etek.controller.persistence.DBManager;
+import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 import java.util.ArrayList;
@@ -27,30 +29,45 @@ import java.util.List;
  */
 public class ConnectTestActivity extends BaseActivity implements View.OnClickListener {
 
+    private RelativeLayout noDataView;
     private LinearLayout backImag;
     private TextView textTitle;
     private TextView textBtn;
     private RecyclerView recycleView;
     private ConnectTestAdapter connectTestAdapter;
-    private List<ConnectTestItem> connectData;
+    private List<DetonatorEntity> connectData = new ArrayList<>();
     private PopupWindow popWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_test);
-        initDate();
         initView();
+        initDate();
     }
 
     /**
      * 页面展示的数据
      */
     private void initDate() {
-        //暂时模拟数据，有的字段本地数据库没有
-        connectData = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            connectData.add(new ConnectTestItem(i + 1, "6170725D0206" + i, "1-" + (i + 1), "失败"));
+        //展示数据
+        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao().loadAll();
+//        if (detonatorEntities != null && detonatorEntities.size()== 0){
+//            //模拟增加10条数据
+//            for (int i = 0; i < 10; i++) {
+//                DetonatorEntity detonatorEntitie = new DetonatorEntity();
+//                detonatorEntitie.setCode("123456789" + i);
+//                detonatorEntitie.setHolePosition("1-" + (1 + i));
+//                detonatorEntitie.setStatus(i % 2);
+//                DBManager.getInstance().getDetonatorEntityDao().insert(detonatorEntitie);
+//            }
+//        }
+
+        if (detonatorEntities != null && detonatorEntities.size() != 0) {
+            connectData.addAll(detonatorEntities);
+            connectTestAdapter.notifyDataSetChanged();
+        } else {
+            noDataView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -58,6 +75,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 初始化ViewR.id.
      */
     private void initView() {
+        noDataView = findViewById(R.id.no_data_view);
         backImag = findViewById(R.id.back_img);
         backImag.setOnClickListener(this);
         textTitle = findViewById(R.id.text_title);
@@ -88,7 +106,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         WindowManager.LayoutParams parms = this.getWindow().getAttributes();
         parms.alpha = 0.5f;
         this.getWindow().setAttributes(parms);
-        popWindow.showAsDropDown(textBtn,0,25);
+        popWindow.showAsDropDown(textBtn, 0, 25);
         popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
@@ -106,7 +124,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      */
     private void bgAlpha() {
         WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.alpha = (float)1.0; //0.0-1.0
+        lp.alpha = (float) 1.0; //0.0-1.0
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().setAttributes(lp);
     }
