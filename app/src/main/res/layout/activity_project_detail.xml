@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="工作区域："
+            android:text="操作区域："
             android:textSize="18sp" />
 
         <LinearLayout
@@ -84,6 +84,7 @@
             android:layout_weight="0.8"
             android:inputType="number"
             android:background="@null"
+            android:lines="1"
             android:text="1000"
             android:paddingLeft="15dp"
             android:textSize="18sp" />
@@ -140,6 +141,7 @@
                 android:id="@+id/delayholein"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:lines="1"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:gravity="center"
@@ -179,7 +181,8 @@
                 android:background="@null"
                 android:inputType="numberSigned"
                 android:gravity="center"
-                android:text="20"
+                android:lines="1"
+                android:text="50"
                 android:textSize="18sp" />
             <TextView
                 android:layout_width="wrap_content"
