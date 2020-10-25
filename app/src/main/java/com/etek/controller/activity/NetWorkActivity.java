@@ -25,6 +25,7 @@ import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,13 +48,6 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void initData() {
-        // 读取数据库里面的数据，有数据展示数据，没有数据展示没有数据界面
-//        for (int i = 0; i < 10; i++) {
-//            ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
-//            projectInfoEntity.setId((long) i);
-//            projectInfoEntity.setProName("項目"+i);
-//            long insert = DBManager.getInstance().getProjectInfoEntityDao().insert(projectInfoEntity);
-//        }
         List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
         if (projectInfoEntities == null && projectInfoEntities.size() == 0) {
             noDataView.setVisibility(View.VISIBLE);
@@ -93,6 +87,7 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
             case R.id.text_btn:
                 //创建项目
                 ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
+                projectInfoEntity.setProName("项目-"+ projectAdapter.getItemCount());
                 long insert = DBManager.getInstance().getProjectInfoEntityDao().insert(projectInfoEntity);
                 if (insert >=0) {
                     noDataView.setVisibility(View.GONE);

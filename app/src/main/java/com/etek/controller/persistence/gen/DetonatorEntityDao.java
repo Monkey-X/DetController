@@ -18,7 +18,7 @@ import com.etek.controller.persistence.entity.DetonatorEntity;
 /** 
  * DAO for table "DETONATOR_ENTITY".
 */
-public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
+public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Long> {
 
     public static final String TABLENAME = "DETONATOR_ENTITY";
 
@@ -27,14 +27,15 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property ValidTime = new Property(0, java.util.Date.class, "validTime", false, "VALID_TIME");
-        public final static Property Uid = new Property(1, String.class, "uid", false, "UID");
-        public final static Property Code = new Property(2, String.class, "code", false, "CODE");
-        public final static Property WorkCode = new Property(3, String.class, "workCode", false, "WORK_CODE");
-        public final static Property Relay = new Property(4, String.class, "relay", false, "RELAY");
-        public final static Property Status = new Property(5, int.class, "status", false, "STATUS");
-        public final static Property HolePosition = new Property(6, String.class, "holePosition", false, "HOLE_POSITION");
-        public final static Property ProjectInfoId = new Property(7, long.class, "projectInfoId", false, "PROJECT_INFO_ID");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property ValidTime = new Property(1, java.util.Date.class, "validTime", false, "VALID_TIME");
+        public final static Property Uid = new Property(2, String.class, "uid", false, "UID");
+        public final static Property Code = new Property(3, String.class, "code", false, "CODE");
+        public final static Property WorkCode = new Property(4, String.class, "workCode", false, "WORK_CODE");
+        public final static Property Relay = new Property(5, String.class, "relay", false, "RELAY");
+        public final static Property Status = new Property(6, int.class, "status", false, "STATUS");
+        public final static Property HolePosition = new Property(7, String.class, "holePosition", false, "HOLE_POSITION");
+        public final static Property ProjectInfoId = new Property(8, long.class, "projectInfoId", false, "PROJECT_INFO_ID");
     }
 
     private Query<DetonatorEntity> projectInfoEntity_DetonatorListQuery;
@@ -51,14 +52,15 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"DETONATOR_ENTITY\" (" + //
-                "\"VALID_TIME\" INTEGER," + // 0: validTime
-                "\"UID\" TEXT," + // 1: uid
-                "\"CODE\" TEXT," + // 2: code
-                "\"WORK_CODE\" TEXT," + // 3: workCode
-                "\"RELAY\" TEXT," + // 4: relay
-                "\"STATUS\" INTEGER NOT NULL ," + // 5: status
-                "\"HOLE_POSITION\" TEXT," + // 6: holePosition
-                "\"PROJECT_INFO_ID\" INTEGER NOT NULL );"); // 7: projectInfoId
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "\"VALID_TIME\" INTEGER," + // 1: validTime
+                "\"UID\" TEXT," + // 2: uid
+                "\"CODE\" TEXT," + // 3: code
+                "\"WORK_CODE\" TEXT," + // 4: workCode
+                "\"RELAY\" TEXT," + // 5: relay
+                "\"STATUS\" INTEGER NOT NULL ," + // 6: status
+                "\"HOLE_POSITION\" TEXT," + // 7: holePosition
+                "\"PROJECT_INFO_ID\" INTEGER NOT NULL );"); // 8: projectInfoId
     }
 
     /** Drops the underlying database table. */
@@ -71,123 +73,138 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
     protected final void bindValues(DatabaseStatement stmt, DetonatorEntity entity) {
         stmt.clearBindings();
  
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
         java.util.Date validTime = entity.getValidTime();
         if (validTime != null) {
-            stmt.bindLong(1, validTime.getTime());
+            stmt.bindLong(2, validTime.getTime());
         }
  
         String uid = entity.getUid();
         if (uid != null) {
-            stmt.bindString(2, uid);
+            stmt.bindString(3, uid);
         }
  
         String code = entity.getCode();
         if (code != null) {
-            stmt.bindString(3, code);
+            stmt.bindString(4, code);
         }
  
         String workCode = entity.getWorkCode();
         if (workCode != null) {
-            stmt.bindString(4, workCode);
+            stmt.bindString(5, workCode);
         }
  
         String relay = entity.getRelay();
         if (relay != null) {
-            stmt.bindString(5, relay);
+            stmt.bindString(6, relay);
         }
-        stmt.bindLong(6, entity.getStatus());
+        stmt.bindLong(7, entity.getStatus());
  
         String holePosition = entity.getHolePosition();
         if (holePosition != null) {
-            stmt.bindString(7, holePosition);
+            stmt.bindString(8, holePosition);
         }
-        stmt.bindLong(8, entity.getProjectInfoId());
+        stmt.bindLong(9, entity.getProjectInfoId());
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, DetonatorEntity entity) {
         stmt.clearBindings();
  
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
         java.util.Date validTime = entity.getValidTime();
         if (validTime != null) {
-            stmt.bindLong(1, validTime.getTime());
+            stmt.bindLong(2, validTime.getTime());
         }
  
         String uid = entity.getUid();
         if (uid != null) {
-            stmt.bindString(2, uid);
+            stmt.bindString(3, uid);
         }
  
         String code = entity.getCode();
         if (code != null) {
-            stmt.bindString(3, code);
+            stmt.bindString(4, code);
         }
  
         String workCode = entity.getWorkCode();
         if (workCode != null) {
-            stmt.bindString(4, workCode);
+            stmt.bindString(5, workCode);
         }
  
         String relay = entity.getRelay();
         if (relay != null) {
-            stmt.bindString(5, relay);
+            stmt.bindString(6, relay);
         }
-        stmt.bindLong(6, entity.getStatus());
+        stmt.bindLong(7, entity.getStatus());
  
         String holePosition = entity.getHolePosition();
         if (holePosition != null) {
-            stmt.bindString(7, holePosition);
+            stmt.bindString(8, holePosition);
         }
-        stmt.bindLong(8, entity.getProjectInfoId());
+        stmt.bindLong(9, entity.getProjectInfoId());
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public DetonatorEntity readEntity(Cursor cursor, int offset) {
         DetonatorEntity entity = new DetonatorEntity( //
-            cursor.isNull(offset + 0) ? null : new java.util.Date(cursor.getLong(offset + 0)), // validTime
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // uid
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // code
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // workCode
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // relay
-            cursor.getInt(offset + 5), // status
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // holePosition
-            cursor.getLong(offset + 7) // projectInfoId
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)), // validTime
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // uid
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // code
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // workCode
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // relay
+            cursor.getInt(offset + 6), // status
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // holePosition
+            cursor.getLong(offset + 8) // projectInfoId
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, DetonatorEntity entity, int offset) {
-        entity.setValidTime(cursor.isNull(offset + 0) ? null : new java.util.Date(cursor.getLong(offset + 0)));
-        entity.setUid(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setCode(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setWorkCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setRelay(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setStatus(cursor.getInt(offset + 5));
-        entity.setHolePosition(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setProjectInfoId(cursor.getLong(offset + 7));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setValidTime(cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)));
+        entity.setUid(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setWorkCode(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setRelay(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setStatus(cursor.getInt(offset + 6));
+        entity.setHolePosition(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setProjectInfoId(cursor.getLong(offset + 8));
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(DetonatorEntity entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(DetonatorEntity entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(DetonatorEntity entity) {
-        return null;
+    public Long getKey(DetonatorEntity entity) {
+        if(entity != null) {
+            return entity.getId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(DetonatorEntity entity) {
-        // TODO
-        return false;
+        return entity.getId() != null;
     }
 
     @Override

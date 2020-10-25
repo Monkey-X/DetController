@@ -18,12 +18,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 import java.util.ArrayList;
@@ -46,23 +48,42 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_detail);
+        initProjectID();
         initView();
         initRecycleView();
         initIntentData();
         initData();
     }
 
-    private void initIntentData() {
+    private void initProjectID() {
         Intent intent = getIntent();
-        projectId = intent.getLongExtra(AppIntentString.PROJECT_ID,-1);
+        projectId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
         Log.d(TAG, "initIntentData: projectId = " + projectId);
+    }
+
+    private void initIntentData() {
         if (projectId == -1) {
             return;
         }
         List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectId);
-        if (detonatorEntities != null) {
+
+        if (detonatorEntities != null && detonatorEntities.size() != 0) {
             detonators.addAll(detonatorEntities);
             projectDetailAdapter.notifyDataSetChanged();
+        } else {
+            for (int i = 0; i < 10; i++) {
+                if (i == 3) {
+                    areaNum.setText("2");
+                }
+                if (i == 6) {
+                    areaNum.setText("3");
+                }
+
+                if (i == 9) {
+                    areaNum.setText("4");
+                }
+                getDatas();
+            }
         }
     }
 
@@ -72,7 +93,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         TextView textBtn = findViewById(R.id.text_btn);
         backImag.setOnClickListener(this);
         textTitle.setText(R.string.project_detail);
-        textBtn.setVisibility(View.GONE);
+        textBtn.setText("保存工程");
+
+        textBtn.setOnClickListener(this);
 
         rootView = findViewById(R.id.rootview);
 
@@ -96,19 +119,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     private void initRecycleView() {
         detonators = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            if (i == 3) {
-                areaNum.setText("2");
-            }
-            if (i == 6) {
-                areaNum.setText("3");
-            }
 
-            if (i == 9) {
-                areaNum.setText("4");
-            }
-            getDatas();
-        }
         recycleView.setLayoutManager(new LinearLayoutManager(this));
         projectDetailAdapter = new ProjectDetailAdapter(this, detonators);
         recycleView.setAdapter(projectDetailAdapter);
@@ -119,47 +130,47 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     }
 
-    private void getDatas(){
+    private void getDatas() {
         // 录入数据 todo
         int lastDelay;
         int lastAreaNum;//操作区域
         int lastHoleNum;// 孔内编号
         if (detonators.size() == 0) {
             lastDelay = getIntFormString(delayTimeNew.getText().toString().trim());
-            lastAreaNum =getIntFormString(areaNum.getText().toString().trim()) ;
+            lastAreaNum = getIntFormString(areaNum.getText().toString().trim());
             lastHoleNum = 0;
-        }else{
+        } else {
             DetonatorEntity detonatorEntity = detonators.get(detonators.size() - 1);
             lastDelay = getIntFormString(detonatorEntity.getRelay());
             String[] split = detonatorEntity.getHolePosition().split("-");
-            lastAreaNum =getIntFormString(split[0]) ;
+            lastAreaNum = getIntFormString(split[0]);
             lastHoleNum = getIntFormString(split[1]);
         }
 
-        int nowAreaNum = getIntFormString (areaNum.getText().toString().trim());
-        int delayholeinTime =getIntFormString(delayholein.getText().toString().trim()) ;
-        int delayholeoutTime =getIntFormString(delayholeout.getText().toString().trim()) ;
+        int nowAreaNum = getIntFormString(areaNum.getText().toString().trim());
+        int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
+        int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
         if (nowAreaNum == lastAreaNum) {
             // 孔内
             lastHoleNum = lastHoleNum + 1;
             lastDelay = lastDelay + delayholeinTime;
-        }else{
+        } else {
             // 空间
-            lastHoleNum =1;
+            lastHoleNum = 1;
             lastDelay = lastDelay + delayholeoutTime;
         }
 
         DetonatorEntity detonatorEntity = new DetonatorEntity();
         detonatorEntity.setProjectInfoId(projectId);
-        detonatorEntity.setHolePosition(nowAreaNum+"-"+lastHoleNum);
+        detonatorEntity.setHolePosition(nowAreaNum + "-" + lastHoleNum);
         detonatorEntity.setRelay(String.valueOf(lastDelay));
+        detonatorEntity.setUid(projectId +"-"+ detonatorEntity.getHolePosition()+detonatorEntity.getRelay());
         detonators.add(detonatorEntity);
-
     }
 
 
     //  数字型的字符串转为数字
-    public int getIntFormString(String stringNum){
+    public int getIntFormString(String stringNum) {
         int i = Integer.parseInt(stringNum);
         return i;
     }
@@ -176,6 +187,13 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.add:
                 areaAdd();
+                break;
+            case R.id.text_btn:
+                if (detonators.size() == 0) {
+                    Toast.makeText(this, "未录入数据", Toast.LENGTH_SHORT);
+                    return;
+                }
+                DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
                 break;
         }
     }
@@ -203,7 +221,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onItemClick(View view, int position) {
         // 点击条目
-        shouPopuWindow(view,position);
+        shouPopuWindow(view, position);
     }
 
     @Override
@@ -235,12 +253,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow popupWindow = new PopupWindow(popuView,200,200);
+        PopupWindow popupWindow = new PopupWindow(popuView, 200, 200);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 删除条目
-                if (popupWindow !=null&& popupWindow.isShowing()) {
+                if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
                 }
                 deleteItemView(position);
@@ -250,14 +268,14 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
                 // 插入
-                if (popupWindow !=null&& popupWindow.isShowing()) {
+                if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
                 }
                 insertItemView(position);
             }
         });
         popupWindow.setOutsideTouchable(true);
-        popupWindow.showAsDropDown(view, 200,-10,Gravity.RIGHT);
+        popupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
     }
 
     // 插入数据 TODO
@@ -267,7 +285,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         detonatorEntity1.setRelay(detonatorEntity.getRelay());
         detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
         detonatorEntity1.setUid("1111");
-        detonators.add(position,detonatorEntity1);
+        detonators.add(position, detonatorEntity1);
         projectDetailAdapter.notifyDataSetChanged();
     }
 

@@ -11,9 +11,10 @@ import org.greenrobot.greendao.annotation.Generated;
 
 
 @Entity
-public class DetonatorEntity extends BaseEntity{
+public class DetonatorEntity{
 
-
+    @Id(autoincrement = true)
+    Long id;
 
     private Date validTime;         //雷管有效期 yxq
 
@@ -35,9 +36,11 @@ public class DetonatorEntity extends BaseEntity{
 
 
 
-    @Generated(hash = 367776768)
-    public DetonatorEntity(Date validTime, String uid, String code, String workCode,
-            String relay, int status, String holePosition, long projectInfoId) {
+    @Generated(hash = 857861448)
+    public DetonatorEntity(Long id, Date validTime, String uid, String code,
+            String workCode, String relay, int status, String holePosition,
+            long projectInfoId) {
+        this.id = id;
         this.validTime = validTime;
         this.uid = uid;
         this.code = code;
@@ -130,5 +133,13 @@ public class DetonatorEntity extends BaseEntity{
 
     public void setHolePosition(String holePosition) {
         this.holePosition = holePosition;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
