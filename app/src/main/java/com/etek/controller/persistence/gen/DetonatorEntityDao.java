@@ -33,7 +33,8 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
         public final static Property WorkCode = new Property(3, String.class, "workCode", false, "WORK_CODE");
         public final static Property Relay = new Property(4, String.class, "relay", false, "RELAY");
         public final static Property Status = new Property(5, int.class, "status", false, "STATUS");
-        public final static Property ProjectInfoId = new Property(6, long.class, "projectInfoId", false, "PROJECT_INFO_ID");
+        public final static Property HolePosition = new Property(6, String.class, "holePosition", false, "HOLE_POSITION");
+        public final static Property ProjectInfoId = new Property(7, long.class, "projectInfoId", false, "PROJECT_INFO_ID");
     }
 
     private Query<DetonatorEntity> projectInfoEntity_DetonatorListQuery;
@@ -56,7 +57,8 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
                 "\"WORK_CODE\" TEXT," + // 3: workCode
                 "\"RELAY\" TEXT," + // 4: relay
                 "\"STATUS\" INTEGER NOT NULL ," + // 5: status
-                "\"PROJECT_INFO_ID\" INTEGER NOT NULL );"); // 6: projectInfoId
+                "\"HOLE_POSITION\" TEXT," + // 6: holePosition
+                "\"PROJECT_INFO_ID\" INTEGER NOT NULL );"); // 7: projectInfoId
     }
 
     /** Drops the underlying database table. */
@@ -94,7 +96,12 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
             stmt.bindString(5, relay);
         }
         stmt.bindLong(6, entity.getStatus());
-        stmt.bindLong(7, entity.getProjectInfoId());
+ 
+        String holePosition = entity.getHolePosition();
+        if (holePosition != null) {
+            stmt.bindString(7, holePosition);
+        }
+        stmt.bindLong(8, entity.getProjectInfoId());
     }
 
     @Override
@@ -126,7 +133,12 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
             stmt.bindString(5, relay);
         }
         stmt.bindLong(6, entity.getStatus());
-        stmt.bindLong(7, entity.getProjectInfoId());
+ 
+        String holePosition = entity.getHolePosition();
+        if (holePosition != null) {
+            stmt.bindString(7, holePosition);
+        }
+        stmt.bindLong(8, entity.getProjectInfoId());
     }
 
     @Override
@@ -143,7 +155,8 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // workCode
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // relay
             cursor.getInt(offset + 5), // status
-            cursor.getLong(offset + 6) // projectInfoId
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // holePosition
+            cursor.getLong(offset + 7) // projectInfoId
         );
         return entity;
     }
@@ -156,7 +169,8 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Void> {
         entity.setWorkCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setRelay(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setStatus(cursor.getInt(offset + 5));
-        entity.setProjectInfoId(cursor.getLong(offset + 6));
+        entity.setHolePosition(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setProjectInfoId(cursor.getLong(offset + 7));
      }
     
     @Override

@@ -4,80 +4,197 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/rootview"
     android:orientation="vertical"
     tools:context=".activity.ProjectDetailActivity">
 
     <include layout="@layout/actionbar_custom_view" />
 
     <LinearLayout
-        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="10dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="18sp"
             android:gravity="center"
-            android:text="工作区域：" />
+            android:text="工作区域："
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="3"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageView
-                android:src="@mipmap/reduce"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:id="@+id/reduce"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@mipmap/reduce" />
 
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/area_num"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="工作区域" />
+                android:text="1"
+                android:textSize="18sp" />
 
             <ImageView
-                android:src="@mipmap/add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:id="@+id/add"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@mipmap/add" />
 
 
         </LinearLayout>
 
     </LinearLayout>
-    <LinearLayout
-        android:padding="10dp"
-        android:orientation="horizontal"
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0.2dp"
+        android:background="@color/btn_gray_normal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="18sp"
             android:gravity="center"
-            android:text="起始延时：" />
+            android:text="起始延时："
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/delay_time"
             android:layout_width="0dp"
-            android:hint="nihao"
-            android:textSize="18sp"
-            android:background="@null"
             android:layout_height="match_parent"
-            android:layout_weight="3" />
+            android:layout_weight="0.8"
+            android:inputType="number"
+            android:background="@null"
+            android:text="1000"
+            android:paddingLeft="15dp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.2"
+            android:text="ms"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <View
-        android:background="@color/btn_gray_normal"
         android:layout_width="match_parent"
-        android:layout_height="2dp"/>
+        android:layout_height="5dp"
+        android:background="@color/btn_gray_normal" />
+
+    <include layout="@layout/project_detail_item_view" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycleView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/btn_gray_normal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="8dp"
+            android:background="@drawable/normal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="孔内延时："
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/delayholein"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="center"
+                android:inputType="numberSigned"
+                android:text="20"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="ms"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/normal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="孔间延时："
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/delayholeout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:inputType="numberSigned"
+                android:gravity="center"
+                android:text="20"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="ms"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+
+
+
+
+    </LinearLayout>
 
 
 </LinearLayout>

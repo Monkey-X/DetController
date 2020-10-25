@@ -19,7 +19,7 @@ public class DetonatorEntity extends BaseEntity{
 
     private String uid;     //雷管UID码 uid
 
-    private String code;        //雷管发编号 fbh
+    private String code;        //雷管发编号 fbh {可能是管吗}
 
     private String workCode;     //雷管工作码 gzm
 
@@ -29,19 +29,22 @@ public class DetonatorEntity extends BaseEntity{
 
     private int status;     //雷管工作码错误信息 0 正常 1 黑名单 2 已使用 3 不存在
 
+    private String holePosition; // 雷管孔位
+
     private long projectInfoId;
 
 
 
-    @Generated(hash = 1495567194)
+    @Generated(hash = 367776768)
     public DetonatorEntity(Date validTime, String uid, String code, String workCode,
-            String relay, int status, long projectInfoId) {
+            String relay, int status, String holePosition, long projectInfoId) {
         this.validTime = validTime;
         this.uid = uid;
         this.code = code;
         this.workCode = workCode;
         this.relay = relay;
         this.status = status;
+        this.holePosition = holePosition;
         this.projectInfoId = projectInfoId;
     }
 
@@ -119,5 +122,13 @@ public class DetonatorEntity extends BaseEntity{
                 ", status=" + status +
                 ", projectInfoId=" + projectInfoId +
                 '}';
+    }
+
+    public String getHolePosition() {
+        return this.holePosition;
+    }
+
+    public void setHolePosition(String holePosition) {
+        this.holePosition = holePosition;
     }
 }
