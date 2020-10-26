@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activity.DelayDownloadActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <include layout="@layout/actionbar_custom_view"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/delayList"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/btn_gray_normal" />
+
+
+    <TextView
+        android:id="@+id/project_save"
+        android:gravity="center"
+        android:text="保 存"
+        android:textStyle="bold"
+        android:background="@drawable/seleted_status"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

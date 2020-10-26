@@ -32,14 +32,18 @@ public class DetonatorEntity{
 
     private String holePosition; // 雷管孔位
 
+    private int downLoadStatus; // 延时下载的状态吗
+
+    private int testStatus;  // 连接检测状态码
+
     private long projectInfoId;
 
 
 
-    @Generated(hash = 857861448)
+    @Generated(hash = 372390353)
     public DetonatorEntity(Long id, Date validTime, String uid, String code,
             String workCode, String relay, int status, String holePosition,
-            long projectInfoId) {
+            int downLoadStatus, int testStatus, long projectInfoId) {
         this.id = id;
         this.validTime = validTime;
         this.uid = uid;
@@ -48,6 +52,8 @@ public class DetonatorEntity{
         this.relay = relay;
         this.status = status;
         this.holePosition = holePosition;
+        this.downLoadStatus = downLoadStatus;
+        this.testStatus = testStatus;
         this.projectInfoId = projectInfoId;
     }
 
@@ -141,5 +147,21 @@ public class DetonatorEntity{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getDownLoadStatus() {
+        return this.downLoadStatus;
+    }
+
+    public void setDownLoadStatus(int downLoadStatus) {
+        this.downLoadStatus = downLoadStatus;
+    }
+
+    public int getTestStatus() {
+        return this.testStatus;
+    }
+
+    public void setTestStatus(int testStatus) {
+        this.testStatus = testStatus;
     }
 }
