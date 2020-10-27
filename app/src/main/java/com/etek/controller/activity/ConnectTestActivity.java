@@ -157,14 +157,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 600);
             rvFiltrate.setLayoutParams(lp);
         }
-        //相同的项目名称就不用展示了
-        for (int i = 0; i < projectInfoEntities.size(); i++) {
-            if (!itemData.contains(projectInfoEntities.get(i).getProName())) {
-                itemData.add(projectInfoEntities.get(i).getProName());
-            }
-        }
 
-        filtrateAdapter = new FiltrateAdapter(R.layout.filtrate_item, itemData);
+        filtrateAdapter = new FiltrateAdapter(R.layout.filtrate_item, projectInfoEntities);
         rvFiltrate.setAdapter(filtrateAdapter);
 
         filtrateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -181,7 +175,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 获取筛选的数据并展示
      */
     private void showFiltrateData(int position) {
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao().loadAll();
+        ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(position);
+
+        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectInfoEntity.getId());
         if (detonatorEntities != null && detonatorEntities.size() > 0){
             connectData.clear();
             if (position % 2 == 0){
