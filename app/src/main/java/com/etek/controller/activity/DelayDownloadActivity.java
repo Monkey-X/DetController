@@ -100,8 +100,14 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.project_save:
                 // 保存列表数据 todo
-
+                saveProjectDatas();
                 break;
+        }
+    }
+
+    private void saveProjectDatas() {
+        if (detonators != null) {
+            DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
         }
     }
 
@@ -149,13 +155,13 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private void showFiltrateData(int position) {
         ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(position);
         List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectInfoEntity.getId());
+        detonators.clear();
         if (detonatorEntities != null && detonatorEntities.size() > 0) {
-            detonators.clear();
             detonators.addAll(detonatorEntities);
-            mProjectDelayAdapter.notifyDataSetChanged();
-        }else{
-            ToastUtils.show(DelayDownloadActivity.this,"项目未录入数据");
+        } else {
+            ToastUtils.show(DelayDownloadActivity.this, "项目未录入数据");
         }
+        mProjectDelayAdapter.notifyDataSetChanged();
     }
 
 
@@ -178,15 +184,15 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow popupWindow = new PopupWindow(popuView, 200, 200);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 200, 200);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 删除条目
-                if (popupWindow != null && popupWindow.isShowing()) {
-                    popupWindow.dismiss();
-                }
                 deleteItemView(position);
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                }
             }
         });
         TextView downloadAgain = popuView.findViewById(R.id.insert_item);
@@ -195,14 +201,14 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
                 // 插入
-                if (popupWindow != null && popupWindow.isShowing()) {
-                    popupWindow.dismiss();
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
                 }
                 downloadItem(position);
             }
         });
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
     }
 
     //再次下载 todo
@@ -212,8 +218,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     // 删除条目
     private void deleteItemView(int position) {
-        detonators.remove(position);
-        mProjectDelayAdapter.notifyDataSetChanged();
+        if (position <= detonators.size() - 1) {
+            detonators.remove(position);
+            mProjectDelayAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

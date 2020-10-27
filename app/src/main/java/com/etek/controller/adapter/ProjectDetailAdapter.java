@@ -22,9 +22,9 @@ import java.util.List;
 
 public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdapter.ProjectDetailViewHolder> {
 
-    private List<DetonatorEntity> datas;
+    public List<DetonatorEntity> datas;
     private Context context;
-    private OnItemClickListener onItemClickListener;
+    public OnItemClickListener onItemClickListener;
 
     public ProjectDetailAdapter(Context context, List<DetonatorEntity> datas) {
         this.context = context;

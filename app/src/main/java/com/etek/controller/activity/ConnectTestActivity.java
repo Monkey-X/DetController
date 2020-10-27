@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -12,127 +13,99 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ConnectTestAdapter;
 import com.etek.controller.adapter.FiltrateAdapter;
+import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 连接检测
  */
-public class ConnectTestActivity extends BaseActivity implements View.OnClickListener {
+public class ConnectTestActivity extends BaseActivity implements View.OnClickListener, ProjectDetailAdapter.OnItemClickListener {
 
-    private RelativeLayout noDataView;
     private LinearLayout backImag;
     private TextView textTitle;
     private TextView textBtn;
     private RecyclerView recycleView;
     private ConnectTestAdapter connectTestAdapter;
-    private List<String> itemData = new ArrayList<>();
     private List<DetonatorEntity> connectData = new ArrayList<>();
     private List<ProjectInfoEntity> projectInfoEntities;
     private PopupWindow popWindow;
     private RecyclerView rvFiltrate;
     private FiltrateAdapter filtrateAdapter;
+    private TextView mProjectSave;
+    private PopupWindow mPopupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_test);
-        addData(); //模拟添加假数据，后续可去除
         initView();
         initDate();
-    }
-
-    private void addData() {
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao().loadAll();
-        if (detonatorEntities == null || detonatorEntities.size() == 0) {
-            //模拟增加10条数据
-            for (int i = 0; i < 10; i++) {
-                DetonatorEntity detonatorEntitie = new DetonatorEntity();
-                detonatorEntitie.setCode("123456789" + i);
-                detonatorEntitie.setHolePosition("1-" + (1 + i));
-                detonatorEntitie.setStatus(i % 2);
-                DBManager.getInstance().getDetonatorEntityDao().insert(detonatorEntitie);
-            }
-        }
     }
 
     /**
      * 页面展示的数据
      */
     private void initDate() {
+        // 获取到项目列表
         projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao().loadAll();
-        if (detonatorEntities != null && detonatorEntities.size() != 0) {
-            connectData.addAll(detonatorEntities);
-            connectTestAdapter.notifyDataSetChanged();
-        } else {
-            noDataView.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
      * 初始化View
      */
     private void initView() {
-        noDataView = findViewById(R.id.no_data_view);
         backImag = findViewById(R.id.back_img);
         backImag.setOnClickListener(this);
         textTitle = findViewById(R.id.text_title);
         textTitle.setText(R.string.title_act_connect_state);
         textBtn = findViewById(R.id.text_btn);
-        textBtn.setText(R.string.connect_filtrate);
+        textBtn.setText("项目列表");
         textBtn.setOnClickListener(this);
+
+
+        mProjectSave = findViewById(R.id.project_save);
+        mProjectSave.setOnClickListener(this);
+
         recycleView = findViewById(R.id.recycleView);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
-        connectTestAdapter = new ConnectTestAdapter(R.layout.connect_test_item, connectData);
+        connectTestAdapter = new ConnectTestAdapter(this, connectData);
         recycleView.setAdapter(connectTestAdapter);
 
-        connectTestAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(ConnectTestActivity.this);
-                DetonatorEntity detonator = (DetonatorEntity) adapter.getData().get(position);
-                dialog.setTitle("是否删除【" + detonator.getCode() + "】该条数据？");
-                dialog.setCancelable(false);
-                dialog.setPositiveButton("是", (dialog1, which) -> {
-                    //集合和本地数据库同时去掉该条数据
-                    connectData.remove(position);
-                    connectTestAdapter.notifyDataSetChanged();
-                    ToastUtils.show(ConnectTestActivity.this, "删除成功");
-                });
-                dialog.show();
-                return false;
-            }
-        });
+        connectTestAdapter.setOnItemClickListener(this);
     }
 
     /**
      * 筛选框
      */
     private void showPopWindow() {
-        View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
-        popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
-        popWindow.setContentView(contentView);
-        WindowManager.LayoutParams parms = this.getWindow().getAttributes();
-        parms.alpha = 0.5f;
-        this.getWindow().setAttributes(parms);
+        if (popWindow == null) {
+            View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
+            popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+            popWindow.setContentView(contentView);
+            WindowManager.LayoutParams parms = this.getWindow().getAttributes();
+            parms.alpha = 0.5f;
+            this.getWindow().setAttributes(parms);
+            popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    bgAlpha();
+                }
+            });
+            initFiltrate(contentView);
+        }
         popWindow.showAsDropDown(textBtn, 0, 25);
-        popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                bgAlpha();
-            }
-        });
-        initFiltrate(contentView);
     }
 
 
@@ -176,27 +149,14 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      */
     private void showFiltrateData(int position) {
         ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(position);
-
         List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectInfoEntity.getId());
-        if (detonatorEntities != null && detonatorEntities.size() > 0){
-            connectData.clear();
-            if (position % 2 == 0){
-                for (int i = 0; i < detonatorEntities.size(); i++) {
-                    if (detonatorEntities.get(i).getStatus() % 2 == 0){
-                        connectData.add(detonatorEntities.get(i));
-                    }
-                }
-            }else{
-                for (int i = 0; i < detonatorEntities.size(); i++) {
-                    if (detonatorEntities.get(i).getStatus() % 2 != 0){
-                        connectData.add(detonatorEntities.get(i));
-                    }
-                }
-            }
-            connectTestAdapter.notifyDataSetChanged();
-        }else{
-            ToastUtils.show(ConnectTestActivity.this,"暂无筛选的数据");
+        connectData.clear();
+        if (detonatorEntities != null && detonatorEntities.size() > 0) {
+            connectData.addAll(detonatorEntities);
+        } else {
+            ToastUtils.show(ConnectTestActivity.this, "项目未录入数据");
         }
+        connectTestAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -208,7 +168,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             case R.id.back_img://返回
                 finish();
                 break;
-
             case R.id.text_btn://筛选
                 if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
                     ToastUtils.show(this, this.getString(R.string.no_filtrate_project));
@@ -216,6 +175,70 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     showPopWindow();
                 }
                 break;
+
+            case R.id.project_save:
+                // 保存项目
+                saveProjectDatas();
+                break;
         }
+    }
+
+    private void saveProjectDatas() {
+        if (connectData != null) {
+            DBManager.getInstance().getDetonatorEntityDao().saveInTx(connectData);
+        }
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        // 点击条目弹出 popuWindow 提示删除或者测试
+        shouPopuWindow(view, position);
+    }
+
+    private void shouPopuWindow(View view, int position) {
+        View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 200, 200);
+        popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 删除条目
+                deleteItemView(position);
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                }
+
+            }
+        });
+        TextView downloadAgain = popuView.findViewById(R.id.insert_item);
+        downloadAgain.setText("测试");
+        downloadAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 插入
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                }
+                testItem(position);
+            }
+        });
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
+    }
+
+    private void testItem(int position) {
+        // 进行单个雷管的测试 todo
+    }
+
+    // 删除条目
+    private void deleteItemView(int position) {
+        if (position <= connectData.size() - 1) {
+            connectData.remove(position);
+            connectTestAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onDelayTimeClick(int position) {
+
     }
 }

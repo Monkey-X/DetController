@@ -8,116 +8,90 @@
 
     <include layout="@layout/actionbar_custom_view" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
+
 
         <LinearLayout
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:background="@drawable/seleted_status"
             android:orientation="horizontal">
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/textColor" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:padding="8dp"
+                android:padding="5dp"
                 android:text="@string/serial_number"
-                android:textColor="@color/textColor"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/textColor" />
+                android:background="@color/btn_gray_normal" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:padding="8dp"
+                android:padding="5dp"
                 android:text="@string/tube_code"
-                android:textColor="@color/textColor"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/textColor" />
+                android:background="@color/btn_gray_normal" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:padding="8dp"
+                android:padding="5dp"
                 android:text="@string/hole_location"
-                android:textColor="@color/textColor"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/textColor" />
+                android:background="@color/btn_gray_normal" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:padding="8dp"
+                android:padding="5dp"
                 android:text="@string/connect"
-                android:textColor="@color/textColor"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/textColor" />
         </LinearLayout>
-
-        <View
-            android:id="@+id/line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/title"
-            android:background="@color/textColor" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/line" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_below="@+id/title" />
 
-        <RelativeLayout
-            android:id="@+id/no_data_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/line"
-            android:visibility="gone">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/btn_gray_normal" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="暂无数据"
-                android:textSize="18sp" />
-        </RelativeLayout>
 
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/project_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/seleted_status"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="保 存"
+        android:textStyle="bold" />
 
 </LinearLayout>
