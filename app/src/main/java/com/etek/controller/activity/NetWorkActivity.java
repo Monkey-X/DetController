@@ -49,14 +49,15 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
 
     private void initData() {
         List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
-        if (projectInfoEntities == null && projectInfoEntities.size() == 0) {
-            noDataView.setVisibility(View.VISIBLE);
-        } else {
+        projectInfos.clear();
+        if (projectInfoEntities != null && projectInfoEntities.size() > 0) {
+            noDataView.setVisibility(View.GONE);
             Log.d(TAG, "initData: projectInfoEntities.size() = " + projectInfoEntities.size());
-            projectInfos.clear();
             projectInfos.addAll(projectInfoEntities);
-            projectAdapter.notifyDataSetChanged();
+        } else {
+            noDataView.setVisibility(View.VISIBLE);
         }
+        projectAdapter.notifyDataSetChanged();
     }
 
 
@@ -72,7 +73,7 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
         noDataView = findViewById(R.id.nodata_view);
 
         recycleView.setLayoutManager(new LinearLayoutManager(this));
-        projectAdapter = new ProjectAdapter(this,projectInfos);
+        projectAdapter = new ProjectAdapter(this, projectInfos);
         recycleView.setAdapter(projectAdapter);
         projectAdapter.setOnItemClickListener(this);
     }
@@ -87,9 +88,9 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
             case R.id.text_btn:
                 //创建项目
                 ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
-                projectInfoEntity.setProName("项目-"+ projectAdapter.getItemCount());
+                projectInfoEntity.setProName("项目-" + projectAdapter.getItemCount());
                 long insert = DBManager.getInstance().getProjectInfoEntityDao().insert(projectInfoEntity);
-                if (insert >=0) {
+                if (insert >= 0) {
                     noDataView.setVisibility(View.GONE);
                     projectInfos.add(projectInfoEntity);
                     projectAdapter.notifyDataSetChanged();
@@ -103,8 +104,8 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
         ProjectInfoEntity projectInfoEntity = projectInfos.get(position);
         Long id = projectInfoEntity.getId();
 
-        Intent intent = new Intent(this,ProjectDetailActivity.class);
-        intent.putExtra(AppIntentString.PROJECT_ID,id);
+        Intent intent = new Intent(this, ProjectDetailActivity.class);
+        intent.putExtra(AppIntentString.PROJECT_ID, id);
         startActivity(intent);
     }
 
@@ -125,6 +126,7 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
             public void onClick(DialogInterface dialog, int which) {
                 //删除数据
                 DBManager.getInstance().getProjectInfoEntityDao().delete(projectInfoEntity);
+
                 initData();
             }
         });

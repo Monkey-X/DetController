@@ -77,21 +77,4 @@
             android:layout_weight="1"
             android:layout_below="@+id/title" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/btn_gray_normal" />
-
-
-    <TextView
-        android:id="@+id/project_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@drawable/seleted_status"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="保 存"
-        android:textStyle="bold" />
-
 </LinearLayout>

@@ -43,8 +43,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private PopupWindow popWindow;
     private RecyclerView rvFiltrate;
     private FiltrateAdapter filtrateAdapter;
-    private TextView mProjectSave;
-    private PopupWindow mPopupWindow;
+    private List<DetonatorEntity> mDetonatorEntities;
+    private ProjectInfoEntity mProjectInfoEntity;
+    private int projectPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +75,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         textBtn.setText("项目列表");
         textBtn.setOnClickListener(this);
 
-
-        mProjectSave = findViewById(R.id.project_save);
-        mProjectSave.setOnClickListener(this);
-
         recycleView = findViewById(R.id.recycleView);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
         connectTestAdapter = new ConnectTestAdapter(this, connectData);
@@ -90,21 +87,19 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 筛选框
      */
     private void showPopWindow() {
-        if (popWindow == null) {
-            View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
-            popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
-            popWindow.setContentView(contentView);
-            WindowManager.LayoutParams parms = this.getWindow().getAttributes();
-            parms.alpha = 0.5f;
-            this.getWindow().setAttributes(parms);
-            popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                @Override
-                public void onDismiss() {
-                    bgAlpha();
-                }
-            });
-            initFiltrate(contentView);
-        }
+        View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
+        popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        popWindow.setContentView(contentView);
+        WindowManager.LayoutParams parms = this.getWindow().getAttributes();
+        parms.alpha = 0.5f;
+        this.getWindow().setAttributes(parms);
+        popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                bgAlpha();
+            }
+        });
+        initFiltrate(contentView);
         popWindow.showAsDropDown(textBtn, 0, 25);
     }
 
@@ -148,11 +143,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 获取筛选的数据并展示
      */
     private void showFiltrateData(int position) {
-        ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(position);
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectInfoEntity.getId());
+        if (projectPosition == position) {
+            return;
+        }
+        this.projectPosition = position;
+        mProjectInfoEntity = projectInfoEntities.get(position);
+        mDetonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
         connectData.clear();
-        if (detonatorEntities != null && detonatorEntities.size() > 0) {
-            connectData.addAll(detonatorEntities);
+        if (mDetonatorEntities != null && mDetonatorEntities.size() > 0) {
+            connectData.addAll(mDetonatorEntities);
         } else {
             ToastUtils.show(ConnectTestActivity.this, "项目未录入数据");
         }
@@ -176,16 +175,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 }
                 break;
 
-            case R.id.project_save:
-                // 保存项目
-                saveProjectDatas();
-                break;
-        }
-    }
-
-    private void saveProjectDatas() {
-        if (connectData != null) {
-            DBManager.getInstance().getDetonatorEntityDao().saveInTx(connectData);
         }
     }
 
@@ -232,8 +221,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     // 删除条目
     private void deleteItemView(int position) {
         if (position <= connectData.size() - 1) {
-            connectData.remove(position);
-            connectTestAdapter.notifyDataSetChanged();
+            DetonatorEntity detonatorEntity = connectData.get(position);
+            DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
+            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
+            if (detonatorEntities != null) {
+                connectData.clear();
+                connectData.addAll(detonatorEntities);
+                connectTestAdapter.notifyDataSetChanged();
+            }
+
         }
     }
 

@@ -43,6 +43,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private TextView textBtn;
     private RecyclerView rvFiltrate;
     private FiltrateAdapter filtrateAdapter;
+    private ProjectInfoEntity mProjectInfoEntity;
+    private int projectPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +63,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         textTitle.setText(R.string.activity_delay_download);
         textBtn.setText("项目列表");
 
-        TextView projectSave = findViewById(R.id.project_save);
-
         textBtn.setOnClickListener(this);
-        projectSave.setOnClickListener(this);
 
         mDelayList = findViewById(R.id.delayList);
     }
@@ -98,36 +97,24 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                     showProjectPopuWindow();
                 }
                 break;
-            case R.id.project_save:
-                // 保存列表数据 todo
-                saveProjectDatas();
-                break;
-        }
-    }
-
-    private void saveProjectDatas() {
-        if (detonators != null) {
-            DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
         }
     }
 
     // 展示项目列表
     private void showProjectPopuWindow() {
-        if (popWindow == null) {
-            View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
-            popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
-            popWindow.setContentView(contentView);
-            WindowManager.LayoutParams parms = this.getWindow().getAttributes();
-            parms.alpha = 0.5f;
-            this.getWindow().setAttributes(parms);
-            popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                @Override
-                public void onDismiss() {
-                    bgAlpha();
-                }
-            });
-            initFiltrate(contentView);
-        }
+        View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
+        popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        popWindow.setContentView(contentView);
+        WindowManager.LayoutParams parms = this.getWindow().getAttributes();
+        parms.alpha = 0.5f;
+        this.getWindow().setAttributes(parms);
+        popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                bgAlpha();
+            }
+        });
+        initFiltrate(contentView);
         popWindow.showAsDropDown(textBtn, 0, 25);
     }
 
@@ -153,8 +140,12 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     private void showFiltrateData(int position) {
-        ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(position);
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectInfoEntity.getId());
+        if (this.projectPosition == position) {
+            return;
+        }
+        projectPosition = position;
+        mProjectInfoEntity = projectInfoEntities.get(position);
+        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
         detonators.clear();
         if (detonatorEntities != null && detonatorEntities.size() > 0) {
             detonators.addAll(detonatorEntities);
@@ -219,8 +210,14 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     // 删除条目
     private void deleteItemView(int position) {
         if (position <= detonators.size() - 1) {
-            detonators.remove(position);
-            mProjectDelayAdapter.notifyDataSetChanged();
+            DetonatorEntity detonatorEntity = detonators.get(position);
+            DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
+            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
+            if (detonatorEntities != null) {
+                detonators.clear();
+                detonators.addAll(detonatorEntities);
+                mProjectDelayAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -244,6 +241,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
                 detonatorEntity.setRelay(nowDelayTime);
+                DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
                 mProjectDelayAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }

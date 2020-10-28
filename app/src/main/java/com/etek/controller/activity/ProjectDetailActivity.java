@@ -43,6 +43,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private EditText delayholein;
     private EditText delayholeout;
     private LinearLayout rootView;
+    private List<DetonatorEntity> mDetonatorEntities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +66,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (projectId == -1) {
             return;
         }
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectId);
+        mDetonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectId);
 
-        if (detonatorEntities != null && detonatorEntities.size() != 0) {
-            detonators.addAll(detonatorEntities);
+        if (mDetonatorEntities != null && mDetonatorEntities.size() != 0) {
+            detonators.addAll(mDetonatorEntities);
             projectDetailAdapter.notifyDataSetChanged();
         } else {
             for (int i = 0; i < 10; i++) {
@@ -291,6 +292,14 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     // 删除条目
     private void deleteItemView(int position) {
+
+        DetonatorEntity detonatorEntity = detonators.get(position);
+        if (mDetonatorEntities !=null) {
+            boolean contains = mDetonatorEntities.contains(detonatorEntity);
+            if (contains) {
+                DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
+            }
+        }
         detonators.remove(position);
         projectDetailAdapter.notifyDataSetChanged();
     }
