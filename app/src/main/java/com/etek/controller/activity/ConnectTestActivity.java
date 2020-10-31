@@ -19,6 +19,7 @@ import com.etek.controller.R;
 import com.etek.controller.adapter.ConnectTestAdapter;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
+import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
@@ -74,6 +75,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         textBtn = findViewById(R.id.text_btn);
         textBtn.setText("项目列表");
         textBtn.setOnClickListener(this);
+
+        TextView missEvent = findViewById(R.id.miss_event);
+        TextView falseConnect = findViewById(R.id.false_connect);
+
+        missEvent.setOnClickListener(this);
+        falseConnect.setOnClickListener(this);
 
         recycleView = findViewById(R.id.recycleView);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -174,8 +181,36 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     showPopWindow();
                 }
                 break;
+            case R.id.miss_event:
+                // 筛选失联
+                changeMissEvent();
+                break;
+            case R.id.false_connect:
+                // 筛选误接
+                changeFalseConnect();
+                break;
 
         }
+    }
+
+    // 筛选 误接状态
+    private void changeFalseConnect() {
+        if (connectData == null || connectData.size() == 0) {
+            ToastUtils.show(this,"未录入数据");
+            return;
+        }
+        // TODO: 2020/10/31
+
+    }
+
+    // 筛选失联 状态
+    private void changeMissEvent() {
+        if (connectData == null || connectData.size() == 0) {
+            ToastUtils.show(this,"未录入数据");
+            return;
+        }
+
+        // TODO: 2020/10/31  
     }
 
     @Override

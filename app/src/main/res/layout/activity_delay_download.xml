@@ -18,4 +18,41 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/btn_gray_normal" />
+
+    <LinearLayout
+        android:padding="5dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/save_project"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="3"
+            android:padding="5dp"
+            android:layout_width="0dp"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="批量编辑"
+            android:id="@+id/all_edit"
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/seleted_status"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"/>
+
+
+
+
+    </LinearLayout>
+
 </LinearLayout>

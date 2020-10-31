@@ -77,4 +77,36 @@
             android:layout_weight="1"
             android:layout_below="@+id/title" />
 
+    <LinearLayout
+        android:padding="5dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="失联"
+            android:id="@+id/miss_event"
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/seleted_status"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/false_connect"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:layout_width="0dp"
+            android:textSize="18sp"
+            android:text="误接"
+            android:background="@drawable/seleted_status"
+            android:gravity="center"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
 </LinearLayout>

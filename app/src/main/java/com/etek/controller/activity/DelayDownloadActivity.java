@@ -21,6 +21,8 @@ import com.etek.controller.R;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDelayAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
+import com.etek.controller.entity.FastEditBean;
+import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
@@ -33,7 +35,7 @@ import java.util.List;
 /**
  * 延时下载
  */
-public class DelayDownloadActivity extends BaseActivity implements View.OnClickListener, ProjectDelayAdapter.OnItemClickListener {
+public class DelayDownloadActivity extends BaseActivity implements View.OnClickListener, ProjectDelayAdapter.OnItemClickListener, FastEditDialog.OnMakeSureListener {
 
     private RecyclerView mDelayList;
     private List<DetonatorEntity> detonators;
@@ -62,6 +64,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         backImag.setOnClickListener(this);
         textTitle.setText(R.string.activity_delay_download);
         textBtn.setText("项目列表");
+
+        TextView allEdit = findViewById(R.id.all_edit);
+
+        allEdit.setOnClickListener(this);
 
         textBtn.setOnClickListener(this);
 
@@ -97,7 +103,23 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                     showProjectPopuWindow();
                 }
                 break;
+            case R.id.all_edit:
+                // 批量编辑
+                changeAllEdit();
+                break;
         }
+    }
+
+
+    private void changeAllEdit() {
+        // 进行批量修改，弹出快捷编辑对话框
+        if (detonators == null || detonators.size() == 0) {
+            ToastUtils.show(this, "未录入数据！");
+        }
+        FastEditDialog fastEditDialog = new FastEditDialog();
+        fastEditDialog.setSerialNumber(detonators.size());
+        fastEditDialog.setOnMakeSureListener(this);
+        fastEditDialog.show(getSupportFragmentManager(),"fastEditDialog");
     }
 
     // 展示项目列表
@@ -247,5 +269,11 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             }
         });
         builder.create().show();
+    }
+
+    @Override
+    public void makeSure(FastEditBean bean) {
+        // todo  进行批量修改
+
     }
 }

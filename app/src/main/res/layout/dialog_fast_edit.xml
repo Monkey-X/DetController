@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="8dp"
+    android:background="@drawable/dialog_bg"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="起始序号："
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:hint="0"
+            android:inputType="number"
+            android:id="@+id/startNum"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"/>
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="截止序号："
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:hint="0"
+            android:id="@+id/endNum"
+            android:gravity="center"
+            android:inputType="number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"/>
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="起始时间："
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:hint="0"
+            android:inputType="number"
+            android:id="@+id/startTime"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"/>
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:text="ms"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="每孔雷管："
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:hint="0"
+            android:inputType="number"
+            android:id="@+id/holeNum"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"/>
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:text="颗"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="孔间延时："
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:hint="0"
+            android:inputType="numberSigned"
+            android:id="@+id/holeOutTime"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"/>
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:text="ms"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="孔内延时："
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:hint="0"
+            android:inputType="numberSigned"
+            android:id="@+id/holeInTime"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"/>
+        <TextView
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:text="ms"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/btn_gray_normal"/>
+
+
+    <LinearLayout
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="18sp"
+            android:padding="6dp"
+            android:gravity="center"
+            android:id="@+id/cancel"
+            android:background="@drawable/seleted_status"
+            android:text="取消"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <TextView
+            android:textSize="18sp"
+            android:padding="6dp"
+            android:text="确定"
+            android:id="@+id/makeSure"
+            android:layout_marginLeft="6dp"
+            android:background="@drawable/seleted_status"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>

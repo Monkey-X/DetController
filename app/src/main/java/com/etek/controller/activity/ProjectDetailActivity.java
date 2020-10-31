@@ -245,6 +245,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
                 detonatorEntity.setRelay(nowDelayTime);
+                DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
                 projectDetailAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
