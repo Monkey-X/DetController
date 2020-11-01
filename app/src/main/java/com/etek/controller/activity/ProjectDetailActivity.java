@@ -154,7 +154,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (nowAreaNum == lastAreaNum) {
             // 孔内
             lastHoleNum = lastHoleNum + 1;
-            lastDelay = lastDelay + delayholeinTime;
+            if (detonators.size() != 0) {
+                lastDelay = lastDelay + delayholeinTime;
+            }
         } else {
             // 空间
             lastHoleNum = 1;

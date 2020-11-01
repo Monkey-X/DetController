@@ -21,6 +21,7 @@ public class AuthBombActivity extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth_bomb);
+        initSupportActionBar(R.string.activity_auth_bomb);
         initView();
 
     }
