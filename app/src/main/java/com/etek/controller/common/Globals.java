@@ -1,22 +1,15 @@
 package com.etek.controller.common;
 
 import com.etek.controller.R;
-
 import com.etek.controller.activity.AssistActivity;
 import com.etek.controller.activity.AuthBombActivity;
 import com.etek.controller.activity.ConnectTestActivity;
 import com.etek.controller.activity.DelayDownloadActivity;
 import com.etek.controller.activity.NetWorkActivity;
-import com.etek.controller.activity.OfflineCheckActivity;
-import com.etek.controller.activity.OnlineCheckActivity;
-
-import com.etek.controller.activity.ReportActivity;
-import com.etek.controller.activity.SettingsActivity;
+import com.etek.controller.activity.ReportActivity2;
 import com.etek.controller.activity.UserInfoActivity;
 import com.etek.controller.entity.FuncationActivity;
-
 import com.etek.controller.model.User;
-
 
 public class Globals {
 
@@ -62,7 +55,7 @@ public class Globals {
 			new FuncationActivity(ConnectTestActivity.class,"连接检测",R.string.title_activity_connecttest,R.drawable.connet_test),
 			new FuncationActivity(DelayDownloadActivity.class,"延时下载",R.string.activity_delay_download,R.drawable.delay_download),
 			new FuncationActivity(AuthBombActivity.class,"授权起爆",R.string.activity_auth_bomb,R.drawable.auth),
-			new FuncationActivity(ReportActivity.class,"数据上报",R.string.activity_det_report,R.drawable.report),
+			new FuncationActivity(ReportActivity2.class,"数据上报",R.string.activity_det_report,R.drawable.report),
 			new FuncationActivity(AssistActivity.class,"辅助功能",R.string.activity_assist,R.drawable.assist),
 			new FuncationActivity(UserInfoActivity.class,"个人设置",R.string.title_activity_personal_info,R.drawable.user),
 

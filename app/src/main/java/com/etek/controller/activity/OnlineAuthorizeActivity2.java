@@ -56,6 +56,7 @@ import com.etek.controller.persistence.gen.ChkControllerEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
+import com.etek.controller.utils.JsonUtils;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -63,8 +64,6 @@ import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.MD5Util;
-import com.etek.sommerlibrary.utils.ToastUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -109,6 +108,15 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         getUserCompanyCode();
         getLocationLocal();
         showDialog();
+
+        //模拟往数据库里存储数据
+        if (DBManager.getInstance().getChkControllerEntityDao().loadAll().size() <= 0) {
+            //模拟数据
+            JsonUtils.projectInfo();
+            DetController detController = JsonUtils.detController();
+            this.detController = detController;
+            storeDetController();
+        }
     }
 
     @Override
@@ -195,21 +203,6 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         detController = new DetController();
         detController.setUserIDCode(Globals.user.getIdCode());
         detController.setCompanyCode(Globals.user.getCompanyCode());
-
-        //模拟一些数据
-        List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
-        List<ChkControllerEntity> chkControllerEntities = DBManager.getInstance().getChkControllerEntityDao().loadAll();
-//        if (chkControllerEntities != null && chkControllerEntities.size()== 0){
-            //模拟增加100条数据
-            for (int i = 0; i < projectInfoEntities.size(); i++) {
-                ChkControllerEntity chkControllerEntity = new ChkControllerEntity();
-                chkControllerEntity.setSn("6100025" + (i+2));
-                chkControllerEntity.setIsOnline(1);
-                chkControllerEntity.resetChkDetonatorList();
-                chkControllerEntity.setProjectInfoEntity(projectInfoEntities.get(i));
-                DBManager.getInstance().getChkControllerEntityDao().insert(chkControllerEntity);
-            }
-//        }
     }
 
     /**
@@ -477,7 +470,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         onlineCheckDto.setDetControllerWithoutDet(detController);
         onlineCheckDto.setDets(detController.getDetList());
         String rptJson = JSON.toJSONString(onlineCheckDto, SerializerFeature.WriteMapNullValue);
-        Log.v(TAG, "rptJson: " + rptJson);
+        Log.e(TAG, "rptJson: " + rptJson);
         getToken();
         // jiangsheng
         Result result = RptUtil.getRptEncode(rptJson);
@@ -493,8 +486,8 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e( TAG, "IOException: " + e.getMessage());
                 dismissProgressBar();
-                Log.e("IOException:", e.getMessage());
             }
 
             @Override
@@ -502,7 +495,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
                 dismissProgressBar();
                 String respStr = response.body().string();
                 if (StringUtils.isEmpty(respStr)) {
-                    Log.w(TAG, "respStr is null ");
+                    Log.e(TAG, "respStr is null ");
                     return;
                 }
 
@@ -511,9 +504,9 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
                     Result rptDecode = RptUtil.getRptDecode(respStr);
                     if (rptDecode.isSuccess()) {
                         String data = (String) rptDecode.getData();
-                        Log.d(TAG, "resp:" + data);
+                        Log.e(TAG, "resp:" + data);
                         serverResult = JSON.parseObject(data, OnlineCheckResp.class);
-                        Log.d(TAG, serverResult.toString());
+                        Log.e(TAG, serverResult.toString());
                         if (serverResult.getCwxx().contains("0")) {
                             ProjectFileDto projectFile = new ProjectFileDto();
 
@@ -694,11 +687,11 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         ChkControllerEntity chkControllerEntity = new ChkControllerEntity();
         Log.i("TAG","storeDetController start");
 
-        List<ChkControllerEntity> oldList = DBManager.getInstance().getChkControllerEntityDao().queryBuilder()
-                .where(ChkControllerEntityDao.Properties.Token.eq(detController.getToken())).list();
-        if (oldList != null && oldList.size() > 0) {
-            return;
-        }
+//        List<ChkControllerEntity> oldList = DBManager.getInstance().getChkControllerEntityDao().queryBuilder()
+//                .where(ChkControllerEntityDao.Properties.Token.eq(detController.getToken())).list();
+//        if (oldList != null && oldList.size() > 0) {
+//            return;
+//        }
 //        if (oldControllerEntity != null) {
 ////            showStatusDialog("此规则检查已完成传输！");
 //            return;
@@ -712,6 +705,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
             chkControllerEntity.setProjectId(proCode);
             chkControllerEntity.setCompany(Globals.user.getCompanyCode());
             chkControllerEntity.setIsOnline(1);
+            chkControllerEntity.setSn("61000255");
             long chkId = DBManager.getInstance().getChkControllerEntityDao().insert(chkControllerEntity);
             for (Detonator detonator : detController.getDetList()) {
 //                List<Lg> lgs = projectFile.getProInfo().getLgs().getLg();
@@ -778,7 +772,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
 
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e("TAG","IOException:" + e.getMessage());
+                Log.e(TAG,"IOException:" + e.getMessage());
 //                closeDialog();
 //                showStatusDialog("服务器报错");
 
@@ -790,7 +784,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
 //                closeDialog();
                 String respStr = response.body().string();
                 if (!StringUtils.isEmpty(respStr)) {
-                    Log.w("TAG","respStr is  " + respStr);
+                    Log.e(TAG,"respStr is  " + respStr);
 //                    showToast("上报返回值为空");
                 }
             }

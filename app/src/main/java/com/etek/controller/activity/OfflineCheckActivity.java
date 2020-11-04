@@ -36,8 +36,8 @@ public class OfflineCheckActivity extends BaseActivity {
     public static FuncationActivity[] offlineFuncation = {
             new FuncationActivity(AuthorizeActivity.class, "授权", R.string.title_activity_authority, R.drawable.authority),
 //            new FuncationActivity(OnlineCheckoutActivity.class,"在线检查",R.string.title_act_online_checkout,R.drawable.yun),
-            new FuncationActivity(CheckoutActivity.class, "数据检查", R.string.title_activity_checkout, R.drawable.check),
-            new FuncationActivity(ReportActivity.class, "数据上报", R.string.activity_det_report, R.drawable.report),
+            new FuncationActivity(CheckoutActivity2.class, "数据检查", R.string.title_activity_checkout, R.drawable.check),
+//            new FuncationActivity(ReportActivity.class, "数据上报", R.string.activity_det_report, R.drawable.report),
 //			new FuncationActivity(ReportActivity.class,"数据上报",R.string.title_activity_report,R.drawable.gv_section),
 
     };

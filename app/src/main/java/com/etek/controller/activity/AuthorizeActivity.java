@@ -128,32 +128,23 @@ public class AuthorizeActivity extends BaseActivity {
         initView();
         initAdapter();
         initRefreshLayout();
-
-
 //       XLog.d("path:",path);
-
-
     }
 
 
     private void getUserCompanyCode() {
-
-
         if (Globals.user == null
                 || StringUtils.isEmpty(Globals.user.getCompanyCode())
                 || StringUtils.isEmpty(Globals.user.getIdCode())) {
             showToast("公司代码或用户证件号为空，请去信息设置页面设置");
             delayAction(new Intent(mContext, UserInfoActivity.class), 1000);
         }
-
     }
 
     private void initView() {
-
         prv.setLayoutManager(new LinearLayoutManager(mContext));
         psl.setColorSchemeColors(Color.rgb(47, 223, 189));
         psl.setRefreshing(true);
-
     }
 
     private void initAdapter() {
@@ -198,11 +189,9 @@ public class AuthorizeActivity extends BaseActivity {
         mAdapter.setEnableLoadMore(true);
 //        mAdapter.setLoadMoreView(R.layout.item_load_more);
         psl.setRefreshing(false);
-
     }
 
     private void loadMore() {
-
         XLog.v("加载更多");
         int offset = (mNextRequestPage - 1) * PAGE_SIZE;
         int limit = offset + PAGE_SIZE;
@@ -214,7 +203,6 @@ public class AuthorizeActivity extends BaseActivity {
                 .list();
         boolean isRefresh = mNextRequestPage == 1;
         setData(isRefresh, datas);
-
     }
 
     private void setData(boolean isRefresh, List data) {
@@ -281,10 +269,7 @@ public class AuthorizeActivity extends BaseActivity {
         AlertDialog dialog = builder.create(); //创建对话框
         dialog.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
         dialog.show();
-
-
     }
-
 
     private void getProjectFile(String fileSn) {
         if (NetUtil.getNetType(mContext) < 0) {
@@ -302,10 +287,7 @@ public class AuthorizeActivity extends BaseActivity {
         } else {
             newUrl = SommerUtils.attachHttpGetParams(AppConstants.DanningServer + AppConstants.ProjectFileDownload, params);
         }
-
-
 //        XLog.v( "newUrl:" + newUrl);
-
         AsyncHttpCilentUtil.getOkHttpClient(newUrl, new Callback() {
 
             @Override
@@ -416,9 +398,7 @@ public class AuthorizeActivity extends BaseActivity {
                         return;
                     }
                     String url = AppConstants.ETEKTestServer + AppConstants.DETUnCheck;
-
                     AsyncHttpCilentUtil.httpPostJson(url, info, new okhttp3.Callback() {
-
                         @Override
                         public void onFailure(Call call, IOException e) {
                             XLog.e("IOException:"+e.getMessage());
@@ -437,7 +417,6 @@ public class AuthorizeActivity extends BaseActivity {
 //                    showToast("上报返回值为空");
 
                             }
-
                         }
                     });
                     break;
@@ -651,16 +630,10 @@ public class AuthorizeActivity extends BaseActivity {
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_file) {
-
             getLocalFile();
-
         } else if (id == R.id.action_local_file) {
-
             getLocalEncodeFile();
-
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -717,8 +690,6 @@ public class AuthorizeActivity extends BaseActivity {
 
     private void getLocalEncodeFile() {
         showDialog();
-
-
 //        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);//关键！多选参数
 //        intent.setType("text/plain"); //指定文件类型
@@ -781,12 +752,9 @@ public class AuthorizeActivity extends BaseActivity {
             showToast("内容为空！");
             XLog.d("content is null");
         }
-
-
     }
 
     public void jsonFileParse(File file) {
-
         String content = null;
         try {
 //            content = FileUtils.readFileFromSD("detonator/json", "pf_20190105_161434.json");
@@ -822,14 +790,10 @@ public class AuthorizeActivity extends BaseActivity {
 //                            queryBuilder()
 //                            .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).uniqueOrThrow();
 //                    showToast("projectInfo！" + projectInfo);
-
-
         } else {
             showToast("内容为空！");
             XLog.d("content is null");
         }
-
-
     }
 
     @Override
@@ -914,9 +878,6 @@ public class AuthorizeActivity extends BaseActivity {
                 dialog.dismiss();
             }
         });
-
         dialog.show();
     }
-
-
 }

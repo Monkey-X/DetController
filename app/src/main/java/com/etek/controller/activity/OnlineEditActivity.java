@@ -994,7 +994,7 @@ public class OnlineEditActivity extends BaseActivity {
 //            XLog.i("finish:" + detController);
 //            //先设置ResultCode，再设置存储数据的意图
 //            setResult(RESULT_OK, intent);
-            Intent intent = new Intent(this,OnlineCheckoutActivity.class);
+            Intent intent = new Intent(this,OnlineCheckoutActivity2.class);
             startActivity(intent);
 
             finish();

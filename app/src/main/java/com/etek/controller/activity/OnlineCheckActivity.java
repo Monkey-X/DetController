@@ -28,9 +28,9 @@ public class OnlineCheckActivity extends BaseActivity {
     private ArrayList<HomeItem> mDataList;
     public static FuncationActivity[] offlineFuncation = {
             new FuncationActivity(OnlineAuthorizeActivity2.class,"授权",R.string.title_act_online_authorize,R.drawable.authority),
-            new FuncationActivity(OnlineCheckoutActivity.class,"规则检查",R.string.title_activity_checkout,R.drawable.yun),
+            new FuncationActivity(OnlineCheckoutActivity2.class,"规则检查",R.string.title_activity_checkout,R.drawable.yun),
 //			new FuncationActivity(CheckoutActivity.class,"数据检查",R.string.title_activity_checkout,R.drawable.check),
-			new FuncationActivity(ReportActivity.class,"数据上报",R.string.activity_det_report,R.drawable.report),
+//			new FuncationActivity(ReportActivity.class,"数据上报",R.string.activity_det_report,R.drawable.report),
 //			new FuncationActivity(ReportActivity.class,"数据上报",R.string.title_activity_report,R.drawable.gv_section),
 
     };

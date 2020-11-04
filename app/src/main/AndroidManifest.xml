@@ -43,14 +43,18 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.OnlineAuthorizeActivity2"></activity>
+        <activity android:name=".activity.ReportActivity2" />
+        <activity android:name=".activity.CheckoutActivity2"/>
+        <activity android:name=".activity.OnlineCheckoutActivity2" />
+        <activity android:name=".activity.OnlineAuthorizeActivity2" />
         <activity
             android:name=".activity.ProjectDetailActivity"
             android:theme="@style/activity_theme" />
         <activity android:name=".activity.LineCheckActivity" />
         <activity android:name=".activity.SingleCheckActivity" />
-        <activity android:name=".activity.DelayDownloadActivity"
-            android:theme="@style/activity_theme"/>
+        <activity
+            android:name=".activity.DelayDownloadActivity"
+            android:theme="@style/activity_theme" />
         <activity android:name=".activity.AssistActivity" />
         <activity
             android:name=".activity.NetWorkActivity"
