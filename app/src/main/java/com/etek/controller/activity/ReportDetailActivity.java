@@ -352,6 +352,10 @@ public class ReportDetailActivity extends BaseActivity {
 
     private void initTableView(List<Detonator> detonatorList) {
 
+        if (detonatorList == null){
+            return;
+        }
+
         int width2 = getWindowWidth();
 
         table.setHeaderNames("序号", "雷管编码", "状态");
