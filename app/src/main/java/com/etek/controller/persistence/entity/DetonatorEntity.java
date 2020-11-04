@@ -39,11 +39,14 @@ public class DetonatorEntity{
     private long projectInfoId;
 
 
+    private int serialNum;
 
-    @Generated(hash = 372390353)
+
+
+    @Generated(hash = 152187983)
     public DetonatorEntity(Long id, Date validTime, String uid, String code,
             String workCode, String relay, int status, String holePosition,
-            int downLoadStatus, int testStatus, long projectInfoId) {
+            int downLoadStatus, int testStatus, long projectInfoId, int serialNum) {
         this.id = id;
         this.validTime = validTime;
         this.uid = uid;
@@ -55,6 +58,7 @@ public class DetonatorEntity{
         this.downLoadStatus = downLoadStatus;
         this.testStatus = testStatus;
         this.projectInfoId = projectInfoId;
+        this.serialNum = serialNum;
     }
 
     @Generated(hash = 442328053)
@@ -163,5 +167,13 @@ public class DetonatorEntity{
 
     public void setTestStatus(int testStatus) {
         this.testStatus = testStatus;
+    }
+
+    public int getSerialNum() {
+        return this.serialNum;
+    }
+
+    public void setSerialNum(int serialNum) {
+        this.serialNum = serialNum;
     }
 }

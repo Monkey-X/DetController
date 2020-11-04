@@ -88,11 +88,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         super.onPause();
         //取消接收扫描广播，并恢复输出模式为默认
 
-        if (scanReceiver != null){
+        if (scanReceiver != null) {
             unregisterReceiver(scanReceiver);
         }
 
-        if (scanner != null){
+        if (scanner != null) {
             scanner.setOutputMode(0);
         }
     }
@@ -208,7 +208,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         detonatorEntity.setProjectInfoId(projectId);
         detonatorEntity.setHolePosition(nowAreaNum + "-" + lastHoleNum);
         detonatorEntity.setRelay(String.valueOf(lastDelay));
-        detonatorEntity.setUid(projectId +"-"+ detonatorEntity.getHolePosition()+detonatorEntity.getRelay());
+        detonatorEntity.setUid(projectId + "-" + detonatorEntity.getHolePosition() + detonatorEntity.getRelay());
         detonators.add(detonatorEntity);
     }
 
@@ -330,6 +330,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         detonatorEntity1.setRelay(detonatorEntity.getRelay());
         detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
         detonatorEntity1.setUid("1111");
+        detonatorEntity1.setProjectInfoId(projectId);
         detonators.add(position, detonatorEntity1);
         projectDetailAdapter.notifyDataSetChanged();
     }
@@ -338,11 +339,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private void deleteItemView(int position) {
 
         DetonatorEntity detonatorEntity = detonators.get(position);
-        if (mDetonatorEntities !=null) {
-            boolean contains = mDetonatorEntities.contains(detonatorEntity);
-            if (contains) {
-                DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
-            }
+        try {
+            DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
+        }catch (Exception e){
         }
         detonators.remove(position);
         projectDetailAdapter.notifyDataSetChanged();
@@ -355,22 +354,22 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     //*********重要
     private class ScannerResultReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
-            Log.d("111","intent.getAction()-->"+intent.getAction());//
+            Log.d("111", "intent.getAction()-->" + intent.getAction());//
 
             //*******重要，注意Extral为"value"
             final String scanResult = intent.getStringExtra("value");
 
             //*******重要
-            if (intent.getAction().equals(RES_ACTION)){
+            if (intent.getAction().equals(RES_ACTION)) {
                 //获取扫描结果
-                if(scanResult.length()>0){ //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
+                if (scanResult.length() > 0) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
 //                    tvScanResult.append("Barcode："+scanResult+"\n");
 
 //                    int offset=tvScanResult.getLineCount()*tvScanResult.getLineHeight();
 //                    if(offset>tvScanResult.getHeight()){
 //                        tvScanResult.scrollTo(0,offset-tvScanResult.getHeight());
 //                    }
-                }else{
+                } else {
                     /**扫描失败提示使用有两个条件：
                      1，需要先将扫描失败提示接口打开只能在广播模式下使用，其他模式无法调用。
                      2，通过判断条码长度来判定是否解码成功，当长度等于0时表示解码失败。

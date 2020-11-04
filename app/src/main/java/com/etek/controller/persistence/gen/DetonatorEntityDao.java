@@ -38,6 +38,7 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Long> {
         public final static Property DownLoadStatus = new Property(8, int.class, "downLoadStatus", false, "DOWN_LOAD_STATUS");
         public final static Property TestStatus = new Property(9, int.class, "testStatus", false, "TEST_STATUS");
         public final static Property ProjectInfoId = new Property(10, long.class, "projectInfoId", false, "PROJECT_INFO_ID");
+        public final static Property SerialNum = new Property(11, int.class, "serialNum", false, "SERIAL_NUM");
     }
 
     private Query<DetonatorEntity> projectInfoEntity_DetonatorListQuery;
@@ -64,7 +65,8 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Long> {
                 "\"HOLE_POSITION\" TEXT," + // 7: holePosition
                 "\"DOWN_LOAD_STATUS\" INTEGER NOT NULL ," + // 8: downLoadStatus
                 "\"TEST_STATUS\" INTEGER NOT NULL ," + // 9: testStatus
-                "\"PROJECT_INFO_ID\" INTEGER NOT NULL );"); // 10: projectInfoId
+                "\"PROJECT_INFO_ID\" INTEGER NOT NULL ," + // 10: projectInfoId
+                "\"SERIAL_NUM\" INTEGER NOT NULL );"); // 11: serialNum
     }
 
     /** Drops the underlying database table. */
@@ -115,6 +117,7 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Long> {
         stmt.bindLong(9, entity.getDownLoadStatus());
         stmt.bindLong(10, entity.getTestStatus());
         stmt.bindLong(11, entity.getProjectInfoId());
+        stmt.bindLong(12, entity.getSerialNum());
     }
 
     @Override
@@ -159,6 +162,7 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Long> {
         stmt.bindLong(9, entity.getDownLoadStatus());
         stmt.bindLong(10, entity.getTestStatus());
         stmt.bindLong(11, entity.getProjectInfoId());
+        stmt.bindLong(12, entity.getSerialNum());
     }
 
     @Override
@@ -179,7 +183,8 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Long> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // holePosition
             cursor.getInt(offset + 8), // downLoadStatus
             cursor.getInt(offset + 9), // testStatus
-            cursor.getLong(offset + 10) // projectInfoId
+            cursor.getLong(offset + 10), // projectInfoId
+            cursor.getInt(offset + 11) // serialNum
         );
         return entity;
     }
@@ -197,6 +202,7 @@ public class DetonatorEntityDao extends AbstractDao<DetonatorEntity, Long> {
         entity.setDownLoadStatus(cursor.getInt(offset + 8));
         entity.setTestStatus(cursor.getInt(offset + 9));
         entity.setProjectInfoId(cursor.getLong(offset + 10));
+        entity.setSerialNum(cursor.getInt(offset + 11));
      }
     
     @Override
