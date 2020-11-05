@@ -829,7 +829,7 @@ public class DetApp {
 	}
 
 	/***
-	 * 单颗模组检测
+	 * 单颗模组检测 单科检测
 	 * @param
 	 * @return
 	 */

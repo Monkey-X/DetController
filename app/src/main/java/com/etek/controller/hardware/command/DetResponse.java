@@ -6,7 +6,6 @@ package com.etek.controller.tool.command;/*
  * <p> @version 1.00</p>
  * */
 
-
 import com.etek.controller.tool.util.DataConverter;
 
 public class DetResponse {

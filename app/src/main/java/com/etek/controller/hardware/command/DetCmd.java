@@ -1,11 +1,10 @@
-/*
+package com.etek.controller.tool.command;/*
  * <p> 核心板通信命令类  </p>
  * <p> 主要实现按照协议格式发送和接收命令</p>
  * <p> 创建时间： ${date}</p>
  * <p> @author Xin Hongwei</p>
  * <p> @version 1.00</p>
  * */
-package com.etek.controller.tool.command;
 
 
 import com.etek.controller.tool.comm.SerialCommBase;
@@ -46,7 +45,7 @@ public class DetCmd {
 	 * strResp:	应答数据
 	 * */
 	private int BoardCmd(byte bcmd,int nLen,
-			int nRSP,StringBuilder strResp) {
+						 int nRSP,StringBuilder strResp) {
 		return BoardCmd(bcmd,null,nLen,nRSP,strResp);
 	}
 
@@ -59,8 +58,8 @@ public class DetCmd {
 	 * strResp:	应答数据
 	 * */
 	private int BoardCmd(byte bcmd,byte[] szParam,
-			int nLen,
-			int nRSP,StringBuilder strResp) {
+						 int nLen,
+						 int nRSP,StringBuilder strResp) {
 
 		int n = 0;
 		if(null!=szParam) n =szParam.length;
@@ -409,6 +408,8 @@ public class DetCmd {
 	public void testProc() {
 		// TODO Auto-generated method stub
 		SerialCommBase comm = new HandSetSerialComm( "/dev/ttyS1",115200);
+		//SerialCommBase comm = new SerialComm("COM5",115200);
+
 
 		int ret = comm.OpenPort();
 		if(0!=ret) {
@@ -428,111 +429,111 @@ public class DetCmd {
 		return;
 	}
 
-    private void testNoDataCmd(DetCmd detobj)
-    {
-        int ret =0;
+	private void testNoDataCmd(DetCmd detobj)
+	{
+		int ret =0;
 
-        /*		*/
-        //	板级指令
-        //	30	核心板 ECHO测
-        ret = detobj.BoardCmd30();
-        if(0!=ret) {
-            printErrorMsg((byte)0x30,ret);
-        }
+		/*		*/
+		//	板级指令
+		//	30	核心板 ECHO测
+		ret = detobj.BoardCmd30();
+		if(0!=ret) {
+			printErrorMsg((byte)0x30,ret);
+		}
 
-        //	41	关闭总线电源
-        ret =detobj.BoardCmd41();
-        if(0!=ret) {
-            printErrorMsg((byte)0x41,ret);
-        }
+		//	41	关闭总线电源
+		ret =detobj.BoardCmd41();
+		if(0!=ret) {
+			printErrorMsg((byte)0x41,ret);
+		}
 
-        //	40	使能低压（Android开机后，缺省情况下总线不带电）；
-        ret =detobj.BoardCmd40();
-        if(0!=ret) {
-            printErrorMsg((byte)0x40,ret);
-        }
-
-
-        //	42	总线使能高压
-        ret =detobj.BoardCmd42();
-        if(0!=ret) {
-            printErrorMsg((byte)0x42,ret);
-        }
-
-        //	44	设置总线电平为0
-        ret =detobj.BoardCmd44();
-        if(0!=ret) {
-            printErrorMsg((byte)0x44,ret);
-        }
-
-        //	45	设置总线电平为1
-        ret =detobj.BoardCmd45();
-        if(0!=ret) {
-            printErrorMsg((byte)0x45,ret);
-        }
-
-        //	4B	获取总线保护状态，比如短路等；
-        ret =detobj.BoardCmd4B();
-        if(0!=ret) {
-            printErrorMsg((byte)0x4B,ret);
-        }
+		//	40	使能低压（Android开机后，缺省情况下总线不带电）；
+		ret =detobj.BoardCmd40();
+		if(0!=ret) {
+			printErrorMsg((byte)0x40,ret);
+		}
 
 
-        //	42	总线使能高压
-        ret =detobj.BoardCmd42();
-        if(0!=ret) {
-            printErrorMsg((byte)0x42,ret);
-        }
+		//	42	总线使能高压
+		ret =detobj.BoardCmd42();
+		if(0!=ret) {
+			printErrorMsg((byte)0x42,ret);
+		}
+
+		//	44	设置总线电平为0
+		ret =detobj.BoardCmd44();
+		if(0!=ret) {
+			printErrorMsg((byte)0x44,ret);
+		}
+
+		//	45	设置总线电平为1
+		ret =detobj.BoardCmd45();
+		if(0!=ret) {
+			printErrorMsg((byte)0x45,ret);
+		}
+
+		//	4B	获取总线保护状态，比如短路等；
+		ret =detobj.BoardCmd4B();
+		if(0!=ret) {
+			printErrorMsg((byte)0x4B,ret);
+		}
 
 
-        //	模块指令 48 00 E4 07
-        //	55	用于检测总线上某个EDD是否脱落；
-        int nID = 0x07E40048;
-        int nDT = 1000;
-        ret = detobj.ModCmd55(nID,nDT);
-        if(0!=ret) {
-            printErrorMsg((byte)0x55,ret);
-        }
-
-        //	58	不会对某一个EDD设置，全00set IO
-        byte bIO = 0x01;
-        ret = detobj.ModCmd58(nID, bIO);
-        if(0!=ret) {
-            printErrorMsg((byte)0x58,ret);
-        }
-
-        //	59	模组上线后是唤醒状态，可以通过指令将模组设置为休眠；只有在休眠状态下可以充电；
-        ret = detobj.ModCmd59(nID);
-        if(0!=ret) {
-            printErrorMsg((byte)0x59,ret);
-        }
+		//	42	总线使能高压
+		ret =detobj.BoardCmd42();
+		if(0!=ret) {
+			printErrorMsg((byte)0x42,ret);
+		}
 
 
-        //	5A	设置模组进入唤醒状态
-        ret = detobj.ModCmd5A(nID);
-        if(0!=ret) {
-            printErrorMsg((byte)0x5A,ret);
-        }
+		//	模块指令 48 00 E4 07
+		//	55	用于检测总线上某个EDD是否脱落；
+		int nID = 0x07E40048;
+		int nDT = 1000;
+		ret = detobj.ModCmd55(nID,nDT);
+		if(0!=ret) {
+			printErrorMsg((byte)0x55,ret);
+		}
 
-        //	59	模组上线后是唤醒状态，可以通过指令将模组设置为休眠；只有在休眠状态下可以充电；
-        ret = detobj.ModCmd59(nID);
-        if(0!=ret) {
-            printErrorMsg((byte)0x59,ret);
-        }
+		//	58	不会对某一个EDD设置，全00set IO
+		byte bIO = 0x02;
+		ret = detobj.ModCmd58(nID, bIO);
+		if(0!=ret) {
+			printErrorMsg((byte)0x58,ret);
+		}
 
-        //	5B	充电
-        ret = detobj.ModCmd5B(0);
-        if(0!=ret) {
-            printErrorMsg((byte)0x5B,ret);
-        }
+		//	59	模组上线后是唤醒状态，可以通过指令将模组设置为休眠；只有在休眠状态下可以充电；
+		ret = detobj.ModCmd59(nID);
+		if(0!=ret) {
+			printErrorMsg((byte)0x59,ret);
+		}
 
-        //	5C	 放电
-        ret = detobj.ModCmd5C(0);
-        if(0!=ret) {
-            printErrorMsg((byte)0x5C,ret);
-        }
 
-        //	5D	模组药头检测
+		//	5A	设置模组进入唤醒状态
+		ret = detobj.ModCmd5A(nID);
+		if(0!=ret) {
+			printErrorMsg((byte)0x5A,ret);
+		}
+
+		//	59	模组上线后是唤醒状态，可以通过指令将模组设置为休眠；只有在休眠状态下可以充电；
+		ret = detobj.ModCmd59(nID);
+		if(0!=ret) {
+			printErrorMsg((byte)0x59,ret);
+		}
+
+		//	5B	充电
+		ret = detobj.ModCmd5B(0);
+		if(0!=ret) {
+			printErrorMsg((byte)0x5B,ret);
+		}
+
+		//	5C	 放电
+		ret = detobj.ModCmd5C(0);
+		if(0!=ret) {
+			printErrorMsg((byte)0x5C,ret);
+		}
+
+		//	5D	模组药头检测
 		/*
 		ret = detobj.ModCmd5D(nID);
 		if(0!=ret) {
@@ -540,140 +541,140 @@ public class DetCmd {
 		}
 		*/
 
-        //	5A	设置模组进入唤醒状态
-        ret = detobj.ModCmd5A(nID);
-        if(0!=ret) {
-            printErrorMsg((byte)0x5A,ret);
-        }
+		//	5A	设置模组进入唤醒状态
+		ret = detobj.ModCmd5A(nID);
+		if(0!=ret) {
+			printErrorMsg((byte)0x5A,ret);
+		}
 
-        //	5F	起爆，必须在休眠状态下
-        ret = detobj.ModCmd5F(0);
-        if(0!=ret) {
-            printErrorMsg((byte)0x5F,ret);
-        }
-
-
-        //	60	模组延时参数校准
-        ret = detobj.ModCmd60(nID);
-        if(0!=ret) {
-            printErrorMsg((byte)0x60,ret);
-        }
-
-        //	61	ID大于等于检查
-        ret = detobj.ModCmd61(nID);
-        if(0!=ret) {
-            printErrorMsg((byte)0x61,ret);
-        }
-
-        //	62	ID小于检查
-        ret = detobj.ModCmd62(nID+1);
-        if(0!=ret) {
-            printErrorMsg((byte)0x62,ret);
-        }
-
-        //	7A	分组充电
-        bIO =0x01;
-        ret = detobj.ModCmd7A(bIO);
-        if(0!=ret) {
-            printErrorMsg((byte)0x7A,ret);
-        }
-
-        return;
-    }
-
-    private void testData4Cmd(DetCmd detobj)
-    {
-        int ret =0;
-        StringBuilder strresp = new StringBuilder();
-
-        //	板级指令
-        // 	31	获取版本信息
-        strresp.setLength(0);
-        ret = detobj.BoardCmd31(strresp);
-        if(0!=ret) {
-            printErrorMsg((byte)0x31,ret);
-        }else {
-            System.out.println(String.format("版本:%s", strresp));
-        }
-
-        // 	32	获取核心板序列号
-        strresp.setLength(0);
-        ret = detobj.BoardCmd32(strresp);
-        if(0!=ret) {
-            printErrorMsg((byte)0x32,ret);
-        }else {
-            System.out.println(String.format("核心板序列号:%s", strresp));
-        }
-
-        //	33	获取配置表
-        strresp.setLength(0);
-        ret = detobj.BoardCmd33(strresp);
-        if(0!=ret) {
-            printErrorMsg((byte)0x33,ret);
-        }else {
-            System.out.println(String.format("配置表:%s", strresp));
-        }
+		//	5F	起爆，必须在休眠状态下
+		ret = detobj.ModCmd5F(0);
+		if(0!=ret) {
+			printErrorMsg((byte)0x5F,ret);
+		}
 
 
-        //	4a	获取模组总线电流电压值
-        strresp.setLength(0);
-        ret = detobj.BoardCmd4A(strresp);
-        if(0!=ret) {
-            printErrorMsg((byte)0x4a,ret);
-        }else {
-            System.out.println(String.format("电流电压值:%s", strresp));
-        }
+		//	60	模组延时参数校准
+		ret = detobj.ModCmd60(nID);
+		if(0!=ret) {
+			printErrorMsg((byte)0x60,ret);
+		}
+
+		//	61	ID大于等于检查
+		ret = detobj.ModCmd61(nID);
+		if(0!=ret) {
+			printErrorMsg((byte)0x61,ret);
+		}
+
+		//	62	ID小于检查
+		ret = detobj.ModCmd62(nID+1);
+		if(0!=ret) {
+			printErrorMsg((byte)0x62,ret);
+		}
+
+		//	7A	分组充电
+		bIO = (byte)(nID&0x0f);
+		ret = detobj.ModCmd7A(bIO);
+		if(0!=ret) {
+			printErrorMsg((byte)0x7A,ret);
+		}
+
+		return;
+	}
+
+	private void testData4Cmd(DetCmd detobj)
+	{
+		int ret =0;
+		StringBuilder strresp = new StringBuilder();
+
+		//	板级指令
+		// 	31	获取版本信息
+		strresp.setLength(0);
+		ret = detobj.BoardCmd31(strresp);
+		if(0!=ret) {
+			printErrorMsg((byte)0x31,ret);
+		}else {
+			System.out.println(String.format("版本:%s", strresp));
+		}
+
+		// 	32	获取核心板序列号
+		strresp.setLength(0);
+		ret = detobj.BoardCmd32(strresp);
+		if(0!=ret) {
+			printErrorMsg((byte)0x32,ret);
+		}else {
+			System.out.println(String.format("核心板序列号:%s", strresp));
+		}
+
+		//	33	获取配置表
+		strresp.setLength(0);
+		ret = detobj.BoardCmd33(strresp);
+		if(0!=ret) {
+			printErrorMsg((byte)0x33,ret);
+		}else {
+			System.out.println(String.format("配置表:%s", strresp));
+		}
+
+
+		//	4a	获取模组总线电流电压值
+		strresp.setLength(0);
+		ret = detobj.BoardCmd4A(strresp);
+		if(0!=ret) {
+			printErrorMsg((byte)0x4a,ret);
+		}else {
+			System.out.println(String.format("电流电压值:%s", strresp));
+		}
 
 
 
 
-        //	模块指令
-        //	50	单个模组ID
-        strresp.setLength(0);
-        ret = detobj.ModCmd50(strresp);
-        if(0!=ret) {
-            printErrorMsg((byte)0x50,ret);
-            strresp.setLength(0);
-            strresp.append("12345678");
-        }else {
-            System.out.println(String.format("单颗模组ID:%s", strresp));
-        }
+		//	模块指令
+		//	50	单个模组ID
+		strresp.setLength(0);
+		ret = detobj.ModCmd50(strresp);
+		if(0!=ret) {
+			printErrorMsg((byte)0x50,ret);
+			strresp.setLength(0);
+			strresp.append("12345678");
+		}else {
+			System.out.println(String.format("单颗模组ID:%s", strresp));
+		}
 
 
-        //	获取ID
-        String str = strresp.toString();
-        byte[] arr = DataConverter.hexStringToBytes(str);
-        int nID = DataConverter.lsbBytes2Int(arr);
-        System.out.println(String.format("ID:%d", nID));
+		//	获取ID
+		String str = strresp.toString();
+		byte[] arr = DataConverter.hexStringToBytes(str);
+		int nID = DataConverter.lsbBytes2Int(arr);
+		System.out.println(String.format("ID:%d", nID));
 
-        //	52	读取模组管码
-        strresp.setLength(0);
-        ret = detobj.ModCmd52(nID,strresp);
-        if(0!=ret) {
-            printErrorMsg((byte)0x52,ret);
-        }else {
-            System.out.println(String.format("模组管码:%s", strresp));
-        }
+		//	52	读取模组管码
+		strresp.setLength(0);
+		ret = detobj.ModCmd52(nID,strresp);
+		if(0!=ret) {
+			printErrorMsg((byte)0x52,ret);
+		}else {
+			System.out.println(String.format("模组管码:%s", strresp));
+		}
 
 
-        //	54
-        strresp.setLength(0);
-        ret = detobj.ModCmd54(nID,strresp);
-        if(0!=ret) {
-            printErrorMsg((byte)0x54,ret);
-        }else {
-            System.out.println(String.format("模组延时:%s", strresp));
-        }
+		//	54
+		strresp.setLength(0);
+		ret = detobj.ModCmd54(nID,strresp);
+		if(0!=ret) {
+			printErrorMsg((byte)0x54,ret);
+		}else {
+			System.out.println(String.format("模组延时:%s", strresp));
+		}
 
-        return;
-    }
+		return;
+	}
 
-    private void printErrorMsg(byte bCmd,int ret) {
-        DetErrorCode dec = new DetErrorCode(bCmd,ret);
-        String strerrmsg = dec.GetErrorMessage();
-        System.out.println(strerrmsg);
-        return;
-    }
+	private void printErrorMsg(byte bCmd,int ret) {
+		DetErrorCode dec = new DetErrorCode(bCmd,ret);
+		String strerrmsg = dec.GetErrorMessage();
+		System.out.println(strerrmsg);
+		return;
+	}
 
 
 }

@@ -75,7 +75,6 @@ public class DataConverter {
 		return n;
 	}
 
-
 	public static int bytes2Word(byte[] arr){
 		int n = 0;
 		n = (0x000000FF & arr[0]);

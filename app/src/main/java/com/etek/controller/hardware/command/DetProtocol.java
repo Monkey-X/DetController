@@ -6,6 +6,7 @@ package com.etek.controller.tool.command;/*
  * <p> @version 1.00</p>
  * */
 
+
 import com.etek.controller.tool.comm.SerialCommBase;
 import com.etek.controller.tool.util.DataConverter;
 
@@ -58,7 +59,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			System.out.println(String.format("\t命令：%s",DataConverter.bytes2HexString(szcmd)));
+			System.out.println(String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
 		}
 		int ret = m_commobj.SendBlock(szcmd);
 		return ret;
@@ -120,7 +121,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			System.out.println(String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
+			System.out.println(String.format("\t命令：%s",DataConverter.bytes2HexString(szcmd)));
 		}
 
 		long t0 = System.currentTimeMillis();

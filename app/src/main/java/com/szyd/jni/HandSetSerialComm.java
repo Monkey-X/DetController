@@ -1,12 +1,10 @@
-package com.etek.controller.tool.szyd.jni; /***
+package com.etek.controller.hardware.szyd.jni; /***
  * 手持机串口通信类
  */
 
-
-import com.etek.controller.tool.comm.SerialCommBase;
-import com.etek.controller.tool.command.DetErrorCode;
-import com.etek.controller.tool.szyd.jni.UHFInfo;
-import com.etek.controller.tool.util.DataConverter;
+import com.etek.controller.hardware.comm.SerialCommBase;
+import com.etek.controller.hardware.command.DetErrorCode;
+import com.etek.controller.hardware.util.DataConverter;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -21,7 +19,7 @@ public class HandSetSerialComm extends SerialCommBase {
 
 	public HandSetSerialComm(String portName,int nBaud){
 		super(portName,nBaud);
-		m_comobj=null;
+		m_comobj= new UHFInfo();
 	}
 
 	public int OpenPort(){
