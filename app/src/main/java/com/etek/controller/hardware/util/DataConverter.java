@@ -1,4 +1,4 @@
-package com.etek.controller.tool.util;/*
+package com.etek.controller.hardware.util;/*
  * 数据转换类
  * @author Xin Hongwei
  * @ version 1.00
@@ -74,7 +74,6 @@ public class DataConverter {
 		n = n * 0x100 + (0x000000FF & arr[0]);
 		return n;
 	}
-
 
 	public static int bytes2Word(byte[] arr){
 		int n = 0;

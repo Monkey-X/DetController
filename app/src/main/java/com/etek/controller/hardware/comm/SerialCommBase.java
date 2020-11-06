@@ -1,7 +1,8 @@
+package com.etek.controller.hardware.comm;
+
 /***
  * 串口通信基类，便于嵌入式和桌面同时测试
  */
-package com.etek.controller.tool.comm;
 
 public abstract class SerialCommBase {
 	public String m_strPortName="COM3";
@@ -9,13 +10,13 @@ public abstract class SerialCommBase {
 	//	缺省为3秒
 	public int m_nTimeout = 5000;
 	public int m_nErrorCode =0;
-	
-	
+
+
 	public SerialCommBase(String portName,int nBaud){
 		m_strPortName = portName;
 		m_nBaudrate = nBaud;
 	}
-	
+
 	public abstract int OpenPort();
 
 	/***
@@ -59,7 +60,7 @@ public abstract class SerialCommBase {
 	public void SetTimeout(int nTimeout) {
 		m_nTimeout = nTimeout;
 	}
-	
+
 	public int GetTimeout() {
 		return m_nTimeout;
 	}
@@ -74,7 +75,7 @@ public abstract class SerialCommBase {
 	 * @return
 	 */
 	public abstract int WaitTimeout();
-	
+
 	public int GetErrorCode() {
 		return m_nErrorCode;
 	}
@@ -89,8 +90,8 @@ public abstract class SerialCommBase {
 	public abstract boolean ctlPowerSupply(int operationValue);
 
 	// true 拉高，false拉低
-    public abstract boolean controlGpio73(boolean ifpullHigh);
+	public abstract boolean controlGpio73(boolean ifpullHigh);
 
 	//获取GPIO74的值
-    public abstract String getGpio74();
+	public abstract String getGpio74();
 }

@@ -1,5 +1,4 @@
-package com.etek.controller.tool.szyd.jni;
-
+package com.szyd.jni;
 
 import java.io.FileDescriptor;
 

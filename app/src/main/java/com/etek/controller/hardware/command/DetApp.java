@@ -6,7 +6,7 @@
  * <p> @version 1.00</p>
  * */
 
-package com.etek.controller.tool.command;
+package com.etek.controller.hardware.command;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,16 +16,27 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-import com.etek.controller.tool.comm.SerialCommBase;
-import com.etek.controller.tool.szyd.jni.HandSetSerialComm;
-import com.etek.controller.tool.test.DetCallback;
-import com.etek.controller.tool.util.DataConverter;
+import com.etek.controller.hardware.comm.SerialCommBase;
+import com.szyd.jni.HandSetSerialComm;
+import com.etek.controller.hardware.test.DetCallback;
+import com.etek.controller.hardware.util.DataConverter;
 
 
 public class DetApp {
 	private SerialCommBase m_commobj;
 	private DetCmd m_cmdObj;	
 	private DetErrorCode m_detError;
+
+
+	private DetApp(){}
+
+	public static DetApp getInstance(){
+		return SingletonHoler.sIntance;
+	}
+
+	private static class SingletonHoler{
+		private static final DetApp sIntance = new DetApp();
+	}
 
 	/***
 	 * 初始化过程，打开串口，创建内部对象
@@ -829,7 +840,7 @@ public class DetApp {
 	}
 
 	/***
-	 * 单颗模组检测
+	 * 单颗模组检测 单科检测
 	 * @param
 	 * @return
 	 */
@@ -982,18 +993,18 @@ public class DetApp {
 			System.out.println(String.format("总线短路与漏电检测 失败 %d", ret));
 		}
 
-		//	单颗模组检测
-		DetCallback cbobj = new DetCallback();		
-		ret = CheckSingleModule(cbobj);
-		if(ret!=0) {
-			System.out.println(String.format("单颗模组检测 失败 %d", ret));
-		}
-
-		//	总线上电与检测流程
-		ret = PowerOnSelfCheck(cbobj);
-		if(ret!=0) {
-			System.out.println(String.format("总线上电与检测流程 失败 %d", ret));
-		}
+//		//	单颗模组检测
+//		DetCallback cbobj = new DetCallback();
+//		ret = CheckSingleModule(cbobj);
+//		if(ret!=0) {
+//			System.out.println(String.format("单颗模组检测 失败 %d", ret));
+//		}
+//
+//		//	总线上电与检测流程
+//		ret = PowerOnSelfCheck(cbobj);
+//		if(ret!=0) {
+//			System.out.println(String.format("总线上电与检测流程 失败 %d", ret));
+//		}
 		
 		
 		return;
@@ -1030,9 +1041,9 @@ public class DetApp {
 		DetApp detapp = new DetApp();
 		detapp.Initialize();
 		
-		DetCallback cbobj = new DetCallback();	
-		
-		detapp.DownloadProc(strfile, cbobj);
+//		DetCallback cbobj = new DetCallback();
+//
+//		detapp.DownloadProc(strfile, cbobj);
 		return;
 	}
 }

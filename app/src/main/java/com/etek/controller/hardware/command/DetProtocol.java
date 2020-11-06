@@ -1,4 +1,4 @@
-package com.etek.controller.tool.command;/*
+package com.etek.controller.hardware.command;/*
  * <p> 核心板通信协议类  </p>
  * <p> 主要实现按照协议格式发送和接收命令</p>
  * <p> 创建时间： ${date}</p>
@@ -6,8 +6,9 @@ package com.etek.controller.tool.command;/*
  * <p> @version 1.00</p>
  * */
 
-import com.etek.controller.tool.comm.SerialCommBase;
-import com.etek.controller.tool.util.DataConverter;
+
+import com.etek.controller.hardware.comm.SerialCommBase;
+import com.etek.controller.hardware.util.DataConverter;
 
 public class DetProtocol {
 	private SerialCommBase m_commobj;
@@ -58,7 +59,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			System.out.println(String.format("\t命令：%s",DataConverter.bytes2HexString(szcmd)));
+			System.out.println(String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
 		}
 		int ret = m_commobj.SendBlock(szcmd);
 		return ret;
@@ -120,7 +121,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			System.out.println(String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
+			System.out.println(String.format("\t命令：%s",DataConverter.bytes2HexString(szcmd)));
 		}
 
 		long t0 = System.currentTimeMillis();

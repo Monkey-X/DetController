@@ -1,10 +1,8 @@
-package com.etek.controller.tool.util; /***
+package com.etek.controller.hardware.util; /***
  * 雷管的ID、管码、二维码相关转换和校验函数类
  * @author		Xin Hongwei
  * @version		V1.01
  */
-
-import com.etek.controller.tool.util.DataConverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -134,6 +132,31 @@ public class DetIDConverter {
 	}
 
 	/***
+	 * 通过显示的管码，计算实际存储的管码
+	 * @param strDC
+	 * @return
+	 */
+	public byte[] GetDCByString(String strDC) {
+		byte[] nval = new byte[8];
+
+		if(strDC.length()<13)
+			return null;
+
+		//sprintf((char*)str,”%02d %01d %02d %02d %c%03d%02d”,
+		//DC[0], DC[1], DC[2], DC[3], DC[4], DC[5]|(DC[6]<<8), DC[7]);
+		nval[0] = Byte.parseByte(strDC.substring(0,2));
+		nval[1] =  Byte.parseByte(strDC.substring(2,3));
+		nval[2] =  Byte.parseByte(strDC.substring(3,5));
+		nval[3] =  Byte.parseByte(strDC.substring(5,7));
+		nval[4] = (byte) strDC.charAt(7);
+		int ret = Integer.parseInt(strDC.substring(8,11));
+		nval[5]=(byte)(ret&0xff);
+		nval[6] = (byte)((ret-nval[5])/0x100);
+		nval[7]= Byte.parseByte(strDC.substring(11,13));
+		return nval;
+	}
+
+	/***
 	 * 检测雷管二维码的检验有效性
 	 * @param strQRCode	二维码字符串，长度必须大于等于17
 	 * @return
@@ -168,7 +191,6 @@ public class DetIDConverter {
 	}
 
 
-
 	/***
 	 * 雷管管码、ID和二维码相关类测试
 	 */
@@ -179,14 +201,18 @@ public class DetIDConverter {
 
 		str= GetDisplayDC(DC);
 
+		byte[] dc0 = GetDCByString(str);
+
 		byte[] id2 = Conv_DC2ID(DC);
 		str = DataConverter.bytes2HexString(id2);
+		int ret = DataConverter.bytes2Int(id2);
 
 		//	二维码校验比对
 		str ="6191201D123451985";
 		VerifyQRCheckValue(str);
+
+
 		return;
 	}
-
 
 }
