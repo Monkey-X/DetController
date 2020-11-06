@@ -19,7 +19,7 @@ public class HandSetSerialComm extends SerialCommBase {
 
 	public HandSetSerialComm(String portName,int nBaud){
 		super(portName,nBaud);
-		m_comobj= new UHFInfo();
+		m_comobj= null;
 	}
 
 	public int OpenPort(){
@@ -30,7 +30,7 @@ public class HandSetSerialComm extends SerialCommBase {
 
 		if(null!=m_comobj) {
 			m_comobj.close(m_strPortName);
-//			m_comobj = null;
+			m_comobj = null;
 		}
 
 		m_fd = m_comobj.getmFd(b);

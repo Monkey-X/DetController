@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -54,12 +55,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 //    private NavigationView mNavigationView;
 //    private Context mConxtext;
 
-
+    private String TAG = "HomeActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         initializeToolbar();
+        Log.d(TAG, "onCreate: ");
         DetApp.getInstance().Initialize();
 
 //        initializeDrawer();
@@ -72,6 +74,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart: 1");
         DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
             @Override
             public void DisplayText(String strText) {
@@ -93,6 +96,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
         });
+        Log.d(TAG, "onStart: 2");
 
     }
 
@@ -213,12 +217,14 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onStop() {
         super.onStop();
         DetApp.getInstance().ShutdownProc();
+        Log.d(TAG, "onStop: ");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         DetApp.getInstance().Finalize();
+        Log.d(TAG, "onDestroy: ");
     }
 
     //返回
