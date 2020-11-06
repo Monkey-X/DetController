@@ -68,9 +68,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: 1");
+    protected void onResume() {
+        super.onResume();
         DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
             @Override
             public void DisplayText(String strText) {
@@ -92,6 +91,33 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: 1");
+//        DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
+//            @Override
+//            public void DisplayText(String strText) {
+//                ToastUtils.show(HomeActivity.this,strText);
+//            }
+//
+//            @Override
+//            public void StartProgressbar() {
+//
+//            }
+//
+//            @Override
+//            public void SetProgressbarValue(int nVal) {
+//
+//            }
+//
+//            @Override
+//            public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
+//
+//            }
+//        });
         Log.d(TAG, "onStart: 2");
     }
 
