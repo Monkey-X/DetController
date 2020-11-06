@@ -8,6 +8,8 @@
 
 package com.etek.controller.hardware.command;
 
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +28,8 @@ public class DetApp {
 	private SerialCommBase m_commobj;
 	private DetCmd m_cmdObj;	
 	private DetErrorCode m_detError;
+	
+	private String TAG = "DetApp";
 
 
 	private DetApp(){}
@@ -913,14 +917,17 @@ public class DetApp {
 		int ret;
 		final int RESP_LEN = 12;
 		final byte RESP_HEAD = (byte)0xb5;
+		Log.d(TAG, "PowerOnSelfCheck: ");
 		
 		DetCmd cmd = new DetCmd(m_commobj);
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
+
 		
 		if(null!=cbobj) 
 			cbobj.DisplayText("总线上电与检测流程 开始...");
-		
+
+		Log.d(TAG, "PowerOnSelfCheck: 总线上电与检测流程 开始...");
 		ret = cmd.BoardSendCmd85();
 		if(0!=ret) return ret;
 		

@@ -7,6 +7,8 @@ package com.etek.controller.hardware.command;/*
  * */
 
 
+import android.util.Log;
+
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.util.DataConverter;
 
