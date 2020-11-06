@@ -68,7 +68,8 @@ public class DetApp {
 		}
 		
 		m_commobj = null;		
-		m_detError = null;		
+		m_detError = null;
+		Log.d(TAG, "Finalize: ");
 		
 		return;
 	}
@@ -146,7 +147,8 @@ public class DetApp {
 		int ret = m_cmdObj.BoardCmd41();		
 
 		m_detError.Setter((byte)0x41, ret);
-		
+
+		Log.d(TAG, "MainBoardBusPowerOff: "+ ret);
 		return ret;
 	}
 

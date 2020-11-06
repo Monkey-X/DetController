@@ -61,6 +61,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         int initialize = DetApp.getInstance().Initialize();
         Log.d(TAG, "onCreate: initialize= "+ initialize);
 
+        DetApp.getInstance().MainBoardPowerOn();
+
         initView();
         initData();
         initAdapter();
@@ -84,6 +86,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             @Override
             public void SetProgressbarValue(int nVal) {
+                Log.d(TAG, "SetProgressbarValue: "+ nVal);
 
             }
 
