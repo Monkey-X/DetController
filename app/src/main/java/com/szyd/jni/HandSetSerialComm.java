@@ -32,15 +32,19 @@ public class HandSetSerialComm extends SerialCommBase {
 			m_comobj.close(m_strPortName);
 			m_comobj = null;
 		}
-
+		
+		m_comobj = new UHFInfo();
+		
 		m_fd = m_comobj.getmFd(b);
 
 		if(null==m_fd) {
 			m_nErrorCode = DetErrorCode.ERR_COMM_OPEN;
 			ret = -1;
 		}
-
-		m_nErrorCode = DetErrorCode.SUCCESS;
+		else{
+			m_nErrorCode = DetErrorCode.SUCCESS;
+		}
+		
 		return ret;
 	}
 
