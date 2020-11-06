@@ -51,9 +51,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     private HeaderView mHeaderView;
-//    private DrawerLayout mDrawer;
-//    private NavigationView mNavigationView;
-//    private Context mConxtext;
 
     private String TAG = "HomeActivity";
     @Override
@@ -61,20 +58,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         initializeToolbar();
-        Log.d(TAG, "onCreate: ");
-        DetApp.getInstance().Initialize();
-
-//        initializeDrawer();
-        initView();
-        initData();
-        initAdapter();
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: 1");
+        Log.d(TAG, "onCreate: 1");
         DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
             @Override
             public void DisplayText(String strText) {
@@ -96,8 +80,20 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
         });
-        Log.d(TAG, "onStart: 2");
+        Log.d(TAG, "onCreate: 2");
 
+        initView();
+        initData();
+        initAdapter();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        int initialize = DetApp.getInstance().Initialize();
+        Log.d(TAG, "onStart: initialize= "+ initialize);
     }
 
     private void initializeToolbar() {
