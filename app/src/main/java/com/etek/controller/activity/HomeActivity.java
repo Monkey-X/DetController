@@ -70,10 +70,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onResume() {
         super.onResume();
-        DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
+        int i = DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
             @Override
             public void DisplayText(String strText) {
-                ToastUtils.show(HomeActivity.this,strText);
+                Log.d(TAG, "DisplayText: "+ strText);
+//                ToastUtils.show(HomeActivity.this, strText);
             }
 
             @Override
@@ -91,6 +92,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
         });
+        Log.d(TAG, "onResume: PowerOnSelfCheck = "+ i);
     }
 
     @Override

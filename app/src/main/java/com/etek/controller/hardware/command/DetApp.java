@@ -929,6 +929,7 @@ public class DetApp {
 
 		Log.d(TAG, "PowerOnSelfCheck: 总线上电与检测流程 开始...");
 		ret = cmd.BoardSendCmd85();
+		Log.d(TAG, "PowerOnSelfCheck: ret = "+ ret);
 		if(0!=ret) return ret;
 		
 		if(null!=cbobj) 
