@@ -58,7 +58,19 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         initializeToolbar();
-        Log.d(TAG, "onCreate: 1");
+        int initialize = DetApp.getInstance().Initialize();
+        Log.d(TAG, "onCreate: initialize= "+ initialize);
+
+        initView();
+        initData();
+        initAdapter();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: 1");
         DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
             @Override
             public void DisplayText(String strText) {
@@ -80,20 +92,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
         });
-        Log.d(TAG, "onCreate: 2");
-
-        initView();
-        initData();
-        initAdapter();
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        int initialize = DetApp.getInstance().Initialize();
-        Log.d(TAG, "onStart: initialize= "+ initialize);
+        Log.d(TAG, "onStart: 2");
     }
 
     private void initializeToolbar() {
