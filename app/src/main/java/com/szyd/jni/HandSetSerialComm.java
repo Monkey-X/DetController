@@ -2,6 +2,8 @@ package com.szyd.jni; /***
  * 手持机串口通信类
  */
 
+import android.util.Log;
+
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.command.DetErrorCode;
 import com.etek.controller.hardware.util.DataConverter;
@@ -13,6 +15,9 @@ import java.io.IOException;
 
 
 public class HandSetSerialComm extends SerialCommBase {
+
+
+	private String TAG = "HandSetSerialComm";
 
 	private UHFInfo m_comobj=null;
 	private FileDescriptor m_fd=null;
@@ -33,8 +38,12 @@ public class HandSetSerialComm extends SerialCommBase {
 			m_comobj = null;
 		}
 
+
 		m_comobj = new UHFInfo();
 		m_fd = m_comobj.getmFd(b);
+		boolean b1 = m_fd == null;
+
+		Log.d(TAG, "OpenPort: m_fd == null "+ b1);
 
 		if(null==m_fd) {
 			m_nErrorCode = DetErrorCode.ERR_COMM_OPEN;
