@@ -1,4 +1,4 @@
-package com.etek.controller.tool.comm;
+package com.etek.controller.hardware.comm;
 
 /***
  * 串口通信基类，便于嵌入式和桌面同时测试

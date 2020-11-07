@@ -1,9 +1,9 @@
-package com.etek.controller.tool.test;
+package com.etek.controller.hardware.test;
 
 
-import com.etek.controller.tool.command.DetApp;
-import com.etek.controller.tool.command.DetCmd;
-import com.etek.controller.tool.util.DetIDConverter;
+import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.command.DetCmd;
+import com.etek.controller.hardware.util.DetIDConverter;
 
 public class detTest {
 
@@ -12,7 +12,7 @@ public class detTest {
 		cmdobj.testProc();
 		
 		
-		DetApp appobj = new DetApp();
+		DetApp appobj = DetApp.getInstance();
 		appobj.testProc();
 		
 		DetIDConverter covobj = new DetIDConverter();

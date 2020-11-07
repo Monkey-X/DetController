@@ -1,4 +1,4 @@
-package com.etek.controller.tool.command;
+package com.etek.controller.hardware.command;
 
 /***
  * 雷管应用错误信息类

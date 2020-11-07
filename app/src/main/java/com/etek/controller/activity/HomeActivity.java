@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,10 +30,13 @@ import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.common.Globals;
 import com.etek.controller.entity.HomeItem;
+import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.widget.ClearableEditText;
 import com.etek.controller.widget.HeaderView;
 import com.etek.controller.adapter.HomeAdapter;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
@@ -47,35 +51,80 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     private HeaderView mHeaderView;
-//    private DrawerLayout mDrawer;
-//    private NavigationView mNavigationView;
-//    private Context mConxtext;
 
-
+    private String TAG = "HomeActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-//        mConxtext = this;
         initializeToolbar();
-//        initializeDrawer();
+        int initialize = DetApp.getInstance().Initialize();
+        Log.d(TAG, "onCreate: initialize= "+ initialize);
+
+        DetApp.getInstance().MainBoardPowerOn();
+
         initView();
         initData();
         initAdapter();
-//        showDialog();
-//        XLog.d("开始了！");
-//        String string = null;
-//        char[] chars = string.toCharArray();
-//        getPermissions();
-//        getPixel();
-//        String url = "192.168.0.7:12018/api/DET/GET?id=13";
-//        UpdateAppUtils.downloadApk(mContext,url,"Det_2-1.0.2-202006031259.apk","Det_2-1.0.2-202006031259.apk");
-//        testCrl();
-//        testRename();
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int i = DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
+            @Override
+            public void DisplayText(String strText) {
+                Log.d(TAG, "DisplayText: "+ strText);
+//                ToastUtils.show(HomeActivity.this, strText);
+            }
 
+            @Override
+            public void StartProgressbar() {
 
+            }
+
+            @Override
+            public void SetProgressbarValue(int nVal) {
+                Log.d(TAG, "SetProgressbarValue: "+ nVal);
+
+            }
+
+            @Override
+            public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
+
+            }
+        });
+        Log.d(TAG, "onResume: PowerOnSelfCheck = "+ i);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: 1");
+//        DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
+//            @Override
+//            public void DisplayText(String strText) {
+//                ToastUtils.show(HomeActivity.this,strText);
+//            }
+//
+//            @Override
+//            public void StartProgressbar() {
+//
+//            }
+//
+//            @Override
+//            public void SetProgressbarValue(int nVal) {
+//
+//            }
+//
+//            @Override
+//            public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
+//
+//            }
+//        });
+        Log.d(TAG, "onStart: 2");
+    }
 
     private void initializeToolbar() {
 //        XLog.d(LOG_TAG, "initializeToolbar as actionBar");
@@ -188,6 +237,20 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
         }
         return false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DetApp.getInstance().ShutdownProc();
+        Log.d(TAG, "onStop: ");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DetApp.getInstance().Finalize();
+        Log.d(TAG, "onDestroy: ");
     }
 
     //返回

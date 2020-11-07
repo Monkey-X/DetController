@@ -1,4 +1,4 @@
-package com.etek.controller.tool.command;/*
+package com.etek.controller.hardware.command;/*
  * <p> 核心板通信协议类  </p>
  * <p> 主要实现按照协议格式发送和接收命令</p>
  * <p> 创建时间： ${date}</p>
@@ -7,8 +7,10 @@ package com.etek.controller.tool.command;/*
  * */
 
 
-import com.etek.controller.tool.comm.SerialCommBase;
-import com.etek.controller.tool.util.DataConverter;
+import android.util.Log;
+
+import com.etek.controller.hardware.comm.SerialCommBase;
+import com.etek.controller.hardware.util.DataConverter;
 
 public class DetProtocol {
 	private SerialCommBase m_commobj;

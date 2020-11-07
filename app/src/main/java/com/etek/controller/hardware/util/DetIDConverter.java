@@ -1,4 +1,4 @@
-package com.etek.controller.tool.util; /***
+package com.etek.controller.hardware.util; /***
  * 雷管的ID、管码、二维码相关转换和校验函数类
  * @author		Xin Hongwei
  * @version		V1.01

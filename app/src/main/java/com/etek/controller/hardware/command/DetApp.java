@@ -6,7 +6,9 @@
  * <p> @version 1.00</p>
  * */
 
-package com.etek.controller.tool.command;
+package com.etek.controller.hardware.command;
+
+import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,16 +18,29 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-import com.etek.controller.tool.comm.SerialCommBase;
-import com.etek.controller.tool.szyd.jni.HandSetSerialComm;
-import com.etek.controller.tool.test.DetCallback;
-import com.etek.controller.tool.util.DataConverter;
+import com.etek.controller.hardware.comm.SerialCommBase;
+import com.szyd.jni.HandSetSerialComm;
+import com.etek.controller.hardware.test.DetCallback;
+import com.etek.controller.hardware.util.DataConverter;
 
 
 public class DetApp {
 	private SerialCommBase m_commobj;
 	private DetCmd m_cmdObj;	
 	private DetErrorCode m_detError;
+	
+	private String TAG = "DetApp";
+
+
+	private DetApp(){}
+
+	public static DetApp getInstance(){
+		return SingletonHoler.sIntance;
+	}
+
+	private static class SingletonHoler{
+		private static final DetApp sIntance = new DetApp();
+	}
 
 	/***
 	 * 初始化过程，打开串口，创建内部对象
@@ -53,7 +68,8 @@ public class DetApp {
 		}
 		
 		m_commobj = null;		
-		m_detError = null;		
+		m_detError = null;
+		Log.d(TAG, "Finalize: ");
 		
 		return;
 	}
@@ -131,7 +147,8 @@ public class DetApp {
 		int ret = m_cmdObj.BoardCmd41();		
 
 		m_detError.Setter((byte)0x41, ret);
-		
+
+		Log.d(TAG, "MainBoardBusPowerOff: "+ ret);
 		return ret;
 	}
 
@@ -902,15 +919,19 @@ public class DetApp {
 		int ret;
 		final int RESP_LEN = 12;
 		final byte RESP_HEAD = (byte)0xb5;
+		Log.d(TAG, "PowerOnSelfCheck: ");
 		
 		DetCmd cmd = new DetCmd(m_commobj);
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
+
 		
 		if(null!=cbobj) 
 			cbobj.DisplayText("总线上电与检测流程 开始...");
-		
+
+		Log.d(TAG, "PowerOnSelfCheck: 总线上电与检测流程 开始...");
 		ret = cmd.BoardSendCmd85();
+		Log.d(TAG, "PowerOnSelfCheck: ret = "+ ret);
 		if(0!=ret) return ret;
 		
 		if(null!=cbobj) 
@@ -982,18 +1003,18 @@ public class DetApp {
 			System.out.println(String.format("总线短路与漏电检测 失败 %d", ret));
 		}
 
-		//	单颗模组检测
-		DetCallback cbobj = new DetCallback();		
-		ret = CheckSingleModule(cbobj);
-		if(ret!=0) {
-			System.out.println(String.format("单颗模组检测 失败 %d", ret));
-		}
-
-		//	总线上电与检测流程
-		ret = PowerOnSelfCheck(cbobj);
-		if(ret!=0) {
-			System.out.println(String.format("总线上电与检测流程 失败 %d", ret));
-		}
+//		//	单颗模组检测
+//		DetCallback cbobj = new DetCallback();
+//		ret = CheckSingleModule(cbobj);
+//		if(ret!=0) {
+//			System.out.println(String.format("单颗模组检测 失败 %d", ret));
+//		}
+//
+//		//	总线上电与检测流程
+//		ret = PowerOnSelfCheck(cbobj);
+//		if(ret!=0) {
+//			System.out.println(String.format("总线上电与检测流程 失败 %d", ret));
+//		}
 		
 		
 		return;
@@ -1030,9 +1051,9 @@ public class DetApp {
 		DetApp detapp = new DetApp();
 		detapp.Initialize();
 		
-		DetCallback cbobj = new DetCallback();	
-		
-		detapp.DownloadProc(strfile, cbobj);
+//		DetCallback cbobj = new DetCallback();
+//
+//		detapp.DownloadProc(strfile, cbobj);
 		return;
 	}
 }

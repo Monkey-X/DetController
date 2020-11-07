@@ -1,4 +1,4 @@
-package com.etek.controller.tool.util;/*
+package com.etek.controller.hardware.util;/*
  * 数据转换类
  * @author Xin Hongwei
  * @ version 1.00

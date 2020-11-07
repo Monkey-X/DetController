@@ -1,6 +1,8 @@
-package com.etek.controller.hardware.szyd.jni; /***
+package com.szyd.jni; /***
  * 手持机串口通信类
  */
+
+import android.util.Log;
 
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.command.DetErrorCode;
@@ -14,12 +16,15 @@ import java.io.IOException;
 
 public class HandSetSerialComm extends SerialCommBase {
 
+
+	private String TAG = "HandSetSerialComm";
+
 	private UHFInfo m_comobj=null;
 	private FileDescriptor m_fd=null;
 
 	public HandSetSerialComm(String portName,int nBaud){
 		super(portName,nBaud);
-		m_comobj= new UHFInfo();
+		m_comobj= null;
 	}
 
 	public int OpenPort(){
@@ -32,19 +37,33 @@ public class HandSetSerialComm extends SerialCommBase {
 			m_comobj.close(m_strPortName);
 			m_comobj = null;
 		}
+<<<<<<< HEAD
 		
 		m_comobj = new UHFInfo();
 		
+=======
+
+
+		m_comobj = new UHFInfo();
+>>>>>>> c8d2bec5e8a23182191e96650505dc8e0651d120
 		m_fd = m_comobj.getmFd(b);
+		boolean b1 = m_fd == null;
+
+		Log.d(TAG, "OpenPort: m_fd == null "+ b1);
 
 		if(null==m_fd) {
 			m_nErrorCode = DetErrorCode.ERR_COMM_OPEN;
 			ret = -1;
+		}else{
+			m_nErrorCode = DetErrorCode.SUCCESS;
 		}
+<<<<<<< HEAD
 		else{
 			m_nErrorCode = DetErrorCode.SUCCESS;
 		}
 		
+=======
+>>>>>>> c8d2bec5e8a23182191e96650505dc8e0651d120
 		return ret;
 	}
 

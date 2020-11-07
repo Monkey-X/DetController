@@ -1,4 +1,4 @@
-package com.etek.controller.tool.command;/*
+package com.etek.controller.hardware.command;/*
  * <p> 核心板通信命令类  </p>
  * <p> 主要实现按照协议格式发送和接收命令</p>
  * <p> 创建时间： ${date}</p>
@@ -7,14 +7,19 @@ package com.etek.controller.tool.command;/*
  * */
 
 
-import com.etek.controller.tool.comm.SerialCommBase;
-import com.etek.controller.tool.szyd.jni.HandSetSerialComm;
-import com.etek.controller.tool.util.DataConverter;
+import android.util.Log;
+
+import com.etek.controller.hardware.comm.SerialCommBase;
+import com.szyd.jni.HandSetSerialComm;
+import com.etek.controller.hardware.util.DataConverter;
 
 public class DetCmd {
 	private SerialCommBase m_commobj;
+	
+	private String TAG = "DetCmd";
 	public DetCmd(SerialCommBase commobj) {
 		m_commobj = commobj;
+		Log.d(TAG, "DetCmd: ");
 	}
 
 	/*
@@ -225,6 +230,8 @@ public class DetCmd {
 	public int BoardSendCmd85() {
 		byte[] szcmd = new byte[2];
 		szcmd[0]=(byte)0x85;szcmd[1]=0x00;
+
+		Log.d(TAG, "BoardSendCmd85: ");
 
 		DetProtocol prt = new DetProtocol(m_commobj);
 

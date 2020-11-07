@@ -1,4 +1,4 @@
-package com.etek.controller.tool.command;/*
+package com.etek.controller.hardware.command;/*
  * <p> 核心板应答类  </p>
  * <p> 实现应答字节和字符串的转换以及应答码的封装</p>
  * <p> 创建时间： ${date}</p>
@@ -6,7 +6,7 @@ package com.etek.controller.tool.command;/*
  * <p> @version 1.00</p>
  * */
 
-import com.etek.controller.tool.util.DataConverter;
+import com.etek.controller.hardware.util.DataConverter;
 
 public class DetResponse {
 	private int m_bRSP;
