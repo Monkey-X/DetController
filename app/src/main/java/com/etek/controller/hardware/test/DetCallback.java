@@ -37,7 +37,7 @@ public interface DetCallback {
 	/***
 	 * 核心板初始化自检回调信息
 	 * @param strHardwareVer
-	 * @param strUpdageHardwareVer
+	 * @param strUpdateHardwareVer
 	 * @param strSNO
 	 * @param strConfig
 	 * @param bCheckResult

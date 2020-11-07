@@ -19,6 +19,7 @@ import java.io.InputStream;
 
 
 import com.etek.controller.hardware.comm.SerialCommBase;
+import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.util.DataConverter;
@@ -804,13 +805,15 @@ public class DetApp {
 	 * 核心板初始化自检
 	 * @return
 	 */
-	public int MainBoardInitialize(DetCallback cbobj) {
+	public int MainBoardInitialize(InitialCheckCallBack cbobj) {
+		Log.d(TAG, "MainBoardInitialize: ");
 		int ret;
 		
 		DetCmd cmd = new DetCmd(m_commobj);
 		StringBuilder strData = new StringBuilder();
 		ret = cmd.BoardCmd80(strData);
 		m_detError.Setter((byte)0x80, ret);
+		Log.d(TAG, "MainBoardInitialize: ret = "+ret);
 		if(0!=ret) return ret;
 		
 		//[0] //B0
@@ -878,6 +881,7 @@ public class DetApp {
 		ret = this.MainBoardBusPowerOff();
 		
 		cmd.BoardPowerOff();
+		Log.d(TAG, "ShutdownProc: ret = "+ret);
 		
 		return ret;
 	}
@@ -1064,7 +1068,7 @@ public class DetApp {
 			strErrMsg = GetErrorMessage();
 
 		//	核心板初始化自检
-		int ret = MainBoardInitialize();
+		int ret = MainBoardInitialize(null);
 		if(ret!=0) {
 			System.out.println(String.format("核心板初始化自检 失败 %d", ret));
 		}
