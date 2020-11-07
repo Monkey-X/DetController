@@ -15,6 +15,7 @@ import com.etek.controller.persistence.gen.PermissibleZoneEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.persistence.gen.ReportEntityDao;
 import com.etek.controller.persistence.gen.RptDetonatorEntityDao;
+import com.etek.controller.persistence.gen.SingleCheckEntityDao;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -53,6 +54,10 @@ public class DBManager {
 
     public DetonatorEntityDao getDetonatorEntityDao() {
         return mDaoSession.getDetonatorEntityDao();
+    }
+
+    public SingleCheckEntityDao getSingleCheckEntityDao(){
+        return mDaoSession.getSingleCheckEntityDao();
     }
 
     public DetReportEntityDao getDetReportEntityDao() {

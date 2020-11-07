@@ -14,6 +14,7 @@ import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.entity.DetReportEntity;
 import com.etek.controller.persistence.entity.ChkDetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
+import com.etek.controller.persistence.entity.SingleCheckEntity;
 import com.etek.controller.persistence.entity.RptDetonatorEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ControllerEntity;
@@ -25,6 +26,7 @@ import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.persistence.gen.DetReportEntityDao;
 import com.etek.controller.persistence.gen.ChkDetonatorEntityDao;
 import com.etek.controller.persistence.gen.ForbiddenZoneEntityDao;
+import com.etek.controller.persistence.gen.SingleCheckEntityDao;
 import com.etek.controller.persistence.gen.RptDetonatorEntityDao;
 import com.etek.controller.persistence.gen.PermissibleZoneEntityDao;
 import com.etek.controller.persistence.gen.ControllerEntityDao;
@@ -45,6 +47,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig detReportEntityDaoConfig;
     private final DaoConfig chkDetonatorEntityDaoConfig;
     private final DaoConfig forbiddenZoneEntityDaoConfig;
+    private final DaoConfig singleCheckEntityDaoConfig;
     private final DaoConfig rptDetonatorEntityDaoConfig;
     private final DaoConfig permissibleZoneEntityDaoConfig;
     private final DaoConfig controllerEntityDaoConfig;
@@ -56,6 +59,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DetReportEntityDao detReportEntityDao;
     private final ChkDetonatorEntityDao chkDetonatorEntityDao;
     private final ForbiddenZoneEntityDao forbiddenZoneEntityDao;
+    private final SingleCheckEntityDao singleCheckEntityDao;
     private final RptDetonatorEntityDao rptDetonatorEntityDao;
     private final PermissibleZoneEntityDao permissibleZoneEntityDao;
     private final ControllerEntityDao controllerEntityDao;
@@ -83,6 +87,9 @@ public class DaoSession extends AbstractDaoSession {
         forbiddenZoneEntityDaoConfig = daoConfigMap.get(ForbiddenZoneEntityDao.class).clone();
         forbiddenZoneEntityDaoConfig.initIdentityScope(type);
 
+        singleCheckEntityDaoConfig = daoConfigMap.get(SingleCheckEntityDao.class).clone();
+        singleCheckEntityDaoConfig.initIdentityScope(type);
+
         rptDetonatorEntityDaoConfig = daoConfigMap.get(RptDetonatorEntityDao.class).clone();
         rptDetonatorEntityDaoConfig.initIdentityScope(type);
 
@@ -101,6 +108,7 @@ public class DaoSession extends AbstractDaoSession {
         detReportEntityDao = new DetReportEntityDao(detReportEntityDaoConfig, this);
         chkDetonatorEntityDao = new ChkDetonatorEntityDao(chkDetonatorEntityDaoConfig, this);
         forbiddenZoneEntityDao = new ForbiddenZoneEntityDao(forbiddenZoneEntityDaoConfig, this);
+        singleCheckEntityDao = new SingleCheckEntityDao(singleCheckEntityDaoConfig, this);
         rptDetonatorEntityDao = new RptDetonatorEntityDao(rptDetonatorEntityDaoConfig, this);
         permissibleZoneEntityDao = new PermissibleZoneEntityDao(permissibleZoneEntityDaoConfig, this);
         controllerEntityDao = new ControllerEntityDao(controllerEntityDaoConfig, this);
@@ -112,6 +120,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(DetReportEntity.class, detReportEntityDao);
         registerDao(ChkDetonatorEntity.class, chkDetonatorEntityDao);
         registerDao(ForbiddenZoneEntity.class, forbiddenZoneEntityDao);
+        registerDao(SingleCheckEntity.class, singleCheckEntityDao);
         registerDao(RptDetonatorEntity.class, rptDetonatorEntityDao);
         registerDao(PermissibleZoneEntity.class, permissibleZoneEntityDao);
         registerDao(ControllerEntity.class, controllerEntityDao);
@@ -125,6 +134,7 @@ public class DaoSession extends AbstractDaoSession {
         detReportEntityDaoConfig.clearIdentityScope();
         chkDetonatorEntityDaoConfig.clearIdentityScope();
         forbiddenZoneEntityDaoConfig.clearIdentityScope();
+        singleCheckEntityDaoConfig.clearIdentityScope();
         rptDetonatorEntityDaoConfig.clearIdentityScope();
         permissibleZoneEntityDaoConfig.clearIdentityScope();
         controllerEntityDaoConfig.clearIdentityScope();
@@ -153,6 +163,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public ForbiddenZoneEntityDao getForbiddenZoneEntityDao() {
         return forbiddenZoneEntityDao;
+    }
+
+    public SingleCheckEntityDao getSingleCheckEntityDao() {
+        return singleCheckEntityDao;
     }
 
     public RptDetonatorEntityDao getRptDetonatorEntityDao() {

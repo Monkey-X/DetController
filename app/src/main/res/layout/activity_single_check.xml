@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,99 +7,61 @@
     android:orientation="vertical"
     tools:context=".activity.SingleCheckActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp_32"
-        android:text="共检测___发"
-        android:textSize="35sp"
-        android:textColor="#48495F"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-condensed"/>
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
-
-        <LinearLayout
+        android:padding="15dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="@dimen/dp_12">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pipe_code"
-                android:textSize="25sp"
-                android:textColor="#48495F"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed"/>
-
-            <TextView
-                android:id="@+id/pipe_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="XXXXXXXXXX"
-                android:textSize="25sp"
-                android:textColor="#48495F"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed"/>
-        </LinearLayout>
-
-        <LinearLayout
+            android:text="共检测 "
+            android:textSize="25sp"
+            android:textColor="#48495F"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-condensed"/>
+        <TextView
+            android:id="@+id/checkNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="@dimen/dp_12">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/uid"
-                android:textSize="25sp"
-                android:textColor="#48495F"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed"/>
-
-            <TextView
-                android:id="@+id/uid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="XXXXXXXXXX"
-                android:textSize="25sp"
-                android:textColor="#48495F"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed"/>
-        </LinearLayout>
-
-        <LinearLayout
+            android:textSize="25sp"
+            android:text="0"
+            android:textColor="#48495F"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-condensed"/>
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="@dimen/dp_12">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/delayed"
-                android:textSize="25sp"
-                android:textColor="#48495F"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed"/>
-
-            <TextView
-                android:id="@+id/delayed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="XXXXXXXXXX"
-                android:textSize="25sp"
-                android:textColor="#48495F"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed"/>
-        </LinearLayout>
+            android:text=" 颗"
+            android:textSize="25sp"
+            android:textColor="#48495F"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-condensed"/>
 
     </LinearLayout>
-</RelativeLayout>
+
+     <include layout="@layout/item_single_check"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/testRecycleView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal" />
+
+    <TextView
+        android:text="点 击 检 测"
+        android:id="@+id/clickTest"
+        android:padding="8dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:background="@drawable/seleted_status"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

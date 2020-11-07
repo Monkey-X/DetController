@@ -27,6 +27,7 @@ public class DaoMaster extends AbstractDaoMaster {
         DetReportEntityDao.createTable(db, ifNotExists);
         ChkDetonatorEntityDao.createTable(db, ifNotExists);
         ForbiddenZoneEntityDao.createTable(db, ifNotExists);
+        SingleCheckEntityDao.createTable(db, ifNotExists);
         RptDetonatorEntityDao.createTable(db, ifNotExists);
         PermissibleZoneEntityDao.createTable(db, ifNotExists);
         ControllerEntityDao.createTable(db, ifNotExists);
@@ -41,6 +42,7 @@ public class DaoMaster extends AbstractDaoMaster {
         DetReportEntityDao.dropTable(db, ifExists);
         ChkDetonatorEntityDao.dropTable(db, ifExists);
         ForbiddenZoneEntityDao.dropTable(db, ifExists);
+        SingleCheckEntityDao.dropTable(db, ifExists);
         RptDetonatorEntityDao.dropTable(db, ifExists);
         PermissibleZoneEntityDao.dropTable(db, ifExists);
         ControllerEntityDao.dropTable(db, ifExists);
@@ -69,6 +71,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(DetReportEntityDao.class);
         registerDaoClass(ChkDetonatorEntityDao.class);
         registerDaoClass(ForbiddenZoneEntityDao.class);
+        registerDaoClass(SingleCheckEntityDao.class);
         registerDaoClass(RptDetonatorEntityDao.class);
         registerDaoClass(PermissibleZoneEntityDao.class);
         registerDaoClass(ControllerEntityDao.class);
