@@ -234,7 +234,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             lastBackKeyDownTick = currentTick;
         } else {
             finish();
-            System.exit(0);
+//            System.exit(0);
         }
     }
 
