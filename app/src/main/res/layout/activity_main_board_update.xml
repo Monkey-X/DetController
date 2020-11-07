@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/white"
+    tools:context=".activity.MainBoardUpdateActivity">
+
+    <include layout="@layout/dialog_main_board"/>
+
+    <TextView
+        android:id="@+id/update"
+        android:text="升 级"
+        android:textStyle="bold"
+        android:padding="15dp"
+        android:gravity="center"
+        android:layout_margin="25dp"
+        android:background="@drawable/seleted_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

@@ -48,8 +48,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-
-
 public class BaseActivity extends AppCompatActivity {
 
     private SharedPreferences preferences;
@@ -60,6 +58,7 @@ public class BaseActivity extends AppCompatActivity {
 
     protected static String LOG_TAG = "";
     ProgressDialog pd1;
+    private ProgressDialog progressDialog;
 
 
     protected void showProgressBar(String title, int max) {
@@ -82,7 +81,21 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    protected void showStatusDialog(final  String content) {
+    protected void showProDialog(String msg) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(msg);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+
+    protected void missProDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+    }
+
+
+    protected void showStatusDialog(final String content) {
         runOnUiThread(() -> {
             android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(mContext);
             builder.setTitle(content);

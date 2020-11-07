@@ -163,7 +163,7 @@ public class DetIDConverter {
 	 * 	true-校验合法，
 	 * 	false--校验不合法
 	 */
-	public boolean VerifyQRCheckValue(String strQRCode) {
+	public static boolean VerifyQRCheckValue(String strQRCode) {
 		int i;
 		int nxor,nlen;
 

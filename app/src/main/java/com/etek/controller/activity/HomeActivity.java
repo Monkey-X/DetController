@@ -25,11 +25,14 @@ import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.common.Globals;
 import com.etek.controller.entity.HomeItem;
+import com.etek.controller.entity.MainBoardInfoBean;
+import com.etek.controller.fragment.MainBoardDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
@@ -44,42 +47,55 @@ import org.jsoup.helper.StringUtil;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
+public class HomeActivity extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
 
-
-    private ArrayList<HomeItem> mDataList;
-    private RecyclerView mRecyclerView;
 
 
     private HeaderView mHeaderView;
 
     private String TAG = "HomeActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        initializeToolbar();
+        setContentView(R.layout.activity_new_home);
 
         int initialize = DetApp.getInstance().Initialize();
-        Log.d(TAG, "onCreate: initialize= "+ initialize);
+        Log.d(TAG, "onCreate: initialize= " + initialize);
 
         DetApp.getInstance().MainBoardPowerOn();
 
         initView();
-        initData();
-        initAdapter();
 
+        mainBoardInit();
+    }
+
+    private void mainBoardInit() {
         DetApp.getInstance().MainBoardInitialize(new InitialCheckCallBack() {
             @Override
             public void SetInitialCheckData(String strHardwareVer, String strUpdateHardwareVer, String strSoftwareVer, String strSNO, String strConfig, byte bCheckResult) {
-                Log.d(TAG, "SetInitialCheckData: strHardwareVer = "+strHardwareVer);
-                Log.d(TAG, "SetInitialCheckData: strUpdateHardwareVer = "+strUpdateHardwareVer);
-                Log.d(TAG, "SetInitialCheckData: strSoftwareVer = "+strSoftwareVer);
-                Log.d(TAG, "SetInitialCheckData: strSNO = "+strSNO);
-                Log.d(TAG, "SetInitialCheckData: strConfig = "+strConfig);
+                Log.d(TAG, "SetInitialCheckData: strHardwareVer = " + strHardwareVer);
+                Log.d(TAG, "SetInitialCheckData: strUpdateHardwareVer = " + strUpdateHardwareVer);
+                Log.d(TAG, "SetInitialCheckData: strSoftwareVer = " + strSoftwareVer);
+                Log.d(TAG, "SetInitialCheckData: strSNO = " + strSNO);
+                Log.d(TAG, "SetInitialCheckData: strConfig = " + strConfig);
+
+                MainBoardInfoBean mainBoardInfoBean = new MainBoardInfoBean();
+                mainBoardInfoBean.setStrHardwareVer(strHardwareVer);
+                mainBoardInfoBean.setStrUpdateHardwareVer(strUpdateHardwareVer);
+                mainBoardInfoBean.setStrSoftwareVer(strSoftwareVer);
+                mainBoardInfoBean.setStrSNO(strSNO);
+                mainBoardInfoBean.setStrConfig(strConfig);
+                setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
+                showMainBoardDialog(mainBoardInfoBean);
             }
         });
+    }
 
+    private void showMainBoardDialog(MainBoardInfoBean mainBoardInfoBean) {
+        MainBoardDialog mainBoardDialog = new MainBoardDialog();
+        mainBoardDialog.setMainBoardInfo(mainBoardInfoBean);
+        mainBoardDialog.show(getSupportFragmentManager(), "mainBoardDialog");
     }
 
     @Override
@@ -93,56 +109,57 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         Log.d(TAG, "onSart: ");
     }
 
-    private void initializeToolbar() {
-//        XLog.d(LOG_TAG, "initializeToolbar as actionBar");
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mHeaderView = (HeaderView) findViewById(R.id.toolbar_header_view);
-        mHeaderView.bindTo(getString(R.string.app_name), "");
-        //mToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        // Toolbar will now take on default Action Bar characteristics
-        setSupportActionBar(mToolbar);
-    }
-
-
     private void initView() {
-        mRecyclerView = findViewById(R.id.rv_list);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        View networking = findViewById(R.id.networking);
+        View connet_test = findViewById(R.id.connet_test);
+        View delay = findViewById(R.id.delay);
+        View auth = findViewById(R.id.auth);
+        View report = findViewById(R.id.report);
+        View assist = findViewById(R.id.assist);
+        View user = findViewById(R.id.user);
+
+        networking.setOnClickListener(this);
+        connet_test.setOnClickListener(this);
+        delay.setOnClickListener(this);
+        auth.setOnClickListener(this);
+        report.setOnClickListener(this);
+        assist.setOnClickListener(this);
+        user.setOnClickListener(this);
     }
+     @Override
+    public void onClick(View v) {
+         switch (v.getId()) {
+             case R.id.networking:
+                 startActivity(NetWorkActivity.class);
+                 break;
+             case R.id.connet_test:
+                 startActivity(ConnectTestActivity.class);
+                 break;
+             case R.id.delay:
+                 startActivity(DelayDownloadActivity.class);
+                 break;
+             case R.id.auth:
+                 startActivity(AuthBombActivity.class);
+                 break;
+             case R.id.report:
+                 startActivity(ReportActivity2.class);
+                 break;
+             case R.id.assist:
+                 startActivity(AssistActivity.class);
+                 break;
+             case R.id.user:
+                 startActivity(UserInfoActivity.class);
+                 break;
+         }
+     }
 
-    @SuppressWarnings("unchecked")
-    private void initAdapter() {
-        BaseQuickAdapter homeAdapter = new HomeAdapter(R.layout.home_item_view, mDataList);
-        homeAdapter.openLoadAnimation();
-//        View top = getLayoutInflater().inflate(R.layout.top_view, (ViewGroup) mRecyclerView.getParent(), false);
-//        homeAdapter.addHeaderView(top);
-        homeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-                Intent intent = new Intent(HomeActivity.this, Globals.mainFuncation[position].getFuncation());
-                startActivity(intent);
+     private void startActivity(Class clz){
+        startActivity(new Intent(this,clz));
+     }
 
 
-            }
-        });
-
-        mRecyclerView.setAdapter(homeAdapter);
-    }
-
-
-    private void initData() {
-        mDataList = new ArrayList<>();
-        for (int i = 0; i < Globals.mainFuncation.length; i++) {
-            HomeItem item = new HomeItem();
-            item.setTitle(getString(Globals.mainFuncation[i].getTitle()));
-            item.setActivity(Globals.mainFuncation[i].getFuncation());
-            item.setImageResource(Globals.mainFuncation[i].getImage());
-            mDataList.add(item);
-        }
-
-    }
-
-    void showDialog(){
+    void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         View view = LayoutInflater.from(this.getBaseContext()).inflate(R.layout.dialog_loading_img, null, false);
 
@@ -168,45 +185,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-//        if (!isPermission) {
-//            ToastUtils.showCustom(mContext, getString(R.string.permissions_not_granted));
-//            return false;
-//        }
-        int id = item.getItemId();
-        Intent intent;
-        switch (id) {
-
-
-            case R.id.nav_checkout:
-                intent = new Intent(HomeActivity.this, CheckoutActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_authority:
-                intent = new Intent(HomeActivity.this, AuthorizeActivity.class);
-                startActivity(intent);
-                break;
-
-            case R.id.nav_user:
-                //删除app
-//                Uri uri = Uri.fromParts("package", "com.etek.controller", null);
-//                 intent = new Intent(Intent.ACTION_DELETE, uri);
-//                startActivity(intent);
-                intent = new Intent(HomeActivity.this, UserInfoActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_about:
-                intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop: ");
@@ -215,8 +193,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DetApp.getInstance().ShutdownProc();
-        DetApp.getInstance().Finalize();
+//        DetApp.getInstance().ShutdownProc();
+//        DetApp.getInstance().Finalize();
         Log.d(TAG, "onDestroy: ");
     }
 
@@ -237,6 +215,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 //            System.exit(0);
         }
     }
+
+
 
 
 }

@@ -26,11 +26,13 @@ import android.widget.Toast;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.scan.ScannerInterface;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -341,7 +343,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         DetonatorEntity detonatorEntity = detonators.get(position);
         try {
             DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
-        }catch (Exception e){
+        } catch (Exception e) {
         }
         detonators.remove(position);
         projectDetailAdapter.notifyDataSetChanged();
@@ -363,18 +365,17 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             if (intent.getAction().equals(RES_ACTION)) {
                 //获取扫描结果
                 if (scanResult.length() > 0) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
-//                    tvScanResult.append("Barcode："+scanResult+"\n");
-
-//                    int offset=tvScanResult.getLineCount()*tvScanResult.getLineHeight();
-//                    if(offset>tvScanResult.getHeight()){
-//                        tvScanResult.scrollTo(0,offset-tvScanResult.getHeight());
-//                    }
+                    if (DetIDConverter.VerifyQRCheckValue(scanResult)) {
+                        // 获取正确的雷管信息
+                    } else {
+                        ToastUtils.show(ProjectDetailActivity.this, "二维码不符合规则！");
+                    }
                 } else {
                     /**扫描失败提示使用有两个条件：
                      1，需要先将扫描失败提示接口打开只能在广播模式下使用，其他模式无法调用。
                      2，通过判断条码长度来判定是否解码成功，当长度等于0时表示解码失败。
                      * */
-                    Toast.makeText(getApplicationContext(), "解码失败！", Toast.LENGTH_SHORT).show();
+                    ToastUtils.show(ProjectDetailActivity.this, "解码失败！");
                 }
             }
         }

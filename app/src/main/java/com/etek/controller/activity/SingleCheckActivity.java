@@ -1,5 +1,6 @@
 package com.etek.controller.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,12 +62,12 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         // 调用接口进行检测
-
+        showProgressDialog("检测中...");
         int result = DetApp.getInstance().CheckSingleModule(new DetCallback() {
             @Override
             public void DisplayText(String strText) {
                 Log.d(TAG, "DisplayText: " + strText);
-                ToastUtils.show(SingleCheckActivity.this,strText);
+//                ToastUtils.show(SingleCheckActivity.this,strText);
 
             }
 
@@ -107,7 +108,6 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
             }
         });
         Log.d(TAG, "onClick: CheckSingleModule = "+result);
-
-
+        missProDialog();
     }
 }

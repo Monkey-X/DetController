@@ -40,6 +40,11 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal" />
+
      <include layout="@layout/item_single_check"/>
 
     <android.support.v7.widget.RecyclerView
