@@ -151,7 +151,7 @@ public class DetCmd {
 	 * @return
 	 */
 	public int BoardPowerOn() {
-		boolean b = m_commobj.ctlPowerSupply(1);
+		boolean b = m_commobj.ctlPowerSupply(5);
 		if(b)
 			return 0;
 
@@ -163,7 +163,7 @@ public class DetCmd {
 	 * @return
 	 */
 	public int BoardPowerOff() {
-		boolean b = m_commobj.ctlPowerSupply(2);
+		boolean b = m_commobj.ctlPowerSupply(6);
 		if(b)
 			return 0;
 		return -1;

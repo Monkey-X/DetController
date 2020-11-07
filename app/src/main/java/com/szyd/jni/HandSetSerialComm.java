@@ -37,15 +37,9 @@ public class HandSetSerialComm extends SerialCommBase {
 			m_comobj.close(m_strPortName);
 			m_comobj = null;
 		}
-<<<<<<< HEAD
 		
 		m_comobj = new UHFInfo();
-		
-=======
 
-
-		m_comobj = new UHFInfo();
->>>>>>> c8d2bec5e8a23182191e96650505dc8e0651d120
 		m_fd = m_comobj.getmFd(b);
 		boolean b1 = m_fd == null;
 
@@ -57,13 +51,6 @@ public class HandSetSerialComm extends SerialCommBase {
 		}else{
 			m_nErrorCode = DetErrorCode.SUCCESS;
 		}
-<<<<<<< HEAD
-		else{
-			m_nErrorCode = DetErrorCode.SUCCESS;
-		}
-		
-=======
->>>>>>> c8d2bec5e8a23182191e96650505dc8e0651d120
 		return ret;
 	}
 

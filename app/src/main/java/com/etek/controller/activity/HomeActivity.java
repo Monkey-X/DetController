@@ -32,6 +32,7 @@ import com.etek.controller.common.Globals;
 import com.etek.controller.entity.HomeItem;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.DetCallback;
+import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.widget.ClearableEditText;
 import com.etek.controller.widget.HeaderView;
 import com.etek.controller.adapter.HomeAdapter;
@@ -67,63 +68,27 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         initData();
         initAdapter();
 
+        DetApp.getInstance().MainBoardInitialize(new InitialCheckCallBack() {
+            @Override
+            public void SetInitialCheckData(String strHardwareVer, String strUpdateHardwareVer, String strSoftwareVer, String strSNO, String strConfig, byte bCheckResult) {
+                Log.d(TAG, "SetInitialCheckData: strHardwareVer = "+strHardwareVer);
+                Log.d(TAG, "SetInitialCheckData: strUpdateHardwareVer = "+strUpdateHardwareVer);
+                Log.d(TAG, "SetInitialCheckData: strSoftwareVer = "+strSoftwareVer);
+                Log.d(TAG, "SetInitialCheckData: strSNO = "+strSNO);
+                Log.d(TAG, "SetInitialCheckData: strConfig = "+strConfig);
+            }
+        });
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        int i = DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
-            @Override
-            public void DisplayText(String strText) {
-                Log.d(TAG, "DisplayText: "+ strText);
-//                ToastUtils.show(HomeActivity.this, strText);
-            }
-
-            @Override
-            public void StartProgressbar() {
-
-            }
-
-            @Override
-            public void SetProgressbarValue(int nVal) {
-                Log.d(TAG, "SetProgressbarValue: "+ nVal);
-
-            }
-
-            @Override
-            public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
-
-            }
-        });
-        Log.d(TAG, "onResume: PowerOnSelfCheck = "+ i);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: 1");
-//        DetApp.getInstance().PowerOnSelfCheck(new DetCallback() {
-//            @Override
-//            public void DisplayText(String strText) {
-//                ToastUtils.show(HomeActivity.this,strText);
-//            }
-//
-//            @Override
-//            public void StartProgressbar() {
-//
-//            }
-//
-//            @Override
-//            public void SetProgressbarValue(int nVal) {
-//
-//            }
-//
-//            @Override
-//            public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
-//
-//            }
-//        });
-        Log.d(TAG, "onStart: 2");
     }
 
     private void initializeToolbar() {
@@ -242,13 +207,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onStop() {
         super.onStop();
-        DetApp.getInstance().ShutdownProc();
         Log.d(TAG, "onStop: ");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        DetApp.getInstance().ShutdownProc();
         DetApp.getInstance().Finalize();
         Log.d(TAG, "onDestroy: ");
     }
