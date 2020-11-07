@@ -1,5 +1,7 @@
 package com.szyd.jni;
 
+import android.util.Log;
+
 import java.io.FileDescriptor;
 
 public class UHFInfo {
@@ -48,6 +50,8 @@ public class UHFInfo {
 
     static {
         try {
+            System.out.println("loadLibrary sptctl");
+//            System.
             System.loadLibrary("sptctl");
         } catch (Exception e) {
             e.printStackTrace();

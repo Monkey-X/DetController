@@ -2,7 +2,10 @@ package com.etek.controller.activity;
 
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.etek.controller.R;
+import com.etek.controller.hardware.command.DetApp;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 /**
@@ -37,5 +40,12 @@ public class SingleCheckActivity extends BaseActivity {
      */
     private void initDate() {
         //TODO 通过接口获取数据并展示
+        DetApp detApp = DetApp.getInstance();
+
+        int i = detApp.MainBoardEcho();
+
+        Toast.makeText(getApplicationContext(), "MainBoardEcho:" + i, Toast.LENGTH_SHORT).show();
+
+        System.out.println("MainBoardEcho:" + i);
     }
 }

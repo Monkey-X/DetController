@@ -47,7 +47,9 @@ public class DetApp {
 	 * 初始化过程，打开串口，创建内部对象
 	 * @return
 	 */
-	public int Initialize() {	
+	public int Initialize() {
+		System.out.println("Initialize....");
+
 		m_detError=new DetErrorCode((byte)0x00,0);
 		
 		m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
@@ -808,7 +810,22 @@ public class DetApp {
 	public int MainBoardInitialize(InitialCheckCallBack cbobj) {
 		Log.d(TAG, "MainBoardInitialize: ");
 		int ret;
-		
+
+		//	超时等待（此时核心板需要做擦除动作）
+		long WAIT_TIME_MS = 2000;
+
+			for(int k=0;k<WAIT_TIME_MS/100;k++) {
+
+				try {
+					Thread.sleep(100);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+				float f =  WAIT_TIME_MS - k*100;
+
+//				if(null!=cbobj)
+//					cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
+			}
 		DetCmd cmd = new DetCmd(m_commobj);
 		StringBuilder strData = new StringBuilder();
 		ret = cmd.BoardCmd80(strData);
@@ -850,7 +867,7 @@ public class DetApp {
 		ret = bCheckResult;
 		return ret;
 	}
-	
+
 
 	/***
 	 * 总线短路与漏电检测

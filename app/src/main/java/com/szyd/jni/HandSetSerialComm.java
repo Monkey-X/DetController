@@ -34,7 +34,7 @@ public class HandSetSerialComm extends SerialCommBase {
 			b = true;
 
 		if(null!=m_comobj) {
-			m_comobj.close(m_strPortName);
+			m_comobj.close("mFd");
 			m_comobj = null;
 		}
 		
@@ -59,9 +59,10 @@ public class HandSetSerialComm extends SerialCommBase {
 	 */
 	public void ClosePort(){
 		if(null!=m_comobj) {
-			m_comobj.close(m_strPortName);
+			m_comobj.close("mFd");
 			m_comobj = null;
 		}
+		m_fd = null;
 		return;
 	}
 

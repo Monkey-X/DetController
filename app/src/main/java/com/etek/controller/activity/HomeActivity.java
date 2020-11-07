@@ -59,6 +59,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         initializeToolbar();
+
         int initialize = DetApp.getInstance().Initialize();
         Log.d(TAG, "onCreate: initialize= "+ initialize);
 
@@ -89,6 +90,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onSart: ");
     }
 
     private void initializeToolbar() {

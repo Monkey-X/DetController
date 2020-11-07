@@ -16,4 +16,5 @@ public interface InitialCheckCallBack {
                                     String strSNO,
                                     String strConfig,
                                     byte bCheckResult);
+
 }

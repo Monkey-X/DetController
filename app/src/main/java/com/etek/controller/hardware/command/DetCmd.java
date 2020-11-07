@@ -151,7 +151,13 @@ public class DetCmd {
 	 * @return
 	 */
 	public int BoardPowerOn() {
-		boolean b = m_commobj.ctlPowerSupply(5);
+		boolean b = m_commobj.ctlPowerSupply(1);
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		boolean c = m_commobj.ctlPowerSupply(5);
 		if(b)
 			return 0;
 
@@ -163,7 +169,15 @@ public class DetCmd {
 	 * @return
 	 */
 	public int BoardPowerOff() {
+
 		boolean b = m_commobj.ctlPowerSupply(6);
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		boolean c = m_commobj.ctlPowerSupply(2);
+
 		if(b)
 			return 0;
 		return -1;
