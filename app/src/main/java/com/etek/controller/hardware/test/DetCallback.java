@@ -34,4 +34,36 @@ public interface DetCallback {
 //
 	public void SetSingleModuleCheckData(int nID,byte[] szDC,int nDT,byte bCheckResult);
 
+	/***
+	 * 核心板初始化自检回调信息
+	 * @param strHardwareVer
+	 * @param strUpdageHardwareVer
+	 * @param strSNO
+	 * @param strConfig
+	 * @param bCheckResult
+	 */
+	 	public void SetInitialCheckData(String strHardwareVer,
+			String strUpdateHardwareVer,
+			String strSoftwareVer,
+			String strSNO,
+			String strConfig,
+			byte bCheckResult);
+/*
+	public void SetInitialCheckData(String strHardwareVer,
+			String strUpdateHardwareVer,
+			String strSoftwareVer,
+			String strSNO,
+			String strConfig,
+			byte bCheckResult) {
+		System.out.println(String.format("硬件版本：%s",strHardwareVer));
+		System.out.println(String.format("硬件升级版本：%s",strUpdateHardwareVer));
+		System.out.println(String.format("软件版本：%s",strSoftwareVer));
+		System.out.println(String.format("序列号：%s",strSNO));
+		System.out.println(String.format("配置信息：%s",strConfig));
+		System.out.println(String.format("自检建国：%d", bCheckResult));
+		
+		return;
+	}
+*/
+
 }

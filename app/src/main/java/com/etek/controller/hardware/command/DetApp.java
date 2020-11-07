@@ -800,17 +800,54 @@ public class DetApp {
 	 * 核心板初始化自检
 	 * @return
 	 */
-	public int MainBoardInitialize() {
+		/***
+	 * 核心板初始化自检
+	 * @return
+	 */
+	public int MainBoardInitialize(DetCallback cbobj) {
 		int ret;
 		
 		DetCmd cmd = new DetCmd(m_commobj);
 		StringBuilder strData = new StringBuilder();
 		ret = cmd.BoardCmd80(strData);
-	
 		m_detError.Setter((byte)0x80, ret);
+		if(0!=ret) return ret;
 		
+		//[0] //B0
+		//[1] //固定值23，有效数据包DAT长度
+		//[2~3] //硬件版本号，高字节在前，当前是v3.0.20
+		//[4~5] //升级固件版本号，高字节在前，当前是v1.0.00
+		//[6~7] //软件版本号，高字节在前，当前是v1.0.10
+		//[8~11] //序列号
+		//[12~15] //配置信息，应是02 XX XX XX
+		//[16~19] //参数1，不显示，仅调试时使用
+		//[20~23] //参数2，不显示，仅调试时使用
+		//[24] //核心板电压检测结果，00:通过；其他:出错，直接报警
+		//[25] //CRC8
+
+		//	0210 1000 1013 00000000 02000012 00001F6E 0000340D 00 4A
+		String str0 = strData.toString();
+		
+		String strHardwareVer = str0.substring(0,1)+"."+str0.substring(1,2)+"."+str0.substring(2,4);
+		String strUpdateHardwareVer = str0.substring(4,5)+"."+str0.substring(5,6)+"."+str0.substring(6,8);
+		String strSoftwareVer = str0.substring(8,9)+"."+str0.substring(9,10)+"."+str0.substring(10,12);
+		String strSNO = str0.substring(12,20);
+		String strConfig = str0.substring(20,28);
+		
+		byte bCheckResult = (byte)Byte.parseByte(str0.substring(44,46),16);
+		
+		if(null!=cbobj) {
+			cbobj.SetInitialCheckData(strHardwareVer, strUpdateHardwareVer, 
+					strSoftwareVer, 
+					strSNO, 
+					strConfig, 
+					bCheckResult);
+		}
+				
+		ret = bCheckResult;
 		return ret;
 	}
+	
 
 	/***
 	 * 总线短路与漏电检测
@@ -846,7 +883,7 @@ public class DetApp {
 	}
 
 	/***
-	 * 单颗模组检测 单科检测
+	 * 单颗模组检测 单颗模组检测
 	 * @param
 	 * @return
 	 */
@@ -873,10 +910,11 @@ public class DetApp {
 			ret = prt.RecvBlock(RESP_LEN, resp);
 			if(0!=ret) {
 				if(null!=cbobj) 
-					cbobj.DisplayText("单颗模组检测 超时吴应答");
+					cbobj.DisplayText("单颗模组检测 超时无应答");
 				break;
 			}
 	
+			//	B2 LEN 完成百分比[1] ID[4] DC[8] DT[4] 
 			String str0 = resp.GetRespData();
 			byte[] szdata = DataConverter.hexStringToBytes(str0);
 			
@@ -897,16 +935,49 @@ public class DetApp {
 				break;
 			}
 						
-			if(null!=cbobj) 
-				cbobj.SetProgressbarValue(szdata[2]);
+			ret = szdata[2];
+			if(ret<0) ret = ret + 0x100;
 			
-			if(szdata[2]>=0x64) {
-				cbobj.DisplayText("单颗模组检测 完成！");
+			if(null!=cbobj) 
+				cbobj.SetProgressbarValue(ret);
+			
+			if(ret<100)
+				continue;
+
+			//			B2 LEN 完成百分比[1] ID[4] DC[8] DT[4] 参数1[2] 参数2[2]  药头检测结果[1] CRC8[1]
+			byte[] id = new byte[4];
+			byte[] dc = new byte[8];
+			byte[] dt = new byte[4];
+			
+			System.arraycopy(szdata, 3, id, 0, 4);
+			System.arraycopy(szdata, 7, dc, 0, 8);
+			System.arraycopy(szdata, 15, dt, 0, 4);
+			
+			byte bResult = szdata[23];
+			
+			//	ID
+			int nid = DataConverter.bytes2Int(id);
+			int ndt = DataConverter.bytes2Int(dt);
+			
+			if(ret>100){
+				if(null!=cbobj) {
+					cbobj.SetSingleModuleCheckData(nid, dc, ndt,bResult);
+					cbobj.DisplayText("单颗模组检测 完成！");				
+				}				
 				break;
-			}			
+			}
+			
+			ret = 0;	
+			if(null!=cbobj) {
+				cbobj.SetSingleModuleCheckData(nid, dc, ndt,bResult);
+				cbobj.DisplayText("单颗模组检测 完成！");				
+			}
+
+			break;
 		}
 				
 		return ret;
+
 	}
 
 
@@ -941,7 +1012,7 @@ public class DetApp {
 			ret = prt.RecvBlock(RESP_LEN, resp);
 			if(0!=ret) {
 				if(null!=cbobj) 
-					cbobj.DisplayText("总线上电与检测流程 超时吴应答");
+					cbobj.DisplayText("总线上电与检测流程 超时无应答");
 				break;
 			}
 	
