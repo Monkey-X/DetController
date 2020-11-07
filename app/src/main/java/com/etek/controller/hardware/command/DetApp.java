@@ -185,6 +185,19 @@ public class DetApp {
 		return ret;
 	}
 
+	/***
+	 * 获取主板的电流电压值
+	 * @param strData	电流和电压值
+	 * @return
+	 */
+	public int MainBoardGetCurrentVoltage(StringBuilder strData) {
+		int ret = m_cmdObj.BoardCmd4A(strData);
+
+		m_detError.Setter((byte)0x4A, ret);
+
+		return ret;
+	}
+
 	/*
 	 * 功能：获取总线保护状态
 	 * */
@@ -195,9 +208,6 @@ public class DetApp {
 		
 		return ret;	
 	}
-
-
-
 
 	/***
 	 * 主控板上电（供电）
@@ -962,7 +972,7 @@ public class DetApp {
 			if(ret>100){
 				if(null!=cbobj) {
 					cbobj.SetSingleModuleCheckData(nid, dc, ndt,bResult);
-					cbobj.DisplayText("单颗模组检测 完成！");				
+					cbobj.DisplayText("单颗模组检测 失败！");
 				}				
 				break;
 			}
