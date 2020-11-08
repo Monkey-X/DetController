@@ -42,12 +42,12 @@ public interface DetCallback {
 	 * @param strConfig
 	 * @param bCheckResult
 	 */
-	 	public void SetInitialCheckData(String strHardwareVer,
-			String strUpdateHardwareVer,
-			String strSoftwareVer,
-			String strSNO,
-			String strConfig,
-			byte bCheckResult);
+//	 	public void SetInitialCheckData(String strHardwareVer,
+//			String strUpdateHardwareVer,
+//			String strSoftwareVer,
+//			String strSNO,
+//			String strConfig,
+//			byte bCheckResult);
 /*
 	public void SetInitialCheckData(String strHardwareVer,
 			String strUpdateHardwareVer,

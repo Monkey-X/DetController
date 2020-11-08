@@ -1,11 +1,13 @@
 package com.etek.controller.activity;
 
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.etek.controller.adapter.ProjectDelayAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.fragment.FastEditDialog;
+import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
@@ -37,6 +40,7 @@ import java.util.List;
  */
 public class DelayDownloadActivity extends BaseActivity implements View.OnClickListener, ProjectDelayAdapter.OnItemClickListener, FastEditDialog.OnMakeSureListener {
 
+    private static final String TAG = "DelayDownloadActivity";
     private RecyclerView mDelayList;
     private List<DetonatorEntity> detonators;
     private ProjectDelayAdapter mProjectDelayAdapter;
@@ -119,7 +123,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         FastEditDialog fastEditDialog = new FastEditDialog();
         fastEditDialog.setSerialNumber(detonators.size());
         fastEditDialog.setOnMakeSureListener(this);
-        fastEditDialog.show(getSupportFragmentManager(),"fastEditDialog");
+        fastEditDialog.show(getSupportFragmentManager(), "fastEditDialog");
     }
 
     // 展示项目列表
@@ -224,9 +228,11 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         mPopupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
     }
 
-    //再次下载 todo
+    //再次下载
     private void downloadItem(int position) {
-
+        showProDialog("下载中...");
+        detSingleDownload(position);
+        missProDialog();
     }
 
     // 删除条目
@@ -275,5 +281,61 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     public void makeSure(FastEditBean bean) {
         // todo  进行批量修改
 
+    }
+
+    /**
+     * 单个雷管的延时下载
+     *
+     * @param position
+     */
+    public void detSingleDownload(int position) {
+        DetonatorEntity detonatorEntity = detonators.get(position);
+        String detId = detonatorEntity.getDetId();
+        String relayTime = detonatorEntity.getRelay();
+        Log.d(TAG, "detSingleDownload: detId = " + detId);
+        // 进行雷管的链接检测
+        int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId),Integer.parseInt(relayTime));
+        Log.d(TAG, "detSingleDownload: detId = " + downloadResult);
+        detonatorEntity.setDownLoadStatus(downloadResult);
+    }
+
+
+    /**
+     * 进行项目中所有的雷管的延时下载  todo
+     */
+    private void allDetDownload() {
+        if (detonators == null || detonators.size() == 0) {
+            return;
+        }
+        DelayDownloadTask delayDownloadTask = new DelayDownloadTask();
+        delayDownloadTask.execute();
+    }
+
+
+    /**
+     * 异步进行 雷管的延时下载
+     */
+    public class DelayDownloadTask extends AsyncTask {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProDialog("下载中...");
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            for (int i = 0; i < detonators.size(); i++) {
+                detSingleDownload(i);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            missProDialog();
+            mProjectDelayAdapter.notifyDataSetChanged();
+        }
     }
 }

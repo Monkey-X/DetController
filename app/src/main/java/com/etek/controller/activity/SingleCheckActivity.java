@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 import com.etek.controller.R;
 import com.etek.controller.adapter.SingleCheckAdapter;
 import com.etek.controller.hardware.command.DetApp;
@@ -63,51 +64,61 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         // 调用接口进行检测
         showProDialog("检测中...");
-        int result = DetApp.getInstance().CheckSingleModule(new DetCallback() {
-            @Override
-            public void DisplayText(String strText) {
-                Log.d(TAG, "DisplayText: " + strText);
-//                ToastUtils.show(SingleCheckActivity.this,strText);
 
+        new Thread() {
+            @Override
+            public void run() {
+                int result = DetApp.getInstance().CheckSingleModule(new DetCallback() {
+                    @Override
+                    public void DisplayText(String strText) {
+                        Log.d(TAG, "DisplayText: " + strText);
+                    }
+
+                    @Override
+                    public void StartProgressbar() {
+
+                    }
+
+                    @Override
+                    public void SetProgressbarValue(int nVal) {
+
+                    }
+
+                    @Override
+                    public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
+                        Log.d(TAG, "SetSingleModuleCheckData: nID=" + nID);
+                        Log.d(TAG, "SetSingleModuleCheckData: szDC=" + nID);
+                        Log.d(TAG, "SetSingleModuleCheckData: nDT=" + nDT);
+                        Log.d(TAG, "SetSingleModuleCheckData: checkResult=" + DataConverter.getByteValue(bCheckResult));
+
+                        SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
+                        singleCheckEntity.setRelay(String.valueOf(nDT));
+                        singleCheckEntity.setDetId(nID);
+                        singleCheckEntity.setDC(DetIDConverter.GetDisplayDC(szDC));
+                        int checkResult = DataConverter.getByteValue(bCheckResult);
+                        singleCheckEntity.setTestStatus(checkResult);
+                        showSingleCheckData(singleCheckEntity);
+                    }
+                });
+                Log.d(TAG, "onClick: CheckSingleModule = " + result);
+                showSingleCheckData(null);
             }
+        }.start();
+    }
 
+    private void showSingleCheckData(SingleCheckEntity singleCheckEntity) {
+        runOnUiThread(new Runnable() {
             @Override
-            public void StartProgressbar() {
-
-            }
-
-            @Override
-            public void SetProgressbarValue(int nVal) {
-
-            }
-
-            @Override
-            public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
-                Log.d(TAG, "SetSingleModuleCheckData: nID="+nID);
-                Log.d(TAG, "SetSingleModuleCheckData: szDC="+nID);
-                Log.d(TAG, "SetSingleModuleCheckData: nDT="+nDT);
-                Log.d(TAG, "SetSingleModuleCheckData: checkResult="+DataConverter.getByteValue(bCheckResult));
-
-                SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
-                singleCheckEntity.setRelay(String.valueOf(nDT));
-                singleCheckEntity.setDetId(nID);
-                singleCheckEntity.setDC(new DetIDConverter().GetDisplayDC(szDC));
-                int checkResult = DataConverter.getByteValue(bCheckResult);
-                singleCheckEntity.setTestStatus(checkResult);
-
-                singleCheckEntityList.add(singleCheckEntity);
-                singleCheckAdapter.notifyDataSetChanged();
-                checkNum.setText(singleCheckEntityList.size()+"");
+            public void run() {
+                missProDialog();
+                if (singleCheckEntity != null) {
+                    singleCheckEntityList.add(singleCheckEntity);
+                    singleCheckAdapter.notifyDataSetChanged();
+                    checkNum.setText(singleCheckEntityList.size() + "");
 //                SingleCheckEntityDao.
 //                DBManager.getInstance().getSingleCheckEntityDao().insert(singleCheckEntity);
-            }
-
-            @Override
-            public void SetInitialCheckData(String strHardwareVer, String strUpdateHardwareVer, String strSoftwareVer, String strSNO, String strConfig, byte bCheckResult) {
-
+                }
             }
         });
-        Log.d(TAG, "onClick: CheckSingleModule = "+result);
-        missProDialog();
     }
 }
