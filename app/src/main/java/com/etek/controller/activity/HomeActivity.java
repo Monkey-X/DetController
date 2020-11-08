@@ -193,8 +193,8 @@ public class HomeActivity extends BaseActivity implements ActivityCompat.OnReque
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        DetApp.getInstance().ShutdownProc();
-//        DetApp.getInstance().Finalize();
+        DetApp.getInstance().ShutdownProc();
+        DetApp.getInstance().Finalize();
         Log.d(TAG, "onDestroy: ");
     }
 

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectAdapter;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.fragment.ProjectDialog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * 雷管组网
  */
-public class NetWorkActivity extends BaseActivity implements View.OnClickListener, ProjectAdapter.OnItemClickListener {
+public class NetWorkActivity extends BaseActivity implements View.OnClickListener, ProjectAdapter.OnItemClickListener, ProjectDialog.OnMakeProjectListener {
 
     private RecyclerView recycleView;
     private View noDataView;
@@ -87,16 +88,15 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.text_btn:
                 //创建项目
-                ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
-                projectInfoEntity.setProName("项目-" + projectAdapter.getItemCount());
-                long insert = DBManager.getInstance().getProjectInfoEntityDao().insert(projectInfoEntity);
-                if (insert >= 0) {
-                    noDataView.setVisibility(View.GONE);
-                    projectInfos.add(projectInfoEntity);
-                    projectAdapter.notifyDataSetChanged();
-                }
+                showMakeProjectDialog();
                 break;
         }
+    }
+
+    private void showMakeProjectDialog() {
+        ProjectDialog projectDialog = new ProjectDialog();
+        projectDialog.setOnMakeProjectListener(this);
+        projectDialog.show(getSupportFragmentManager(),"makeProDialog");
     }
 
     @Override
@@ -131,5 +131,16 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
             }
         });
         builder.create().show();
+    }
+
+    @Override
+    public void makeProject(ProjectInfoEntity bean) {
+        // 创建项目的回调
+        long insert = DBManager.getInstance().getProjectInfoEntityDao().insert(bean);
+        if (insert >= 0) {
+            noDataView.setVisibility(View.GONE);
+            projectInfos.add(bean);
+            projectAdapter.notifyDataSetChanged();
+        }
     }
 }

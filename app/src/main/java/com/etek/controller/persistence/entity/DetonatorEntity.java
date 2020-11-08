@@ -20,7 +20,9 @@ public class DetonatorEntity{
 
     private String uid;     //雷管UID码 uid
 
-    private String code;        //雷管发编号 fbh {可能是管吗}
+    private String code;        //雷管管吗 fbh {可能是管吗}
+
+    private String detId;    // 管吗内部id
 
     private String workCode;     //雷管工作码 gzm
 
@@ -43,14 +45,16 @@ public class DetonatorEntity{
 
 
 
-    @Generated(hash = 152187983)
+    @Generated(hash = 1280044808)
     public DetonatorEntity(Long id, Date validTime, String uid, String code,
-            String workCode, String relay, int status, String holePosition,
-            int downLoadStatus, int testStatus, long projectInfoId, int serialNum) {
+            String detId, String workCode, String relay, int status,
+            String holePosition, int downLoadStatus, int testStatus,
+            long projectInfoId, int serialNum) {
         this.id = id;
         this.validTime = validTime;
         this.uid = uid;
         this.code = code;
+        this.detId = detId;
         this.workCode = workCode;
         this.relay = relay;
         this.status = status;
@@ -175,5 +179,13 @@ public class DetonatorEntity{
 
     public void setSerialNum(int serialNum) {
         this.serialNum = serialNum;
+    }
+
+    public String getDetId() {
+        return this.detId;
+    }
+
+    public void setDetId(String detId) {
+        this.detId = detId;
     }
 }

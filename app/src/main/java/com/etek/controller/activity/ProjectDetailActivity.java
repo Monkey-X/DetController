@@ -55,6 +55,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     //*******重要
     private static final String RES_ACTION = "android.intent.action.SCANRESULT";
     private ScannerResultReceiver scanReceiver;
+    private boolean isInsertItem = false;
+    private int insertPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         initView();
         initRecycleView();
         initIntentData();
-        initData();
     }
 
     @Override
@@ -110,24 +111,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
         mDetonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectId);
-
         if (mDetonatorEntities != null && mDetonatorEntities.size() != 0) {
             detonators.addAll(mDetonatorEntities);
             projectDetailAdapter.notifyDataSetChanged();
-        } else {
-            for (int i = 0; i < 10; i++) {
-                if (i == 3) {
-                    areaNum.setText("2");
-                }
-                if (i == 6) {
-                    areaNum.setText("3");
-                }
-
-                if (i == 9) {
-                    areaNum.setText("4");
-                }
-                getDatas();
-            }
         }
     }
 
@@ -155,72 +141,16 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         delayholein = findViewById(R.id.delayholein);
         delayholeout = findViewById(R.id.delayholeout);
 
+        // 孔内
+        View layoutHoleIn = findViewById(R.id.layoutHoleIn);
+        // 孔间
+        View layoutHoleOut = findViewById(R.id.layoutHoleOut);
+
         reduce.setOnClickListener(this);
         add.setOnClickListener(this);
-
+        layoutHoleIn.setOnClickListener(this);
+        layoutHoleOut.setOnClickListener(this);
     }
-
-
-    private void initRecycleView() {
-        detonators = new ArrayList<>();
-
-        recycleView.setLayoutManager(new LinearLayoutManager(this));
-        projectDetailAdapter = new ProjectDetailAdapter(this, detonators);
-        recycleView.setAdapter(projectDetailAdapter);
-        projectDetailAdapter.setOnItemClickListener(this);
-    }
-
-    private void initData() {
-
-    }
-
-    private void getDatas() {
-        // 录入数据 todo
-        int lastDelay;
-        int lastAreaNum;//操作区域
-        int lastHoleNum;// 孔内编号
-        if (detonators.size() == 0) {
-            lastDelay = getIntFormString(delayTimeNew.getText().toString().trim());
-            lastAreaNum = getIntFormString(areaNum.getText().toString().trim());
-            lastHoleNum = 0;
-        } else {
-            DetonatorEntity detonatorEntity = detonators.get(detonators.size() - 1);
-            lastDelay = getIntFormString(detonatorEntity.getRelay());
-            String[] split = detonatorEntity.getHolePosition().split("-");
-            lastAreaNum = getIntFormString(split[0]);
-            lastHoleNum = getIntFormString(split[1]);
-        }
-
-        int nowAreaNum = getIntFormString(areaNum.getText().toString().trim());
-        int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
-        int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
-        if (nowAreaNum == lastAreaNum) {
-            // 孔内
-            lastHoleNum = lastHoleNum + 1;
-            if (detonators.size() != 0) {
-                lastDelay = lastDelay + delayholeinTime;
-            }
-        } else {
-            // 空间
-            lastHoleNum = 1;
-            lastDelay = lastDelay + delayholeoutTime;
-        }
-
-        DetonatorEntity detonatorEntity = new DetonatorEntity();
-        detonatorEntity.setProjectInfoId(projectId);
-        detonatorEntity.setHolePosition(nowAreaNum + "-" + lastHoleNum);
-        detonatorEntity.setRelay(String.valueOf(lastDelay));
-        detonatorEntity.setUid(projectId + "-" + detonatorEntity.getHolePosition() + detonatorEntity.getRelay());
-        detonators.add(detonatorEntity);
-    }
-
-
-    //  数字型的字符串转为数字
-    public int getIntFormString(String stringNum) {
-        int i = Integer.parseInt(stringNum);
-        return i;
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -240,9 +170,106 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
                 DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
+                ToastUtils.show(this, "保存成功！");
+
+//                String scanResult = "6191201D123451985";
+//
+//                if (scanResult.length() > 0 && DetIDConverter.VerifyQRCheckValue(scanResult)) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
+//                    // 扫描成功
+//                    String strgm = scanResult.substring(0, 13);
+//                    createDetData(strgm);
+//                } else {
+//                    // 扫描失败
+//                    showStatusDialog("扫描失败！");
+//                }
+                break;
+            case R.id.layoutHoleIn:
+                // 设置孔内延时
+                setHoleInTime();
+                break;
+            case R.id.layoutHoleOut:
+                // 设置孔间延时
+                setHoleOutTime();
                 break;
         }
     }
+
+    /**
+     * 设置孔间延时
+     */
+    private void setHoleOutTime() {
+        if (detonators != null && detonators.size() == 0) {
+            return;
+        }
+
+        int lastPosition = detonators.size() - 1;
+        DetonatorEntity detonatorEntity = detonators.get(lastPosition);
+        if (!TextUtils.isEmpty(detonatorEntity.getRelay())) {
+            return;
+        }
+        if (detonators.size() >= 2) {
+            DetonatorEntity detonatorEntity1 = detonators.get(lastPosition - 1);
+            String lastDelayTime = detonatorEntity1.getRelay();
+            String holePosition = detonatorEntity1.getHolePosition();
+            String[] split = holePosition.split("-");
+            int intFormString = getIntFormString(split[1]);
+            int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
+            int newDelayTime = getIntFormString(lastDelayTime) + delayholeoutTime;
+            detonatorEntity.setRelay(String.valueOf(newDelayTime));
+            detonatorEntity.setHolePosition(split[0] + "-" + String.valueOf(intFormString + 1));
+            projectDetailAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 设置孔内延时时间
+     */
+    private void setHoleInTime() {
+        if (detonators != null && detonators.size() == 0) {
+            return;
+        }
+
+        int lastPosition = detonators.size() - 1;
+        DetonatorEntity detonatorEntity = detonators.get(lastPosition);
+        if (!TextUtils.isEmpty(detonatorEntity.getRelay())) {
+            return;
+        }
+
+        if (detonators.size() == 1) {
+            int startDelayTime = getIntFormString(delayTimeNew.getText().toString().trim());
+            int area = getIntFormString(areaNum.getText().toString().trim());
+            detonatorEntity.setRelay(String.valueOf(startDelayTime));
+            detonatorEntity.setHolePosition(area + "-" + 1);
+            projectDetailAdapter.notifyDataSetChanged();
+            return;
+        }
+
+        DetonatorEntity detonatorEntity1 = detonators.get(lastPosition - 1);
+        String lastDelayTime = detonatorEntity1.getRelay();
+        int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
+        int newDelayTime = getIntFormString(lastDelayTime) + delayholeinTime;
+        detonatorEntity.setRelay(String.valueOf(newDelayTime));
+        detonatorEntity.setHolePosition(detonatorEntity1.getHolePosition());
+        projectDetailAdapter.notifyDataSetChanged();
+    }
+
+
+    private void initRecycleView() {
+        detonators = new ArrayList<>();
+
+        recycleView.setLayoutManager(new LinearLayoutManager(this));
+        projectDetailAdapter = new ProjectDetailAdapter(this, detonators);
+        recycleView.setAdapter(projectDetailAdapter);
+        projectDetailAdapter.setOnItemClickListener(this);
+    }
+
+
+    //  数字型的字符串转为数字
+    public int getIntFormString(String stringNum) {
+        int i = Integer.parseInt(stringNum);
+        return i;
+    }
+
 
     // 操作区域加法
     private void areaAdd() {
@@ -325,16 +352,19 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         popupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
     }
 
-    // 插入数据 TODO
+    // 插入数据  怎么扫码插入 todo
     private void insertItemView(int position) {
-        DetonatorEntity detonatorEntity = detonators.get(position);
-        DetonatorEntity detonatorEntity1 = new DetonatorEntity();
-        detonatorEntity1.setRelay(detonatorEntity.getRelay());
-        detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
-        detonatorEntity1.setUid("1111");
-        detonatorEntity1.setProjectInfoId(projectId);
-        detonators.add(position, detonatorEntity1);
-        projectDetailAdapter.notifyDataSetChanged();
+        isInsertItem = true;
+        insertPosition = position;
+        showProDialog("请扫描雷管信息");
+//        DetonatorEntity detonatorEntity = detonators.get(position);
+//        DetonatorEntity detonatorEntity1 = new DetonatorEntity();
+//        detonatorEntity1.setRelay(detonatorEntity.getRelay());
+//        detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
+//        detonatorEntity1.setUid("1111");
+//        detonatorEntity1.setProjectInfoId(projectId);
+//        detonators.add(position, detonatorEntity1);
+//        projectDetailAdapter.notifyDataSetChanged();
     }
 
     // 删除条目
@@ -360,24 +390,91 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
             //*******重要，注意Extral为"value"
             final String scanResult = intent.getStringExtra("value");
+            if (isInsertItem) {
+                missProDialog();
+            }
 
             //*******重要
             if (intent.getAction().equals(RES_ACTION)) {
                 //获取扫描结果
-                if (scanResult.length() > 0) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
-                    if (DetIDConverter.VerifyQRCheckValue(scanResult)) {
-                        // 获取正确的雷管信息
-                    } else {
-                        ToastUtils.show(ProjectDetailActivity.this, "二维码不符合规则！");
-                    }
+                if (scanResult.length() > 0 && DetIDConverter.VerifyQRCheckValue(scanResult)) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
+                    // 扫描成功
+                    String strgm = scanResult.substring(0, 13);
+                    createDetData(strgm);
                 } else {
-                    /**扫描失败提示使用有两个条件：
-                     1，需要先将扫描失败提示接口打开只能在广播模式下使用，其他模式无法调用。
-                     2，通过判断条码长度来判定是否解码成功，当长度等于0时表示解码失败。
-                     * */
-                    ToastUtils.show(ProjectDetailActivity.this, "解码失败！");
+                    // 扫描失败
+                    showStatusDialog("扫描失败！");
+                    isInsertItem = false;
                 }
             }
         }
+    }
+
+    private void createDetData(String strgm) {
+        if (isInsertItem) {
+            isInsertItem = false;
+            DetonatorEntity detonatorEntity = detonators.get(insertPosition);
+            DetonatorEntity detonatorEntity1 = new DetonatorEntity();
+            detonatorEntity1.setRelay(detonatorEntity.getRelay());
+            detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
+            detonatorEntity1.setCode(strgm);
+            detonatorEntity1.setProjectInfoId(projectId);
+            detonators.add(insertPosition, detonatorEntity1);
+            projectDetailAdapter.notifyDataSetChanged();
+            return;
+        }
+        if (detonators.size() != 0) {
+            DetonatorEntity detonatorEntity = detonators.get(detonators.size() - 1);
+            if (TextUtils.isEmpty(detonatorEntity.getRelay())) {
+                showStatusDialog("请设置录入雷管的延时后，再继续扫描！");
+                return;
+            }
+        }
+        DetonatorEntity detonatorEntity = new DetonatorEntity();
+        detonatorEntity.setProjectInfoId(projectId);
+        detonatorEntity.setCode(strgm);
+        detonators.add(detonatorEntity);
+        projectDetailAdapter.notifyDataSetChanged();
+    }
+
+
+    private void getDatas() {
+        // 录入数据 todo
+        int lastDelay;
+        int lastAreaNum;//操作区域
+        int lastHoleNum;// 孔内编号
+        if (detonators.size() == 0) {
+            lastDelay = getIntFormString(delayTimeNew.getText().toString().trim());
+            lastAreaNum = getIntFormString(areaNum.getText().toString().trim());
+            lastHoleNum = 0;
+        } else {
+            DetonatorEntity detonatorEntity = detonators.get(detonators.size() - 1);
+            lastDelay = getIntFormString(detonatorEntity.getRelay());
+            String[] split = detonatorEntity.getHolePosition().split("-");
+            lastAreaNum = getIntFormString(split[0]);
+            lastHoleNum = getIntFormString(split[1]);
+        }
+
+        int nowAreaNum = getIntFormString(areaNum.getText().toString().trim());
+        int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
+        int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
+        if (nowAreaNum == lastAreaNum) {
+            // 孔内
+            lastHoleNum = lastHoleNum + 1;
+            if (detonators.size() != 0) {
+                lastDelay = lastDelay + delayholeinTime;
+            }
+        } else {
+            // 空间
+            lastHoleNum = 1;
+            lastDelay = lastDelay + delayholeoutTime;
+        }
+
+        DetonatorEntity detonatorEntity = new DetonatorEntity();
+        detonatorEntity.setProjectInfoId(projectId);
+        detonatorEntity.setHolePosition(nowAreaNum + "-" + lastHoleNum);
+        detonatorEntity.setRelay(String.valueOf(lastDelay));
+        detonatorEntity.setUid(projectId + "-" + detonatorEntity.getHolePosition() + detonatorEntity.getRelay());
+        detonators.add(detonatorEntity);
     }
 }
