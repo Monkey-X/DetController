@@ -367,6 +367,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 if (scanResult.length() > 0) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
                     if (DetIDConverter.VerifyQRCheckValue(scanResult)) {
                         // 获取正确的雷管信息
+
                     } else {
                         ToastUtils.show(ProjectDetailActivity.this, "二维码不符合规则！");
                     }

@@ -62,7 +62,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         // 调用接口进行检测
-        showProgressDialog("检测中...");
+        showProDialog("检测中...");
         int result = DetApp.getInstance().CheckSingleModule(new DetCallback() {
             @Override
             public void DisplayText(String strText) {
