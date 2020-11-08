@@ -120,7 +120,9 @@ public class FastEditDialog extends DialogFragment implements View.OnClickListen
             return;
         }
 
-        if (getNumFormString(startNumString) > number || getNumFormString(endNumString) > number) {
+        if (getNumFormString(startNumString) == 0 ||
+                getNumFormString(startNumString) > number || getNumFormString(endNumString) > number
+                || getNumFormString(startNumString) >= getNumFormString(endNumString)) {
             ToastUtils.show(getContext(), "请输入正确的序号！");
             return;
         }
