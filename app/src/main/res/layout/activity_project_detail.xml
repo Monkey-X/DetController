@@ -123,11 +123,12 @@
         android:padding="8dp">
 
         <LinearLayout
+            android:id="@+id/layoutHoleIn"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:gravity="center"
             android:padding="8dp"
-            android:background="@drawable/normal"
+            android:background="@drawable/seleted_status"
             android:layout_height="wrap_content">
 
             <TextView
@@ -158,12 +159,13 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layoutHoleOut"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:gravity="center"
             android:padding="8dp"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/normal"
+            android:background="@drawable/seleted_status"
             android:layout_height="wrap_content">
 
             <TextView
@@ -192,10 +194,6 @@
                 android:textSize="18sp" />
 
         </LinearLayout>
-
-
-
-
 
     </LinearLayout>
 

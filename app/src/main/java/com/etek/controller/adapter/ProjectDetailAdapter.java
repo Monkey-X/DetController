@@ -43,7 +43,7 @@ public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdap
     public void onBindViewHolder(@NonNull ProjectDetailAdapter.ProjectDetailViewHolder holder, int i) {
         DetonatorEntity detonatorEntity = datas.get(i);
         holder.holePosition.setText(detonatorEntity.getHolePosition());
-        holder.uidNum.setText(detonatorEntity.getUid());
+        holder.uidNum.setText(detonatorEntity.getCode());
         holder.number.setText(String.valueOf(i + 1));
         holder.delayTime.setText(detonatorEntity.getRelay());
         holder.rootview.setOnClickListener(new View.OnClickListener() {

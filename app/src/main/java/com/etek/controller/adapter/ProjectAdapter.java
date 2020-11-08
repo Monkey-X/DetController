@@ -39,7 +39,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     @Override
     public void onBindViewHolder(@NonNull ProjectViewHolder projectViewHolder, int i) {
         ProjectInfoEntity projectInfoEntity = datas.get(i);
-        projectViewHolder.projectNum.setText(i+1+"");
+        projectViewHolder.projectNum.setText(String.valueOf(i+1));
         projectViewHolder.projectName.setText(projectInfoEntity.getProName());
         //添加项目的状态
 
