@@ -171,11 +171,11 @@ public class DetCmd {
 	public int BoardPowerOff() {
 
 		boolean b = m_commobj.ctlPowerSupply(6);
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(50);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		boolean c = m_commobj.ctlPowerSupply(2);
 
 		if(b)

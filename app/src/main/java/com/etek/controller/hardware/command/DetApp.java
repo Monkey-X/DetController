@@ -905,12 +905,13 @@ public class DetApp {
 		
 		DetCmd cmd = new DetCmd(m_commobj);
 		
-		ret = this.MainBoardBusPowerOff();
+//		ret = this.MainBoardBusPowerOff();
 		
 		cmd.BoardPowerOff();
-		Log.d(TAG, "ShutdownProc: ret = "+ret);
-		
-		return ret;
+		Log.d(TAG, "ShutdownProc");
+//		Log.d(TAG, "ShutdownProc: ret = "+ret);
+
+		return 0;
 	}
 
 	/***
@@ -947,6 +948,9 @@ public class DetApp {
 	
 			//	B2 LEN 完成百分比[1] ID[4] DC[8] DT[4] 
 			String str0 = resp.GetRespData();
+
+			System.out.println("GetRespData:"+str0);
+
 			byte[] szdata = DataConverter.hexStringToBytes(str0);
 			
 			if(null==szdata) {
@@ -987,8 +991,8 @@ public class DetApp {
 			byte bResult = szdata[23];
 			
 			//	ID
-			int nid = DataConverter.bytes2Int(id);
-			int ndt = DataConverter.bytes2Int(dt);
+			int nid = DataConverter.lsbBytes2Int(id);
+			int ndt = DataConverter.lsbBytes2Int(dt);
 			
 			if(ret>100){
 				if(null!=cbobj) {
