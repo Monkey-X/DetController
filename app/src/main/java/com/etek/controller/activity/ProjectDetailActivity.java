@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
@@ -394,6 +395,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 missProDialog();
             }
 
+            Log.d(TAG, "onReceive: scanResult = " + scanResult);
+
             //*******重要
             if (intent.getAction().equals(RES_ACTION)) {
                 //获取扫描结果
@@ -411,6 +414,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void createDetData(String strgm) {
+        // 检查重复的雷管 todo
         if (isInsertItem) {
             isInsertItem = false;
             DetonatorEntity detonatorEntity = detonators.get(insertPosition);
@@ -418,6 +422,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             detonatorEntity1.setRelay(detonatorEntity.getRelay());
             detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
             detonatorEntity1.setCode(strgm);
+            detonatorEntity1.setDetId(getDetIdByGm(strgm));
             detonatorEntity1.setProjectInfoId(projectId);
             detonators.add(insertPosition, detonatorEntity1);
             projectDetailAdapter.notifyDataSetChanged();
@@ -433,8 +438,17 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         DetonatorEntity detonatorEntity = new DetonatorEntity();
         detonatorEntity.setProjectInfoId(projectId);
         detonatorEntity.setCode(strgm);
+        detonatorEntity.setDetId(getDetIdByGm(strgm));
         detonators.add(detonatorEntity);
         projectDetailAdapter.notifyDataSetChanged();
+    }
+
+    // 将雷管管吗转化为雷管Id
+    public String getDetIdByGm(String gm) {
+        byte[] bytes = DetIDConverter.GetDCByString(gm);
+        byte[] bytes1 = DetIDConverter.Conv_DC2ID(bytes);
+        int detId = DataConverter.bytes2Int(bytes1);
+        return String.valueOf(detId);
     }
 
 

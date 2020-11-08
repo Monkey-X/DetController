@@ -12,10 +12,9 @@ import java.util.Map;
 public class DetIDConverter {
 
     private static final String TAG = "DetIDConverter";
-    private Map<Integer, String> m_mapDeskCode = new HashMap<Integer, String>();
+    private static Map<Integer, String> m_mapDeskCode = new HashMap<Integer, String>();
 
-    public DetIDConverter() {
-        m_mapDeskCode.clear();
+    static {
         m_mapDeskCode.put(99, "ZYX123456");
         m_mapDeskCode.put(61, "D23456789");
         m_mapDeskCode.put(38, "612345789");
@@ -25,10 +24,13 @@ public class DetIDConverter {
         m_mapDeskCode.put(9, "ADXYZ1234");
     }
 
+    public DetIDConverter() {
+    }
+
     /*** 获取机台号的索引
      * @return 返回机台号索引，如果没找到返回-1
      * */
-    private byte GetDeskIndex(byte facCode, byte dskCode) {
+    private static byte GetDeskIndex(byte facCode, byte dskCode) {
         Integer nval = (int) facCode;
         String str = m_mapDeskCode.get(nval);
         if (null == str) return -1;
@@ -85,7 +87,7 @@ public class DetIDConverter {
      * @param DC    8字节的管码编号
      * @return
      */
-    public byte[] Conv_DC2ID(byte[] DC) {
+    public static byte[] Conv_DC2ID(byte[] DC) {
         long hexID;
         byte dskIdx = GetDeskIndex(DC[0], DC[4]);
 
@@ -115,7 +117,7 @@ public class DetIDConverter {
      * @param DC    8字节的管码
      * @return 格式化管码
      */
-    public String GetDisplayDC(byte[] DC) {
+    public static String GetDisplayDC(byte[] DC) {
         int i;
         int[] nval = new int[8];
 

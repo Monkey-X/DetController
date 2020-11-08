@@ -1,10 +1,12 @@
 package com.etek.controller.activity;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.etek.controller.adapter.ConnectTestAdapter;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.fragment.FastEditDialog;
+import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
@@ -34,6 +37,7 @@ import java.util.List;
  */
 public class ConnectTestActivity extends BaseActivity implements View.OnClickListener, ProjectDetailAdapter.OnItemClickListener {
 
+    private static final String TAG = "ConnectTestActivity";
     private LinearLayout backImag;
     private TextView textTitle;
     private TextView textBtn;
@@ -196,7 +200,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     // 筛选 误接状态
     private void changeFalseConnect() {
         if (connectData == null || connectData.size() == 0) {
-            ToastUtils.show(this,"未录入数据");
+            ToastUtils.show(this, "未录入数据");
             return;
         }
         // TODO: 2020/10/31
@@ -206,7 +210,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     // 筛选失联 状态
     private void changeMissEvent() {
         if (connectData == null || connectData.size() == 0) {
-            ToastUtils.show(this,"未录入数据");
+            ToastUtils.show(this, "未录入数据");
             return;
         }
 
@@ -238,7 +242,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         downloadAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 插入
+                // 再次测试
                 if (mPopupWindow != null && mPopupWindow.isShowing()) {
                     mPopupWindow.dismiss();
                 }
@@ -249,8 +253,28 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         mPopupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
     }
 
+    /**
+     * 对雷管的再次检测
+     *
+     * @param position
+     */
     private void testItem(int position) {
         // 进行单个雷管的测试 todo
+        showProDialog("检测中...");
+        detSingleCheck(position);
+        connectTestAdapter.notifyDataSetChanged();
+    }
+
+
+    /**
+     * 进行项目中所有的雷管的连接检测
+     */
+    private void allDetConnectTest() {
+        if (connectData == null || connectData.size() == 0) {
+            return;
+        }
+        TestAsyncTask testAsyncTask = new TestAsyncTask();
+        testAsyncTask.execute();
     }
 
     // 删除条目
@@ -271,5 +295,45 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onDelayTimeClick(int position) {
 
+    }
+
+    /**
+     * 单个雷管的链接测试
+     *
+     * @param position
+     */
+    public void detSingleCheck(int position) {
+        DetonatorEntity detonatorEntity = connectData.get(position);
+        String detId = detonatorEntity.getDetId();
+        Log.d(TAG, "detSingleCheck: detId = " + detId);
+        // 进行雷管的链接检测
+        int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
+        Log.d(TAG, "detSingleCheck: testResult = " + testResult);
+        detonatorEntity.setTestStatus(testResult);
+    }
+
+
+    // 异步进行在线检测
+    public class TestAsyncTask extends AsyncTask {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProDialog("检测中...");
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            for (int i = 0; i < connectData.size(); i++) {
+                detSingleCheck(i);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            connectTestAdapter.notifyDataSetChanged();
+            missProDialog();
+        }
     }
 }

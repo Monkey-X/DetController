@@ -91,11 +91,6 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                     public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
 
                     }
-
-                    @Override
-                    public void SetInitialCheckData(String strHardwareVer, String strUpdateHardwareVer, String strSoftwareVer, String strSNO, String strConfig, byte bCheckResult) {
-
-                    }
                 });
                 showResult(result);
             }
