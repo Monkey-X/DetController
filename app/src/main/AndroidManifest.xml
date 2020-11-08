@@ -43,8 +43,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.FunctionTestActivity"></activity>
+        <activity android:name=".activity.MainBoardUpdateActivity" />
         <activity android:name=".activity.ReportActivity2" />
-        <activity android:name=".activity.CheckoutActivity2"/>
+        <activity android:name=".activity.CheckoutActivity2" />
         <activity android:name=".activity.OnlineCheckoutActivity2" />
         <activity android:name=".activity.OnlineAuthorizeActivity2" />
         <activity

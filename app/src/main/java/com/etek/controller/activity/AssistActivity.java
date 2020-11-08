@@ -45,8 +45,11 @@ public class AssistActivity extends BaseActivity {
      */
     private void initDate() {
         mDataList = new ArrayList<>();
-        mDataList.add(new AssistItem(this.getString(R.string.title_act_single_check), R.drawable.check));
-        mDataList.add(new AssistItem(this.getString(R.string.title_act_line_check), R.drawable.check));
+        mDataList.add(new AssistItem(this.getString(R.string.title_act_single_check), R.mipmap.jiance));
+        mDataList.add(new AssistItem(this.getString(R.string.title_act_line_check), R.mipmap.zongxian));
+        mDataList.add(new AssistItem(this.getString(R.string.title_main_board_update), R.mipmap.zhuban));
+        mDataList.add(new AssistItem(getString(R.string.title_function_test), R.mipmap.ceshi));
+
     }
 
     /**
@@ -67,6 +70,14 @@ public class AssistActivity extends BaseActivity {
                     case 1: //跳转线路检测页面
                         Intent lineIntent = new Intent(AssistActivity.this, LineCheckActivity.class);
                         startActivity(lineIntent);
+                        break;
+                    case 2: //主板升级
+                        Intent mainIntent = new Intent(AssistActivity.this, MainBoardUpdateActivity.class);
+                        startActivity(mainIntent);
+                        break;
+                    case 3: //功能测试
+                        Intent testIntent = new Intent(AssistActivity.this, FunctionTestActivity.class);
+                        startActivity(testIntent);
                         break;
                 }
             }

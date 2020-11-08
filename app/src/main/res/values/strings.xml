@@ -226,6 +226,7 @@
 
 
     <!--2020.10.21-->
+    <string name="title_main_board_update">主控板升级</string>
     <string name="title_activity_personal_info">用户信息</string>
     <string name="title_activity_connecttest">连接检测</string>
     <string name="activity_network">雷管组网</string>
@@ -242,4 +243,6 @@
     <string name="connect_filtrate">筛 选</string>
     <string name="out_contact">暂无项目</string>
     <string name="no_filtrate_project">暂无可筛选的项目</string>
+    <string name="title_function_test">功能检测</string>
+    <string name="mainBoardInfo_sp">mainBoardInfo</string>
 </resources>
