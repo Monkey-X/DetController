@@ -112,6 +112,15 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
             public void run() {
                 missProDialog();
                 if (singleCheckEntity != null) {
+                    // 去除重复扫描的
+                    if (singleCheckEntityList != null && singleCheckEntityList.size()!=0) {
+                        for (SingleCheckEntity checkEntity : singleCheckEntityList) {
+                            if (checkEntity.getDetId() == singleCheckEntity.getDetId()) {
+                                showStatusDialog("此雷管已检测！");
+                                return;
+                            }
+                        }
+                    }
                     singleCheckEntityList.add(singleCheckEntity);
                     singleCheckAdapter.notifyDataSetChanged();
                     checkNum.setText(singleCheckEntityList.size() + "");

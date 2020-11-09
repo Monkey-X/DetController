@@ -414,7 +414,19 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void createDetData(String strgm) {
-        // 检查重复的雷管 todo
+        // 检查重复的雷管
+        if (detonators != null && detonators.size() != 0) {
+            for (int i = 0; i < detonators.size(); i++) {
+                DetonatorEntity detonatorEntity = detonators.get(i);
+                if (detonatorEntity.getCode().equals(strgm)) {
+                    showStatusDialog("此雷管已扫描！");
+                    recycleView.scrollToPosition(i);
+                    return;
+                }
+            }
+        }
+
+        // 扫描插入
         if (isInsertItem) {
             isInsertItem = false;
             DetonatorEntity detonatorEntity = detonators.get(insertPosition);
