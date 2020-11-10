@@ -280,7 +280,27 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     @Override
     public void makeSure(FastEditBean bean) {
         // todo  进行批量修改
-
+        // 对第一个先设置延时
+        int holePosition = bean.getStartNum() + bean.getHoleNum();
+        int delayTime = bean.getStartTime();
+        DetonatorEntity detonatorEntity = detonators.get(bean.getStartNum() - 1);
+        detonatorEntity.setRelay(String.valueOf(delayTime));
+        for (int i = bean.getStartNum()+1; i <= bean.getEndNum(); i++) {
+            DetonatorEntity detonatorEntity1 = detonators.get(i - 1);
+            Log.d(TAG, "makeSure: holePosition = "+holePosition);
+            Log.d(TAG, "makeSure: delayTime = "+delayTime);
+            if (i < holePosition) {
+                delayTime = delayTime+bean.getHoleInTime();
+                detonatorEntity1.setRelay(String.valueOf(delayTime));
+            }else if (holePosition == i){
+                delayTime = delayTime+bean.getHoleOutTime();
+                detonatorEntity1.setRelay(String.valueOf(delayTime));
+                holePosition = holePosition +bean.getHoleNum();
+            }
+        }
+        // 修改保存到数据库
+        DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
+        mProjectDelayAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -294,7 +314,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         String relayTime = detonatorEntity.getRelay();
         Log.d(TAG, "detSingleDownload: detId = " + detId);
         // 进行雷管的链接检测
-        int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId),Integer.parseInt(relayTime));
+        int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId), Integer.parseInt(relayTime));
         Log.d(TAG, "detSingleDownload: detId = " + downloadResult);
         detonatorEntity.setDownLoadStatus(downloadResult);
     }

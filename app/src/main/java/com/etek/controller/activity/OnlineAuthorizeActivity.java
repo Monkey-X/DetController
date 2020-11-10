@@ -797,7 +797,7 @@ public class OnlineAuthorizeActivity extends BaseActivity {
             XLog.v("onNotificationReceived "+devCheckoutEnum.toString());
             switch (devCheckoutEnum) {
 
-                case CONTROLLER:
+                case CONTROLLER:// 得到控制器序列号和雷管总数
                     XLog.d("CONTROLLER "+SommerUtils.bytesToHexArrString(devRsp.getData()));
 //                    byte[] d1 = devRsp.getData();
                     detController.clrDetonatorList();
@@ -824,7 +824,7 @@ public class OnlineAuthorizeActivity extends BaseActivity {
                     bleCmd = BLECmd.getDetCmd(number);
                     sendCmd2Controller(bleCmd);
                     break;
-                case DET:
+                case DET: // 得到雷管
 //                    XLog.d("DET: "+ SommerUtils.bytesToHexArrString(devRsp.getData()));
 
                     Detonator detonator = new Detonator(devRsp.getData());
@@ -854,7 +854,7 @@ public class OnlineAuthorizeActivity extends BaseActivity {
                     }
 
                     break;
-                case VERIF:
+                case VERIF:// 校验值下传
 //                    XLog.d("token:",detController.getToken());
 
 
@@ -874,13 +874,13 @@ public class OnlineAuthorizeActivity extends BaseActivity {
                     sendCmd2Controller(bleCmd);
 
                     break;
-                case TOEXP_TOTAL:
+                case TOEXP_TOTAL: //得到待起爆雷管总数
 //                    XLog.d("TOEXP_TOTAL ", SommerUtils.bytesToHexArrString(devRsp.getData()));
                     bleCmd = BLECmd.getOverCmd();
                     sendCmd2Controller(bleCmd);
 
                     break;
-                case OVER:
+                case OVER: //雷管传输结束
 //                    projectInfo.setStatus(1);
 //                    DBManager.getInstance().getProjectInfoEntityDao().update(projectInfo);
 //                    XLog.d("over:"+);
