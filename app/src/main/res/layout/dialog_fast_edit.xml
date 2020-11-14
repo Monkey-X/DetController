@@ -32,13 +32,13 @@
             android:layout_weight="1"
             android:background="@null"/>
 
-        <TextView
-            android:textSize="18sp"
-            android:padding="5dp"
-            android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+<!--        <TextView-->
+<!--            android:textSize="18sp"-->
+<!--            android:padding="5dp"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.3"/>-->
 
     </LinearLayout>
 
@@ -72,13 +72,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"/>
-        <TextView
-            android:textSize="18sp"
-            android:padding="5dp"
-            android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+<!--        <TextView-->
+<!--            android:textSize="18sp"-->
+<!--            android:padding="5dp"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.3"/>-->
 
     </LinearLayout>
 
@@ -112,13 +112,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"/>
-        <TextView
-            android:textSize="18sp"
-            android:padding="5dp"
-            android:text="ms"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+<!--        <TextView-->
+<!--            android:textSize="18sp"-->
+<!--            android:padding="5dp"-->
+<!--            android:text="ms"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.3"/>-->
 
     </LinearLayout>
 
@@ -151,13 +151,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"/>
-        <TextView
-            android:textSize="18sp"
-            android:padding="5dp"
-            android:text="颗"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+<!--        <TextView-->
+<!--            android:textSize="18sp"-->
+<!--            android:padding="5dp"-->
+<!--            android:text="颗"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.3"/>-->
 
     </LinearLayout>
 
@@ -191,13 +191,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"/>
-        <TextView
-            android:textSize="18sp"
-            android:padding="5dp"
-            android:text="ms"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+<!--        <TextView-->
+<!--            android:textSize="18sp"-->
+<!--            android:padding="5dp"-->
+<!--            android:text="ms"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.3"/>-->
 
     </LinearLayout>
 
@@ -231,13 +231,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"/>
-        <TextView
-            android:textSize="18sp"
-            android:padding="5dp"
-            android:text="ms"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+<!--        <TextView-->
+<!--            android:textSize="18sp"-->
+<!--            android:padding="5dp"-->
+<!--            android:text="ms"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.3"/>-->
 
     </LinearLayout>
 

@@ -82,9 +82,11 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
         TextView missEvent = findViewById(R.id.miss_event);
         TextView falseConnect = findViewById(R.id.false_connect);
+        TextView allDet = findViewById(R.id.all_det);
 
         missEvent.setOnClickListener(this);
         falseConnect.setOnClickListener(this);
+        allDet.setOnClickListener(this);
 
         recycleView = findViewById(R.id.recycleView);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -193,8 +195,17 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 // 筛选误接
                 changeFalseConnect();
                 break;
+            case R.id.all_det:
+                // 展示全部
+                showAllDet();
+                break;
 
         }
+    }
+
+    private void showAllDet() {
+        // 筛选后点击展示全部
+
     }
 
     // 筛选 误接状态
@@ -225,7 +236,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow mPopupWindow = new PopupWindow(popuView, 200, 200);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -263,6 +274,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         showProDialog("检测中...");
         detSingleCheck(position);
         connectTestAdapter.notifyDataSetChanged();
+        missProDialog();
     }
 
 
@@ -310,6 +322,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
         detonatorEntity.setTestStatus(testResult);
+        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
     }
 
 

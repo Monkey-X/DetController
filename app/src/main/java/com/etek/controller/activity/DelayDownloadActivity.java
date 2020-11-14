@@ -119,6 +119,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         // 进行批量修改，弹出快捷编辑对话框
         if (detonators == null || detonators.size() == 0) {
             ToastUtils.show(this, "未录入数据！");
+            return;
         }
         FastEditDialog fastEditDialog = new FastEditDialog();
         fastEditDialog.setSerialNumber(detonators.size());
@@ -201,7 +202,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow mPopupWindow = new PopupWindow(popuView, 200, 200);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,6 +233,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private void downloadItem(int position) {
         showProDialog("下载中...");
         detSingleDownload(position);
+        mProjectDelayAdapter.notifyDataSetChanged();
         missProDialog();
     }
 
@@ -315,8 +317,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         Log.d(TAG, "detSingleDownload: detId = " + detId);
         // 进行雷管的链接检测
         int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId), Integer.parseInt(relayTime));
-        Log.d(TAG, "detSingleDownload: detId = " + downloadResult);
+        Log.d(TAG, "detSingleDownload: downloadResult = " + downloadResult);
         detonatorEntity.setDownLoadStatus(downloadResult);
+        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
     }
 
 

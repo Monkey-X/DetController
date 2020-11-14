@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -328,7 +329,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow popupWindow = new PopupWindow(popuView, 200, 200);
+        PopupWindow popupWindow = new PopupWindow(popuView,150,120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -358,14 +359,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         isInsertItem = true;
         insertPosition = position;
         showProDialog("请扫描雷管信息");
-//        DetonatorEntity detonatorEntity = detonators.get(position);
-//        DetonatorEntity detonatorEntity1 = new DetonatorEntity();
-//        detonatorEntity1.setRelay(detonatorEntity.getRelay());
-//        detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
-//        detonatorEntity1.setUid("1111");
-//        detonatorEntity1.setProjectInfoId(projectId);
-//        detonators.add(position, detonatorEntity1);
-//        projectDetailAdapter.notifyDataSetChanged();
     }
 
     // 删除条目
@@ -463,6 +456,13 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         return String.valueOf(detId);
     }
 
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+
+        Log.d(TAG, "onKeyUp: keyCode = "+ keyCode);
+        return super.onKeyUp(keyCode, event);
+    }
 
     private void getDatas() {
         // 录入数据 todo
