@@ -24,11 +24,9 @@ import com.alibaba.fastjson.serializer.ValueFilter;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.adapter.CheckOutAdapter;
+import com.etek.controller.adapter.CheckOutAdapter2;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
 import com.etek.controller.dto.Jbqy;
@@ -45,18 +43,14 @@ import com.etek.controller.dto.Zbqys;
 import com.etek.controller.entity.DetController;
 import com.etek.controller.entity.Detonator;
 import com.etek.controller.persistence.DBManager;
-import com.etek.controller.persistence.entity.ChkControllerEntity;
-import com.etek.controller.persistence.entity.ChkDetonatorEntity;
 import com.etek.controller.persistence.entity.ControllerEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.controller.persistence.gen.ChkControllerEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
-import com.etek.controller.utils.JsonUtils;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -74,7 +68,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnClickListener {
+public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnClickListener, CheckOutAdapter2.OnItemClickListener {
 
     private String TAG = "OnlineAuthorizeActivity2";
     private static final int REQUEST_PRO_EDIT = 11;
@@ -84,8 +78,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
     private ImageView imgLoading;
     private SwipeRefreshLayout slProjectInfo;
     private RecyclerView rvProjectInfo;
-
-    private CheckOutAdapter mProjectInfoAdapter;
+    private CheckOutAdapter2 mProjectInfoAdapter;
     private static final int PAGE_SIZE = 10;
     private int mNextRequestPage = 1;
     private DetController detController;
@@ -95,8 +88,8 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
     private int isTest = 0;
     private String contractCode;
     private String proCode;
-    private boolean isValid;
     private long proId = 0;
+    private boolean isValid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,15 +101,6 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         getUserCompanyCode();
         getLocationLocal();
         showDialog();
-
-        //模拟往数据库里存储数据
-        if (DBManager.getInstance().getChkControllerEntityDao().loadAll().size() <= 0) {
-            //模拟数据
-            JsonUtils.projectInfo();
-            DetController detController = JsonUtils.detController();
-            this.detController = detController;
-            storeDetController();
-        }
     }
 
     @Override
@@ -154,29 +138,35 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         rvProjectInfo = findViewById(R.id.rv_project_info);
         contractId.setOnClickListener(this);
         selectLocation.setOnClickListener(this);
-
         rvProjectInfo.setLayoutManager(new LinearLayoutManager(mContext));
         slProjectInfo.setColorSchemeColors(Color.rgb(47, 223, 189));
         slProjectInfo.setRefreshing(true);
-        mProjectInfoAdapter = new CheckOutAdapter();
+        mProjectInfoAdapter = new CheckOutAdapter2();
         mProjectInfoAdapter.setOnLoadMoreListener(() -> new Handler().post(() -> loadMore()));
-
         rvProjectInfo.setAdapter(mProjectInfoAdapter);
-        rvProjectInfo.addOnItemTouchListener(new OnItemClickListener() {
-            @Override
-            public void onSimpleItemClick(final BaseQuickAdapter adapter, final View view, final int position) {
-//                ToastUtils.show(mContext, "position:" + position);
-                // 获取itemView的位置
-
-                Intent intent = new Intent(mContext, CheckoutDetailActivity.class);
-                ChkControllerEntity chkControllerEntity = mProjectInfoAdapter.getData().get(position);
-                XLog.d("projectInfoEntity:"+chkControllerEntity);
-//                showToast("proid:" + projectInfoEntity.getId());
-                intent.putExtra("chkId", chkControllerEntity.getId());
-                startActivity(intent);
-            }
-        });
+        mProjectInfoAdapter.setOnItemClickListener(this);
         slProjectInfo.setOnRefreshListener(() -> refresh());
+    }
+
+    /**
+     * 条目的点击事件
+     */
+    @Override
+    public void onItemCLick(ProjectInfoEntity projectInfoEntity, int position) {
+        Intent intent = new Intent(mContext, CheckoutDetailActivity2.class);
+        XLog.d("projectInfoEntity:" + projectInfoEntity);
+        intent.putExtra("chkId", projectInfoEntity.getId());
+        intent.putExtra("longitude",getStringInfo("Longitude"));
+        intent.putExtra("latitude",getStringInfo("Latitude"));
+        startActivity(intent);
+    }
+
+    /**
+     * 校验的点击事件
+     */
+    @Override
+    public void onCheckOutClick(ProjectInfoEntity projectInfoEntity, int position) {
+        getVerifyResult(projectInfoEntity);
     }
 
     /**
@@ -365,46 +355,47 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         dialog.show();
     }
 
-
+    /**
+     * 下拉刷下
+     */
     private void refresh() {
-        showToast("数据更新！");
         mNextRequestPage = 1;
         mProjectInfoAdapter.setEnableLoadMore(false);//这里的作用是防止下拉刷新的时候还可以上拉加载
-        List<ChkControllerEntity> datas = DBManager.getInstance().getChkControllerEntityDao().queryBuilder()
-                .where(ChkControllerEntityDao.Properties.IsOnline.eq(1))
-                .orderDesc(ChkControllerEntityDao.Properties.Id)
+        List<ProjectInfoEntity> datas = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder()
+                .orderDesc(ProjectInfoEntityDao.Properties.Id)
                 .limit(PAGE_SIZE)
                 .build()
                 .list();
-
+        Log.v(TAG,"数据更新! " + datas.size());
         setChkData(true, datas);
         mProjectInfoAdapter.setEnableLoadMore(true);
-//        mAdapter.setLoadMoreView(R.layout.item_load_more);
         slProjectInfo.setRefreshing(false);
     }
 
-
+    /**
+     * 上拉加载
+     */
     private void loadMore() {
-//        Log.v(TAG,"加载更多! ");
         int offset = (mNextRequestPage - 1) * PAGE_SIZE;
         int limit = offset + PAGE_SIZE;
-        List<ChkControllerEntity> datas = DBManager.getInstance().getChkControllerEntityDao().queryBuilder()
-                .where(ChkControllerEntityDao.Properties.IsOnline.eq(1))
-                .orderDesc(ChkControllerEntityDao.Properties.Id)
+        List<ProjectInfoEntity> datas = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder()
+                .orderDesc(ProjectInfoEntityDao.Properties.Id)
                 .offset(offset)
                 .limit(limit)
                 .build()
                 .list();
         boolean isRefresh = mNextRequestPage == 1;
+        Log.v(TAG,"加载更多! " + datas.size());
         setChkData(isRefresh, datas);
     }
 
-
+    /**
+     * 设置数据并刷新页面
+     */
     private void setChkData(boolean isRefresh, List datas) {
         mNextRequestPage++;
         final int size = datas == null ? 0 : datas.size();
 
-//        XLog.v("iscomputing:", prv.isComputingLayout());
         if (rvProjectInfo.isComputingLayout())
             return;
         if (isRefresh) {
@@ -420,14 +411,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         } else {
             mProjectInfoAdapter.loadMoreComplete();
         }
-//        for (ProjectInfoEntity datum : mProjectInfoAdapter.getData()) {
-//            if (datum.getId() == curProId) {
-//                datum.setSelect(true);
-//                mProjectInfoAdapter.notifyDataSetChanged();
-//            }
-//        }
     }
-
 
     /**
      * 在线验证
@@ -449,8 +433,6 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
 
     /**
      * 获取TOKEN
-     *
-     * @return
      */
     private String getToken() {
         StringBuilder sb = new StringBuilder();
@@ -462,17 +444,19 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         return token;
     }
 
-    private void getVerifyResult() {
+    private void getVerifyResult(ProjectInfoEntity projectInfoEntity) {
         isValid = false;
-//        detController.setLongitude(105.6493);
-//        detController.setLatitude(26.4922);
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
-        onlineCheckDto.setDetControllerWithoutDet(detController);
-        onlineCheckDto.setDets(detController.getDetList());
+        onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
+        onlineCheckDto.setHtid(projectInfoEntity.getContractCode());
+        onlineCheckDto.setJd(getStringInfo("Longitude"));
+        onlineCheckDto.setWd(getStringInfo("Latitude"));
+        onlineCheckDto.setXmbh(projectInfoEntity.getProCode());
+        onlineCheckDto.setSbbh("61000255");//无数据，暂时写死
+        onlineCheckDto.setUid("61000001028324");//无数据，暂时写死
         String rptJson = JSON.toJSONString(onlineCheckDto, SerializerFeature.WriteMapNullValue);
         Log.e(TAG, "rptJson: " + rptJson);
         getToken();
-        // jiangsheng
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
             showToast("数据编码出错：" + result.getMessage());
@@ -682,117 +666,9 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         return proId;
     }
 
-    private void storeDetController() {
-
-        ChkControllerEntity chkControllerEntity = new ChkControllerEntity();
-        Log.i("TAG","storeDetController start");
-
-//        List<ChkControllerEntity> oldList = DBManager.getInstance().getChkControllerEntityDao().queryBuilder()
-//                .where(ChkControllerEntityDao.Properties.Token.eq(detController.getToken())).list();
-//        if (oldList != null && oldList.size() > 0) {
-//            return;
-//        }
-//        if (oldControllerEntity != null) {
-////            showStatusDialog("此规则检查已完成传输！");
-//            return;
-//        }
-        Log.i("TAG","storeDetController" + detController.toString());
-        try {
-            detController.setCompany("");
-            BeanPropertiesUtil.copyProperties(detController, chkControllerEntity);
-            chkControllerEntity.setProjectInfoId(proId);
-            chkControllerEntity.setContractId(contractCode);
-            chkControllerEntity.setProjectId(proCode);
-            chkControllerEntity.setCompany(Globals.user.getCompanyCode());
-            chkControllerEntity.setIsOnline(1);
-            chkControllerEntity.setSn("61000255");
-            long chkId = DBManager.getInstance().getChkControllerEntityDao().insert(chkControllerEntity);
-            for (Detonator detonator : detController.getDetList()) {
-//                List<Lg> lgs = projectFile.getProInfo().getLgs().getLg();
-                ChkDetonatorEntity chkDet = new ChkDetonatorEntity();
-                chkDet.setSource(SommerUtils.bytesToHexString(detonator.getSource()));
-                chkDet.setChipID(detonator.getChipID());
-                chkDet.setDetIDs(SommerUtils.bytesToHexString(detonator.getIds()));
-
-                chkDet.setStatus(detonator.getStatus());
-                chkDet.setType(detonator.getType());
-                chkDet.setNum(detonator.getNum());
-                chkDet.setValidTime(detonator.getTime());
-                chkDet.setCode(detonator.getDetCode());
-                chkDet.setWorkCode(SommerUtils.bytesToHexString(detonator.getAcCode()));
-                chkDet.setUid(detonator.getUid());
-                chkDet.setRelay(detonator.getRelay());
-                chkDet.setChkId(chkId);
-                DBManager.getInstance().getChkDetonatorEntityDao().insert(chkDet);
-            }
-//            Log.i("copy: ", chkControllerEntity);
-        } catch (Exception e) {
-            Log.e("TAG",e.toString());
-            e.printStackTrace();
-        }
-    }
-
-
-    String getReportDto() {
-        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
-        Log.d("TAG","getReportDto:"+projectInfo.toString());
-
-        try {
-            BeanPropertiesUtil.copyProperties(projectInfo, projectInfoDto);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-//        Log.d("from:", projectInfo);
-        projectInfoDto.setCreateTime(new Date());
-        projectInfoDto.addDetControllers(detController);
-
-//        Log.v("to: ", projectInfoDto);
-        ValueFilter filter = (Object object, String name, Object v) -> {
-            if (v == null) return "";
-            return v;
-        };
-        return JSON.toJSONString(projectInfoDto, filter);
-    }
-
-    private void sendCheckoutReport() {
-
-        String rptJson = getReportDto();
-        if(rptJson==null){
-            return;
-        }
-        String fdName = "report_info" + DateUtil.getDateDoc(new Date()) + ".json";
-        FileUtils.saveFileToSDcard("detonator/json", fdName, rptJson);
-//        showToast("保存完成！");
-        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
-
-        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG,"IOException:" + e.getMessage());
-//                closeDialog();
-//                showStatusDialog("服务器报错");
-
-//                sendCmdMessage(MSG_RPT_DANLING_ERR);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-//                closeDialog();
-                String respStr = response.body().string();
-                if (!StringUtils.isEmpty(respStr)) {
-                    Log.e(TAG,"respStr is  " + respStr);
-//                    showToast("上报返回值为空");
-                }
-            }
-        });
-    }
-
-
-
+    /**
+     * 导航栏菜单按钮
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (Globals.isTest) {
@@ -803,6 +679,9 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         return true;
     }
 
+    /**
+     * 菜单按钮选中事件
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -810,7 +689,59 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
             Intent intent = new Intent(mContext, OnlineEditActivity.class);
             intent.putExtra("Controller", detController);
             startActivityForResult(intent, REQUEST_PRO_EDIT);
+        }else if (id == R.id.send_checkout_report){
+            //发送检测报告
+//            if (projectInfo == null){ //假数据projectInfo
+//                projectInfo = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().limit(1).unique();
+//            }
+//            sendCheckoutReport();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 雷管传输结束后调用
+     */
+    private void sendCheckoutReport() {
+
+        String rptJson = getReportDto();
+        if(rptJson==null){
+            return;
+        }
+        String fdName = "report_info" + DateUtil.getDateDoc(new Date()) + ".json";
+        FileUtils.saveFileToSDcard("detonator/json", fdName, rptJson);
+        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
+        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG,"IOException:" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String respStr = response.body().string();
+                if (!StringUtils.isEmpty(respStr)) {
+                    Log.e(TAG,"respStr is  " + respStr);
+                }
+            }
+        });
+    }
+
+    private String getReportDto() {
+        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
+        Log.d(TAG,"getReportDto:"+projectInfo.toString());
+        try {
+            BeanPropertiesUtil.copyProperties(projectInfo, projectInfoDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        projectInfoDto.setCreateTime(new Date());
+        projectInfoDto.addDetControllers(detController);
+        ValueFilter filter = (Object object, String name, Object v) -> {
+            if (v == null) return "";
+            return v;
+        };
+        return JSON.toJSONString(projectInfoDto, filter);
     }
 }
