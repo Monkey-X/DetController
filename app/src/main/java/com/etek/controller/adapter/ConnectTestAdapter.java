@@ -21,7 +21,7 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
     public void onBindViewHolder(@NonNull ProjectDetailViewHolder holder, int i) {
         DetonatorEntity detonatorEntity = datas.get(i);
         holder.holePosition.setText(detonatorEntity.getTestStatus()+" ");// 表示测试状态
-        holder.uidNum.setText(detonatorEntity.getUid());
+        holder.uidNum.setText(detonatorEntity.getCode());
         holder.number.setText(String.valueOf(i + 1));
         holder.delayTime.setText(detonatorEntity.getHolePosition()); // 标示空位
         holder.rootview.setOnClickListener(new View.OnClickListener() {

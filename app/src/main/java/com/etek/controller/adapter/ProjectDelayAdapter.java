@@ -37,7 +37,7 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
     public void onBindViewHolder(@NonNull ProjectDelayViewHolder holder, int i) {
         DetonatorEntity detonatorEntity = datas.get(i);
         holder.holePosition.setText(detonatorEntity.getHolePosition());
-        holder.uidNum.setText(detonatorEntity.getUid());
+        holder.uidNum.setText(detonatorEntity.getCode());
         holder.number.setText(String.valueOf(i + 1));
         holder.delayTime.setText(detonatorEntity.getRelay());
         holder.itemStatus.setText(detonatorEntity.getDownLoadStatus()+" ");
