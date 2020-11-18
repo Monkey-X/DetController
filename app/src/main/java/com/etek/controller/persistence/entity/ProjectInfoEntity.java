@@ -116,6 +116,14 @@ public class ProjectInfoEntity{
         this.status = status;
     }
 
+    public String getProjectImplementStates() {
+        return projectImplementStates;
+    }
+
+    public void setProjectImplementStates(String projectImplementStates) {
+        this.projectImplementStates = projectImplementStates;
+    }
+
     /**
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
@@ -300,7 +308,7 @@ public class ProjectInfoEntity{
 
     private Boolean isOnline;
 
-
+    private String projectImplementStates; // 工程实施的状态值
 
     @Transient
     private boolean isSelect;
@@ -325,10 +333,11 @@ public class ProjectInfoEntity{
     @Generated(hash = 1931631268)
     private transient ProjectInfoEntityDao myDao;
 
-    @Generated(hash = 891869920)
+    @Generated(hash = 208218570)
     public ProjectInfoEntity(Long id, String proCode, String proName, String companyCode,
             String companyName, String contractCode, String contractName, String fileSn,
-            Date createTime, Date applyDate, int status, Boolean isOnline) {
+            Date createTime, Date applyDate, int status, Boolean isOnline,
+            String projectImplementStates) {
         this.id = id;
         this.proCode = proCode;
         this.proName = proName;
@@ -341,6 +350,7 @@ public class ProjectInfoEntity{
         this.applyDate = applyDate;
         this.status = status;
         this.isOnline = isOnline;
+        this.projectImplementStates = projectImplementStates;
     }
 
     @Generated(hash = 479712204)
