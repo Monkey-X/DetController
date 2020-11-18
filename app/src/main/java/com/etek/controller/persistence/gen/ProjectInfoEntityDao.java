@@ -36,6 +36,7 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         public final static Property ApplyDate = new Property(9, java.util.Date.class, "applyDate", false, "APPLY_DATE");
         public final static Property Status = new Property(10, int.class, "status", false, "STATUS");
         public final static Property IsOnline = new Property(11, Boolean.class, "isOnline", false, "IS_ONLINE");
+        public final static Property ProjectImplementStates = new Property(12, String.class, "projectImplementStates", false, "PROJECT_IMPLEMENT_STATES");
     }
 
     private DaoSession daoSession;
@@ -65,7 +66,8 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
                 "\"CREATE_TIME\" INTEGER," + // 8: createTime
                 "\"APPLY_DATE\" INTEGER," + // 9: applyDate
                 "\"STATUS\" INTEGER NOT NULL ," + // 10: status
-                "\"IS_ONLINE\" INTEGER);"); // 11: isOnline
+                "\"IS_ONLINE\" INTEGER," + // 11: isOnline
+                "\"PROJECT_IMPLEMENT_STATES\" TEXT);"); // 12: projectImplementStates
     }
 
     /** Drops the underlying database table. */
@@ -133,6 +135,11 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         if (isOnline != null) {
             stmt.bindLong(12, isOnline ? 1L: 0L);
         }
+ 
+        String projectImplementStates = entity.getProjectImplementStates();
+        if (projectImplementStates != null) {
+            stmt.bindString(13, projectImplementStates);
+        }
     }
 
     @Override
@@ -194,6 +201,11 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         if (isOnline != null) {
             stmt.bindLong(12, isOnline ? 1L: 0L);
         }
+ 
+        String projectImplementStates = entity.getProjectImplementStates();
+        if (projectImplementStates != null) {
+            stmt.bindString(13, projectImplementStates);
+        }
     }
 
     @Override
@@ -221,7 +233,8 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
             cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)), // createTime
             cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // applyDate
             cursor.getInt(offset + 10), // status
-            cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0 // isOnline
+            cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0, // isOnline
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // projectImplementStates
         );
         return entity;
     }
@@ -240,6 +253,7 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         entity.setApplyDate(cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)));
         entity.setStatus(cursor.getInt(offset + 10));
         entity.setIsOnline(cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0);
+        entity.setProjectImplementStates(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
      }
     
     @Override

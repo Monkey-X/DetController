@@ -243,7 +243,7 @@ public class SplashActivity extends BaseActivity {
 
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+            Intent intent = new Intent(SplashActivity.this, HomeActivity2.class);
             startActivity(intent);
             finish();
         }, SPLASH_LENGTH);

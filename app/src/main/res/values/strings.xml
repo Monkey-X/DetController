@@ -245,4 +245,17 @@
     <string name="no_filtrate_project">暂无可筛选的项目</string>
     <string name="title_function_test">功能检测</string>
     <string name="mainBoardInfo_sp">mainBoardInfo</string>
+    <!--2020.11.18-->
+    <string name="home">首页</string>
+    <string name="home_project_manage">方案管理</string>
+    <string name="home_project_implement">工程实施</string>
+    <string name="home_assist_function">辅助功能</string>
+    <string name="home_local_setting">本机设置</string>
+    <string name="immediately_look">立即查看</string>
+    <string name="project_list">项目列表</string>
+    <string name="project_connect_test">1. 连接检测</string>
+    <string name="project_delay_download">2. 延时下载</string>
+    <string name="project_chaeck_authorization">3. 检查授权</string>
+    <string name="project_power_bomb">4. 充电起爆</string>
+    <string name="project_date_report">5. 数据上传</string>
 </resources>
