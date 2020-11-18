@@ -158,7 +158,7 @@ public class DetCmd {
 			e.printStackTrace();
 		}
 		boolean c = m_commobj.ctlPowerSupply(5);
-		if(b)
+		if(b&&c)
 			return 0;
 
 		return -1;

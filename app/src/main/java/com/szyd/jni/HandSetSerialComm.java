@@ -12,6 +12,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 public class HandSetSerialComm extends SerialCommBase {
@@ -114,6 +115,7 @@ public class HandSetSerialComm extends SerialCommBase {
 		String str0="";
 
 		int ret = WaitTimeout();
+		System.out.println("RecvBlock -->WaitTimeout:"+ret);
 		if(0!=ret) {
 			m_nErrorCode = DetErrorCode.ERR_COMM_RECV_TIMEOUT;
 			return null;
@@ -126,6 +128,7 @@ public class HandSetSerialComm extends SerialCommBase {
 		try {
 			is = new FileInputStream(m_fd);
 			int bufflenth = is.available();//获得数据长度
+			System.out.println("RecvBlock -->bufflenth:"+bufflenth);
 
 			//	不能全部都收回来
 			if(bufflenth>nLen)
@@ -178,24 +181,32 @@ public class HandSetSerialComm extends SerialCommBase {
 		int ret;
 
 		if(null==m_fd) {
+			System.out.println("function SendRec,m_fd 为空");
 			m_nErrorCode = DetErrorCode.ERR_COMM_NOT_OPEN;
 			return null;
 		}
 
+		System.out.println("function SendRec,FlushComm start...");
 		//	清除缓冲
 		FlushComm();
+		System.out.println("function SendRec,FlushComm end...");
 
 		//	发送
 		ret = SendBlock(szcmd);
-		if(0!=ret) return null;
+		System.out.println("function SendRec,SendBlock end...");
+		if(0!=ret) {
+			System.out.println("function SendRec,SendBlock 返回为空");
+			return null;
+		}
 
+		System.out.println("function SendRec,RecvBlock start...");
 		//	接收
 		return RecvBlock(nLen);
 	}
 
 
 	/***
-	 * 情书串口的输入缓存
+	 * 清除串口的输入缓存
 	 */
 	public void FlushComm() {
 		if(null==m_fd) return;
@@ -206,9 +217,12 @@ public class HandSetSerialComm extends SerialCommBase {
 		try {
 			is = new FileInputStream(m_fd);
 			int bufflenth = is.available();//获得数据长度
+			System.out.println("function FlushComm,bufflenth:"+ bufflenth);
+
 			while (bufflenth != 0) {
 				bytes = new byte[bufflenth];//初始化byte数组
 				is.read(bytes);
+				System.out.println("function FlushComm,bytes:"+ Arrays.toString(bytes));
 
 				bufflenth = is.available();
 			}
@@ -242,12 +256,14 @@ public class HandSetSerialComm extends SerialCommBase {
 		try {
 			is = new FileInputStream(m_fd);
 			int bufflenth = is.available();//获得数据长度
+			System.out.println("WaitTimeout -->bufflenth:"+bufflenth);
 			while(true){
 				if(bufflenth>0) break;
 				Thread.sleep(10);
 
 				//	超时判断
 				long t1 = System.currentTimeMillis();
+
 				if(t1-t0>m_nTimeout) {
 					ret = -1;
 					break;

@@ -67,11 +67,18 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         showProDialog("升级中...");
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
+                DetApp.getInstance().MainBoardPowerOff();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+//                DetApp.getInstance().MainBoardPowerOn();
 
-                int result = DetApp.getInstance().DownloadProc("/sdcard/", new DetCallback() {
+                int result = DetApp.getInstance().DownloadProc("/test/CoreBrd1768_Std_v1.0.13.bin", new DetCallback() {
                     @Override
                     public void DisplayText(String strText) {
                         Log.d(TAG, "DisplayText: " + strText);
@@ -104,9 +111,9 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
             public void run() {
                 missProDialog();
                 if (result == 0) {
-                    ToastUtils.show(MainBoardUpdateActivity.this,"升级完成！");
-                }else{
-                    ToastUtils.show(MainBoardUpdateActivity.this,"升级失败！");
+                    ToastUtils.show(MainBoardUpdateActivity.this, "升级完成！");
+                } else {
+                    ToastUtils.show(MainBoardUpdateActivity.this, "升级失败！");
                 }
             }
         });

@@ -67,6 +67,11 @@ public class HomeActivity extends BaseActivity implements ActivityCompat.OnReque
 
         initView();
 
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         mainBoardInit();
     }
 

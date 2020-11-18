@@ -8,6 +8,7 @@
 
 package com.etek.controller.hardware.command;
 
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -494,6 +495,7 @@ public class DetApp {
 	 * @return
 	 */
 	public int DownloadProc(String strBINFileName, DetCallback cbobj) {
+        Log.d(TAG, "DownloadProc: ");
 		int ret;
 		int nFizeSize;
 		BufferedInputStream in=null;
@@ -505,8 +507,8 @@ public class DetApp {
 		final byte[] CMD_SYN_RESPONSE = {0x42,0x65,0x6c,0x6c,0x65,0x20};
 				
 		DetCmd cmd = new DetCmd(m_commobj);
-				
-		File file = new File(strBINFileName);
+
+        File file = new File(Environment.getExternalStorageDirectory().getPath()+strBINFileName);
         if (!file.exists() || !file.isFile()) {
         	if(null!=cbobj)
         		cbobj.DisplayText("文件不存在");
@@ -516,6 +518,8 @@ public class DetApp {
 
 		//	将BL引脚拉低
 		ret = cmd.BoardSetBL(false);
+		System.out.println("BL电平拉低,ret:"+ret);
+
 		if(0!=ret) {
         	if(null!=cbobj)
         		cbobj.DisplayText("BL电平拉低失败!");
@@ -524,6 +528,8 @@ public class DetApp {
 
 		//	核心板5V供电
 		ret = cmd.BoardPowerOn();
+		System.out.println("核心板5V供电,ret:"+ret);
+
 		if(0!=ret) {
         	if(null!=cbobj)
         		cbobj.DisplayText("核心板5V供电失败!");
@@ -550,8 +556,11 @@ public class DetApp {
 			e1.printStackTrace();
 		}
 
+		m_commobj.FlushComm();
 		//	将BL脚置高（此时核心板进入BL状态）
 		ret = cmd.BoardSetBL(true);
+		System.out.println("BL脚置高,ret:"+ret);
+
 		if(0!=ret) {
         	if(null!=cbobj)
         		cbobj.DisplayText("BL脚置高失败!");
@@ -560,8 +569,10 @@ public class DetApp {
 
 		//	监控UART口,收到6字节同步指令？
 		//	47 61 73 74 6F 6E
-		m_commobj.SetTimeout(10000);		
+		m_commobj.SetTimeout(10000);
 		ret = m_commobj.WaitTimeout();
+		System.out.println("监控UART口,ret:"+ret);
+
 		if(0!=ret) {
 	    	if(null!=cbobj)
 	    		cbobj.DisplayText("未收到同步指令");
@@ -575,6 +586,7 @@ public class DetApp {
 	    	return -1;
 		}
 		String str0 = DataConverter.bytes2HexString(szData);
+		System.out.println("收到的指令："+str0);
 		if(!"476173746f6e".equals(str0)) {
 	    	if(null!=cbobj)
 	    		cbobj.DisplayText("未收到同步指令 476173746f6e");

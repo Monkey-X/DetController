@@ -12,6 +12,8 @@ import android.util.Log;
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.util.DataConverter;
 
+import java.util.Arrays;
+
 public class DetProtocol {
 	private SerialCommBase m_commobj;
 	private final boolean DEBUG_PRINT = true;
@@ -127,6 +129,9 @@ public class DetProtocol {
 		}
 
 		long t0 = System.currentTimeMillis();
+
+		System.out.println("m_commobj.SendRecv："+ Arrays.toString(szcmd)+",len:"+(nLen+3));
+
 		byte[] data = m_commobj.SendRecv(szcmd, nLen+3);
 		long t1 = System.currentTimeMillis();
 
