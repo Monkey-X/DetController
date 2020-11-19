@@ -106,7 +106,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
 
         String status = projectInfoEntity.getProjectImplementStates();
         if (status == null){//如果为空，给个默认值（默认第一个是可点击的）
-            status = AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT;
+            status = AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST;
         }
 
         switch (status) {
