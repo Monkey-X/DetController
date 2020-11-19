@@ -3,31 +3,28 @@ package com.etek.controller.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import android.widget.RelativeLayout;
 import com.etek.controller.R;
-import com.etek.controller.adapter.ProjectImplementAdapter;
 import com.etek.controller.common.AppIntentString;
-import com.etek.controller.entity.ProjectImplementItem;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * 工程实施页
  */
-public class ProjectImplementActivity extends BaseActivity {
+public class ProjectImplementActivity extends BaseActivity implements View.OnClickListener {
 
-    private RecyclerView recycleView;
-    private List<ProjectImplementItem> items = new ArrayList<>();
-    private ProjectImplementAdapter projectImplementAdapter;
     private ProjectInfoEntity projectInfoEntity;
     private long proId;
+    private RelativeLayout connectTest;
+    private RelativeLayout delayDownload;
+    private RelativeLayout checkAuthorization;
+    private RelativeLayout powerBomb;
+    private RelativeLayout dataReport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +41,31 @@ public class ProjectImplementActivity extends BaseActivity {
         refreshData();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.project_connect_test://连接检测
+                startActivity(ConnectTestActivity.class);
+                break;
+
+            case R.id.project_delay_download://延时下载
+                startActivity(DelayDownloadActivity.class);
+                break;
+
+            case R.id.project_check_authorization://检查授权(跳转原来的在线授权页面)
+                startActivity(OnlineAuthorizeActivity2.class);
+                break;
+
+            case R.id.project_power_bomb://充电起爆
+                startActivity(PowerBombActivity.class);
+                break;
+
+            case R.id.project_data_report://数据上传
+                startActivity(ReportActivity2.class);
+                break;
+        }
+    }
+
     /**
      * 获取项目id
      */
@@ -55,36 +77,16 @@ public class ProjectImplementActivity extends BaseActivity {
      * 初始化View
      */
     private void initView() {
-        recycleView = findViewById(R.id.project_implement_recycleView);
-        recycleView.setLayoutManager(new LinearLayoutManager(this));
-        projectImplementAdapter = new ProjectImplementAdapter(R.layout.activity_project_implement_item, items);
-        recycleView.setAdapter(projectImplementAdapter);
-        projectImplementAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (position) {
-                    case 0://连接检测
-                        startActivity(ConnectTestActivity.class);
-                        break;
-
-                    case 1://延时下载
-                        startActivity(DelayDownloadActivity.class);
-                        break;
-
-                    case 2://检查授权(跳转原来的在线授权页面)
-                        startActivity(OnlineAuthorizeActivity2.class);
-                        break;
-
-                    case 3://充电起爆
-                        startActivity(PowerBombActivity.class);
-                        break;
-
-                    case 4://数据上传
-                        startActivity(ReportActivity2.class);
-                        break;
-                }
-            }
-        });
+        connectTest = findViewById(R.id.project_connect_test);
+        delayDownload = findViewById(R.id.project_delay_download);
+        checkAuthorization = findViewById(R.id.project_check_authorization);
+        powerBomb = findViewById(R.id.project_power_bomb);
+        dataReport = findViewById(R.id.project_data_report);
+        connectTest.setOnClickListener(this);
+        delayDownload.setOnClickListener(this);
+        checkAuthorization.setOnClickListener(this);
+        powerBomb.setOnClickListener(this);
+        dataReport.setOnClickListener(this);
     }
 
     /**
@@ -95,20 +97,68 @@ public class ProjectImplementActivity extends BaseActivity {
     }
 
     /**
-     * 刷新数据
+     * 刷新页面
      */
     private void refreshData() {
-        items.clear();
         if (proId > 0) {
             projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
         }
-        if (projectInfoEntity != null){
-            items.add(new ProjectImplementItem(R.drawable.project_connect_test, R.drawable.un_project_connect_test, this.getString(R.string.project_connect_test), projectInfoEntity.getProjectImplementStates()));
-            items.add(new ProjectImplementItem(R.drawable.project_delay_download, R.drawable.un_project_delay_download, this.getString(R.string.project_delay_download), projectInfoEntity.getProjectImplementStates()));
-            items.add(new ProjectImplementItem(R.drawable.project_chaeck_authorization, R.drawable.un_project_chaeck_authorization, this.getString(R.string.project_chaeck_authorization), projectInfoEntity.getProjectImplementStates()));
-            items.add(new ProjectImplementItem(R.drawable.project_power_bomb, R.drawable.un_project_power_bomb, this.getString(R.string.project_power_bomb), projectInfoEntity.getProjectImplementStates()));
-            items.add(new ProjectImplementItem(R.drawable.project_data_report, R.drawable.un_project_data_report, this.getString(R.string.project_date_report), projectInfoEntity.getProjectImplementStates()));
+
+        String status = projectInfoEntity.getProjectImplementStates();
+        if (status == null){//如果为空，给个默认值（默认第一个是可点击的）
+            status = AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT;
         }
-        projectImplementAdapter.notifyDataSetChanged();
+
+        switch (status) {
+            case AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST://前一个有颜色，其余四个置灰(不可点击)
+                connectTest.setBackgroundResource(R.drawable.project_connect_test);
+                delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
+                checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
+                powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
+                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+                delayDownload.setClickable(false);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
+                dataReport.setClickable(false);
+                break;
+
+            case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD://前二个有颜色，其余三个置灰(不可点击)
+                connectTest.setBackgroundResource(R.drawable.project_connect_test);
+                delayDownload.setBackgroundResource(R.drawable.project_delay_download);
+                checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
+                powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
+                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
+                dataReport.setClickable(false);
+                break;
+
+            case AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE://前三个有颜色，其余二个置灰(不可点击)
+                connectTest.setBackgroundResource(R.drawable.project_connect_test);
+                delayDownload.setBackgroundResource(R.drawable.project_delay_download);
+                checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
+                powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
+                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+                powerBomb.setClickable(false);
+                dataReport.setClickable(false);
+                break;
+
+            case AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB://前四个有颜色，其余一个置灰(不可点击)
+                connectTest.setBackgroundResource(R.drawable.project_connect_test);
+                delayDownload.setBackgroundResource(R.drawable.project_delay_download);
+                checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
+                powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
+                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+                dataReport.setClickable(false);
+                break;
+
+            case AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT://前五个有颜色，其余一个置灰(不可点击)
+                connectTest.setBackgroundResource(R.drawable.project_connect_test);
+                delayDownload.setBackgroundResource(R.drawable.project_delay_download);
+                checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
+                powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
+                dataReport.setBackgroundResource(R.drawable.project_data_report);
+                break;
+        }
     }
 }

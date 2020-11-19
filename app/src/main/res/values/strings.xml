@@ -255,7 +255,7 @@
     <string name="project_list">项目列表</string>
     <string name="project_connect_test">1. 连接检测</string>
     <string name="project_delay_download">2. 延时下载</string>
-    <string name="project_chaeck_authorization">3. 检查授权</string>
+    <string name="project_check_authorization">3. 检查授权</string>
     <string name="project_power_bomb">4. 充电起爆</string>
-    <string name="project_date_report">5. 数据上传</string>
+    <string name="project_data_report">5. 数据上传</string>
 </resources>

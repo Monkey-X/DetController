@@ -3,35 +3,30 @@ package com.etek.controller.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import com.alibaba.fastjson.JSON;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
-import com.etek.controller.adapter.NewHomeAdapter;
 import com.etek.controller.entity.MainBoardInfoBean;
-import com.etek.controller.entity.NewHomeItem;
 import com.etek.controller.fragment.MainBoardDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 首页
  */
-public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
 
 
     private String TAG = "HomeActivity";
-    private RecyclerView recycleView;
-    private List<NewHomeItem> items = new ArrayList<>();
     private long lastBackKeyDownTick = 0;
     public static final long MAX_DOUBLE_BACK_DURATION = 1500;
-    private NewHomeAdapter newHomeAdapter;
+    private RelativeLayout projectManage;
+    private RelativeLayout projectImplement;
+    private RelativeLayout assistFunction;
+    private RelativeLayout localSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +38,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         DetApp.getInstance().MainBoardPowerOn();
 
         initView();
-
-        initData();
 
         mainBoardInit();
     }
@@ -77,42 +70,37 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         mainBoardDialog.show(getSupportFragmentManager(), "mainBoardDialog");
     }
 
-    private void initData() {
-        items.add(new NewHomeItem(R.drawable.home_project_manage,this.getString(R.string.home_project_manage),this.getString(R.string.immediately_look)));
-        items.add(new NewHomeItem(R.drawable.home_project_implement,this.getString(R.string.home_project_implement),this.getString(R.string.immediately_look)));
-        items.add(new NewHomeItem(R.drawable.home_assist_function,this.getString(R.string.home_assist_function),this.getString(R.string.immediately_look)));
-        items.add(new NewHomeItem(R.drawable.home_local_setting,this.getString(R.string.home_local_setting),this.getString(R.string.immediately_look)));
-        newHomeAdapter.notifyDataSetChanged();
+    private void initView() {
+        projectManage = findViewById(R.id.home_project_manage);
+        projectImplement = findViewById(R.id.home_project_implement);
+        assistFunction = findViewById(R.id.home_assist_function);
+        localSetting = findViewById(R.id.home_local_setting);
+        projectManage.setOnClickListener(this);
+        projectImplement.setOnClickListener(this);
+        assistFunction.setOnClickListener(this);
+        localSetting.setOnClickListener(this);
     }
 
-    private void initView() {
-        recycleView = findViewById(R.id.home_recycleView);
-        recycleView.setLayoutManager(new LinearLayoutManager(this));
-        newHomeAdapter = new NewHomeAdapter(R.layout.activity_new_home_item, items);
-        recycleView.setAdapter(newHomeAdapter);
-        newHomeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (position) {
-                    case 0://方案管理
-                        startActivity(NetWorkActivity.class);
-                        break;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.home_project_manage://方案管理
+                startActivity(NetWorkActivity.class);
+                break;
 
-                    case 1://工程实施
-                        startActivity(ProjectListActivity.class);
-                        break;
+            case R.id.home_project_implement://工程实施
+                startActivity(ProjectListActivity.class);
+                break;
 
-                    case 2://辅助功能
-                        startActivity(AssistActivity.class);
-                        break;
+            case R.id.home_assist_function://辅助功能
+                startActivity(AssistActivity.class);
+                break;
 
-                    case 3://本机设置
-//                        startActivity(UserInfoActivity.class);
-                        startActivity(SettingsActivity.class);
-                        break;
-                }
-            }
-        });
+            case R.id.home_local_setting://本机设置
+//                startActivity(UserInfoActivity.class);
+                startActivity(SettingsActivity.class);
+                break;
+        }
     }
 
     private void startActivity(Class clz) {
@@ -159,4 +147,5 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     protected void onTitleChanged(CharSequence title, int color) {
         super.onTitleChanged(this.getString(R.string.home), color);
     }
+
 }
