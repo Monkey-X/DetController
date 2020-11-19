@@ -3,6 +3,7 @@ package com.etek.controller.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -12,7 +13,11 @@ import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.fragment.MainBoardDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
+import com.etek.controller.scan.ScannerInterface;
 import com.etek.sommerlibrary.activity.BaseActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 首页
@@ -32,14 +37,42 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_home2);
-        int initialize = DetApp.getInstance().Initialize();
-        Log.d(TAG, "onCreate: initialize= " + initialize);
 
-        DetApp.getInstance().MainBoardPowerOn();
 
         initView();
 
-        mainBoardInit();
+        initMainBoard();
+
+        unlockScanKey();
+
+        getUserInfo();
+    }
+
+    private void getUserInfo() {
+        String userStr = getPreInfo("userInfo");
+        if (TextUtils.isEmpty(userStr)) {
+            startActivity(UserInfoActivity.class);
+        }
+    }
+
+    private void initMainBoard() {
+        new Thread() {
+            @Override
+            public void run() {
+                int initialize = DetApp.getInstance().Initialize();
+                Log.d(TAG, "onCreate: initialize= " + initialize);
+                DetApp.getInstance().MainBoardPowerOn();
+                mainBoardInit();
+            }
+        }.start();
+    }
+
+    /**
+     * 解除扫描对按间的占用
+     */
+    private void unlockScanKey() {
+        ScannerInterface scannerInterface = new ScannerInterface(this);
+        scannerInterface.unlockScanKey();
     }
 
     private void mainBoardInit() {
@@ -59,7 +92,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 mainBoardInfoBean.setStrSNO(strSNO);
                 mainBoardInfoBean.setStrConfig(strConfig);
                 setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
-                showMainBoardDialog(mainBoardInfoBean);
+//                showMainBoardDialog(mainBoardInfoBean);
             }
         });
     }
@@ -98,7 +131,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
             case R.id.home_local_setting://本机设置
 //                startActivity(UserInfoActivity.class);
-                startActivity(SettingsActivity.class);
+                startActivity(PersonActivity.class);
                 break;
         }
     }

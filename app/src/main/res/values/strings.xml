@@ -258,4 +258,7 @@
     <string name="project_check_authorization">3. 检查授权</string>
     <string name="project_power_bomb">4. 充电起爆</string>
     <string name="project_data_report">5. 数据上传</string>
+    <string name="str_success">成功</string>
+    <string name="str_faile">失败</string>
+    <string name="str_miss">失联</string>
 </resources>

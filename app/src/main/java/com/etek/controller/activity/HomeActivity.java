@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -73,6 +74,9 @@ public class HomeActivity extends BaseActivity implements ActivityCompat.OnReque
             e.printStackTrace();
         }
         mainBoardInit();
+
+        String path = Environment.getExternalStorageDirectory().getPath();
+        Log.d(TAG, "onCreate: path"+path);
     }
 
     private void mainBoardInit() {

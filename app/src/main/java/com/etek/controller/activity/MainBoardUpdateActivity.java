@@ -76,7 +76,6 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-//                DetApp.getInstance().MainBoardPowerOn();
 
                 int result = DetApp.getInstance().DownloadProc("/test/CoreBrd1768_Std_v1.0.13.bin", new DetCallback() {
                     @Override

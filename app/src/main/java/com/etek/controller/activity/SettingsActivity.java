@@ -56,9 +56,6 @@ import com.elvishew.xlog.XLog;
 public class SettingsActivity extends BaseActivity implements OnToggledListener {
 
 
-    @BindView(R.id.settings_exitLayout)
-    RelativeLayout exitLayout;
-
     @BindView(R.id.danling_switch)
     LabeledSwitch danningSwitch;
 
@@ -136,20 +133,6 @@ public class SettingsActivity extends BaseActivity implements OnToggledListener 
         TextView appVersion = findViewById(R.id.set_app_version);
         appVersion.setText(getString(R.string.about_version, SommerUtils.getVersionName(this),
                 "" + SommerUtils.getVersionCode(this)));
-
-
-        exitLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityCollector.finishAll();
-            }
-        });
-
-
-//        rlUpdateApp =  findViewById(R.id.update_app);
-
-
-//        zbAddressSel = findViewById(R.id.zhongbao_select);;
 
         List<String> list = new ArrayList<String>();
 

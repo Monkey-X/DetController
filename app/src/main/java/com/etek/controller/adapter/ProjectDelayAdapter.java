@@ -40,7 +40,7 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
         holder.uidNum.setText(detonatorEntity.getCode());
         holder.number.setText(String.valueOf(i + 1));
         holder.delayTime.setText(detonatorEntity.getRelay());
-        holder.itemStatus.setText(detonatorEntity.getDownLoadStatus()+" ");
+        setDownLoadStatus(holder.itemStatus, detonatorEntity.getDownLoadStatus());
         holder.rootview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,6 +57,21 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
                 }
             }
         });
+    }
+
+
+    public void setDownLoadStatus(TextView view, int status) {
+        if (status == 0) {
+            view.setText("");
+            return;
+        }
+        if (status == 160) {
+            view.setText(R.string.str_success);
+            view.setTextColor(view.getContext().getColor(R.color.palegreen));
+        } else {
+            view.setText(R.string.str_faile);
+            view.setTextColor(view.getContext().getColor(R.color.red_normal));
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -94,6 +95,11 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void showMakeProjectDialog() {
+        String userStr = getPreInfo("userInfo");
+        if (TextUtils.isEmpty(userStr)) {
+            startActivity(new Intent(NetWorkActivity.this,UserInfoActivity.class));
+            return;
+        }
         ProjectDialog projectDialog = new ProjectDialog();
         projectDialog.setOnMakeProjectListener(this);
         projectDialog.show(getSupportFragmentManager(),"makeProDialog");

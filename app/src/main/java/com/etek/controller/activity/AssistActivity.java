@@ -47,7 +47,7 @@ public class AssistActivity extends BaseActivity {
         mDataList = new ArrayList<>();
         mDataList.add(new AssistItem(this.getString(R.string.title_act_single_check), R.mipmap.jiance));
         mDataList.add(new AssistItem(this.getString(R.string.title_act_line_check), R.mipmap.zongxian));
-        mDataList.add(new AssistItem(this.getString(R.string.title_main_board_update), R.mipmap.zhuban));
+//        mDataList.add(new AssistItem(this.getString(R.string.title_main_board_update), R.mipmap.zhuban));
         mDataList.add(new AssistItem(getString(R.string.title_function_test), R.mipmap.ceshi));
 
     }

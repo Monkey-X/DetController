@@ -41,6 +41,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         ProjectInfoEntity projectInfoEntity = datas.get(i);
         projectViewHolder.projectNum.setText(String.valueOf(i+1));
         projectViewHolder.projectName.setText(projectInfoEntity.getProName());
+        projectViewHolder.projectId.setText(projectInfoEntity.getProCode());
         //添加项目的状态
 
         projectViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +73,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
 
         private TextView projectNum;
         private TextView projectName;
+        private TextView projectId;
         private TextView projectStatus;
         private View rootView;
 
@@ -79,6 +81,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             super(itemView);
             projectNum = itemView.findViewById(R.id.project_num);
             projectName = itemView.findViewById(R.id.project_name);
+            projectId = itemView.findViewById(R.id.project_id);
             projectStatus = itemView.findViewById(R.id.project_status);
             rootView = itemView.findViewById(R.id.item_view);
         }

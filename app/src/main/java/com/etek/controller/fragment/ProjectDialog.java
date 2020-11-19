@@ -1,5 +1,6 @@
 package com.etek.controller.fragment;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,8 +18,10 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
 import com.etek.controller.entity.FastEditBean;
+import com.etek.controller.model.User;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -68,12 +71,25 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
         contractId = rootView.findViewById(R.id.contract_id);
         contractName = rootView.findViewById(R.id.contract_name);
 
+        getUserInfo();
 
         TextView cancel = rootView.findViewById(R.id.cancel);
         TextView makeSure = rootView.findViewById(R.id.makeSure);
         cancel.setOnClickListener(this);
         makeSure.setOnClickListener(this);
         return rootView;
+    }
+
+    private void getUserInfo() {
+        SharedPreferences detInfo = getContext().getSharedPreferences("detInfo", getContext().MODE_PRIVATE);
+        String userInfo = detInfo.getString("userInfo", "");
+        if (!TextUtils.isEmpty(userInfo)) {
+            User user = JSON.parseObject(userInfo, User.class);
+            if (user != null) {
+                companyName.setText(user.getCompanyName());
+                companyId.setText(user.getCompanyCode());
+            }
+        }
     }
 
     @Override
@@ -103,15 +119,15 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
             return;
 
         }
-        String strCompanyName = getString(companyName);
+        String strCompanyName = getString(contractName);
         if (TextUtils.isEmpty(strCompanyName)) {
-            ToastUtils.show(getContext(), "请输入单位名称！");
+            ToastUtils.show(getContext(), "请输入合同名称！");
             return;
 
         }
-        String strCompanyId = getString(companyId);
+        String strCompanyId = getString(contractId);
         if (TextUtils.isEmpty(strCompanyId)) {
-            ToastUtils.show(getContext(), "请输入单位代码！");
+            ToastUtils.show(getContext(), "请输入合同代码！");
             return;
         }
 

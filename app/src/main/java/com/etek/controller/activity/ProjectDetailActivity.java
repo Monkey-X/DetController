@@ -79,6 +79,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private void initScanner() {
         scanner = new ScannerInterface(this);
         scanner.setOutputMode(1);
+        scanner.lockScanKey();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(RES_ACTION);
@@ -98,6 +99,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         if (scanner != null) {
+            scanner.unlockScanKey();
             scanner.setOutputMode(0);
         }
     }
@@ -173,17 +175,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
                 ToastUtils.show(this, "保存成功！");
-
-//                String scanResult = "6191201D123451985";
-//
-//                if (scanResult.length() > 0 && DetIDConverter.VerifyQRCheckValue(scanResult)) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
-//                    // 扫描成功
-//                    String strgm = scanResult.substring(0, 13);
-//                    createDetData(strgm);
-//                } else {
-//                    // 扫描失败
-//                    showStatusDialog("扫描失败！");
-//                }
                 break;
             case R.id.layoutHoleIn:
                 // 设置孔内延时
@@ -329,7 +320,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow popupWindow = new PopupWindow(popuView,150,120);
+        PopupWindow popupWindow = new PopupWindow(popuView, 150, 120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -456,11 +447,21 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         return String.valueOf(detId);
     }
 
-
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        Log.d(TAG, "onKeyUp: keyCode = "+ keyCode);
+        Log.d(TAG, "onKeyUp: keyCode = " + keyCode);
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+          // 孔内
+            setHoleInTime();
+            return  true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+          // 孔间
+            setHoleOutTime();
+            return true;
+        }
         return super.onKeyUp(keyCode, event);
     }
 

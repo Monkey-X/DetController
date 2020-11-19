@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:singleLine="true"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_name"
 
@@ -64,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:singleLine="true"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_sex"
 
@@ -95,6 +97,7 @@
             android:id="@+id/personal_info_age"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/dp_40"
@@ -129,6 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:singleLine="true"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_id_code"
 
@@ -161,6 +165,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:singleLine="true"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_company_name"
 
@@ -191,6 +196,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/dp_40"
+            android:singleLine="true"
             android:layout_toRightOf="@id/tv_company_code"
 
             android:inputType="number"

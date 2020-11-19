@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -229,6 +230,17 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         mPopupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
     }
 
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BUTTON_1) {
+            allDetDownload();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
     //再次下载
     private void downloadItem(int position) {
         showProDialog("下载中...");
@@ -314,7 +326,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         DetonatorEntity detonatorEntity = detonators.get(position);
         String detId = detonatorEntity.getDetId();
         String relayTime = detonatorEntity.getRelay();
+        int wakeupStatus = DetApp.getInstance().ModuleSetWakeupStatus(Integer.parseInt(detId));
         Log.d(TAG, "detSingleDownload: detId = " + detId);
+        Log.d(TAG, "detSingleDownload: wakeupStatus = " + wakeupStatus);
         // 进行雷管的链接检测
         int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId), Integer.parseInt(relayTime));
         Log.d(TAG, "detSingleDownload: downloadResult = " + downloadResult);

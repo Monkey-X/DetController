@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -278,6 +279,18 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     }
 
 
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BUTTON_1) {
+            allDetConnectTest();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+
     /**
      * 进行项目中所有的雷管的连接检测
      */
@@ -318,6 +331,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         DetonatorEntity detonatorEntity = connectData.get(position);
         String detId = detonatorEntity.getDetId();
         Log.d(TAG, "detSingleCheck: detId = " + detId);
+        int wakeupStatus = DetApp.getInstance().ModuleSetWakeupStatus(Integer.parseInt(detId));
+        Log.d(TAG, "detSingleCheck: wakeupStatus = "+wakeupStatus);
         // 进行雷管的链接检测
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
