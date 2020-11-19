@@ -37,6 +37,11 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         public final static Property Status = new Property(10, int.class, "status", false, "STATUS");
         public final static Property IsOnline = new Property(11, Boolean.class, "isOnline", false, "IS_ONLINE");
         public final static Property ProjectImplementStates = new Property(12, String.class, "projectImplementStates", false, "PROJECT_IMPLEMENT_STATES");
+        public final static Property Longitude = new Property(13, double.class, "longitude", false, "LONGITUDE");
+        public final static Property Latitude = new Property(14, double.class, "latitude", false, "LATITUDE");
+        public final static Property ReportStatus = new Property(15, String.class, "reportStatus", false, "REPORT_STATUS");
+        public final static Property ControllerId = new Property(16, String.class, "controllerId", false, "CONTROLLER_ID");
+        public final static Property BlastTime = new Property(17, java.util.Date.class, "blastTime", false, "BLAST_TIME");
     }
 
     private DaoSession daoSession;
@@ -67,7 +72,12 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
                 "\"APPLY_DATE\" INTEGER," + // 9: applyDate
                 "\"STATUS\" INTEGER NOT NULL ," + // 10: status
                 "\"IS_ONLINE\" INTEGER," + // 11: isOnline
-                "\"PROJECT_IMPLEMENT_STATES\" TEXT);"); // 12: projectImplementStates
+                "\"PROJECT_IMPLEMENT_STATES\" TEXT," + // 12: projectImplementStates
+                "\"LONGITUDE\" REAL NOT NULL ," + // 13: longitude
+                "\"LATITUDE\" REAL NOT NULL ," + // 14: latitude
+                "\"REPORT_STATUS\" TEXT," + // 15: reportStatus
+                "\"CONTROLLER_ID\" TEXT," + // 16: controllerId
+                "\"BLAST_TIME\" INTEGER);"); // 17: blastTime
     }
 
     /** Drops the underlying database table. */
@@ -140,6 +150,23 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         if (projectImplementStates != null) {
             stmt.bindString(13, projectImplementStates);
         }
+        stmt.bindDouble(14, entity.getLongitude());
+        stmt.bindDouble(15, entity.getLatitude());
+ 
+        String reportStatus = entity.getReportStatus();
+        if (reportStatus != null) {
+            stmt.bindString(16, reportStatus);
+        }
+ 
+        String controllerId = entity.getControllerId();
+        if (controllerId != null) {
+            stmt.bindString(17, controllerId);
+        }
+ 
+        java.util.Date blastTime = entity.getBlastTime();
+        if (blastTime != null) {
+            stmt.bindLong(18, blastTime.getTime());
+        }
     }
 
     @Override
@@ -206,6 +233,23 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         if (projectImplementStates != null) {
             stmt.bindString(13, projectImplementStates);
         }
+        stmt.bindDouble(14, entity.getLongitude());
+        stmt.bindDouble(15, entity.getLatitude());
+ 
+        String reportStatus = entity.getReportStatus();
+        if (reportStatus != null) {
+            stmt.bindString(16, reportStatus);
+        }
+ 
+        String controllerId = entity.getControllerId();
+        if (controllerId != null) {
+            stmt.bindString(17, controllerId);
+        }
+ 
+        java.util.Date blastTime = entity.getBlastTime();
+        if (blastTime != null) {
+            stmt.bindLong(18, blastTime.getTime());
+        }
     }
 
     @Override
@@ -234,7 +278,12 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
             cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // applyDate
             cursor.getInt(offset + 10), // status
             cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0, // isOnline
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // projectImplementStates
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // projectImplementStates
+            cursor.getDouble(offset + 13), // longitude
+            cursor.getDouble(offset + 14), // latitude
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // reportStatus
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // controllerId
+            cursor.isNull(offset + 17) ? null : new java.util.Date(cursor.getLong(offset + 17)) // blastTime
         );
         return entity;
     }
@@ -254,6 +303,11 @@ public class ProjectInfoEntityDao extends AbstractDao<ProjectInfoEntity, Long> {
         entity.setStatus(cursor.getInt(offset + 10));
         entity.setIsOnline(cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0);
         entity.setProjectImplementStates(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setLongitude(cursor.getDouble(offset + 13));
+        entity.setLatitude(cursor.getDouble(offset + 14));
+        entity.setReportStatus(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setControllerId(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setBlastTime(cursor.isNull(offset + 17) ? null : new java.util.Date(cursor.getLong(offset + 17)));
      }
     
     @Override

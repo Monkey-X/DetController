@@ -70,7 +70,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      * 获取项目id
      */
     private void getProjectId() {
-        proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, 0);
+        proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
     }
 
     /**
@@ -92,8 +92,8 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     /**
      * 跳转页面
      */
-    private void startActivity(Class clz){
-        startActivity(new Intent(this,clz));
+    private void startActivity(Class clz) {
+        startActivity(new Intent(this, clz));
     }
 
     /**

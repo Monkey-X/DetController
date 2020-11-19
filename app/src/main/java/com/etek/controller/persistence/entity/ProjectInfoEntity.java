@@ -124,6 +124,46 @@ public class ProjectInfoEntity{
         this.projectImplementStates = projectImplementStates;
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public String getReportStatus() {
+        return reportStatus;
+    }
+
+    public String getControllerId() {
+        return controllerId;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setReportStatus(String reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public void setControllerId(String controllerId) {
+        this.controllerId = controllerId;
+    }
+
+    public Date getBlastTime() {
+        return blastTime;
+    }
+
+    public void setBlastTime(Date blastTime) {
+        this.blastTime = blastTime;
+    }
+
     /**
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
@@ -308,7 +348,12 @@ public class ProjectInfoEntity{
 
     private Boolean isOnline;
 
-    private String projectImplementStates; // 工程实施的状态值
+    private String projectImplementStates; //工程实施的状态值
+    private double longitude ; //经度
+    private double latitude ; //纬度
+    private String reportStatus ; //上报状态
+    private String controllerId ; //起爆器设备编号(Sbbh)
+    private Date blastTime; //爆破时间精确到时分秒    YYYY-MM-DD HH:MM:SS
 
     @Transient
     private boolean isSelect;
@@ -333,11 +378,16 @@ public class ProjectInfoEntity{
     @Generated(hash = 1931631268)
     private transient ProjectInfoEntityDao myDao;
 
-    @Generated(hash = 208218570)
+    @Generated(hash = 479712204)
+    public ProjectInfoEntity() {
+    }
+
+    @Generated(hash = 102650926)
     public ProjectInfoEntity(Long id, String proCode, String proName, String companyCode,
             String companyName, String contractCode, String contractName, String fileSn,
             Date createTime, Date applyDate, int status, Boolean isOnline,
-            String projectImplementStates) {
+            String projectImplementStates, double longitude, double latitude, String reportStatus,
+            String controllerId, Date blastTime) {
         this.id = id;
         this.proCode = proCode;
         this.proName = proName;
@@ -351,10 +401,11 @@ public class ProjectInfoEntity{
         this.status = status;
         this.isOnline = isOnline;
         this.projectImplementStates = projectImplementStates;
-    }
-
-    @Generated(hash = 479712204)
-    public ProjectInfoEntity() {
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.reportStatus = reportStatus;
+        this.controllerId = controllerId;
+        this.blastTime = blastTime;
     }
 
     public boolean isSelect() {
