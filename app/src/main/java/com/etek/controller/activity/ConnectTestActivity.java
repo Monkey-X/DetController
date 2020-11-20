@@ -18,15 +18,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ConnectTestAdapter;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
+import com.etek.controller.common.AppIntentString;
 import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -52,21 +55,37 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private List<DetonatorEntity> mDetonatorEntities;
     private ProjectInfoEntity mProjectInfoEntity;
     private int projectPosition = -1;
+    private long proId;
+    private List<DetonatorEntity> detonatorEntityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_test);
+        getProjectId();
         initView();
         initDate();
+    }
+
+    /**
+     * 获取项目id
+     */
+    private void getProjectId() {
+        proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
+        XLog.d("proId: " + proId);
     }
 
     /**
      * 页面展示的数据
      */
     private void initDate() {
-        // 获取到项目列表
-        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+        // 获取到项目列表（暂时隐藏）
+//        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+        //根据项目id获取雷管并展示
+        if (proId >= 0){
+            detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+            connectData.addAll(detonatorEntityList);
+        }
     }
 
     /**
@@ -80,6 +99,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         textBtn = findViewById(R.id.text_btn);
         textBtn.setText("项目列表");
         textBtn.setOnClickListener(this);
+        textBtn.setVisibility(View.GONE);
 
         TextView missEvent = findViewById(R.id.miss_event);
         TextView falseConnect = findViewById(R.id.false_connect);
@@ -237,7 +257,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 220);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -307,12 +327,14 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (position <= connectData.size() - 1) {
             DetonatorEntity detonatorEntity = connectData.get(position);
             DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
-            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
-            if (detonatorEntities != null) {
-                connectData.clear();
-                connectData.addAll(detonatorEntities);
-                connectTestAdapter.notifyDataSetChanged();
-            }
+            connectData.remove(position);
+            connectTestAdapter.notifyDataSetChanged();
+//            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
+//            if (detonatorEntities != null) {
+//                connectData.clear();
+//                connectData.addAll(detonatorEntities);
+//                connectTestAdapter.notifyDataSetChanged();
+//            }
 
         }
     }

@@ -20,16 +20,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDelayAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
+import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -52,14 +55,25 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private FiltrateAdapter filtrateAdapter;
     private ProjectInfoEntity mProjectInfoEntity;
     private int projectPosition = -1;
+    private long proId;
+    private List<DetonatorEntity> detonatorEntityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delay_download);
+        getProjectId();
         initView();
         initRecycleView();
         initProject();
+    }
+
+    /**
+     * 获取项目id
+     */
+    private void getProjectId() {
+        proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
+        XLog.d("proId: " + proId);
     }
 
     private void initView() {
@@ -69,6 +83,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         backImag.setOnClickListener(this);
         textTitle.setText(R.string.activity_delay_download);
         textBtn.setText("项目列表");
+        textBtn.setVisibility(View.GONE);
 
         TextView allEdit = findViewById(R.id.all_edit);
 
@@ -90,8 +105,13 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
 
     private void initProject() {
-        // 获取工程项目列表
-        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+        // 获取工程项目列表（暂时隐藏）
+//        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+        //根据项目id获取雷管并展示页面
+        if (proId >= 0){
+            detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+            detonators.addAll(detonatorEntityList);
+        }
     }
 
     @Override
@@ -203,7 +223,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 220);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,12 +274,14 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (position <= detonators.size() - 1) {
             DetonatorEntity detonatorEntity = detonators.get(position);
             DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
-            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
-            if (detonatorEntities != null) {
-                detonators.clear();
-                detonators.addAll(detonatorEntities);
-                mProjectDelayAdapter.notifyDataSetChanged();
-            }
+            detonators.remove(position);
+            mProjectDelayAdapter.notifyDataSetChanged();
+//            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
+//            if (detonatorEntities != null) {
+//                detonators.clear();
+//                detonators.addAll(detonatorEntities);
+//                mProjectDelayAdapter.notifyDataSetChanged();
+//            }
         }
     }
 
