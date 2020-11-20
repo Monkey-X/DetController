@@ -261,4 +261,7 @@
     <string name="str_success">成功</string>
     <string name="str_faile">失败</string>
     <string name="str_miss">失联</string>
+    <string name="longitude">经&#160;&#160;&#160;&#160;&#160;&#160;度：</string>
+    <string name="latitude">纬&#160;&#160;&#160;&#160;&#160;&#160;度：</string>
+
 </resources>

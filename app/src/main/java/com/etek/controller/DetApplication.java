@@ -12,6 +12,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.common.Globals;
 import com.etek.controller.persistence.DBManager;
+import com.etek.controller.utils.location.DLocationUtils;
 import com.etek.sommerlibrary.app.BaseApplication;
 import com.polidea.rxandroidble2.LogConstants;
 import com.polidea.rxandroidble2.LogOptions;
@@ -44,7 +45,7 @@ public class DetApplication extends BaseApplication {
 
         super.onCreate();
         // 程序创建的时候执行
-
+        DLocationUtils.init(this);
 
         // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
         SDKInitializer.initialize(this);

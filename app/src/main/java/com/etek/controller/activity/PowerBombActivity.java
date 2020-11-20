@@ -37,7 +37,6 @@ public class PowerBombActivity extends BaseActivity {
      */
     private void init() {
         this.mContext = this;
-        DLocationUtils.init(this);
         text = findViewById(R.id.text);
     }
 

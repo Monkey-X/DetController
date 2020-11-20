@@ -27,8 +27,8 @@ public class JsonUtils {
         if (list != null && list.size() == 0){
             for (int i = 0; i < 8; i++) {
                 DetonatorEntity detonatorEntity = new DetonatorEntity();
-                detonatorEntity.setCode("6170725D0217" + i);
-                detonatorEntity.setUid("6020A8373C00C" + i);
+                detonatorEntity.setCode("6170725D02064");
+                detonatorEntity.setUid("61000001028324");
                 detonatorEntity.setStatus(i%2);
                 detonatorEntity.setProjectInfoId(proId);
                 detonatorEntity.setRelay("100" + i);

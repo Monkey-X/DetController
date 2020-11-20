@@ -52,8 +52,8 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 startActivity(new Intent(this,DelayDownloadActivity.class).putExtra(AppIntentString.PROJECT_ID,proId));
                 break;
 
-            case R.id.project_check_authorization://检查授权(跳转原来的在线授权页面)
-                startActivity(new Intent(this,OnlineAuthorizeActivity2.class));
+            case R.id.project_check_authorization://检查授权
+                startActivity(new Intent(this,OnlineAuthorizeActivity2.class).putExtra(AppIntentString.PROJECT_ID,proId));
                 break;
 
             case R.id.project_power_bomb://充电起爆

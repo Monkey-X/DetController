@@ -1,33 +1,19 @@
 package com.etek.controller.activity;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
+
+import android.location.Location;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.serializer.ValueFilter;
-import com.baidu.location.BDLocation;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.adapter.CheckOutAdapter2;
 import com.etek.controller.common.AppConstants;
+import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
 import com.etek.controller.dto.Jbqy;
 import com.etek.controller.dto.Jbqys;
@@ -36,7 +22,6 @@ import com.etek.controller.dto.Lgs;
 import com.etek.controller.dto.OnlineCheckDto;
 import com.etek.controller.dto.OnlineCheckResp;
 import com.etek.controller.dto.ProjectFileDto;
-import com.etek.controller.dto.ProjectInfoDto;
 import com.etek.controller.dto.Sbbhs;
 import com.etek.controller.dto.Zbqy;
 import com.etek.controller.dto.Zbqys;
@@ -48,46 +33,61 @@ import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
-import com.etek.controller.utils.BeanPropertiesUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
+import com.etek.controller.utils.location.DLocationTools;
+import com.etek.controller.utils.location.DLocationUtils;
+import com.etek.controller.utils.location.OnLocationChangeListener;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.DateUtil;
-import com.etek.sommerlibrary.utils.FileUtils;
-import com.etek.sommerlibrary.utils.MD5Util;
+import com.etek.sommerlibrary.utils.ToastUtils;
+
 import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnClickListener, CheckOutAdapter2.OnItemClickListener {
+import static com.etek.controller.utils.location.DLocationWhat.NO_LOCATIONMANAGER;
+import static com.etek.controller.utils.location.DLocationWhat.NO_PROVIDER;
+import static com.etek.controller.utils.location.DLocationWhat.ONLY_GPS_WORK;
 
-    private String TAG = "OnlineAuthorizeActivity2";
-    private static final int REQUEST_PRO_EDIT = 11;
-    private TextView contractId;
-    private TextView detLocation;
-    private Button selectLocation;
-    private ImageView imgLoading;
-    private SwipeRefreshLayout slProjectInfo;
-    private RecyclerView rvProjectInfo;
-    private CheckOutAdapter2 mProjectInfoAdapter;
-    private static final int PAGE_SIZE = 10;
-    private int mNextRequestPage = 1;
-    private DetController detController;
+/**
+ * 在线授权页
+ */
+public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnClickListener {
+
+    private LinearLayout project;
+    private TextView companyName;
+    private TextView companyCode;
+    private TextView projectName;
+    private TextView projectCode;
+    private TextView contractName;
+    private TextView contractCode;
+    private TextView controllerId;
+    private TextView implementStates;
+    private TextView blastTime;
+    private EditText longitude;
+    private EditText latitude;
+    private TextView getLocation;
+    private TextView verify;
+    private int GO_TO_GPS = 150;
+    private long proIds;
+    private ProjectInfoEntity projectInfoEntity;
+    private List<DetonatorEntity> detonatorEntityList;
+    private StringBuilder uid = new StringBuilder();
     private ProjectInfoEntity projectInfo;
-    private LocationClient mLocClient;
-    private BDLocation mLocation;
-    private int isTest = 0;
-    private String contractCode;
-    private String proCode;
+    private DetController detController;
     private long proId = 0;
     private boolean isValid;
 
@@ -96,93 +96,94 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_authorize2);
         initSupportActionBar(R.string.title_act_online_authorize);
+        getProjectId();
         initView();
         initData();
-        getUserCompanyCode();
-        getLocationLocal();
-        showDialog();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (isTest == 0) {
-            getBaiduLocation();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refresh();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mLocClient != null) {
-            mLocClient.stop();
-            mLocClient = null;
-        }
-        super.onDestroy();
+    /**
+     * 获取项目id
+     */
+    private void getProjectId() {
+        proIds = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
+        XLog.d("proIds: " + proIds);
     }
 
     /**
      * 初始化view
      */
     private void initView() {
-        contractId = findViewById(R.id.contract_id);
-        detLocation = findViewById(R.id.det_location);
-        selectLocation = findViewById(R.id.select_location);
-        imgLoading = findViewById(R.id.img_loading);
-        slProjectInfo = findViewById(R.id.sl_project_info);
-        rvProjectInfo = findViewById(R.id.rv_project_info);
-        contractId.setOnClickListener(this);
-        selectLocation.setOnClickListener(this);
-        rvProjectInfo.setLayoutManager(new LinearLayoutManager(mContext));
-        slProjectInfo.setColorSchemeColors(Color.rgb(47, 223, 189));
-        slProjectInfo.setRefreshing(true);
-        mProjectInfoAdapter = new CheckOutAdapter2();
-        mProjectInfoAdapter.setOnLoadMoreListener(() -> new Handler().post(() -> loadMore()));
-        rvProjectInfo.setAdapter(mProjectInfoAdapter);
-        mProjectInfoAdapter.setOnItemClickListener(this);
-        slProjectInfo.setOnRefreshListener(() -> refresh());
+        project = findViewById(R.id.project);
+        companyName = findViewById(R.id.company_name);
+        companyCode = findViewById(R.id.company_code);
+        projectName = findViewById(R.id.project_name);
+        projectCode = findViewById(R.id.project_code);
+        contractName = findViewById(R.id.contract_name);
+        contractCode = findViewById(R.id.contract_code);
+        controllerId = findViewById(R.id.controller_id);
+        implementStates = findViewById(R.id.project_mplement_states);
+        blastTime = findViewById(R.id.blast_time);
+        longitude = findViewById(R.id.location_longitude);
+        latitude = findViewById(R.id.location_latitude);
+        getLocation = findViewById(R.id.get_location);
+        verify = findViewById(R.id.verify);
+        verify.setOnClickListener(this);
+        getLocation.setOnClickListener(this);
     }
 
-    /**
-     * 条目的点击事件
-     */
-    @Override
-    public void onItemCLick(ProjectInfoEntity projectInfoEntity, int position) {
-        Intent intent = new Intent(mContext, CheckoutDetailActivity2.class);
-        XLog.d("projectInfoEntity:" + projectInfoEntity);
-        intent.putExtra("chkId", projectInfoEntity.getId());
-        intent.putExtra("longitude",getStringInfo("Longitude"));
-        intent.putExtra("latitude",getStringInfo("Latitude"));
-        startActivity(intent);
-    }
 
     /**
-     * 校验的点击事件
+     * 定位
      */
-    @Override
-    public void onCheckOutClick(ProjectInfoEntity projectInfoEntity, int position) {
-        getVerifyResult(projectInfoEntity);
-    }
-
-    /**
-     * 点击事件
-     */
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.contract_id:
-                changeLocationDialog();
+    private void getLocation() {
+        int status = DLocationUtils.getInstance().register(locationChangeListener);
+        XLog.e("status: " + status);
+        switch (status){
+            case NO_LOCATIONMANAGER:
+                //请求权限
+                ToastUtils.show(this,"没有定位权限");
+                DLocationTools.openAppSetting(mContext);
                 break;
-
-            case R.id.select_location:
-                Intent i = new Intent(this, SelectMapActivity.class);
-                startActivity(i);
+            case NO_PROVIDER:
+                //打开定位
+                ToastUtils.show(this,"尚未打开定位");
+                DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
                 break;
+            case ONLY_GPS_WORK:
+                //切换定位模式到【高精确度】或【节电】
+                ToastUtils.show(this,"切换定位模式到【高精确度】或【节电】");
+                DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
+                break;
+        }
+    }
+
+    /**
+     * 定位监听器
+     */
+    private OnLocationChangeListener locationChangeListener = new OnLocationChangeListener() {
+        @Override
+        public void getLastKnownLocation(Location location) {
+            updateGPSInfo(location);
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            updateGPSInfo(location);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    };
+
+    /**
+     * 更新经纬度信息
+     */
+    public void updateGPSInfo(Location location) {
+        if (location != null) {
+            longitude.setText(location.getLongitude()+"");
+            latitude.setText(location.getLatitude()+"");
+            projectInfoEntity.setLongitude(location.getLongitude());
+            projectInfoEntity.setLatitude(location.getLatitude());
         }
     }
 
@@ -190,273 +191,89 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
      * 初始化数据
      */
     private void initData() {
-        detController = new DetController();
-        detController.setUserIDCode(Globals.user.getIdCode());
-        detController.setCompanyCode(Globals.user.getCompanyCode());
-    }
-
-    /**
-     * 如果用户信息为空则跳转至用户信息页面
-     */
-    private void getUserCompanyCode() {
-        if (Globals.user == null || StringUtils.isEmpty(Globals.user.getCompanyCode()) || StringUtils.isEmpty(Globals.user.getIdCode())) {
-            showStatusDialog("公司代码或用户证件号为空，请去信息设置页面设置");
-            delayAction(new Intent(mContext, UserInfoActivity.class), 1000);
+        if (proIds >= 0) {
+            projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proIds)).unique();
+            detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proIds)).list();
+            companyName.setText(projectInfoEntity.getCompanyName());
+            companyCode.setText(projectInfoEntity.getCompanyCode());
+            projectName.setText(projectInfoEntity.getProName());
+            projectCode.setText(projectInfoEntity.getProCode());
+            contractName.setText(projectInfoEntity.getContractName());
+            contractCode.setText(projectInfoEntity.getContractCode());
+            controllerId.setText(projectInfoEntity.getControllerId());
+            longitude.setText(projectInfoEntity.getLongitude()+"");
+            latitude.setText(projectInfoEntity.getLatitude()+"");
+            if (AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST.equals(projectInfoEntity.getProjectImplementStates())) {
+                implementStates.setText("连接检测");
+            } else if (AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD.equals(projectInfoEntity.getProjectImplementStates())) {
+                implementStates.setText("延时下载");
+            } else if (AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE.equals(projectInfoEntity.getProjectImplementStates())) {
+                implementStates.setText("检查授权");
+            } else if (AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB.equals(projectInfoEntity.getProjectImplementStates())) {
+                implementStates.setText("充电起爆");
+            } else if (AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT.equals(projectInfoEntity.getProjectImplementStates())) {
+                implementStates.setText("数据上传");
+            }
+            if (projectInfoEntity.getBlastTime() != null) {
+                blastTime.setText(DateUtil.getDateStr(projectInfoEntity.getBlastTime()));
+            }
         }
     }
 
     /**
-     * 获取位置信息
+     * 注销
      */
-    private void getLocationLocal() {
-        String longitudeStr = getStringInfo("Longitude");
-        String latitudeStr = getStringInfo("Latitude");
-        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))) {
-            double longitude = Double.parseDouble(longitudeStr);
-            double latitude = Double.parseDouble(latitudeStr);
-            detController.setLongitude(longitude);
-            detController.setLatitude(latitude);
-            detLocation.setText(longitude + " , " + latitude);
-            detLocation.setTextColor(getMyColor(R.color.darkgoldenrod));
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DLocationUtils.getInstance().unregister();
     }
 
-    private void getBaiduLocation() {
-        // 定位初始化
-        mLocClient = new LocationClient(mContext);
-        mLocClient.registerNotifyLocationListener(
-                location -> {
-                    mLocClient.stop();
-                    if (location.getLocType() == BDLocation.TypeGpsLocation) {// GPS定位结果
-                        mLocation = location;
-                        detLocation.setText(location.getLongitude() + " , " + location.getLatitude());
-                        detLocation.setTextColor(getMyColor(R.color.colorPrimary));
-                        detController.setLatitude(mLocation.getLatitude());
-                        detController.setLongitude(mLocation.getLongitude());
-                        setStringInfo("Longitude", location.getLongitude() + "");
-                        setStringInfo("Latitude", location.getLatitude() + "");
-                    } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
-                        mLocation = location;
-                        detLocation.setText(location.getLongitude() + " , " + location.getLatitude());
-                        detLocation.setTextColor(getMyColor(R.color.colorPrimary));
-                        detController.setLatitude(mLocation.getLatitude());
-                        detController.setLongitude(mLocation.getLongitude());
-                        setStringInfo("Longitude", location.getLongitude() + "");
-                        setStringInfo("Latitude", location.getLatitude() + "");
-                    } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {// 离线定位结果
-                        mLocation = location;
-                        detLocation.setText(location.getLongitude() + " , " + location.getLatitude());
-                        detLocation.setTextColor(getMyColor(R.color.colorPrimary));
-                        detController.setLatitude(mLocation.getLatitude());
-                        detController.setLongitude(mLocation.getLongitude());
-                        setStringInfo("Longitude", location.getLongitude() + "");
-                        setStringInfo("Latitude", location.getLatitude() + "");
-                    } else if (location.getLocType() == BDLocation.TypeServerError) {
-                        showStatusDialog("定位失败：" + location.getLocType());
-                    } else if (location.getLocType() == BDLocation.TypeNetWorkException) {
-                        showStatusDialog("定位失败：" + location.getLocType());
-                    } else if (location.getLocType() == BDLocation.TypeCriteriaException) {
-                        showStatusDialog("无法获取有效定位依据导致定位失败，一般是由于手机的原因，处于飞行模式下一般会造成这种结果，可以试着重启手机");
-                    } else {
-                        showStatusDialog("定位失败：" + location.getLocType());
-                    }
-                });
-
-        LocationClientOption option = new LocationClientOption();
-        option.setCoorType("bd09ll");// 坐标类型
-        option.setIsNeedAddress(true);// 可选，设置是否需要地址信息，默认不需要
-        option.setOpenGps(true);// 打开Gps
-        option.setScanSpan(1000);// 1000毫秒定位一次
-        option.setIsNeedLocationPoiList(true);// 可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
-        mLocClient.setLocOption(option);
-        mLocClient.start();
-    }
-
-    /**
-     * 弹框输入项目信息
-     */
-    public void showDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this.getBaseContext()).inflate(R.layout.dialog_input_checkout, null, false);
-        EditText etProCode = view.findViewById(R.id.et_pro_code);
-        EditText etContractCode = view.findViewById(R.id.et_contract_code);
-        etProCode.setText(Globals.proId);
-        etContractCode.setText(Globals.contractId);
-        dialog.setView(view);
-        dialog.setTitle("请输入项目信息！");
-        dialog.setCancelable(false);
-        //设置对话框标题
-        dialog.setIcon(R.mipmap.ic_launcher);
-        dialog.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                contractCode = etContractCode.getText().toString();
-                proCode = etProCode.getText().toString();
-                detController.setContractId(contractCode);
-                detController.setProjectId(proCode);
-
-                if (!StringUtils.isEmpty(contractCode)) {
-                    contractId.setText((mContext.getString(R.string.contract_code_param, contractCode)));
-                    setStringInfo("contractId", contractCode);
-                    Globals.contractId = contractCode;
-                } else {
-                    setStringInfo("contractId", "");
-                    Globals.contractId = contractCode;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.verify://校验
+                if (TextUtils.isEmpty(longitude.getText().toString().trim())){
+                    ToastUtils.show(mContext,"当前经度为空");
+                    return;
                 }
 
-                if (!StringUtils.isEmpty(proCode)) {
-                    contractId.setText((mContext.getString(R.string.project_code_param, proCode)));
-                    setStringInfo("proId", proCode);
-                    Globals.proId = proCode;
-                } else {
-                    setStringInfo("proId", "");
-                    Globals.proId = proCode;
+                if (TextUtils.isEmpty(latitude.getText().toString().trim())){
+                    ToastUtils.show(mContext,"当前纬度为空");
+                    return;
                 }
-                showOnlineDocVerify();
-            }
-        });
-        dialog.show();
-    }
+                getVerifyResult(projectInfoEntity);
+                break;
 
-    public void changeLocationDialog() {
-//        if (!Globals.isTest) {
-//            return;
-//        }
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this.getBaseContext()).inflate(R.layout.dialog_input_location, null, false);
-        EditText etLongitude = view.findViewById(R.id.et_longitude);
-        EditText etLatitude = view.findViewById(R.id.et_latitude);
-
-        etLongitude.setText(detController.getLongitude() + "");
-        etLatitude.setText(detController.getLatitude() + "");
-        dialog.setView(view);
-        dialog.setTitle("请输入项目信息！");
-        //设置对话框标题
-        dialog.setIcon(R.mipmap.ic_launcher);
-        dialog.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                double longitude = Double.parseDouble(etLongitude.getText().toString());
-                double latitude = Double.parseDouble(etLatitude.getText().toString());
-                detController.setLongitude(longitude);
-                detController.setLatitude(latitude);
-                detLocation.setText(longitude + " , " + latitude);
-                detLocation.setTextColor(getMyColor(R.color.goldenrod));
-            }
-        });
-
-        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
-    /**
-     * 下拉刷下
-     */
-    private void refresh() {
-        mNextRequestPage = 1;
-        mProjectInfoAdapter.setEnableLoadMore(false);//这里的作用是防止下拉刷新的时候还可以上拉加载
-        List<ProjectInfoEntity> datas = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder()
-                .orderDesc(ProjectInfoEntityDao.Properties.Id)
-                .limit(PAGE_SIZE)
-                .build()
-                .list();
-        Log.v(TAG,"数据更新! " + datas.size());
-        setChkData(true, datas);
-        mProjectInfoAdapter.setEnableLoadMore(true);
-        slProjectInfo.setRefreshing(false);
-    }
-
-    /**
-     * 上拉加载
-     */
-    private void loadMore() {
-        int offset = (mNextRequestPage - 1) * PAGE_SIZE;
-        int limit = offset + PAGE_SIZE;
-        List<ProjectInfoEntity> datas = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder()
-                .orderDesc(ProjectInfoEntityDao.Properties.Id)
-                .offset(offset)
-                .limit(limit)
-                .build()
-                .list();
-        boolean isRefresh = mNextRequestPage == 1;
-        Log.v(TAG,"加载更多! " + datas.size());
-        setChkData(isRefresh, datas);
-    }
-
-    /**
-     * 设置数据并刷新页面
-     */
-    private void setChkData(boolean isRefresh, List datas) {
-        mNextRequestPage++;
-        final int size = datas == null ? 0 : datas.size();
-
-        if (rvProjectInfo.isComputingLayout())
-            return;
-        if (isRefresh) {
-            mProjectInfoAdapter.setNewData(datas);
-        } else {
-            if (size > 0) {
-                mProjectInfoAdapter.addData(datas);
-            }
-        }
-        if (size < PAGE_SIZE) {
-            //第一页如果不够一页就不显示没有更多数据布局
-            mProjectInfoAdapter.loadMoreEnd(isRefresh);
-        } else {
-            mProjectInfoAdapter.loadMoreComplete();
+            case R.id.get_location://获取当前位置
+                getLocation();
+                break;
         }
     }
 
     /**
-     * 在线验证
+     * 获取验证结果
      */
-    public void showOnlineDocVerify() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("是否手动添加雷管管码信息？");
-        //设置对话框标题
-        dialog.setIcon(R.mipmap.ic_launcher);
-        dialog.setPositiveButton("确认", (dialog1, which) -> {
-            Intent intent = new Intent(mContext, OnlineEditActivity.class);
-            intent.putExtra("Controller", detController);
-            startActivityForResult(intent, REQUEST_PRO_EDIT);
-        });
-        dialog.setNegativeButton("取消", (dialog12, which) -> dialog12.dismiss());
-        dialog.setCancelable(false);
-        dialog.show();
-    }
-
-    /**
-     * 获取TOKEN
-     */
-    private String getToken() {
-        StringBuilder sb = new StringBuilder();
-        for (Detonator detonator : detController.getDetList()) {
-            sb.append(detonator.getDetCode());
-        }
-        String token = MD5Util.md5(sb.toString());
-        detController.setToken(token);
-        return token;
-    }
-
     private void getVerifyResult(ProjectInfoEntity projectInfoEntity) {
         isValid = false;
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
         onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
         onlineCheckDto.setHtid(projectInfoEntity.getContractCode());
-        onlineCheckDto.setJd(getStringInfo("Longitude"));
-        onlineCheckDto.setWd(getStringInfo("Latitude"));
+        onlineCheckDto.setJd(projectInfoEntity.getLongitude() + "");
+        onlineCheckDto.setWd(projectInfoEntity.getLatitude() + "");
         onlineCheckDto.setXmbh(projectInfoEntity.getProCode());
-        onlineCheckDto.setSbbh("61000255");//无数据，暂时写死
-        onlineCheckDto.setUid("61000001028324");//无数据，暂时写死
+        onlineCheckDto.setSbbh(projectInfoEntity.getControllerId());
+        for (int i = 0; i < detonatorEntityList.size(); i++) {
+            if (i == 0) {
+                uid.append(detonatorEntityList.get(i).getUid());
+            }else{
+                uid.append("," + detonatorEntityList.get(i).getUid());
+            }
+        }
+        XLog.e("uid: " + uid.toString());
+        onlineCheckDto.setUid(uid.toString());//无数据，暂时写死
         String rptJson = JSON.toJSONString(onlineCheckDto, SerializerFeature.WriteMapNullValue);
-        Log.e(TAG, "rptJson: " + rptJson);
-        getToken();
+        XLog.e("rptJson: " + rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
             showToast("数据编码出错：" + result.getMessage());
@@ -466,11 +283,11 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
         String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-
+        XLog.e("newUrl: " + newUrl);
         AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e( TAG, "IOException: " + e.getMessage());
+                XLog.e("IOException: " + e.getMessage());
                 dismissProgressBar();
             }
 
@@ -479,18 +296,19 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
                 dismissProgressBar();
                 String respStr = response.body().string();
                 if (StringUtils.isEmpty(respStr)) {
-                    Log.e(TAG, "respStr is null ");
+                    XLog.e("respStr is null ");
                     return;
                 }
-
+                XLog.e("respStr: " + respStr);
                 OnlineCheckResp serverResult = null;
                 try {
                     Result rptDecode = RptUtil.getRptDecode(respStr);
+                    XLog.e("respStr: " + rptDecode);
                     if (rptDecode.isSuccess()) {
                         String data = (String) rptDecode.getData();
-                        Log.e(TAG, "resp:" + data);
+                        XLog.e("resp:" + data);
                         serverResult = JSON.parseObject(data, OnlineCheckResp.class);
-                        Log.e(TAG, serverResult.toString());
+                        XLog.e("serverResult: " + serverResult.toString());
                         if (serverResult.getCwxx().contains("0")) {
                             ProjectFileDto projectFile = new ProjectFileDto();
 
@@ -517,7 +335,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
                                 }
                             }
                             if (isUnreg) {
-                                Log.w(TAG, "unRegDet:" + unRegDet);
+                                XLog.w("unRegDet:" + unRegDet);
                                 showStatusDialog("已存在已使用雷管！");
                                 proId = storeProjectInfo(projectFile, serverResult);
                                 if (proId != 0) {
@@ -544,18 +362,20 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
                         }
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "解析错误：" + e.getMessage());
+                    XLog.e("解析错误：" + e.getMessage());
                 }
             }
         });
     }
 
-
+    /**
+     * 存储数据
+     */
     private long storeProjectInfo(final ProjectFileDto projectFile, OnlineCheckResp onlineCheckResp) {
 
 //        ThreadPoolUtils.getThreadPool().execute(()->{
 //        ProInfoDto mDetInfoDto = projectFile.getProInfo();
-        Log.v(TAG, "onlineCheckResp:" + onlineCheckResp);
+        XLog.v("onlineCheckResp:" + onlineCheckResp);
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setApplyDate(onlineCheckResp.getSqrq());
         projectInfoEntity.setProCode(projectFile.getXmbh());
@@ -572,7 +392,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         if (proId == 0) {
             return 0;
         }
-        Log.v(TAG, "proid:" + proId);
+        XLog.v("proid:" + proId);
         // get detonators to database by sommer 19.01.07
         Lgs lgs = onlineCheckResp.getLgs();
         if (!lgs.getLg().isEmpty()) {
@@ -664,84 +484,5 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         }
 //        });
         return proId;
-    }
-
-    /**
-     * 导航栏菜单按钮
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (Globals.isTest) {
-            getMenuInflater().inflate(R.menu.menu_online_check_test, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.menu_online_check, menu);
-        }
-        return true;
-    }
-
-    /**
-     * 菜单按钮选中事件
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_file) {
-            Intent intent = new Intent(mContext, OnlineEditActivity.class);
-            intent.putExtra("Controller", detController);
-            startActivityForResult(intent, REQUEST_PRO_EDIT);
-        }else if (id == R.id.send_checkout_report){
-            //发送检测报告
-//            if (projectInfo == null){ //假数据projectInfo
-//                projectInfo = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().limit(1).unique();
-//            }
-//            sendCheckoutReport();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * 雷管传输结束后调用
-     */
-    private void sendCheckoutReport() {
-
-        String rptJson = getReportDto();
-        if(rptJson==null){
-            return;
-        }
-        String fdName = "report_info" + DateUtil.getDateDoc(new Date()) + ".json";
-        FileUtils.saveFileToSDcard("detonator/json", fdName, rptJson);
-        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
-        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG,"IOException:" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String respStr = response.body().string();
-                if (!StringUtils.isEmpty(respStr)) {
-                    Log.e(TAG,"respStr is  " + respStr);
-                }
-            }
-        });
-    }
-
-    private String getReportDto() {
-        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
-        Log.d(TAG,"getReportDto:"+projectInfo.toString());
-        try {
-            BeanPropertiesUtil.copyProperties(projectInfo, projectInfoDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        projectInfoDto.setCreateTime(new Date());
-        projectInfoDto.addDetControllers(detController);
-        ValueFilter filter = (Object object, String name, Object v) -> {
-            if (v == null) return "";
-            return v;
-        };
-        return JSON.toJSONString(projectInfoDto, filter);
     }
 }
