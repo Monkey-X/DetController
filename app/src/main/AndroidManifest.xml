@@ -55,7 +55,6 @@
         </activity>
         <activity android:name=".activity.FunctionTestActivity" />
         <activity android:name=".activity.PersonActivity" />
-        <activity android:name=".activity.FunctionTestActivity" />
         <activity android:name=".activity.MainBoardUpdateActivity" />
         <activity android:name=".activity.ReportActivity2" />
         <activity android:name=".activity.CheckoutActivity2" />

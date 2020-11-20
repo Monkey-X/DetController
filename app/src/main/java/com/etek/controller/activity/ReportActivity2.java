@@ -109,10 +109,11 @@ public class ReportActivity2 extends BaseActivity {
     private OnItemClickListener mItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(View itemView, int position) {
-            cDetController = rptCtlList.get(position);
-            Intent intent = new Intent(mContext, ReportDetailActivity2.class);
-            intent.putExtra("DetController", cDetController);
-            startActivity(intent);
+            //详情页逻辑变化，直接跳转会报错(该列表页后续不需要的)
+//            cDetController = rptCtlList.get(position);
+//            Intent intent = new Intent(mContext, ReportDetailActivity2.class);
+//            intent.putExtra("DetController", cDetController);
+//            startActivity(intent);
         }
     };
 

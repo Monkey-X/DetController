@@ -61,7 +61,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 break;
 
             case R.id.project_data_report://数据上传
-                startActivity(new Intent(this,ReportActivity2.class));
+                startActivity(new Intent(this, ReportDetailActivity2.class).putExtra(AppIntentString.PROJECT_ID,proId));
                 break;
         }
     }
