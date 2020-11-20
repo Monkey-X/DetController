@@ -234,7 +234,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             return;
         }
 
-        if (true) {
+        if (Globals.isTest) {
             sendReport2ETEKTest();
         } else {
             if (Globals.isServerDanningOn) {

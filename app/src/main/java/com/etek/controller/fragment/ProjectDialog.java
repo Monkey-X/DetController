@@ -119,14 +119,14 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
             return;
 
         }
-        String strCompanyName = getString(contractName);
-        if (TextUtils.isEmpty(strCompanyName)) {
+        String strContractName = getString(contractName);
+        if (TextUtils.isEmpty(strContractName)) {
             ToastUtils.show(getContext(), "请输入合同名称！");
             return;
 
         }
-        String strCompanyId = getString(contractId);
-        if (TextUtils.isEmpty(strCompanyId)) {
+        String strContractId = getString(contractId);
+        if (TextUtils.isEmpty(strContractId)) {
             ToastUtils.show(getContext(), "请输入合同代码！");
             return;
         }
@@ -134,10 +134,10 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setProName(strProName);
         projectInfoEntity.setProCode(strProId);
-        projectInfoEntity.setCompanyName(strCompanyName);
-        projectInfoEntity.setCompanyCode(strCompanyId);
-        projectInfoEntity.setContractName(getString(contractName));
-        projectInfoEntity.setContractCode(getString(contractId));
+        projectInfoEntity.setCompanyName(getString(companyName));
+        projectInfoEntity.setCompanyCode(getString(companyId));
+        projectInfoEntity.setContractName(strContractName);
+        projectInfoEntity.setContractCode(strContractId);
 
         if (listener != null) {
             listener.makeProject(projectInfoEntity);
