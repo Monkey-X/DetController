@@ -316,14 +316,14 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
 //                            Log.d("TAG",detInfoDto.toString());
 //                            projectFile.setProInfo(detInfoDto);
 
-                            projectFile.setCompany(Globals.user.getCompanyName());
-                            projectFile.setDwdm(Globals.user.getCompanyCode());
-                            projectFile.setXmbh(detController.getProjectId());
-                            projectFile.setHtbh(detController.getContractId());
+                            projectFile.setCompany(projectInfoEntity.getCompanyName());
+                            projectFile.setDwdm(projectInfoEntity.getCompanyCode());
+                            projectFile.setXmbh(projectInfoEntity.getProCode());
+                            projectFile.setHtbh(projectInfoEntity.getControllerId());
 
                             int unRegDet = 0;
                             boolean isUnreg = false;
-                            for (Detonator detonator : detController.getDetList()) {
+                            for (DetonatorEntity detonator : detonatorEntityList) {
                                 for (Lg lg : serverResult.getLgs().getLg()) {
                                     if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {
                                         if (lg.getGzmcwxx() != 0) {
@@ -337,25 +337,23 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
                             if (isUnreg) {
                                 XLog.w("unRegDet:" + unRegDet);
                                 showStatusDialog("已存在已使用雷管！");
-                                proId = storeProjectInfo(projectFile, serverResult);
-                                if (proId != 0) {
-                                    isValid = true;
-                                    projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
-                                            queryBuilder()
-                                            .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-                                }
+//                                proId = storeProjectInfo(projectFile, serverResult);
+//                                if (proId != 0) {
+//                                    projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
+//                                            queryBuilder()
+//                                            .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+//                                }
                                 return;
                             }
 
-                            proId = storeProjectInfo(projectFile, serverResult);
-                            if (proId != 0) {
-                                isValid = true;
-                                projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
-                                        queryBuilder()
-                                        .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-                            } else {
-                                showStatusDialog("已经存在有此项目");
-                            }
+//                            proId = storeProjectInfo(projectFile, serverResult);
+//                            if (proId != 0) {
+//                                projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
+//                                        queryBuilder()
+//                                        .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+//                            } else {
+//                                showStatusDialog("已经存在有此项目");
+//                            }
                         } else {
                             showStatusDialog(serverResult.getCwxxms());
 //                        result = ActivityResult.successOf("上传丹灵服务器成功!");

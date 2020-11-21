@@ -33,6 +33,7 @@ import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
+import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -380,6 +381,16 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+
+    private void updateProjectStatus(){
+        ProjectInfoEntity projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+        if (projectInfoEntity!=null) {
+            projectInfoEntity.setProjectImplementStates(AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE);
+            DBManager.getInstance().getProjectInfoEntityDao().save(projectInfoEntity);
+        }
+    }
+
+
     /**
      * 异步进行 雷管的延时下载
      */
@@ -404,6 +415,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             super.onPostExecute(o);
             missProDialog();
             mProjectDelayAdapter.notifyDataSetChanged();
+            updateProjectStatus();
         }
     }
 }

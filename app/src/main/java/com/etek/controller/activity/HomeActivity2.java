@@ -35,12 +35,15 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     private RelativeLayout projectImplement;
     private RelativeLayout assistFunction;
     private RelativeLayout localSetting;
+    private long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_home2);
 
+        int initialize = DetApp.getInstance().Initialize();
+        Log.d(TAG, "onCreate: initialize= " + initialize);
 
         initView();
 
@@ -62,8 +65,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         new Thread() {
             @Override
             public void run() {
-                int initialize = DetApp.getInstance().Initialize();
-                Log.d(TAG, "onCreate: initialize= " + initialize);
                 DetApp.getInstance().MainBoardPowerOn();
                 mainBoardInit();
             }
@@ -152,6 +153,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onSart: ");
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -172,6 +174,9 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     @Override
     public void onBackPressed() {
         long currentTick = System.currentTimeMillis();
+        if (currentTick - startTime < 5000) {
+            return;
+        }
         if (currentTick - lastBackKeyDownTick > MAX_DOUBLE_BACK_DURATION) {
             showToast("再按一次退出");
             lastBackKeyDownTick = currentTick;

@@ -30,6 +30,7 @@ import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
+import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -83,7 +84,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         // 获取到项目列表（暂时隐藏）
 //        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
         //根据项目id获取雷管并展示
-        if (proId >= 0){
+        if (proId >= 0) {
             detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
             connectData.addAll(detonatorEntityList);
         }
@@ -227,7 +228,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     private void showAllDet() {
         // 筛选后点击展示全部
-
+        if (proId >= 0) {
+            List<DetonatorEntity> list = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+            connectData.clear();
+            connectData.addAll(list);
+            connectTestAdapter.notifyDataSetChanged();
+        }
     }
 
     // 筛选 误接状态
@@ -247,7 +253,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             return;
         }
 
-        // TODO: 2020/10/31  
+        List<DetonatorEntity> missConnect = new ArrayList<>();
+        for (DetonatorEntity connectDatum : connectData) {
+            if (connectDatum.getTestStatus() == 170) {
+                missConnect.add(connectDatum);
+            }
+        }
+        connectData.clear();
+        connectData.addAll(missConnect);
+        connectTestAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -324,10 +338,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (testAsyncTask != null) {
             testAsyncTask.cancel(true);
         }
+        checkAllDetStatus();
+        super.onDestroy();
+    }
+
+    private void checkAllDetStatus() {
+        // TODO: 2020/11/21  检查所有雷管的信息
     }
 
     // 删除条目
@@ -370,6 +389,14 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
     }
 
+    private void updateProjectStatus(){
+        ProjectInfoEntity projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+        if (projectInfoEntity!=null) {
+            projectInfoEntity.setProjectImplementStates(AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD);
+            DBManager.getInstance().getProjectInfoEntityDao().save(projectInfoEntity);
+        }
+    }
+
 
     // 异步进行在线检测
     public class TestAsyncTask extends AsyncTask {
@@ -391,6 +418,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             connectTestAdapter.notifyDataSetChanged();
+            updateProjectStatus();
             missProDialog();
         }
     }

@@ -113,6 +113,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 checkAuthorization.setClickable(false);
                 powerBomb.setClickable(false);
                 dataReport.setClickable(false);
+                connectTest.setClickable(true);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD://延时下载有颜色，其余四个置灰(不可点击)
@@ -122,6 +123,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
                 dataReport.setBackgroundResource(R.drawable.un_project_data_report);
                 connectTest.setClickable(false);
+                delayDownload.setClickable(true);
                 checkAuthorization.setClickable(false);
                 powerBomb.setClickable(false);
                 dataReport.setClickable(false);
@@ -135,6 +137,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 dataReport.setBackgroundResource(R.drawable.un_project_data_report);
                 connectTest.setClickable(false);
                 delayDownload.setClickable(false);
+                checkAuthorization.setClickable(true);
                 powerBomb.setClickable(false);
                 dataReport.setClickable(false);
                 break;
@@ -147,6 +150,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 dataReport.setBackgroundResource(R.drawable.un_project_data_report);
                 connectTest.setClickable(false);
                 delayDownload.setClickable(false);
+                powerBomb.setClickable(true);
                 checkAuthorization.setClickable(false);
                 dataReport.setClickable(false);
                 break;
@@ -160,6 +164,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 connectTest.setClickable(false);
                 delayDownload.setClickable(false);
                 checkAuthorization.setClickable(false);
+                dataReport.setClickable(true);
                 powerBomb.setClickable(false);
                 break;
         }
