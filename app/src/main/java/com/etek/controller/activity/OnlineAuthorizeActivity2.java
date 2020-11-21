@@ -204,15 +204,15 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
             longitude.setText(projectInfoEntity.getLongitude()+"");
             latitude.setText(projectInfoEntity.getLatitude()+"");
             if (AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST.equals(projectInfoEntity.getProjectImplementStates())) {
-                implementStates.setText("连接检测");
+                implementStates.setText(getString(R.string.title_activity_connecttest));
             } else if (AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD.equals(projectInfoEntity.getProjectImplementStates())) {
-                implementStates.setText("延时下载");
+                implementStates.setText(getString(R.string.activity_delay_download));
             } else if (AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE.equals(projectInfoEntity.getProjectImplementStates())) {
-                implementStates.setText("检查授权");
+                implementStates.setText(getString(R.string.check_authorize));
             } else if (AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB.equals(projectInfoEntity.getProjectImplementStates())) {
-                implementStates.setText("充电起爆");
+                implementStates.setText(getString(R.string.title_power_bomb));
             } else if (AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT.equals(projectInfoEntity.getProjectImplementStates())) {
-                implementStates.setText("数据上传");
+                implementStates.setText(getString(R.string.data_report));
             }
             if (projectInfoEntity.getBlastTime() != null) {
                 blastTime.setText(DateUtil.getDateStr(projectInfoEntity.getBlastTime()));

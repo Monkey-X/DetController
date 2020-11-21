@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.etek.controller.R;
+import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 
 import java.util.List;
@@ -43,6 +44,17 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         projectViewHolder.projectName.setText(projectInfoEntity.getProName());
         projectViewHolder.projectId.setText(projectInfoEntity.getProCode());
         //添加项目的状态
+        if (AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST.equals(projectInfoEntity.getProjectImplementStates())) {
+            projectViewHolder.projectStatus.setText(context.getString(R.string.title_activity_connecttest));
+        } else if (AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD.equals(projectInfoEntity.getProjectImplementStates())) {
+            projectViewHolder.projectStatus.setText(context.getString(R.string.activity_delay_download));
+        } else if (AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE.equals(projectInfoEntity.getProjectImplementStates())) {
+            projectViewHolder.projectStatus.setText(context.getString(R.string.check_authorize));
+        } else if (AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB.equals(projectInfoEntity.getProjectImplementStates())) {
+            projectViewHolder.projectStatus.setText(context.getString(R.string.title_power_bomb));
+        } else if (AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT.equals(projectInfoEntity.getProjectImplementStates())) {
+            projectViewHolder.projectStatus.setText(context.getString(R.string.data_report));
+        }
 
         projectViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
