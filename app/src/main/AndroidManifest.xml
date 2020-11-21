@@ -43,10 +43,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.AboutActivity"></activity>
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/activity_theme">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -115,9 +115,7 @@
             android:screenOrientation="unspecified" />
         <activity
             android:name=".activity.SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activity.DetInfoDetailActivity"
             android:label="@string/title_activity_det_detail"

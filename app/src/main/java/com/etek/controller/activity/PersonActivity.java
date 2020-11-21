@@ -54,6 +54,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 startActivity(intent);
                 break;
             case R.id.clean_data:
+                // TODO: 2020/11/21   清理数据
                 break;
             case R.id.mainboard_update:
                 Intent mainIntent = new Intent(this, MainBoardUpdateActivity.class);
@@ -63,6 +64,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 startActivity(SettingsActivity.class);
                 break;
             case R.id.about:
+                startActivity(AboutActivity.class);
                 break;
         }
     }

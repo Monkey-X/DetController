@@ -55,6 +55,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private List<DetonatorEntity> mDetonatorEntities;
     private ProjectInfoEntity mProjectInfoEntity;
     private int projectPosition = -1;
+    private TestAsyncTask testAsyncTask;
     private long proId;
     private List<DetonatorEntity> detonatorEntityList;
 
@@ -299,7 +300,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     }
 
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -318,8 +318,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (connectData == null || connectData.size() == 0) {
             return;
         }
-        TestAsyncTask testAsyncTask = new TestAsyncTask();
+        testAsyncTask = new TestAsyncTask();
         testAsyncTask.execute();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (testAsyncTask != null) {
+            testAsyncTask.cancel(true);
+        }
     }
 
     // 删除条目
@@ -354,7 +362,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         String detId = detonatorEntity.getDetId();
         Log.d(TAG, "detSingleCheck: detId = " + detId);
         int wakeupStatus = DetApp.getInstance().ModuleSetWakeupStatus(Integer.parseInt(detId));
-        Log.d(TAG, "detSingleCheck: wakeupStatus = "+wakeupStatus);
+        Log.d(TAG, "detSingleCheck: wakeupStatus = " + wakeupStatus);
         // 进行雷管的链接检测
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);

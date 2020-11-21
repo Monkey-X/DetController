@@ -57,6 +57,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private int projectPosition = -1;
     private long proId;
     private List<DetonatorEntity> detonatorEntityList;
+    private DelayDownloadTask delayDownloadTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,17 +322,17 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         int delayTime = bean.getStartTime();
         DetonatorEntity detonatorEntity = detonators.get(bean.getStartNum() - 1);
         detonatorEntity.setRelay(String.valueOf(delayTime));
-        for (int i = bean.getStartNum()+1; i <= bean.getEndNum(); i++) {
+        for (int i = bean.getStartNum() + 1; i <= bean.getEndNum(); i++) {
             DetonatorEntity detonatorEntity1 = detonators.get(i - 1);
-            Log.d(TAG, "makeSure: holePosition = "+holePosition);
-            Log.d(TAG, "makeSure: delayTime = "+delayTime);
+            Log.d(TAG, "makeSure: holePosition = " + holePosition);
+            Log.d(TAG, "makeSure: delayTime = " + delayTime);
             if (i < holePosition) {
-                delayTime = delayTime+bean.getHoleInTime();
+                delayTime = delayTime + bean.getHoleInTime();
                 detonatorEntity1.setRelay(String.valueOf(delayTime));
-            }else if (holePosition == i){
-                delayTime = delayTime+bean.getHoleOutTime();
+            } else if (holePosition == i) {
+                delayTime = delayTime + bean.getHoleOutTime();
                 detonatorEntity1.setRelay(String.valueOf(delayTime));
-                holePosition = holePosition +bean.getHoleNum();
+                holePosition = holePosition + bean.getHoleNum();
             }
         }
         // 修改保存到数据库
@@ -366,10 +367,18 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (detonators == null || detonators.size() == 0) {
             return;
         }
-        DelayDownloadTask delayDownloadTask = new DelayDownloadTask();
+        delayDownloadTask = new DelayDownloadTask();
         delayDownloadTask.execute();
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (delayDownloadTask != null) {
+            delayDownloadTask.cancel(true);
+        }
+    }
 
     /**
      * 异步进行 雷管的延时下载

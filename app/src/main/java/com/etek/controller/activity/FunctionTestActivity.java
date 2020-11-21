@@ -54,7 +54,6 @@ public class FunctionTestActivity extends BaseActivity implements BaseQuickAdapt
         datas.add("模组唤醒");
         datas.add("模组充电");
         datas.add("模组放电");
-        datas.add("获取模组总线电压和电流");
         return datas;
     }
 
@@ -99,20 +98,6 @@ public class FunctionTestActivity extends BaseActivity implements BaseQuickAdapt
                 break;
             case 6:
                 // 获取模组总线电压和电流
-                StringBuilder strData = new StringBuilder();
-                int ret = DetApp.getInstance().MainBoardGetCurrentVoltage(strData);
-                if (ret != 0) {
-                    Log.d(TAG, "获取电压电流 失败 " + ret);
-                    ToastUtils.show(this, "获取电压电流 失败 " + ret);
-                } else {
-                    String str0 = strData.toString();
-
-                    float fv = (float) (Integer.parseInt(str0.substring(0, 8), 16) * 1.00);
-                    float fc = (float) (Integer.parseInt(str0.substring(8, 16), 16) * 1.00);
-                    Log.d(TAG, String.format("电压：%.2fmV\t电流：%,2fmA", fv, fc));
-                    layout.setVisibility(View.VISIBLE);
-                    text1.setText(String.format("电压：%.2fmV\t电流：%,2fmA", fv, fc));
-                }
                 break;
 
         }

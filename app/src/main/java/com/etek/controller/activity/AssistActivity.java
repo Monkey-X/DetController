@@ -71,11 +71,7 @@ public class AssistActivity extends BaseActivity {
                         Intent lineIntent = new Intent(AssistActivity.this, LineCheckActivity.class);
                         startActivity(lineIntent);
                         break;
-                    case 2: //主板升级
-                        Intent mainIntent = new Intent(AssistActivity.this, MainBoardUpdateActivity.class);
-                        startActivity(mainIntent);
-                        break;
-                    case 3: //功能测试
+                    case 2: //功能测试
                         Intent testIntent = new Intent(AssistActivity.this, FunctionTestActivity.class);
                         startActivity(testIntent);
                         break;

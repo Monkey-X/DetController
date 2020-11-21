@@ -68,12 +68,7 @@ public class SettingsActivity extends BaseActivity implements OnToggledListener 
 
     @BindView(R.id.settings_sim)
     RelativeLayout settings_sim;
-    //    private RelativeLayout settingsMore;
-//    private RelativeLayout logLayout;
-//
 
-    @BindView(R.id.update_app)
-     RelativeLayout rlUpdateApp;
     @BindView(R.id.zhongbao_select)
     RelativeLayout zbAddressSel;
     @BindView(R.id.zhongbao_spinner)
@@ -89,26 +84,10 @@ public class SettingsActivity extends BaseActivity implements OnToggledListener 
         initSupportActionBar(R.string.title_activity_settings);
     }
 
-    @OnClick(R.id.update_app)
-    public void updateApp(){
-        AppUpdate(mContext);
-    }
 
-    int count = 0;
-
-    @OnClick(R.id.rl_site)
-    public void rl_site(){
-        count++;
-        if(count==2){
-            ToastUtils.showCustom(mContext,"连续点击六次进入更多的设定");
-        }
-
-        if(count>3){
-            count = 0;
-            Intent i = new Intent(mContext,SettingsMoreActivity.class);
-            startActivity(i);
-        }
-    }
+//    进行更多的设置
+//    Intent i = new Intent(mContext,SettingsMoreActivity.class);
+//    startActivity(i);
 
 
 
@@ -119,20 +98,9 @@ public class SettingsActivity extends BaseActivity implements OnToggledListener 
 
         danningSwitch.setOn(Globals.isServerDanningOn);
         danningSwitch.setOnToggledListener(this);
-//        LabeledSwitch zhongbaoSwitch = findViewById(R.id.zhongbao_switch);
-//        zhongbaoSwitch.setOn(Globals.isServerZhongbaoOn);
-//        zhongbaoSwitch.setOnToggledListener(this);
-//
-
-//        simSwitch.setOn(Globals.isSimUPload);
-//        simSwitch.setOnToggledListener(this);
 
         zhongbaoSwitch.setOn(Globals.isServerZhongbaoOn);
         zhongbaoSwitch.setOnToggledListener(this);
-
-        TextView appVersion = findViewById(R.id.set_app_version);
-        appVersion.setText(getString(R.string.about_version, SommerUtils.getVersionName(this),
-                "" + SommerUtils.getVersionCode(this)));
 
         List<String> list = new ArrayList<String>();
 
@@ -213,6 +181,9 @@ public class SettingsActivity extends BaseActivity implements OnToggledListener 
                 break;
         }
     }
+
+
+    // 进行app版本的检查和升级
     private   void AppUpdate(Context mConxtext) {
         String url = AppConstants.ETEKTestServer+AppConstants.CheckoutReport;
         UpdateAppUtils.checkUpdate(url, mConxtext, new UpdateAppUtils.UpdateCallback() {

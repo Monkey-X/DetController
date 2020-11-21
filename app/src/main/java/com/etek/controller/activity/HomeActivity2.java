@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
 import com.etek.controller.entity.MainBoardInfoBean;
@@ -15,6 +17,7 @@ import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.scan.ScannerInterface;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,6 +159,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         super.onStop();
         Log.d(TAG, "onStop: ");
     }
+
 
     @Override
     protected void onDestroy() {
