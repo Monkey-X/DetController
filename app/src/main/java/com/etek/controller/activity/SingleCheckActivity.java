@@ -99,6 +99,27 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         singleCheckEntity.setTestStatus(checkResult);
                         showSingleCheckData(singleCheckEntity);
                     }
+
+                    /***
+                     * 批量操作雷管时结果回调函数
+                     * @param nID
+                     * @param nResult
+                     */
+                    @Override
+                    public void SetDetsSettingResult(int nID,int nResult){
+
+                    }
+
+
+                    /***
+                     * 充电和放电过程中返回的电压和电流值
+                     * @param nVoltage
+                     * @param nCurrent
+                     */
+                    @Override
+                    public void SetChargeData(int nVoltage,int nCurrent){
+
+                    }
                 });
                 Log.d(TAG, "onClick: CheckSingleModule = " + result);
                 showSingleCheckData(null);

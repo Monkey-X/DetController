@@ -253,6 +253,98 @@ public class DetCmd {
 		return ret;
 	}
 
+	/***
+	 * 10个雷管连接检测
+	 * @param arrIDs:	10个雷管的ID数组
+	 * @return
+	 */
+	public int BoardSendCmd88(int[] arrIDs) {
+		byte[] szcmd = new byte[43];
+
+		szcmd[0]=(byte)0x88;szcmd[1]=0x29;
+
+		int n = arrIDs.length;
+		szcmd[2] = (byte)n;
+
+		for(n=0;n<arrIDs.length;n++) {
+			byte[] arrid = DataConverter.int2BytesLSB(arrIDs[n]);
+			System.arraycopy(arrid, 0, szcmd, 3+n*4, 4);
+		}
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		int ret = prt.SendBlock(szcmd);
+		return ret;
+	}
+
+	/***
+	 * 5个雷管延时下载
+	 * @param arrIDs
+	 * @param arrDTs
+	 * @return
+	 */
+	public int BoardSendCmd89(int[] arrIDs,int[] arrDTs) {
+		byte[] szcmd = new byte[43];
+
+		szcmd[0]=(byte)0x89;szcmd[1]=0x29;
+
+		int n = arrIDs.length;
+		szcmd[2] = (byte)n;
+
+		for(n=0;n<arrIDs.length;n++) {
+			byte[] arrid = DataConverter.int2BytesLSB(arrIDs[n]);
+			System.arraycopy(arrid, 0, szcmd, 3+n*8, 4);
+
+			arrid = DataConverter.int2BytesLSB(arrDTs[n]);
+			System.arraycopy(arrid, 0, szcmd, 3+n*8+4, 4);
+		}
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		int ret = prt.SendBlock(szcmd);
+		return ret;
+	}
+
+	/***
+	 * 雷管网络充电流程
+	 * @return
+	 */
+	public int BoardSendCmd8C() {
+		byte[] szcmd = new byte[2];
+
+		szcmd[0]=(byte)0x8C;szcmd[1]=0x00;
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		int ret = prt.SendBlock(szcmd);
+		return ret;
+	}
+
+	/***
+	 * 雷管网络放电流程
+	 * @return
+	 */
+	public int BoardSendCmd8D() {
+		byte[] szcmd = new byte[2];
+
+		szcmd[0]=(byte)0x8D;szcmd[1]=0x00;
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		int ret = prt.SendBlock(szcmd);
+		return ret;
+	}
+
+	/***
+	 * 雷管网络等待起爆时的电压和是否脱落检测
+	 * @param strData
+	 * @return
+	 */
+	public int BoardCmd8E(StringBuilder strData) {
+		byte bcmd = (byte)0x8E;
+		return BoardCmd(bcmd,null,8,0xbe,strData);
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 

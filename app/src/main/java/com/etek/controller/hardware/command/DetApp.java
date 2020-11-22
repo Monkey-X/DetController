@@ -984,40 +984,35 @@ public class DetApp {
 						
 			ret = szdata[2];
 			if(ret<0) ret = ret + 0x100;
-			
-			if(null!=cbobj) 
+
+			if(null!=cbobj)
 				cbobj.SetProgressbarValue(ret);
-			
+
 			if(ret<100)
 				continue;
+
+			if(ret>100)
+				break;
 
 			//			B2 LEN 完成百分比[1] ID[4] DC[8] DT[4] 参数1[2] 参数2[2]  药头检测结果[1] CRC8[1]
 			byte[] id = new byte[4];
 			byte[] dc = new byte[8];
 			byte[] dt = new byte[4];
-			
+
 			System.arraycopy(szdata, 3, id, 0, 4);
 			System.arraycopy(szdata, 7, dc, 0, 8);
 			System.arraycopy(szdata, 15, dt, 0, 4);
-			
+
 			byte bResult = szdata[23];
-			
+
 			//	ID
-			int nid = DataConverter.lsbBytes2Int(id);
-			int ndt = DataConverter.lsbBytes2Int(dt);
-			
-			if(ret>100){
-				if(null!=cbobj) {
-					cbobj.SetSingleModuleCheckData(nid, dc, ndt,bResult);
-					cbobj.DisplayText("单颗模组检测 失败！");
-				}				
-				break;
-			}
-			
-			ret = 0;	
+			int nid = DataConverter.bytes2Int(id);
+			int ndt = DataConverter.bytes2Int(dt);
+
+			ret = 0;
 			if(null!=cbobj) {
 				cbobj.SetSingleModuleCheckData(nid, dc, ndt,bResult);
-				cbobj.DisplayText("单颗模组检测 完成！");				
+				cbobj.DisplayText("单颗模组检测 完成！");
 			}
 
 			break;
@@ -1082,20 +1077,422 @@ public class DetApp {
 					cbobj.DisplayText("总线上电与检测流程 首数据无效");
 				break;
 			}
-						
-			if(null!=cbobj) 
-				cbobj.SetProgressbarValue(szdata[2]);
-			
-			if(szdata[2]>=0x64) {
+
+			ret = szdata[2];
+			if(ret<0) ret = ret +0x100;
+
+			if(ret==0x64) {
+				ret= 0;
 				cbobj.DisplayText("总线上电与检测流程 完成！");
 				break;
-			}			
+			}
+
+			if(ret<0x64) {
+				cbobj.SetProgressbarValue(ret);
+				continue;
+			}
+
+			cbobj.DisplayText("总线上电与检测流 出错");
+			return -1;
 		}
 				
 		return ret;
 	}
-	
-	
+
+	/***
+	 * 批量雷管网络连接检测（最多10个）
+	 * @param nIDs
+	 * @param cbobj
+	 * @return
+	 */
+	public int DetsCheckLinkage(int[] nIDs,DetCallback cbobj) {
+		int ret;
+		final int RESP_LEN = 14;
+		final byte RESP_HEAD = (byte)0xb8;
+		byte[] szdata  = null;
+
+
+		DetCmd cmd = new DetCmd(m_commobj);
+		DetProtocol prt = new DetProtocol(m_commobj);
+		DetResponse resp = new DetResponse();
+
+		int[] arrIDs = new int[10];
+		int nDetNum = nIDs.length;
+		if(nDetNum>=10)
+			nDetNum = 10;
+		System.arraycopy(nIDs, 0,arrIDs, 0, nDetNum);
+
+		ret = cmd.BoardSendCmd88(arrIDs);
+		m_detError.Setter((byte)0x88, ret);
+		if(0!=ret) return ret;
+
+		//[0] //B8
+		//[1] //固定值0B，有效数据包DAT长度
+
+		//[2] //完成百分比
+		//[3~12 //10字节状态，表示10个雷管的连接测试状态：00：未测试，01：通过；0F：错误
+		//[13] //CRC8
+		if(null!=cbobj)
+			cbobj.StartProgressbar();
+
+		while(true) {
+			ret = prt.RecvBlock(RESP_LEN, resp);
+			if(0!=ret) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络连接检测 超时无应答");
+				break;
+			}
+
+			String str0 = resp.GetRespData();
+			szdata = DataConverter.hexStringToBytes(str0);
+
+			if(null==szdata) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络连接检测  获取无效数据");
+				break;
+			}
+			if(szdata.length<RESP_LEN-1) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络连接检测 获取数据长度不足");
+				break;
+			}
+
+			if(szdata[0]!=(byte)RESP_HEAD) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络连接检测 首数据无效");
+				break;
+			}
+
+			ret = szdata[2];
+			if(ret<0) ret = ret +0x100;
+
+			if(ret==0x64) {
+				if(null!=cbobj)
+					cbobj.DisplayText("总雷管网络连接检测 完成！");
+				break;
+			}
+
+			if(ret<0x64) {
+				if(null!=cbobj)
+					cbobj.SetProgressbarValue(ret);
+				continue;
+			}
+
+			if(null!=cbobj)
+				cbobj.DisplayText("雷管网络连接检测出错");
+			return -1;
+		}
+
+
+		for(int n=0;n<nDetNum;n++) {
+			if(null!=cbobj)
+				cbobj.SetDetsSettingResult(nIDs[n], szdata[3+n]);
+		}
+		return ret;
+
+	}
+
+
+	/***
+	 * 批量设置雷管延时，每组最多5个
+	 * @param nIDs
+	 * @param nDTs
+	 * @param cbobj
+	 * @return
+	 */
+	public int DetsSetDelayTime(int[] nIDs,int[] nDTs,DetCallback cbobj) {
+		int ret;
+		final int RESP_LEN = 9;
+		final byte RESP_HEAD = (byte)0xb9;
+		byte[] szdata  = null;
+
+		DetCmd cmd = new DetCmd(m_commobj);
+		DetProtocol prt = new DetProtocol(m_commobj);
+		DetResponse resp = new DetResponse();
+
+		int[] arrIDs = new int[5];
+
+		int nDetNum = nIDs.length;
+		if(nDetNum>=5)
+			nDetNum = 5;
+		System.arraycopy(nIDs, 0,arrIDs, 0, nDetNum);
+		int[] arrDTs = new int[5];
+		System.arraycopy(nDTs, 0, arrDTs, 0, nDetNum);
+		ret = cmd.BoardSendCmd89(arrIDs,arrDTs);
+		m_detError.Setter((byte)0x89, ret);
+		if(0!=ret) return ret;
+
+		//[0] //B9
+		//[1] //固定值06，有效数据包DAT长度
+		//[2] //完成百分比
+		//[3~7 //5字节状态，表示5个雷管的延时下载状态：00：未测试，01：成功；0F：错误
+		//[8] //CRC8
+
+		if(null!=cbobj)
+			cbobj.StartProgressbar();
+
+		while(true) {
+			ret = prt.RecvBlock(RESP_LEN, resp);
+			if(0!=ret) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络延时下载 超时无应答");
+				break;
+			}
+
+			String str0 = resp.GetRespData();
+			szdata = DataConverter.hexStringToBytes(str0);
+
+			if(null==szdata) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络延时下载  获取无效数据");
+				break;
+			}
+			if(szdata.length<RESP_LEN-1) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络延时下载 获取数据长度不足");
+				break;
+			}
+
+			if(szdata[0]!=(byte)RESP_HEAD) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络延时下载 首数据无效");
+				break;
+			}
+
+			ret = szdata[2];
+			if(ret<0) ret = ret +0x100;
+
+			if(ret==0x64) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络延时下载 完成！");
+				break;
+			}
+
+			if(ret<0x64) {
+				if(null!=cbobj)
+					cbobj.SetProgressbarValue(ret);
+				continue;
+			}
+
+			if(null!=cbobj)
+				cbobj.DisplayText("雷管网络延时下载出错");
+			return -1;
+		}
+
+
+		for(int n=0;n<nDetNum;n++) {
+			if(null!=cbobj)
+				cbobj.SetDetsSettingResult(nIDs[n], szdata[3+n]);
+		}
+		return ret;
+	}
+
+	/***
+	 * 雷管网络总线充电
+	 * @param cbobj
+	 * @return
+	 */
+	public int DetsBusCharge(DetCallback cbobj) {
+		int ret;
+		final int RESP_LEN = 12;
+		final byte RESP_HEAD = (byte)0xbc;
+		byte[] szdata  = null;
+
+		DetCmd cmd = new DetCmd(m_commobj);
+		DetProtocol prt = new DetProtocol(m_commobj);
+		DetResponse resp = new DetResponse();
+
+		ret = cmd.BoardSendCmd8C();
+		m_detError.Setter((byte)0x8C, ret);
+		if(0!=ret) return ret;
+
+		//[0] //BC
+		//[1] //固定值09，有效数据包DAT长度
+		//[2] //完成百分比，正确流程为0~100，表示正在进行中
+		//                检测到错误时，此值为>100的值，检测终止
+		//[3~6] //总线电压值，实时显示
+		//[7~10 //总线电流值，实时显示
+		//[11] //CRC8
+
+
+		if(null!=cbobj)
+			cbobj.StartProgressbar();
+
+		while(true) {
+			ret = prt.RecvBlock(RESP_LEN, resp);
+			if(0!=ret) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线充电 超时无应答");
+				break;
+			}
+
+			String str0 = resp.GetRespData();
+			szdata = DataConverter.hexStringToBytes(str0);
+
+			if(null==szdata) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线充电  获取无效数据");
+				break;
+			}
+			if(szdata.length<RESP_LEN-1) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线充电 获取数据长度不足");
+				break;
+			}
+
+			if(szdata[0]!=(byte)RESP_HEAD) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线充电 首数据无效");
+				break;
+			}
+
+			ret = szdata[2];
+			if(ret<0) ret = ret +0x100;
+
+			byte[] vt = new byte[4];
+			byte[] cr = new byte[4];
+
+			System.arraycopy(szdata, 3, vt, 0, 4);
+			System.arraycopy(szdata, 7, cr, 0, 4);
+
+			int nVoltage = DataConverter.bytes2Int(vt);
+			int nCurrent = DataConverter.bytes2Int(cr);
+
+			if(null!=cbobj)
+				cbobj.SetChargeData(nVoltage, nCurrent);
+
+			if(ret==0x64) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线充电 完成！");
+				break;
+			}
+
+			if(ret<0x64) {
+				if(null!=cbobj)
+					cbobj.SetProgressbarValue(ret);
+				continue;
+			}
+
+			if(null!=cbobj)
+				cbobj.DisplayText("雷管网络总线充电 出错");
+			return -1;
+		}
+
+		return ret;
+	}
+
+	/***
+	 * 雷管网络总线放电
+	 * @param cbobj
+	 * @return
+	 */
+	public int DetsBusDischarge(DetCallback cbobj) {
+		int ret;
+		final int RESP_LEN = 12;
+		final byte RESP_HEAD = (byte)0xbd;
+		byte[] szdata  = null;
+
+		DetCmd cmd = new DetCmd(m_commobj);
+		DetProtocol prt = new DetProtocol(m_commobj);
+		DetResponse resp = new DetResponse();
+
+		ret = cmd.BoardSendCmd8D();
+		m_detError.Setter((byte)0x8D, ret);
+		if(0!=ret) return ret;
+
+		//[0] //BC
+		//[1] //固定值09，有效数据包DAT长度
+		//[2] //完成百分比，正确流程为0~100，表示正在进行中
+		//                检测到错误时，此值为>100的值，检测终止
+		//[3~6] //总线电压值，实时显示
+		//[7~10 //总线电流值，实时显示
+		//[11] //CRC8
+
+
+		if(null!=cbobj)
+			cbobj.StartProgressbar();
+
+		while(true) {
+			ret = prt.RecvBlock(RESP_LEN, resp);
+			if(0!=ret) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线放电 超时无应答");
+				break;
+			}
+
+			String str0 = resp.GetRespData();
+			szdata = DataConverter.hexStringToBytes(str0);
+
+			if(null==szdata) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线放电  获取无效数据");
+				break;
+			}
+			if(szdata.length<RESP_LEN-1) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线放电 获取数据长度不足");
+				break;
+			}
+
+			if(szdata[0]!=(byte)RESP_HEAD) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线放电 首数据无效");
+				break;
+			}
+
+			ret = szdata[2];
+			if(ret<0) ret = ret +0x100;
+
+			byte[] vt = new byte[4];
+			byte[] cr = new byte[4];
+
+			System.arraycopy(szdata, 3, vt, 0, 4);
+			System.arraycopy(szdata, 7, cr, 0, 4);
+
+			int nVoltage = DataConverter.bytes2Int(vt);
+			int nCurrent = DataConverter.bytes2Int(cr);
+
+
+			if(null!=cbobj)
+				cbobj.SetChargeData(nVoltage, nCurrent);
+
+			if(ret==0x64) {
+				if(null!=cbobj)
+					cbobj.DisplayText("雷管网络总线放电 完成！");
+				break;
+			}
+
+			if(ret<0x64) {
+				if(null!=cbobj)
+					cbobj.SetProgressbarValue(ret);
+				continue;
+			}
+
+			if(null!=cbobj)
+				cbobj.DisplayText("雷管网络总线放电 出错");
+			return -1;
+		}
+
+		return ret;
+	}
+
+	/*
+	[0] 	BE
+	[1] 	固定值05，有效数据包DAT长度
+	[2~5] 	总线电压值，实时显示
+	[6 		0x01：正常，等待起爆指令；0x0B：总线能量输出不足；0x0C：总线雷管模组脱落，开路
+	[7] 	CRC8
+	*/
+	public int DetsCheckDropOff(StringBuilder strData) {
+		int ret;
+
+		DetCmd cmd = new DetCmd(m_commobj);
+		ret = cmd.BoardCmd8E(strData);
+		m_detError.Setter((byte)0x8E, ret);
+		if(0!=ret) return ret;
+
+		return ret;
+	}
 	
 
 	public void testDetAPP() {

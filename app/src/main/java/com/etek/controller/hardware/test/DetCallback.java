@@ -66,4 +66,25 @@ public interface DetCallback {
 	}
 */
 
+	/***
+	 * 批量操作雷管时结果回调函数
+	 * @param nID
+	 * @param nResult
+	 */
+	public void SetDetsSettingResult(int nID,int nResult);
+//	{
+//		System.out.println(String.format("雷管 0x%08X 结果:%d", nID,nResult));
+//		return;
+//	}
+
+	/***
+	 * 充电和放电过程中返回的电压和电流值
+	 * @param nVoltage
+	 * @param nCurrent
+	 */
+	public void SetChargeData(int nVoltage,int nCurrent);
+//	{
+//		System.out.println(String.format("\t当前：电压 %d 电流:%d",nVoltage,nCurrent));
+//		return;
+//	}
 }

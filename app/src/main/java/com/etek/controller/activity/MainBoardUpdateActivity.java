@@ -97,6 +97,27 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                     public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
 
                     }
+
+                    /***
+                     * 批量操作雷管时结果回调函数
+                     * @param nID
+                     * @param nResult
+                     */
+                    @Override
+                    public void SetDetsSettingResult(int nID,int nResult){
+
+                    }
+
+
+                    /***
+                     * 充电和放电过程中返回的电压和电流值
+                     * @param nVoltage
+                     * @param nCurrent
+                     */
+                    @Override
+                    public void SetChargeData(int nVoltage,int nCurrent){
+
+                    }
                 });
                 showResult(result);
             }
