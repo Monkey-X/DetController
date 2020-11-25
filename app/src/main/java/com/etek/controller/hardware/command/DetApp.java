@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
+import com.etek.controller.hardware.util.DetIDConverter;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.util.DataConverter;
@@ -77,7 +78,6 @@ public class DetApp {
 		
 		return;
 	}
-
 
 	/*
 	 * 功能：核心板ECHO测试
@@ -508,7 +508,9 @@ public class DetApp {
 				
 		DetCmd cmd = new DetCmd(m_commobj);
 
-        File file = new File(Environment.getExternalStorageDirectory().getPath()+strBINFileName);
+		//	改成绝对路径
+		String strFilePath = Environment.getExternalStorageDirectory().getPath()+strBINFileName;
+        File file = new File(strFilePath);
         if (!file.exists() || !file.isFile()) {
         	if(null!=cbobj)
         		cbobj.DisplayText("文件不存在");
@@ -516,24 +518,20 @@ public class DetApp {
         }
         nFizeSize = (int) file.length();
 
-		//	将BL引脚拉低
-		ret = cmd.BoardSetBL(false);
-		System.out.println("BL电平拉低,ret:"+ret);
-
-		if(0!=ret) {
-        	if(null!=cbobj)
-        		cbobj.DisplayText("BL电平拉低失败!");
-            return -1;
-		}
-
 		//	核心板5V供电
 		ret = cmd.BoardPowerOn();
-		System.out.println("核心板5V供电,ret:"+ret);
-
 		if(0!=ret) {
-        	if(null!=cbobj)
-        		cbobj.DisplayText("核心板5V供电失败!");
-            return -1;
+			if(null!=cbobj)
+				cbobj.DisplayText("核心板5V供电失败!");
+			return -1;
+		}
+
+		//	将BL引脚拉低
+		ret = cmd.BoardSetBL(false);
+		if(0!=ret) {
+			if(null!=cbobj)
+				cbobj.DisplayText("BL电平拉低失败!");
+			return -1;
 		}
 
     	if(null!=cbobj)
@@ -556,16 +554,15 @@ public class DetApp {
 			e1.printStackTrace();
 		}
 
-		m_commobj.FlushComm();
 		//	将BL脚置高（此时核心板进入BL状态）
 		ret = cmd.BoardSetBL(true);
-		System.out.println("BL脚置高,ret:"+ret);
-
 		if(0!=ret) {
         	if(null!=cbobj)
         		cbobj.DisplayText("BL脚置高失败!");
             return -1;
 		}
+
+		m_commobj.FlushComm();
 
 		//	监控UART口,收到6字节同步指令？
 		//	47 61 73 74 6F 6E
@@ -601,8 +598,7 @@ public class DetApp {
         		cbobj.DisplayText("发送同步指令应答 失败!");
             return -1;
 		}
-		
-		
+
 		while(true) {
 			ret = m_commobj.WaitTimeout();
 			if(0!=ret) {
@@ -646,7 +642,6 @@ public class DetApp {
 
 		//	收到7字节确认指令？
 		//	53 68 69 HWL HWH BWL BWH	HW：硬件版本，BW:Bootloader（固件）版本
-
 		str0 = DataConverter.bytes2HexString(szData);
 		if("536869".equals(str0.subSequence(0, 6))){
         	if(null!=cbobj)
@@ -723,11 +718,13 @@ public class DetApp {
     	}
     		
 		try {
-			InputStream fis = new FileInputStream(strBINFileName);
+			FileInputStream fis = new FileInputStream(strFilePath);
 			in = new BufferedInputStream(fis, PACKAGE_SIZE);
 		} catch (FileNotFoundException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
+			cbobj.DisplayText("打开主控板程序失败");
+			return -1;
 		}
 		
 		try {
@@ -791,7 +788,7 @@ public class DetApp {
 
 		//	核心板下电并重新上电
 		if(null!=cbobj)
-    		cbobj.DisplayText("�µ�");		
+    		cbobj.DisplayText("主控板下电");
 		cmd.BoardPowerOff();
 
 		//	等待2秒
@@ -822,10 +819,6 @@ public class DetApp {
 	}
 
 	/***
-	 * 核心板初始化自检
-	 * @return
-	 */
-		/***
 	 * 核心板初始化自检
 	 * @return
 	 */
@@ -890,7 +883,6 @@ public class DetApp {
 		return ret;
 	}
 
-
 	/***
 	 * 总线短路与漏电检测
 	 * @return
@@ -906,7 +898,6 @@ public class DetApp {
 		
 		return ret;
 	}
-
 
 	/***
 	 * 关机流程
@@ -1021,7 +1012,6 @@ public class DetApp {
 		return ret;
 
 	}
-
 
 	/***
 	 * 总线上电与检测流程
@@ -1191,7 +1181,6 @@ public class DetApp {
 		return ret;
 
 	}
-
 
 	/***
 	 * 批量设置雷管延时，每组最多5个
@@ -1493,7 +1482,119 @@ public class DetApp {
 
 		return ret;
 	}
-	
+
+	/***
+	 * 读取单颗雷管的ID和管码（不需要单独上下电操作，完成后总线没有电）
+	 * @param strid:		雷管ID
+	 * @param strDC			雷管的管码，是可视管码
+	 * @param cbobj			回调信息
+	 * @return
+	 */
+	public int DetsGetIDAndDC(StringBuilder strid,StringBuilder strDC,DetCallback cbobj){
+		int ret;
+		final int RESP_LEN = 17;
+		final byte RESP_HEAD = (byte)0xb4;
+		byte[] szdata  = null;
+
+		DetCmd cmd = new DetCmd(m_commobj);
+		DetProtocol prt = new DetProtocol(m_commobj);
+		DetResponse resp = new DetResponse();
+
+		ret = cmd.BoardSendCmd84();
+		m_detError.Setter((byte)0x84, ret);
+		if(0!=ret) return ret;
+
+		//[0] //B4
+		//[1] //固定值14，有效数据包DAT长度
+		//[2] //完成百分比，正确流程为0~100，表示正在进行中
+		//		检测到错误时，此值为>100的值，检测终止
+		//				[3~6] //ID[0~3]，ID，未检测时为00 00 00 00（不显示，仅验算时使用）
+		//[7~14] //DC[0~7]，管码，未检测时为00 00 00 00 30 00 00 00
+		//[15] //读取结果，00:尚未读取；01:通过；0A:ID读取错误；0B:管码读取错误；0F:短路；
+		//[16] //CRC8
+
+		while(true) {
+			ret = prt.RecvBlock(RESP_LEN, resp);
+			if(0!=ret) {
+				if(null!=cbobj)
+					cbobj.DisplayText("读取单颗雷管的ID和管码 超时无应答");
+				break;
+			}
+
+			String str0 = resp.GetRespData();
+			szdata = DataConverter.hexStringToBytes(str0);
+
+			if(null==szdata) {
+				if(null!=cbobj)
+					cbobj.DisplayText("读取单颗雷管的ID和管码  获取无效数据");
+				break;
+			}
+			if(szdata.length<RESP_LEN-1) {
+				if(null!=cbobj)
+					cbobj.DisplayText("读取单颗雷管的ID和管码 获取数据长度不足");
+				break;
+			}
+
+			if(szdata[0]!=(byte)RESP_HEAD) {
+				if(null!=cbobj)
+					cbobj.DisplayText("读取单颗雷管的ID和管码 首数据无效");
+				break;
+			}
+
+			ret = szdata[2];
+			if(ret<0) ret = ret +0x100;
+
+			if(ret<0x64) {
+				if(null!=cbobj)
+					cbobj.SetProgressbarValue(ret);
+				continue;
+			}
+
+			if(ret>100){
+				String strerrmsg =new String();
+
+				switch(ret){
+					case 110:
+					case 120:
+						strerrmsg="总线短路";
+						break;
+					case 150:
+						//	ID读取失败，提示：“雷管读取失败”
+						strerrmsg="雷管读取失败";
+						break;
+					case 180:
+						//	管码读取失败，提示：“管码读取失败”
+						strerrmsg="雷管读取失败";
+						break;
+					default:
+						strerrmsg="读取单颗雷管的ID和管码 出错";
+						break;
+				}
+				if(null!=cbobj)
+					cbobj.DisplayText(strerrmsg);
+				return -1;
+			}
+
+			byte[] id = new byte[4];
+			byte[] dc = new byte[8];
+
+			System.arraycopy(szdata, 3, id, 0, 4);
+			System.arraycopy(szdata, 7, dc, 0, 8);
+
+			ret = DataConverter.lsbBytes2Int(id);
+			strid.append(String.valueOf(ret));
+
+			DetIDConverter ic = new DetIDConverter();
+			String strdc = ic.GetDisplayDC(dc);
+			strDC.append(strdc);
+
+			if(null!=cbobj)
+				cbobj.DisplayText("读取单颗雷管的ID和管码 完成！");
+			break;
+		}
+
+		return ret;
+	}
 
 	public void testDetAPP() {
 		String strErrMsg ="";

@@ -345,6 +345,21 @@ public class DetCmd {
 		return BoardCmd(bcmd,null,8,0xbe,strData);
 	}
 
+
+	/***
+	 * 读取单颗雷管的ID和管码（不需要单独上下电操作，完成后总线没有电）
+	 * @return
+	 */
+	public int BoardSendCmd84() {
+		byte[] szcmd = new byte[2];
+
+		szcmd[0]=(byte)0x84;szcmd[1]=0x00;
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		int ret = prt.SendBlock(szcmd);
+		return ret;
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 
