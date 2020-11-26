@@ -14,7 +14,6 @@ import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
-import com.etek.controller.common.Globals;
 import com.etek.controller.dto.Jbqy;
 import com.etek.controller.dto.Jbqys;
 import com.etek.controller.dto.Lg;
@@ -138,20 +137,20 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
     private void getLocation() {
         int status = DLocationUtils.getInstance().register(locationChangeListener);
         XLog.e("status: " + status);
-        switch (status){
+        switch (status) {
             case NO_LOCATIONMANAGER:
                 //请求权限
-                ToastUtils.show(this,"没有定位权限");
+                ToastUtils.show(this, "没有定位权限");
                 DLocationTools.openAppSetting(mContext);
                 break;
             case NO_PROVIDER:
                 //打开定位
-                ToastUtils.show(this,"尚未打开定位");
+                ToastUtils.show(this, "尚未打开定位");
                 DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
                 break;
             case ONLY_GPS_WORK:
                 //切换定位模式到【高精确度】或【节电】
-                ToastUtils.show(this,"切换定位模式到【高精确度】或【节电】");
+                ToastUtils.show(this, "切换定位模式到【高精确度】或【节电】");
                 DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
                 break;
         }
@@ -180,8 +179,8 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
      */
     public void updateGPSInfo(Location location) {
         if (location != null) {
-            longitude.setText(location.getLongitude()+"");
-            latitude.setText(location.getLatitude()+"");
+            longitude.setText(location.getLongitude() + "");
+            latitude.setText(location.getLatitude() + "");
             projectInfoEntity.setLongitude(location.getLongitude());
             projectInfoEntity.setLatitude(location.getLatitude());
         }
@@ -201,8 +200,12 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
             contractName.setText(projectInfoEntity.getContractName());
             contractCode.setText(projectInfoEntity.getContractCode());
             controllerId.setText(projectInfoEntity.getControllerId());
-            longitude.setText(projectInfoEntity.getLongitude()+"");
-            latitude.setText(projectInfoEntity.getLatitude()+"");
+            if (0 != projectInfoEntity.getLongitude()) {
+                longitude.setText(projectInfoEntity.getLongitude() + "");
+            }
+            if (0 != projectInfoEntity.getLatitude()) {
+                latitude.setText(projectInfoEntity.getLatitude() + "");
+            }
             if (AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST.equals(projectInfoEntity.getProjectImplementStates())) {
                 implementStates.setText(getString(R.string.title_activity_connecttest));
             } else if (AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD.equals(projectInfoEntity.getProjectImplementStates())) {
@@ -233,13 +236,13 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.verify://校验
-                if (TextUtils.isEmpty(longitude.getText().toString().trim())){
-                    ToastUtils.show(mContext,"当前经度为空");
+                if (TextUtils.isEmpty(longitude.getText().toString().trim())) {
+                    ToastUtils.show(mContext, "当前经度为空");
                     return;
                 }
 
-                if (TextUtils.isEmpty(latitude.getText().toString().trim())){
-                    ToastUtils.show(mContext,"当前纬度为空");
+                if (TextUtils.isEmpty(latitude.getText().toString().trim())) {
+                    ToastUtils.show(mContext, "当前纬度为空");
                     return;
                 }
                 getVerifyResult(projectInfoEntity);
@@ -266,7 +269,7 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
         for (int i = 0; i < detonatorEntityList.size(); i++) {
             if (i == 0) {
                 uid.append(detonatorEntityList.get(i).getUid());
-            }else{
+            } else {
                 uid.append("," + detonatorEntityList.get(i).getUid());
             }
         }

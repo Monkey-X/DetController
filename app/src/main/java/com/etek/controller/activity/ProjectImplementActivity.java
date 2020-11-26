@@ -109,11 +109,11 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
                 dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-                delayDownload.setClickable(false);
-                checkAuthorization.setClickable(false);
-                powerBomb.setClickable(false);
-                dataReport.setClickable(false);
-                connectTest.setClickable(true);
+//                delayDownload.setClickable(false);
+//                checkAuthorization.setClickable(false);
+//                powerBomb.setClickable(false);
+//                dataReport.setClickable(false);
+//                connectTest.setClickable(true);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD://延时下载有颜色，其余四个置灰(不可点击)
@@ -122,11 +122,11 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
                 dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(true);
-                checkAuthorization.setClickable(false);
-                powerBomb.setClickable(false);
-                dataReport.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(true);
+//                checkAuthorization.setClickable(false);
+//                powerBomb.setClickable(false);
+//                dataReport.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE://检查授权有颜色，其余四个置灰(不可点击)
@@ -135,11 +135,11 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
                 dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
-                checkAuthorization.setClickable(true);
-                powerBomb.setClickable(false);
-                dataReport.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(false);
+//                checkAuthorization.setClickable(true);
+//                powerBomb.setClickable(false);
+//                dataReport.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB://充电起爆有颜色，其余四个置灰(不可点击)
@@ -148,11 +148,11 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
                 dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
-                powerBomb.setClickable(true);
-                checkAuthorization.setClickable(false);
-                dataReport.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(false);
+//                powerBomb.setClickable(true);
+//                checkAuthorization.setClickable(false);
+//                dataReport.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT://数据上传有颜色，其余四个置灰(不可点击)
@@ -161,11 +161,11 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
                 dataReport.setBackgroundResource(R.drawable.project_data_report);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
-                checkAuthorization.setClickable(false);
-                dataReport.setClickable(true);
-                powerBomb.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(false);
+//                checkAuthorization.setClickable(false);
+//                dataReport.setClickable(true);
+//                powerBomb.setClickable(false);
                 break;
         }
     }
