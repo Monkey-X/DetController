@@ -139,8 +139,10 @@ public class DetProtocol {
 			System.out.println(String.format("命令：%02X\t耗时:%d ms",bCmd,t1-t0));
 			if(null==data)
 				System.out.println("应答: 无");
-			else
-				System.out.println(String.format("\t应答：%s",DataConverter.bytes2HexString(data)));
+			else{
+				String strout = DataConverter.bytes2HexString(data);
+				System.out.println(String.format("\t应答：%s",strout));
+			}
 		}
 
 		if(null==data) return m_commobj.GetErrorCode();

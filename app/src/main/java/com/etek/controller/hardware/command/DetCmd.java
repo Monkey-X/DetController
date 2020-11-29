@@ -211,7 +211,7 @@ public class DetCmd {
 	 */
 	public int BoardCmd80(StringBuilder strData) {
 		byte bcmd = (byte)0x80;
-		return BoardCmd(bcmd,null,0x17,0xb0,strData);
+		return BoardCmd(bcmd,null,0x15,0xb0,strData);
 	}
 
 	/***
