@@ -115,7 +115,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                      * @param nCurrent
                      */
                     @Override
-                    public void SetChargeData(int nVoltage,int nCurrent){
+                    public void setChargeData(int nVoltage,int nCurrent){
 
                     }
                 });

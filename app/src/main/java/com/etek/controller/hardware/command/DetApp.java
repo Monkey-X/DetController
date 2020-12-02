@@ -20,7 +20,9 @@ import java.io.InputStream;
 
 
 import com.etek.controller.hardware.comm.SerialCommBase;
+import com.etek.controller.hardware.test.BusChargeCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
+import com.etek.controller.hardware.test.PowerCheckCallBack;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.test.DetCallback;
@@ -1030,7 +1032,7 @@ public class DetApp {
 	 * @param
 	 * @return
 	 */
-	public int PowerOnSelfCheck(DetCallback cbobj) {
+	public int PowerOnSelfCheck(PowerCheckCallBack cbobj) {
 		int ret;
 		final int RESP_LEN = 12;
 		final byte RESP_HEAD = (byte)0xb5;
@@ -1048,9 +1050,6 @@ public class DetApp {
 		ret = cmd.BoardSendCmd85();
 		Log.d(TAG, "PowerOnSelfCheck: ret = "+ ret);
 		if(0!=ret) return ret;
-		
-		if(null!=cbobj) 
-			cbobj.StartProgressbar();
 		
 		while(true) {	
 			ret = prt.RecvBlock(RESP_LEN, resp);
@@ -1293,7 +1292,7 @@ public class DetApp {
 	 * @param cbobj
 	 * @return
 	 */
-	public int DetsBusCharge(DetCallback cbobj) {
+	public int DetsBusCharge(BusChargeCallback cbobj) {
 		int ret;
 		final int RESP_LEN = 12;
 		final byte RESP_HEAD = (byte)0xbc;
@@ -1314,10 +1313,6 @@ public class DetApp {
 		//[3~6] //总线电压值，实时显示
 		//[7~10 //总线电流值，实时显示
 		//[11] //CRC8
-
-
-		if(null!=cbobj)
-			cbobj.StartProgressbar();
 
 		while(true) {
 			ret = prt.RecvBlock(RESP_LEN, resp);
@@ -1360,7 +1355,7 @@ public class DetApp {
 			int nCurrent = DataConverter.bytes2Int(cr);
 
 			if(null!=cbobj)
-				cbobj.SetChargeData(nVoltage, nCurrent);
+				cbobj.setChargeData(nVoltage, nCurrent);
 
 			if(ret==0x64) {
 				if(null!=cbobj)
@@ -1387,7 +1382,7 @@ public class DetApp {
 	 * @param cbobj
 	 * @return
 	 */
-	public int DetsBusDischarge(DetCallback cbobj) {
+	public int DetsBusDischarge(BusChargeCallback cbobj) {
 		int ret;
 		final int RESP_LEN = 12;
 		final byte RESP_HEAD = (byte)0xbd;
@@ -1408,10 +1403,6 @@ public class DetApp {
 		//[3~6] //总线电压值，实时显示
 		//[7~10 //总线电流值，实时显示
 		//[11] //CRC8
-
-
-		if(null!=cbobj)
-			cbobj.StartProgressbar();
 
 		while(true) {
 			ret = prt.RecvBlock(RESP_LEN, resp);
@@ -1455,7 +1446,7 @@ public class DetApp {
 
 
 			if(null!=cbobj)
-				cbobj.SetChargeData(nVoltage, nCurrent);
+				cbobj.setChargeData(nVoltage, nCurrent);
 
 			if(ret==0x64) {
 				if(null!=cbobj)

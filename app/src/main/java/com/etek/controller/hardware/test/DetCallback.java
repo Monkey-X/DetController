@@ -82,7 +82,7 @@ public interface DetCallback {
 	 * @param nVoltage
 	 * @param nCurrent
 	 */
-	public void SetChargeData(int nVoltage,int nCurrent);
+	public void setChargeData(int nVoltage,int nCurrent);
 //	{
 //		System.out.println(String.format("\t当前：电压 %d 电流:%d",nVoltage,nCurrent));
 //		return;

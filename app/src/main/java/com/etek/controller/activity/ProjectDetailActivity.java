@@ -205,11 +205,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             String lastDelayTime = detonatorEntity1.getRelay();
             String holePosition = detonatorEntity1.getHolePosition();
             String[] split = holePosition.split("-");
-            int intFormString = getIntFormString(split[1]);
+            int intFormString = getIntFormString(split[0]);
             int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
             int newDelayTime = getIntFormString(lastDelayTime) + delayholeoutTime;
             detonatorEntity.setRelay(String.valueOf(newDelayTime));
-            detonatorEntity.setHolePosition(split[0] + "-" + String.valueOf(intFormString + 1));
+            detonatorEntity.setHolePosition(String.valueOf(intFormString + 1) + "-" + 1);
             projectDetailAdapter.notifyDataSetChanged();
         }
     }
@@ -230,19 +230,25 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
         if (detonators.size() == 1) {
             int startDelayTime = getIntFormString(delayTimeNew.getText().toString().trim());
-            int area = getIntFormString(areaNum.getText().toString().trim());
+//            int area = getIntFormString(areaNum.getText().toString().trim());
             detonatorEntity.setRelay(String.valueOf(startDelayTime));
-            detonatorEntity.setHolePosition(area + "-" + 1);
+            detonatorEntity.setHolePosition(1 + "-" + 1);
             projectDetailAdapter.notifyDataSetChanged();
             return;
         }
 
         DetonatorEntity detonatorEntity1 = detonators.get(lastPosition - 1);
         String lastDelayTime = detonatorEntity1.getRelay();
+
+        String holePosition = detonatorEntity1.getHolePosition();
+        String[] split = holePosition.split("-");
+        int intFormString = getIntFormString(split[1]);
+        int first = getIntFormString(split[0]);
+
         int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
         int newDelayTime = getIntFormString(lastDelayTime) + delayholeinTime;
         detonatorEntity.setRelay(String.valueOf(newDelayTime));
-        detonatorEntity.setHolePosition(detonatorEntity1.getHolePosition());
+        detonatorEntity.setHolePosition(first + "-" + String.valueOf(intFormString + 1));
         projectDetailAdapter.notifyDataSetChanged();
     }
 
@@ -452,13 +458,13 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
         Log.d(TAG, "onKeyUp: keyCode = " + keyCode);
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-          // 孔内
+            // 孔内
             setHoleInTime();
-            return  true;
+            return true;
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-          // 孔间
+            // 孔间
             setHoleOutTime();
             return true;
         }
