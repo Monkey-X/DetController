@@ -254,7 +254,6 @@
     <string name="home_local_setting">本机设置</string>
     <string name="immediately_look">立即查看</string>
     <string name="project_list">项目列表</string>
-    <string name="contract_list">合同列表</string>
     <string name="project_create_net">1. 雷管组网</string>
     <string name="project_connect_test">2. 连接检测</string>
     <string name="project_delay_download">3. 延时下载</string>
