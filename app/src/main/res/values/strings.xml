@@ -254,6 +254,7 @@
     <string name="home_local_setting">本机设置</string>
     <string name="immediately_look">立即查看</string>
     <string name="project_list">项目列表</string>
+    <string name="contract_list">合同列表</string>
     <string name="project_connect_test">1. 连接检测</string>
     <string name="project_delay_download">2. 延时下载</string>
     <string name="project_check_authorization">3. 检查授权</string>
