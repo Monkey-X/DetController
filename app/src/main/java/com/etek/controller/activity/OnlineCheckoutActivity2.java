@@ -198,8 +198,6 @@ public class OnlineCheckoutActivity2 extends BaseActivity implements CheckOutAda
         for (Detonator conDet : detController.getDetList()) {
             isUnreg = true;
             for (DetonatorEntity infoDet : projectInfo.getDetonatorList()) {
-                XLog.v(infoDet.toString());
-                XLog.v("verfiryCode: ", conDet.getDetCode(), infoDet.getCode());
                 String cUid = conDet.getUid().substring(conDet.getUid().length() - 8, conDet.getUid().length());
                 String iUid = conDet.getUid().substring(infoDet.getUid().length() - 8, infoDet.getUid().length());
                 XLog.v("verfiryUid: ", cUid, iUid);

@@ -51,10 +51,11 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         getDialog().setCanceledOnTouchOutside(false);
+        setCancelable(false);
         WindowManager.LayoutParams params = win.getAttributes();
         params.gravity = Gravity.CENTER;
         // 使用ViewGroup.LayoutParams，以便Dialog 宽度充满整个屏幕
-        params.width = (int) (dm.widthPixels * 0.8);
+        params.width = (int) (dm.widthPixels * 0.9);
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         win.setAttributes(params);
     }
@@ -97,6 +98,9 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
         switch (v.getId()) {
             case R.id.cancel:
                 this.dismiss();
+                if (listener != null) {
+                    listener.makeProjectCancel();
+                }
                 break;
             case R.id.makeSure:
                 // 点击确定，进行批量的修改
@@ -147,6 +151,7 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
 
     public interface OnMakeProjectListener {
         void makeProject(ProjectInfoEntity bean);
+        void makeProjectCancel();
     }
 
     public void setOnMakeProjectListener(OnMakeProjectListener listener) {

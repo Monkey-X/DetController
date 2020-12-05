@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -20,6 +21,7 @@ import com.etek.controller.dto.Jbqys;
 import com.etek.controller.dto.Lg;
 import com.etek.controller.dto.Lgs;
 import com.etek.controller.dto.ProInfoDto;
+import com.etek.controller.dto.ProjectDownLoadEntity;
 import com.etek.controller.dto.ProjectFileDto;
 import com.etek.controller.dto.Sbbhs;
 import com.etek.controller.dto.Zbqy;
@@ -31,6 +33,7 @@ import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AppUtils;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
@@ -60,10 +63,11 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
 
     private RecyclerView recycleView;
     private LinearLayout noDataView;
-    private List<ProjectInfoEntity> projectInfos = new ArrayList<>();
+    private List<ProjectDownLoadEntity> projectInfos = new ArrayList<>();
     private ContractAdapter contractAdapter;
     private String respStr = "";
     private static final int UPDATE = 10;
+    private String TAG = "AuthorizedDownloadActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +103,12 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
      * 初始化数据
      */
     private void initData() {
-        List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+        List<ProjectDownLoadEntity> projectDownLoadEntities = DBManager.getInstance().getProjectDownLoadEntityDao().loadAll();
+
         projectInfos.clear();
-        if (projectInfoEntities != null && projectInfoEntities.size() > 0) {
+        if (projectDownLoadEntities != null && projectDownLoadEntities.size() > 0) {
             noDataView.setVisibility(View.GONE);
-            projectInfos.addAll(projectInfoEntities);
+            projectInfos.addAll(projectDownLoadEntities);
         } else {
             noDataView.setVisibility(View.VISIBLE);
         }
@@ -123,7 +128,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
             showStatusDialog("请去设置网络！");
             return;
         }
-        showProgressDialog(getMyString(R.string.downloading));
+        showProDialog("下载中...");
         LinkedHashMap params = new LinkedHashMap();
         params.put("dwdm", contractCode);    // 输入合同编号
         params.put("xlh", authorizedCode);   // 输入授权码
@@ -140,41 +145,34 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
             @Override
             public void onFailure(Call call, IOException e) {
                 showLongToast(authorizedCode + "onFailure！" + e.getLocalizedMessage());
-                XLog.e("onFailure:", e.getLocalizedMessage());
-                closeProgressDialog();
+                Log.d(TAG, "onFailure: "+e.getLocalizedMessage());
+                missProDialog();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                XLog.v("onSuccess:", response.toString());
+                Log.d(TAG, "onSuccess: "+response.toString());
                 setStringInfo("filesn", authorizedCode);
                 respStr = response.body().string();
-                XLog.v(respStr);
-                closeProgressDialog();
+                Log.d(TAG, "onSuccess: respStr ="+respStr);
+                missProDialog();
                 if (respStr == null || respStr.length() < 10) {
                     showToast("下载数据错误！");
                     return;
                 }
-//                showLongToast(authorizedCode + "下载成功！");
-                // 保存原始的数据
-                String fdName = "pf_" + DateUtil.getDateDoc(new Date()) + "-" + authorizedCode + ".json";
-                FileUtils.saveFileToSDcard("detonator/json", fdName, respStr);
-
                 ProjectFileDto projectFileDto = null;
                 try {
                     projectFileDto = JSON.parseObject(respStr, ProjectFileDto.class);
                 } catch (Exception e) {
                     XLog.e(e);
                     showToast("错误信息："+e.getMessage());
-                    closeProgressDialog();
                     return;
                 }
 
-                XLog.i( "projectFileDto:" + projectFileDto);
                 Result detInfoResult = projectFileDto.parseContentAndSave(authorizedCode);
 
                 if (detInfoResult.isSuccess()) {
-                    XLog.d("pfBean:", detInfoResult.toString());
+                    Log.d(TAG, "onResponse: "+detInfoResult.toString());
 
                     ProjectFileDto projectFile = (ProjectFileDto) detInfoResult.getData();
                     projectFile.setFileSn(authorizedCode);
@@ -182,32 +180,35 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                     projectFile.setMingma("");
                     String strInfo = JSON.toJSONString(projectFile, AppUtils.filter);
                     XLog.i(strInfo);
+
                     sendCmdMessage(UPDATE,strInfo);
 
-//                    projectFile.setMmwj("");
-                    fdName =  Globals.user.getCompanyCode()+ "-" + authorizedCode+ "-" + DateUtil.getDateDoc(new Date()) + ".json";
-                    FileUtils.saveFileToSDcard("detonator/author", fdName,strInfo);
                     String msg = valifyProjectFile(projectFile);
                     if (msg != null && !StringUtils.isEmpty(msg)) {
                         showStatusDialog(msg);
                         return;
                     }
-
-                    long proId = storeProjectInfo(projectFile, authorizedCode);
-                    if (proId == 0) {
-                        showStatusDialog("已经存在有此项目");
-                        return;
-                    }
-
-//                    ProjectInfoEntity projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
-//                            queryBuilder()
-//                            .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).uniqueOrThrow();
-//                    showToast("projectInfo！" + projectInfo);
+                    long proId = saveProjectInfo(projectFile, authorizedCode);
                 } else {
                     showStatusDialog(detInfoResult.getMessage());
                 }
             }
         });
+    }
+
+    private long saveProjectInfo(ProjectFileDto projectFile, String authorizedCode) {
+        ProjectDownLoadEntity projectDownLoadEntity = new ProjectDownLoadEntity();
+        projectDownLoadEntity.setXmbh(projectFile.getXmbh());
+        projectDownLoadEntity.setXmmc(projectFile.getXmmc());
+        projectDownLoadEntity.setDwdm(projectFile.getDwdm());
+        projectDownLoadEntity.setDwmc(projectFile.getDwmc());
+        projectDownLoadEntity.setHtbh(projectFile.getHtbh());
+        projectDownLoadEntity.setHtmc(projectFile.getHtmc());
+        projectDownLoadEntity.setHtmc(projectFile.getHtmc());
+        projectDownLoadEntity.setMmwj(projectFile.getMmwj());
+        projectDownLoadEntity.setFileSn(authorizedCode);
+        DBManager.getInstance().getProjectDownLoadEntityDao().save(projectDownLoadEntity);
+        return 0;
     }
 
     /**
@@ -383,19 +384,13 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                         @Override
                         public void onFailure(Call call, IOException e) {
                             XLog.e("IOException:"+e.getMessage());
-//                closeDialog();
-//                showStatusDialog("服务器报错");
-
-//                sendCmdMessage(MSG_RPT_DANLING_ERR);
                         }
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-//                closeDialog();
                             String respStr = response.body().string();
                             if (!StringUtils.isEmpty(respStr)) {
                                 XLog.w("respStr is  "+ respStr);
-//                    showToast("上报返回值为空");
 
                             }
                         }

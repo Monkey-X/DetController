@@ -8,11 +8,17 @@
     <com.etek.controller.widget.ClearableEditText
         android:hint="请输入合同编号"
         android:id="@+id/contract_code"
+        android:maxLines="1"
+        android:inputType="number"
+        android:layout_margin="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <com.etek.controller.widget.ClearableEditText
         android:hint="请输入授权码"
+        android:maxLines="1"
+        android:inputType="number"
+        android:layout_margin="8dp"
         android:id="@+id/authorized_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

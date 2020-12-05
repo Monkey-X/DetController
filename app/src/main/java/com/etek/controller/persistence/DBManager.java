@@ -12,6 +12,7 @@ import com.etek.controller.persistence.gen.DetReportEntityDao;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.persistence.gen.ForbiddenZoneEntityDao;
 import com.etek.controller.persistence.gen.PermissibleZoneEntityDao;
+import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.persistence.gen.ReportEntityDao;
 import com.etek.controller.persistence.gen.RptDetonatorEntityDao;
@@ -93,5 +94,8 @@ public class DBManager {
         return mDaoSession.getChkDetonatorEntityDao();
     }
 
+    public ProjectDownLoadEntityDao getProjectDownLoadEntityDao(){
+        return mDaoSession.getProjectDownLoadEntityDao();
+    }
 
 }

@@ -5,26 +5,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
+
 import com.etek.controller.R;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.fragment.ProjectDialog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
+
+import java.util.List;
 
 
 /**
  * 工程实施页
  */
-public class ProjectImplementActivity extends BaseActivity implements View.OnClickListener {
+public class ProjectImplementActivity extends BaseActivity implements View.OnClickListener, ProjectDialog.OnMakeProjectListener {
 
     private ProjectInfoEntity projectInfoEntity;
-    private long proId;
+    private long proId = -1;
     private RelativeLayout connectTest;
     private RelativeLayout delayDownload;
     private RelativeLayout checkAuthorization;
     private RelativeLayout powerBomb;
     private RelativeLayout dataReport;
+    private RelativeLayout createNet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,24 +50,27 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.project_net:
+                startActivity(new Intent(this, ProjectDetailActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
+                break;
             case R.id.project_connect_test://连接检测
-                startActivity(new Intent(this,ConnectTestActivity.class).putExtra(AppIntentString.PROJECT_ID,proId));
+                startActivity(new Intent(this, ConnectTestActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
 
             case R.id.project_delay_download://延时下载
-                startActivity(new Intent(this,DelayDownloadActivity.class).putExtra(AppIntentString.PROJECT_ID,proId));
+                startActivity(new Intent(this, DelayDownloadActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
 
             case R.id.project_check_authorization://检查授权
-                startActivity(new Intent(this,OnlineAuthorizeActivity2.class).putExtra(AppIntentString.PROJECT_ID,proId));
+                startActivity(new Intent(this, OnlineAuthorizeActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
 
             case R.id.project_power_bomb://充电起爆
-                startActivity(new Intent(this,PowerBombActivity.class));
+                startActivity(new Intent(this, PowerBombActivity.class));
                 break;
 
             case R.id.project_data_report://数据上传
-                startActivity(new Intent(this, ReportDetailActivity2.class).putExtra(AppIntentString.PROJECT_ID,proId));
+                startActivity(new Intent(this, ReportDetailActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
         }
     }
@@ -70,7 +79,35 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      * 获取项目id
      */
     private void getProjectId() {
-        proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
+        List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+        if (projectInfoEntities != null && projectInfoEntities.size() != 0) {
+            // 没有项目，创建项目
+            createProject();
+        } else {
+            ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(0);
+            proId = projectInfoEntity.getId();
+        }
+    }
+
+    @Override
+    public void makeProjectCancel() {
+        this.finish();
+    }
+
+    private void createProject() {
+        ProjectDialog projectDialog = new ProjectDialog();
+        projectDialog.setOnMakeProjectListener(this);
+        projectDialog.show(getSupportFragmentManager(),"projectDialog");
+    }
+
+    @Override
+    public void makeProject(ProjectInfoEntity bean) {
+        if (bean != null) {
+            proId = DBManager.getInstance().getProjectInfoEntityDao().insert(bean);
+        }else{
+            ToastUtils.showShort(this,"创建项目失败！");
+            this.finish();
+        }
     }
 
     /**
@@ -78,6 +115,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      */
     private void initView() {
         connectTest = findViewById(R.id.project_connect_test);
+        createNet = findViewById(R.id.project_net);
         delayDownload = findViewById(R.id.project_delay_download);
         checkAuthorization = findViewById(R.id.project_check_authorization);
         powerBomb = findViewById(R.id.project_power_bomb);
@@ -87,14 +125,18 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
         checkAuthorization.setOnClickListener(this);
         powerBomb.setOnClickListener(this);
         dataReport.setOnClickListener(this);
+        createNet.setOnClickListener(this);
     }
 
     /**
      * 刷新页面
      */
     private void refreshData() {
-        if (proId > 0) {
+        if (proId >= 0) {
             projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+        }
+        if (projectInfoEntity == null) {
+            return;
         }
 
         String status = projectInfoEntity.getProjectImplementStates();
@@ -169,4 +211,5 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 break;
         }
     }
+
 }

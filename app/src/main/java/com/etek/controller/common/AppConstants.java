@@ -45,7 +45,7 @@ public  class AppConstants {
 
     public final static String OnlineDownload = "/mbdzlgtxzx/servlet/DzlgMmxzJsonServlert";
 
-    public final static String ETEKTestServer = "http://222.191.229.234:12018";
+    public final static String ETEKTestServer = "http://222.191.229.234:1111";
     public final static String ProjectReportTest = "/api/DET/Post";
     public final static String CheckoutReport = "/api/DET/PostFromBody";
     public final static String WhiteBlackList = "/api/DET";

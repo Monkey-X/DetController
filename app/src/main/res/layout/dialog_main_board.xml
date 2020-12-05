@@ -115,29 +115,4 @@
 
     </LinearLayout>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="模块配置表："
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/config"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
 </LinearLayout>
