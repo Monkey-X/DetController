@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
@@ -31,7 +30,6 @@ import com.etek.controller.dto.ProjectFileDto;
 import com.etek.controller.dto.Sbbhs;
 import com.etek.controller.dto.Zbqy;
 import com.etek.controller.dto.Zbqys;
-import com.etek.controller.entity.Detonator;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
@@ -39,9 +37,9 @@ import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
+import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
-import com.etek.controller.utils.JsonUtils;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.utils.location.DLocationTools;
@@ -51,21 +49,16 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
-import com.google.gson.Gson;
-
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-
 import static com.etek.controller.utils.location.DLocationWhat.NO_LOCATIONMANAGER;
 import static com.etek.controller.utils.location.DLocationWhat.NO_PROVIDER;
 import static com.etek.controller.utils.location.DLocationWhat.ONLY_GPS_WORK;
@@ -486,9 +479,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 离线检查
      */
     private void offlineCheck() {
-        String data = JsonUtils.getData();
-        Gson gson = new Gson();
-        ProjectDownLoadEntity projectDownLoadEntity = gson.fromJson(data, ProjectDownLoadEntity.class);
+        //测试模拟json
+//        String data = JsonUtils.getData();
+//        Gson gson = new Gson();
+//        ProjectDownLoadEntity projectDownLoadEntity = gson.fromJson(data, ProjectDownLoadEntity.class);
+
+        ProjectDownLoadEntity projectDownLoadEntity = DBManager.getInstance().getProjectDownLoadEntityDao().queryBuilder().where(ProjectDownLoadEntityDao.Properties.Htbh.eq(projectInfoEntity.getContractCode())).unique();
         if (!projectInfoEntity.getProCode().equals(projectDownLoadEntity.getXmbh())) {
             ToastUtils.show(this, "项目编号检查错误");
         }
