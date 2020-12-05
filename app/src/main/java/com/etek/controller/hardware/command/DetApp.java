@@ -1098,7 +1098,7 @@ public class DetApp {
 			return -1;
 		}
 				
-		return ret;
+		return 0;
 	}
 
 	/***
@@ -1190,7 +1190,7 @@ public class DetApp {
 			if(null!=cbobj)
 				cbobj.SetDetsSettingResult(nIDs[n], szdata[3+n]);
 		}
-		return ret;
+		return 0;
 
 	}
 
@@ -1285,7 +1285,7 @@ public class DetApp {
 			if(null!=cbobj)
 				cbobj.SetDetsSettingResult(nIDs[n], szdata[3+n]);
 		}
-		return ret;
+		return 0;
 	}
 
 	/***
@@ -1379,7 +1379,7 @@ public class DetApp {
 			return -1;
 		}
 
-		return ret;
+		return 0;
 	}
 
 	/***
@@ -1474,7 +1474,7 @@ public class DetApp {
 			return -1;
 		}
 
-		return ret;
+		return 0;
 	}
 
 	/*
@@ -1605,7 +1605,7 @@ public class DetApp {
 			break;
 		}
 
-		return ret;
+		return 0;
 	}
 
 	public void testDetAPP() {
