@@ -62,7 +62,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 break;
 
             case R.id.project_check_authorization://检查授权
-                startActivity(new Intent(this, OnlineAuthorizeActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
+                startActivity(new Intent(this, AuthBombActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
 
             case R.id.project_power_bomb://充电起爆
@@ -104,6 +104,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     public void makeProject(ProjectInfoEntity bean) {
         if (bean != null) {
             proId = DBManager.getInstance().getProjectInfoEntityDao().insert(bean);
+            refreshData();
         }else{
             ToastUtils.showShort(this,"创建项目失败！");
             this.finish();
