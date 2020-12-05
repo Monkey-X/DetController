@@ -525,9 +525,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                                 isUnreg = true;
                                 unRegDet++;
                                 detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
+                                DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
                                 XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
                             }else{
                                 detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
+                                DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
                                 XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
                             }
                             checkDetailAdapter.notifyDataSetChanged();
