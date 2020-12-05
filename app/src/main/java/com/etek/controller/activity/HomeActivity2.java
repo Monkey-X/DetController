@@ -121,8 +121,9 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.home_project_manage://方案管理
-                startActivity(NetWorkActivity.class);
+            case R.id.home_project_manage://授权下载
+//                startActivity(NetWorkActivity.class);//方案管理
+                startActivity(AuthorizedDownloadActivity.class);
                 break;
 
             case R.id.home_project_implement://工程实施
