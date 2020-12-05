@@ -532,10 +532,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                                 DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
                                 XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
                             }
-                            checkDetailAdapter.notifyDataSetChanged();
                         }
                     }
                 }
+                checkDetailAdapter.notifyDataSetChanged();
                 if(isUnreg){
                     showStatusDialog("存在已使用雷管" + unRegDet + "个！");
                 }

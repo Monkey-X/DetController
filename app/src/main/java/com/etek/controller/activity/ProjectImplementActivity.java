@@ -103,6 +103,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     @Override
     public void makeProject(ProjectInfoEntity bean) {
         if (bean != null) {
+            bean.setControllerId(getStringInfo(getString(R.string.controller_sno)));
             proId = DBManager.getInstance().getProjectInfoEntityDao().insert(bean);
             refreshData();
         }else{

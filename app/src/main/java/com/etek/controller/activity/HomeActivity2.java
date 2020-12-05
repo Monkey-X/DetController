@@ -11,10 +11,12 @@ import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
+import com.etek.controller.common.Globals;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.fragment.MainBoardDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
+import com.etek.controller.model.User;
 import com.etek.controller.scan.ScannerInterface;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -58,6 +60,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         String userStr = getPreInfo("userInfo");
         if (TextUtils.isEmpty(userStr)) {
             startActivity(UserInfoActivity.class);
+        }else{
+            Globals.user = JSON.parseObject(userStr, User.class);
         }
     }
 

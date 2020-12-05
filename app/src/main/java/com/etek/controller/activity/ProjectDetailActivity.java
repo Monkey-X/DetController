@@ -29,6 +29,7 @@ import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.test.PowerCheckCallBack;
 import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.persistence.DBManager;
@@ -418,6 +419,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         detonatorEntity.setProjectInfoId(projectId);
         detonatorEntity.setCode(strgm);
         detonatorEntity.setDetId(getDetIdByGm(strgm));
+        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
         detonators.add(detonatorEntity);
         projectDetailAdapter.notifyDataSetChanged();
     }
@@ -480,13 +482,25 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
         @Override
         protected String doInBackground(String... strings) {
-            int moduleId = DetApp.getInstance().ModuleGetID();
+            StringBuilder detNum = new StringBuilder();
+            StringBuilder detId = new StringBuilder();
+            int result = DetApp.getInstance().DetsGetIDAndDC(detId, detNum, new PowerCheckCallBack() {
+                @Override
+                public void DisplayText(String strText) {
+                    Log.d(TAG, "DisplayText: "+strText);
+                }
 
-            if (moduleId == -1) {
-                return "";
+                @Override
+                public void SetProgressbarValue(int nVal) {
+                    Log.d(TAG, "SetProgressbarValue: "+nVal);
+                }
+            });
+            Log.d(TAG, "doInBackground: detNum = "+detNum.toString());
+            Log.d(TAG, "doInBackground: detId = "+detId.toString());
+            if (result == 0) {
+                return detNum.toString();
             }
-            String moduleNum = DetApp.getInstance().ModuleGetDC(moduleId);
-            return moduleNum;
+            return "";
         }
 
         @Override
