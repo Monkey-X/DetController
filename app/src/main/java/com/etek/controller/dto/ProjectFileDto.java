@@ -17,7 +17,7 @@ import com.etek.sommerlibrary.utils.DES3Utils;
 public class ProjectFileDto {
 
 
-       private String xmbh;    //项目编号
+    private String xmbh;    //项目编号
     private String xmmc; //项目名称
     private String dwdm; //单位代码
     private String dwmc; //单位名称
@@ -170,7 +170,6 @@ public class ProjectFileDto {
     }
 
     public Result parseContentAndSave(String content) {
-//        ProjectFileBean pfBean = new ProjectFileBean();
         ProInfoDto detInfoDto = new ProInfoDto();
         if (result == ResultErrEnum.SUCCESS.getCode()) {
 
@@ -187,92 +186,6 @@ public class ProjectFileDto {
                         return Result.errorMsg("解析数据为空");
                     }
                     this.proInfo = detInfoDto;
-//                    final ProInfoDto  mDetInfoDto = detInfoDto;
-//                    ThreadPoolUtils.getThreadPool().execute(()->{
-//                        ProjectInfoEntity proInfoBean = new ProjectInfoEntity();
-//                        proInfoBean.setApplyDate(mDetInfoDto.getSqrq());
-//                        proInfoBean.setProCode(xmbh);
-//                        proInfoBean.setProName(xmmc);
-//                        proInfoBean.setCompanyCode(dwdm);
-//                        proInfoBean.setCompanyName(dwmc);
-//                        proInfoBean.setContractCode(htbh);
-//                        proInfoBean.setContractName(htmc);
-//                        proInfoBean.setCreateTime(new Date());
-//                        long proId = DBManager.getInstance().getProjectInfoEntityDao().insert(proInfoBean);
-//
-//
-//
-//                        // get detonators to database by sommer 19.01.07
-//                        Lgs lgs = mDetInfoDto.getLgs();
-//                        if (!lgs.getLg().isEmpty()) {
-//                            List<DetonatorEntity> detonatorEntityList = new ArrayList<>();
-//                            for (Lg lg : lgs.getLg()) {
-//
-//                                DetonatorEntity detonatorBean = new DetonatorEntity();
-//                                detonatorBean.setCode(lg.getFbh());
-//                                detonatorBean.setWorkCode(lg.getGzm());
-//                                detonatorBean.setUid(lg.getUid());
-//                                detonatorBean.setValidTime(lg.getYxq());
-//                                detonatorBean.setProjectInfoId(proId);
-////                                detonatorBean.set
-////                            detonatorBean.setProInfoBean(proInfoBean);
-//                                detonatorBean.setStatus(lg.getGzmcwxx());
-////                                detonatorBean.set
-////                               detonatorBean.setProInfoBean(detInfoDto);
-//                                detonatorEntityList.add(detonatorBean);
-//
-////
-//                            }
-//                            DBManager.getInstance().getDetonatorEntityDao().insertInTx(detonatorEntityList);
-//
-//                        }
-//
-//
-//                        Zbqys zbqys = mDetInfoDto.getZbqys();
-//                        if (!zbqys.getZbqy().isEmpty()) {
-//                            List<PermissibleZoneEntity> permissibleZoneEntityList = new ArrayList<>();
-//                            for (Zbqy zbqy : zbqys.getZbqy()) {
-//
-////                                private String zbqssj;  //准爆起始时间
-////
-////                                private String zbjzsj;  //准爆截止时间
-//                                PermissibleZoneEntity permissibleZone = new PermissibleZoneEntity();
-////                            permissibleZoneBean.setProInfoBean(proInfoBean);
-//                                permissibleZone.setName(zbqy.getZbqymc());
-//                                permissibleZone.setLatitude(Double.parseDouble(zbqy.getZbqywd()));
-//                                permissibleZone.setLongitude(Double.parseDouble(zbqy.getZbqyjd()));
-//                                permissibleZone.setRadius(Integer.parseInt(zbqy.getZbqybj()));
-//                                permissibleZone.setStartTime(zbqy.getZbqssj());
-//                                permissibleZone.setStopTime(zbqy.getZbjzsj());
-//                                permissibleZone.setProjectInfoId(proId);
-//                                permissibleZoneEntityList.add(permissibleZone);
-////                                Dao<PermissibleZoneBean, Long> permissibleZoneDao = DatabaseHelper.getInstance(mcontext).getDao(PermissibleZoneBean.class);
-////                                permissibleZoneDao.create(permissibleZoneBean);
-////                                permissibleZoneBean.setStartTime(zbqy.getZbqssj());
-////                                permissibleZoneBean.setStopTime(zbqy.getZbjzsj());
-//                            }
-//                            DBManager.getInstance().getPermissibleZoneEntityDao().insertInTx(permissibleZoneEntityList);
-//                        }
-//
-//                        List<Sbbhs> sbbhs = mDetInfoDto.getSbbhs();
-//
-//                        if (!sbbhs.isEmpty()) {
-//                            List<ControllerEntity> controllerEntityList = new ArrayList<>();
-//                            for (Sbbhs sbbh : sbbhs) {
-//                                ControllerEntity controller = new ControllerEntity();
-//                                controller.setName(sbbh.getSbbh());
-//                                controller.setProjectInfoId(proId);
-//                                controllerEntityList.add(controller);
-////                            detControllerBean.setProInfoBean(proInfoBean);
-//
-////                            Dao<DetControllerBean, Long> detControllerDao = DatabaseHelper.getInstance(mcontext).getDao(DetControllerBean.class);
-////                            detControllerDao.create(detControllerBean);
-//                            }
-//                            DBManager.getInstance().getControllerEntityDao().insertInTx(controllerEntityList);
-//                        }
-//                    });
-//                    FileUtils.saveFileToSDcard("detonator/json", "ret_"+fdName, detInfoDto.toString());
-
                 }
 
             } catch (Exception e) {
@@ -281,7 +194,6 @@ public class ProjectFileDto {
                 return Result.errorMsg("数据错误：" + e.getMessage());
 
             }
-
 
         } else {
             return Result.errorMsg(ResultErrEnum.getBycode(result).getMessage());

@@ -43,7 +43,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.AboutActivity"></activity>
+        <activity android:name=".activity.AboutActivity" />
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/activity_theme">
@@ -66,6 +66,7 @@
         <activity android:name=".activity.ProjectListActivity" />
         <activity android:name=".activity.ProjectImplementActivity" />
         <activity android:name=".activity.PowerBombActivity" />
+        <activity android:name=".activity.AuthorizedDownloadActivity"/>
         <activity
             android:name=".activity.ProjectDetailActivity"
             android:theme="@style/activity_theme" />
@@ -115,7 +116,7 @@
             android:screenOrientation="unspecified" />
         <activity
             android:name=".activity.SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.DetInfoDetailActivity"
             android:label="@string/title_activity_det_detail"

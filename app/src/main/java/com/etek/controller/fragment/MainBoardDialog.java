@@ -53,13 +53,11 @@ public class MainBoardDialog extends DialogFragment {
         TextView updateHardwareVer = dialogView.findViewById(R.id.updateHardwareVer);
         TextView softwareVer = dialogView.findViewById(R.id.softwareVer);
         TextView sno = dialogView.findViewById(R.id.sno);
-        TextView config = dialogView.findViewById(R.id.config);
 
         hardver.setText("v"+mainBoardInfoBean.getStrHardwareVer());
         updateHardwareVer.setText("v"+mainBoardInfoBean.getStrUpdateHardwareVer());
         softwareVer.setText("v"+mainBoardInfoBean.getStrSoftwareVer());
         sno.setText(mainBoardInfoBean.getStrSNO());
-        config.setText(mainBoardInfoBean.getStrConfig());
         return dialogView;
     }
 }

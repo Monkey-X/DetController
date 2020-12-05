@@ -66,6 +66,10 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
             @Override
             public void run() {
                 DetApp.getInstance().MainBoardPowerOn();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                }
                 mainBoardInit();
             }
         }.start();
@@ -80,13 +84,14 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     }
 
     private void mainBoardInit() {
-        DetApp.getInstance().MainBoardInitialize(new InitialCheckCallBack() {
+        int result = DetApp.getInstance().MainBoardInitialize(new InitialCheckCallBack() {
             @Override
             public void SetInitialCheckData(String strHardwareVer, String strUpdateHardwareVer, String strSoftwareVer, String strSNO, String strConfig, byte bCheckResult) {
                 Log.d(TAG, "SetInitialCheckData: strHardwareVer = " + strHardwareVer);
                 Log.d(TAG, "SetInitialCheckData: strUpdateHardwareVer = " + strUpdateHardwareVer);
                 Log.d(TAG, "SetInitialCheckData: strSoftwareVer = " + strSoftwareVer);
                 Log.d(TAG, "SetInitialCheckData: strSNO = " + strSNO);
+                Log.d(TAG, "SetInitialCheckData: strConfig = " + strConfig);
                 Log.d(TAG, "SetInitialCheckData: strConfig = " + strConfig);
 
                 MainBoardInfoBean mainBoardInfoBean = new MainBoardInfoBean();
@@ -95,10 +100,12 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 mainBoardInfoBean.setStrSoftwareVer(strSoftwareVer);
                 mainBoardInfoBean.setStrSNO(strSNO);
                 mainBoardInfoBean.setStrConfig(strConfig);
+                setStringInfo(getString(R.string.controller_sno), strSNO);
                 setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
 //                showMainBoardDialog(mainBoardInfoBean);
             }
         });
+        Log.d(TAG, "SetInitialCheckData: result = " + result);
     }
 
     private void showMainBoardDialog(MainBoardInfoBean mainBoardInfoBean) {
@@ -121,12 +128,13 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.home_project_manage://方案管理
-                startActivity(NetWorkActivity.class);
+            case R.id.home_project_manage://授权下载
+//                startActivity(NetWorkActivity.class);//方案管理
+                startActivity(AuthorizedDownloadActivity.class);
                 break;
 
             case R.id.home_project_implement://工程实施
-                startActivity(ProjectListActivity.class);
+                startActivity(ProjectImplementActivity.class);
                 break;
 
             case R.id.home_assist_function://辅助功能

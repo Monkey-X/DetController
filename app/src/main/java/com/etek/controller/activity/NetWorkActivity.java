@@ -149,4 +149,9 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
             projectAdapter.notifyDataSetChanged();
         }
     }
+
+    @Override
+    public void makeProjectCancel() {
+
+    }
 }

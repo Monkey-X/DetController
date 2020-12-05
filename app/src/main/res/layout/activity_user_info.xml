@@ -133,6 +133,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:singleLine="true"
+            android:inputType="number"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_id_code"
 

@@ -32,6 +32,7 @@ public class DaoMaster extends AbstractDaoMaster {
         PermissibleZoneEntityDao.createTable(db, ifNotExists);
         ControllerEntityDao.createTable(db, ifNotExists);
         DetonatorEntityDao.createTable(db, ifNotExists);
+        ProjectDownLoadEntityDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -47,6 +48,7 @@ public class DaoMaster extends AbstractDaoMaster {
         PermissibleZoneEntityDao.dropTable(db, ifExists);
         ControllerEntityDao.dropTable(db, ifExists);
         DetonatorEntityDao.dropTable(db, ifExists);
+        ProjectDownLoadEntityDao.dropTable(db, ifExists);
     }
 
     /**
@@ -76,6 +78,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(PermissibleZoneEntityDao.class);
         registerDaoClass(ControllerEntityDao.class);
         registerDaoClass(DetonatorEntityDao.class);
+        registerDaoClass(ProjectDownLoadEntityDao.class);
     }
 
     public DaoSession newSession() {

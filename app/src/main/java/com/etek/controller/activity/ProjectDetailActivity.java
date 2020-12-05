@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.persistence.DBManager;
@@ -42,7 +44,6 @@ import java.util.List;
 public class ProjectDetailActivity extends BaseActivity implements View.OnClickListener, ProjectDetailAdapter.OnItemClickListener {
 
     private static final String TAG = "ProjectDetailActivity";
-    private TextView areaNum;
     private EditText delayTimeNew;
     private RecyclerView recycleView;
     private List<DetonatorEntity> detonators;
@@ -126,17 +127,15 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         TextView textTitle = findViewById(R.id.text_title);
         TextView textBtn = findViewById(R.id.text_btn);
         backImag.setOnClickListener(this);
-        textTitle.setText(R.string.project_detail);
+        textTitle.setText("雷管组网");
         textBtn.setText("保存工程");
+        textBtn.setVisibility(View.INVISIBLE);
 
         textBtn.setOnClickListener(this);
 
         rootView = findViewById(R.id.rootview);
 
         // 正式布局
-        View reduce = findViewById(R.id.reduce);
-        areaNum = findViewById(R.id.area_num);
-        View add = findViewById(R.id.add);
         // 起始延时
         delayTimeNew = findViewById(R.id.delay_time);
 
@@ -150,8 +149,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         // 孔间
         View layoutHoleOut = findViewById(R.id.layoutHoleOut);
 
-        reduce.setOnClickListener(this);
-        add.setOnClickListener(this);
+        View getDet = findViewById(R.id.get_det);
+
+        getDet.setOnClickListener(this);
         layoutHoleIn.setOnClickListener(this);
         layoutHoleOut.setOnClickListener(this);
     }
@@ -161,12 +161,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.back_img:
                 finish();
-                break;
-            case R.id.reduce:
-                areaReduce();
-                break;
-            case R.id.add:
-                areaAdd();
                 break;
             case R.id.text_btn:
                 if (detonators.size() == 0) {
@@ -183,6 +177,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             case R.id.layoutHoleOut:
                 // 设置孔间延时
                 setHoleOutTime();
+                break;
+            case R.id.get_det:
+                // 点击获取雷管信息
+                // TODO: 2020/12/5
+                ReadDetNumTask readDetNumTask = new ReadDetNumTask();
+                readDetNumTask.execute();
                 break;
         }
     }
@@ -205,11 +205,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             String lastDelayTime = detonatorEntity1.getRelay();
             String holePosition = detonatorEntity1.getHolePosition();
             String[] split = holePosition.split("-");
-            int intFormString = getIntFormString(split[1]);
+            int intFormString = getIntFormString(split[0]);
             int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
             int newDelayTime = getIntFormString(lastDelayTime) + delayholeoutTime;
             detonatorEntity.setRelay(String.valueOf(newDelayTime));
-            detonatorEntity.setHolePosition(split[0] + "-" + String.valueOf(intFormString + 1));
+            detonatorEntity.setHolePosition(String.valueOf(intFormString + 1) + "-" + 1);
+            DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
             projectDetailAdapter.notifyDataSetChanged();
         }
     }
@@ -230,19 +231,26 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
         if (detonators.size() == 1) {
             int startDelayTime = getIntFormString(delayTimeNew.getText().toString().trim());
-            int area = getIntFormString(areaNum.getText().toString().trim());
+//            int area = getIntFormString(areaNum.getText().toString().trim());
             detonatorEntity.setRelay(String.valueOf(startDelayTime));
-            detonatorEntity.setHolePosition(area + "-" + 1);
+            detonatorEntity.setHolePosition(1 + "-" + 1);
             projectDetailAdapter.notifyDataSetChanged();
             return;
         }
 
         DetonatorEntity detonatorEntity1 = detonators.get(lastPosition - 1);
         String lastDelayTime = detonatorEntity1.getRelay();
+
+        String holePosition = detonatorEntity1.getHolePosition();
+        String[] split = holePosition.split("-");
+        int intFormString = getIntFormString(split[1]);
+        int first = getIntFormString(split[0]);
+
         int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
         int newDelayTime = getIntFormString(lastDelayTime) + delayholeinTime;
         detonatorEntity.setRelay(String.valueOf(newDelayTime));
-        detonatorEntity.setHolePosition(detonatorEntity1.getHolePosition());
+        detonatorEntity.setHolePosition(first + "-" + String.valueOf(intFormString + 1));
+        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
         projectDetailAdapter.notifyDataSetChanged();
     }
 
@@ -261,27 +269,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     public int getIntFormString(String stringNum) {
         int i = Integer.parseInt(stringNum);
         return i;
-    }
-
-
-    // 操作区域加法
-    private void areaAdd() {
-        String num = areaNum.getText().toString().trim();
-        int parseInt = Integer.parseInt(num);
-        if (parseInt >= 99) {
-            return;
-        }
-        areaNum.setText(parseInt + 1 + "");
-    }
-
-    // 操作区域减法
-    private void areaReduce() {
-        String num = areaNum.getText().toString().trim();
-        int parseInt = Integer.parseInt(num);
-        if (parseInt <= 1) {
-            return;
-        }
-        areaNum.setText(parseInt - 1 + "");
     }
 
     @Override
@@ -399,16 +386,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     private void createDetData(String strgm) {
         // 检查重复的雷管
-        if (detonators != null && detonators.size() != 0) {
-            for (int i = 0; i < detonators.size(); i++) {
-                DetonatorEntity detonatorEntity = detonators.get(i);
-                if (detonatorEntity.getCode().equals(strgm)) {
-                    showStatusDialog("此雷管已扫描！");
-                    recycleView.scrollToPosition(i);
-                    return;
-                }
-            }
+        if (checkTheSameDet(strgm)) {
+            isInsertItem = false;
+            return;
         }
+
 
         // 扫描插入
         if (isInsertItem) {
@@ -420,6 +402,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             detonatorEntity1.setCode(strgm);
             detonatorEntity1.setDetId(getDetIdByGm(strgm));
             detonatorEntity1.setProjectInfoId(projectId);
+            DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity1);
             detonators.add(insertPosition, detonatorEntity1);
             projectDetailAdapter.notifyDataSetChanged();
             return;
@@ -427,7 +410,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (detonators.size() != 0) {
             DetonatorEntity detonatorEntity = detonators.get(detonators.size() - 1);
             if (TextUtils.isEmpty(detonatorEntity.getRelay())) {
-                showStatusDialog("请设置录入雷管的延时后，再继续扫描！");
+                showStatusDialog("请设置录入雷管的延时后，再继续录入！");
                 return;
             }
         }
@@ -437,6 +420,25 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         detonatorEntity.setDetId(getDetIdByGm(strgm));
         detonators.add(detonatorEntity);
         projectDetailAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 判断是否有相同的雷管
+     * @param strgm
+     * @return
+     */
+    private boolean checkTheSameDet(String strgm) {
+        if (detonators != null && detonators.size() != 0) {
+            for (int i = 0; i < detonators.size(); i++) {
+                DetonatorEntity detonatorEntity = detonators.get(i);
+                if (detonatorEntity.getCode().equals(strgm)) {
+                    showStatusDialog("此雷管已扫描！");
+                    recycleView.scrollToPosition(i);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // 将雷管管吗转化为雷管Id
@@ -452,56 +454,50 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
         Log.d(TAG, "onKeyUp: keyCode = " + keyCode);
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-          // 孔内
+            // 孔内
             setHoleInTime();
-            return  true;
+            return true;
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-          // 孔间
+            // 孔间
             setHoleOutTime();
             return true;
         }
         return super.onKeyUp(keyCode, event);
     }
 
-    private void getDatas() {
-        // 录入数据 todo
-        int lastDelay;
-        int lastAreaNum;//操作区域
-        int lastHoleNum;// 孔内编号
-        if (detonators.size() == 0) {
-            lastDelay = getIntFormString(delayTimeNew.getText().toString().trim());
-            lastAreaNum = getIntFormString(areaNum.getText().toString().trim());
-            lastHoleNum = 0;
-        } else {
-            DetonatorEntity detonatorEntity = detonators.get(detonators.size() - 1);
-            lastDelay = getIntFormString(detonatorEntity.getRelay());
-            String[] split = detonatorEntity.getHolePosition().split("-");
-            lastAreaNum = getIntFormString(split[0]);
-            lastHoleNum = getIntFormString(split[1]);
+    /**
+     * 连接获取雷管信息
+     */
+    public class ReadDetNumTask extends AsyncTask<String, Integer, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProDialog("读取中...");
         }
 
-        int nowAreaNum = getIntFormString(areaNum.getText().toString().trim());
-        int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
-        int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
-        if (nowAreaNum == lastAreaNum) {
-            // 孔内
-            lastHoleNum = lastHoleNum + 1;
-            if (detonators.size() != 0) {
-                lastDelay = lastDelay + delayholeinTime;
+        @Override
+        protected String doInBackground(String... strings) {
+            int moduleId = DetApp.getInstance().ModuleGetID();
+
+            if (moduleId == -1) {
+                return "";
             }
-        } else {
-            // 空间
-            lastHoleNum = 1;
-            lastDelay = lastDelay + delayholeoutTime;
+            String moduleNum = DetApp.getInstance().ModuleGetDC(moduleId);
+            return moduleNum;
         }
 
-        DetonatorEntity detonatorEntity = new DetonatorEntity();
-        detonatorEntity.setProjectInfoId(projectId);
-        detonatorEntity.setHolePosition(nowAreaNum + "-" + lastHoleNum);
-        detonatorEntity.setRelay(String.valueOf(lastDelay));
-        detonatorEntity.setUid(projectId + "-" + detonatorEntity.getHolePosition() + detonatorEntity.getRelay());
-        detonators.add(detonatorEntity);
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            missProDialog();
+            if (TextUtils.isEmpty(result)) {
+                showStatusDialog("获取雷管码失败！");
+            }else{
+                createDetData(result);
+            }
+        }
     }
 }

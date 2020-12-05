@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -49,13 +50,11 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                     TextView updateHardwareVer = findViewById(R.id.updateHardwareVer);
                     TextView softwareVer = findViewById(R.id.softwareVer);
                     TextView sno = findViewById(R.id.sno);
-                    TextView config = findViewById(R.id.config);
 
                     hardver.setText("v" + mainBoardInfoBean.getStrHardwareVer());
                     updateHardwareVer.setText("v" + mainBoardInfoBean.getStrUpdateHardwareVer());
                     softwareVer.setText("v" + mainBoardInfoBean.getStrSoftwareVer());
                     sno.setText(mainBoardInfoBean.getStrSNO());
-                    config.setText(mainBoardInfoBean.getStrConfig());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -115,7 +114,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                      * @param nCurrent
                      */
                     @Override
-                    public void SetChargeData(int nVoltage,int nCurrent){
+                    public void setChargeData(int nVoltage,int nCurrent){
 
                     }
                 });

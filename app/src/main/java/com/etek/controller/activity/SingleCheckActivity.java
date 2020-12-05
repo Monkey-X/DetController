@@ -117,7 +117,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                      * @param nCurrent
                      */
                     @Override
-                    public void SetChargeData(int nVoltage,int nCurrent){
+                    public void setChargeData(int nVoltage,int nCurrent){
 
                     }
                 });
