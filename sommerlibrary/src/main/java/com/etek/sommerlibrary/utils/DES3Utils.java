@@ -11,7 +11,8 @@ public class DES3Utils {
     private static final String Algorithm = "DESede";
     //    private static final String Algorithm = "DESede";
     // 加密密钥
-    public static final String PASSWORD_CRYPT_KEY = "jadl12345678912345678912";
+//    public static final String PASSWORD_CRYPT_KEY = "jadl12345678912345678912";
+    public static final String PASSWORD_CRYPT_KEY = "jadl12345678901234373083";//测试密钥
     public static final String CRYPT_KEY_FRONT = "jadl12345678901234";
 
     // 加密 src为源数据的字节数组

@@ -33,12 +33,6 @@ public class AuthBombActivity2 extends BaseActivity implements View.OnClickListe
      */
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
-
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao().loadAll();
-        for (int i = 0; i < detonatorEntities.size(); i++) {
-            XLog.d("detonatorEntities: " + detonatorEntities.get(i).getStatus());
-            XLog.d("detonatorEntities: " + detonatorEntities.get(i).toString());
-        }
         XLog.d("proId: " + proId);
     }
 

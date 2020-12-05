@@ -40,6 +40,7 @@ import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
+import com.etek.controller.utils.JsonUtils;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.utils.location.DLocationTools;
@@ -49,6 +50,8 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
+import com.google.gson.Gson;
+
 import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -479,12 +482,16 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 离线检查
      */
     private void offlineCheck() {
-        //测试模拟json
+        //测试模拟授权下载数据json
 //        String data = JsonUtils.getData();
 //        Gson gson = new Gson();
 //        ProjectDownLoadEntity projectDownLoadEntity = gson.fromJson(data, ProjectDownLoadEntity.class);
 
         ProjectDownLoadEntity projectDownLoadEntity = DBManager.getInstance().getProjectDownLoadEntityDao().queryBuilder().where(ProjectDownLoadEntityDao.Properties.Htbh.eq(projectInfoEntity.getContractCode())).unique();
+        if (projectDownLoadEntity == null){
+            ToastUtils.show(this,"数据为空,无法检查，请去授权下载");
+            return;
+        }
         if (!projectInfoEntity.getProCode().equals(projectDownLoadEntity.getXmbh())) {
             ToastUtils.show(this, "项目编号检查错误");
         }

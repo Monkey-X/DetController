@@ -63,6 +63,7 @@ public class JsonUtils {
                 detonatorEntity.setProjectInfoId(proId);
                 detonatorEntity.setRelay("100" + i);
                 detonatorEntity.setHolePosition("孔" + i);
+                detonatorEntity.setStatus(i%3);
                 DBManager.getInstance().getDetonatorEntityDao().insert(detonatorEntity);
             }
         }
