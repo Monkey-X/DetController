@@ -80,7 +80,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      */
     private void getProjectId() {
         List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
-        if (projectInfoEntities != null && projectInfoEntities.size() != 0) {
+        if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
             // 没有项目，创建项目
             createProject();
         } else {
