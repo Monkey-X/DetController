@@ -7,7 +7,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
         android:background="@drawable/message_item_auto">
 
         <TextView
@@ -33,7 +34,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:padding="5dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/message_item_auto">
 
         <TextView
@@ -60,7 +62,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
         android:background="@drawable/message_item_auto">
 
         <TextView
@@ -102,13 +105,12 @@
                 android:text="@string/longitude" />
 
             <EditText
-                android:background="@null"
                 android:id="@+id/ctrl_location_longitude"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="105dp"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:textColor="@color/eighty_per_trans_black"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -128,8 +130,7 @@
                 android:text="@string/latitude" />
 
             <EditText
-                android:background="@null"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:id="@+id/ctrl_location_latitude"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
