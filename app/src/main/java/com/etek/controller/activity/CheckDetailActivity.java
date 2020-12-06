@@ -90,6 +90,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         setContentView(R.layout.activity_check_detail);
         getProjectId();
         initView();
+        getLocation();
     }
 
     /**
@@ -150,7 +151,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.get_location) {
-            getLocation();
+           // getLocation();
         }
     }
 

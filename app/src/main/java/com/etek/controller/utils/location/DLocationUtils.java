@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import com.etek.sommerlibrary.utils.NetUtil;
 
+import java.util.List;
+
 /**
  * 使用Android原生API
  * 优先使用网络定位
@@ -125,8 +127,8 @@ public class DLocationUtils {
 
         String provider;
         // 获取可用的位置提供器，GPS或是NetWork
-        String providers = mLocationManager.getBestProvider(getCriteria(),true );
-        if (providers.equals( LocationManager.NETWORK_PROVIDER )) {
+        List<String> providers = mLocationManager.getProviders(true );
+        if (providers.contains( LocationManager.NETWORK_PROVIDER )) {
             if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && NetUtil.getNetType(mContext) >= 0){
                 Log.i(TAG, "使用网络定位 " );
                 provider = LocationManager.NETWORK_PROVIDER;
@@ -138,7 +140,7 @@ public class DLocationUtils {
                     return DLocationWhat.ONLY_GPS_WORK;
                 }
             }
-        } else if (providers.equals(LocationManager.GPS_PROVIDER)){
+        } else if (providers.contains(LocationManager.GPS_PROVIDER)){
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 Log.i(TAG, "使用GPS定位");
                 provider = LocationManager.GPS_PROVIDER;
