@@ -48,6 +48,7 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -179,10 +180,14 @@ public class OnlineAuthorizeActivity2 extends BaseActivity implements View.OnCli
      */
     public void updateGPSInfo(Location location) {
         if (location != null) {
-            longitude.setText(location.getLongitude() + "");
-            latitude.setText(location.getLatitude() + "");
-            projectInfoEntity.setLongitude(location.getLongitude());
-            projectInfoEntity.setLatitude(location.getLatitude());
+            DecimalFormat df = new DecimalFormat("0.000000");
+            String longitude2 = df.format(location.getLongitude());
+            String latitude2 = df.format(location.getLatitude());
+            longitude.setText(longitude2);
+            latitude.setText(latitude2);
+            projectInfoEntity.setLongitude(Double.parseDouble(longitude2));
+            projectInfoEntity.setLatitude(Double.parseDouble(latitude2));
+            XLog.e("updateGPSInfo:  " + longitude + "  ,  " + latitude);
         }
     }
 

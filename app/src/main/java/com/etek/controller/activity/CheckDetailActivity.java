@@ -40,7 +40,6 @@ import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
-import com.etek.controller.utils.JsonUtils;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.utils.location.DLocationTools;
@@ -50,7 +49,6 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
-import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
@@ -85,7 +83,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private int GO_TO_GPS = 150;
     private StringBuilder uid = new StringBuilder();
     private String type;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,11 +203,16 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      */
     public void updateGPSInfo(Location location) {
         if (location != null) {
-            locationLongitude.setText("" + location.getLongitude());
-            locationLatitude.setText("" + location.getLatitude());
-            projectInfoEntity.setLongitude(location.getLongitude());
-            projectInfoEntity.setLatitude(location.getLatitude());
-            XLog.e(location.getLongitude() + "  ,  " + location.getLatitude());
+            //地标
+            XLog.e("DLocationUtils:  " + location.getLongitude() + "  ,  " + location.getLatitude());
+            DecimalFormat df = new DecimalFormat("0.000000");
+            String longitude = df.format(location.getLongitude());
+            String latitude = df.format(location.getLatitude());
+            locationLongitude.setText(longitude);
+            locationLatitude.setText(latitude);
+            projectInfoEntity.setLongitude(Double.parseDouble(longitude));
+            projectInfoEntity.setLatitude(Double.parseDouble(latitude));
+            XLog.e("DLocationUtils:  " + longitude + "  ,  " + latitude);
         }
     }
 

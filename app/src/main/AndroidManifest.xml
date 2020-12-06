@@ -21,7 +21,7 @@
     <!-- <uses-permission android:name="android.permission.WRITE_SETTINGS" /> -->
     <!-- 蓝牙权限 -->
     <!-- Android6.0 蓝牙扫描才需要 -->
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
