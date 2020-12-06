@@ -2,6 +2,7 @@ package com.etek.controller.activity;
 
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -271,9 +272,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         onlineCheckDto.setSbbh(projectInfoEntity.getControllerId());
         for (int i = 0; i < detonatorEntityList.size(); i++) {
             if (i == 0) {
-                uid.append(detonatorEntityList.get(i).getUid());
+                uid.append(detonatorEntityList.get(i).getCode());
             } else {
-                uid.append("," + detonatorEntityList.get(i).getUid());
+                uid.append("," + detonatorEntityList.get(i).getCode());
             }
         }
         XLog.e("uid: " + uid.toString());
@@ -513,38 +514,77 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if (!projectInfoEntity.getContractName().equals(projectDownLoadEntity.getHtmc())) {
             ToastUtils.show(this, "合同名称检查错误");
         }
-        Result rptDecode = RptUtil.getRptDecode(projectDownLoadEntity.getMmwj());
-        XLog.e(rptDecode);
-        if (rptDecode.isSuccess()) {
-            String data2 = (String) rptDecode.getData();
-            OnlineCheckResp serverResult = JSON.parseObject(data2, OnlineCheckResp.class);
-            if (serverResult.getCwxx().contains("0")) {
-                int unRegDet = 0;
-                boolean isUnreg = false;
-                for (int i = 0; i < detonatorEntityList.size(); i++) {
-                    for (Lg lg : serverResult.getLgs().getLg()) {
-                        if(detonatorEntityList.get(i).getUid().equalsIgnoreCase(lg.getUid())){
-                            if(lg.getGzmcwxx()!=0){
-                                isUnreg = true;
-                                unRegDet++;
-                                detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
-                                DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
-                                XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
-                            }else{
-                                detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
-                                DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
-                                XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
+        OffLineCheckTask offLineCheckTask = new OffLineCheckTask(projectDownLoadEntity.getMmwj(), projectDownLoadEntity.getFileSn());
+        offLineCheckTask.execute();
+    }
+
+
+    public class OffLineCheckTask extends AsyncTask<String, Integer, Integer>{
+
+        private final String mmwj;
+        private final String fileSn;
+
+        public OffLineCheckTask(String mmwj, String fileSn){
+            this.mmwj = mmwj;
+            this.fileSn = fileSn;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProDialog("检测中...");
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            missProDialog();
+            if (integer == -1) {
+                showStatusDialog("本地数据获取失败！");
+            }else if (integer ==0){
+                checkDetailAdapter.notifyDataSetChanged();
+            }else {
+                showStatusDialog("存在已使用雷管" + integer + "个！");
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+            Result rptDecode = RptUtil.getRptDecode(mmwj,fileSn);
+            XLog.e(rptDecode);
+            if (rptDecode.isSuccess()) {
+                String data2 = (String) rptDecode.getData();
+                OnlineCheckResp serverResult = JSON.parseObject(data2, OnlineCheckResp.class);
+                if (serverResult.getCwxx().contains("0")) {
+                    int unRegDet = 0;
+                    boolean isUnreg = false;
+                    for (int i = 0; i < detonatorEntityList.size(); i++) {
+                        for (Lg lg : serverResult.getLgs().getLg()) {
+                            if(detonatorEntityList.get(i).getCode().equalsIgnoreCase(lg.getUid())){
+                                if(lg.getGzmcwxx()!=0){
+                                    isUnreg = true;
+                                    unRegDet++;
+                                    detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
+                                    DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
+                                    XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
+                                }else{
+                                    detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
+                                    DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
+                                    XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
+                                }
                             }
                         }
                     }
+                    if(isUnreg){
+//                        showStatusDialog("存在已使用雷管" + unRegDet + "个！");
+                        return unRegDet;
+                    }
                 }
-                checkDetailAdapter.notifyDataSetChanged();
-                if(isUnreg){
-                    showStatusDialog("存在已使用雷管" + unRegDet + "个！");
-                }
+                return 0;
+            } else {
+                XLog.e("解密失败：" + rptDecode.getMessage());
+                return -1;
             }
-        } else {
-            XLog.e("解密失败：" + rptDecode.getMessage());
         }
     }
 }

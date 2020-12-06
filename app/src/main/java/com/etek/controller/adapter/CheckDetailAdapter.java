@@ -29,6 +29,9 @@ public class CheckDetailAdapter extends BaseQuickAdapter <DetonatorEntity, BaseV
         } else if (item.getStatus() == 3) {
             helper.setText(R.id.status, "不存在");
             helper.setTextColor(R.id.status,mContext.getColor(R.color.gray));
+        }else if (item.getStatus() == -1){
+            helper.setText(R.id.status, "");
+            helper.setTextColor(R.id.status,mContext.getColor(R.color.gray));
         }
     }
 }

@@ -1,17 +1,16 @@
 package com.etek.controller.persistence.entity;
 
 
-
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
 import java.util.Date;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 
-
 @Entity
-public class DetonatorEntity{
+public class DetonatorEntity {
 
     @Id(autoincrement = true)
     Long id;
@@ -30,7 +29,7 @@ public class DetonatorEntity{
     private String relay;     //雷管起爆延时时间 relay
 
 
-    private int status;     //雷管工作码错误信息 0 正常 1 黑名单 2 已使用 3 不存在
+    private int status = -1;     //雷管工作码错误信息 0 正常 1 黑名单 2 已使用 3 不存在
 
     private String holePosition; // 雷管孔位
 
@@ -44,12 +43,11 @@ public class DetonatorEntity{
     private int serialNum;
 
 
-
     @Generated(hash = 1280044808)
     public DetonatorEntity(Long id, Date validTime, String uid, String code,
-            String detId, String workCode, String relay, int status,
-            String holePosition, int downLoadStatus, int testStatus,
-            long projectInfoId, int serialNum) {
+                           String detId, String workCode, String relay, int status,
+                           String holePosition, int downLoadStatus, int testStatus,
+                           long projectInfoId, int serialNum) {
         this.id = id;
         this.validTime = validTime;
         this.uid = uid;
@@ -68,8 +66,6 @@ public class DetonatorEntity{
     @Generated(hash = 442328053)
     public DetonatorEntity() {
     }
-
-
 
 
     public Date getValidTime() {
