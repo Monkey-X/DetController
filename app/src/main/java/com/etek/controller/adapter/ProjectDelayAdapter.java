@@ -64,7 +64,9 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
         if (status == 0) {
             view.setText(R.string.str_success);
             view.setTextColor(view.getContext().getColor(R.color.palegreen));
-        } else {
+        } else if (status == -1){
+           view.setText("");
+        }else{
             view.setText(R.string.str_faile);
             view.setTextColor(view.getContext().getColor(R.color.red_normal));
         }

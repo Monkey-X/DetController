@@ -160,7 +160,7 @@ public class ReportDto2 {
     public void setDets2(List<DetonatorEntity> detonatorEntities) {
         List<String> dets = new ArrayList<>();
         for (DetonatorEntity detonatorEntity : detonatorEntities) {
-            dets.add(detonatorEntity.getUid());
+            dets.add(detonatorEntity.getCode());
         }
         uid = StringUtils.join(dets, ",");
     }

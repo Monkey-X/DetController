@@ -41,7 +41,9 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
         if (teststatus == 0) {
             view.setText(R.string.str_success);
             view.setTextColor(view.getContext().getColor(R.color.palegreen));
-        } else {
+        } else if (teststatus == -1){
+            view.setText("");
+        }else{
             view.setText(R.string.str_miss);
             view.setTextColor(view.getContext().getColor(R.color.lightgrey));
         }

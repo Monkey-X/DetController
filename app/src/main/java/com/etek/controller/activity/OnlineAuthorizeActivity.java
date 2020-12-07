@@ -1039,12 +1039,6 @@ public class OnlineAuthorizeActivity extends BaseActivity {
                         if (serverResult.getCwxx().contains("0")) {
                             ProjectFileDto projectFile = new ProjectFileDto();
 
-//                            ProInfoDto   detInfoDto = JSON.parseObject(data, ProInfoDto.class);
-//
-//                            XLog.d(detInfoDto.toString());
-
-//                            projectFile.setProInfo(detInfoDto);
-
                             projectFile.setCompany(Globals.user.getCompanyName());
                             projectFile.setDwdm(Globals.user.getCompanyCode());
                             projectFile.setXmbh(detController.getProjectId());

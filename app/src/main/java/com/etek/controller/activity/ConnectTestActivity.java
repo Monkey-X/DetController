@@ -255,7 +255,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
         List<DetonatorEntity> missConnect = new ArrayList<>();
         for (DetonatorEntity connectDatum : connectData) {
-            if (connectDatum.getTestStatus() == 170) {
+            if (connectDatum.getTestStatus() != 0) {
                 missConnect.add(connectDatum);
             }
         }
@@ -389,9 +389,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
     }
 
-    private void updateProjectStatus(){
+    private void updateProjectStatus() {
         ProjectInfoEntity projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-        if (projectInfoEntity!=null) {
+        if (projectInfoEntity != null) {
             projectInfoEntity.setProjectImplementStates(AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD);
             DBManager.getInstance().getProjectInfoEntityDao().save(projectInfoEntity);
         }
