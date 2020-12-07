@@ -97,7 +97,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         backImag = findViewById(R.id.back_img);
         backImag.setOnClickListener(this);
         textTitle = findViewById(R.id.text_title);
-        textTitle.setText(R.string.title_act_connect_state);
+        textTitle.setText(R.string.title_activity_connecttest);
         textBtn = findViewById(R.id.text_btn);
         textBtn.setText("项目列表");
         textBtn.setOnClickListener(this);
@@ -380,8 +380,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         DetonatorEntity detonatorEntity = connectData.get(position);
         String detId = detonatorEntity.getDetId();
         Log.d(TAG, "detSingleCheck: detId = " + detId);
-        int wakeupStatus = DetApp.getInstance().ModuleSetWakeupStatus(Integer.parseInt(detId));
-        Log.d(TAG, "detSingleCheck: wakeupStatus = " + wakeupStatus);
+        int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
+        Log.d(TAG, "detSingleCheck: MainBoardHVEnable = " + wakeupStatus);
         // 进行雷管的链接检测
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);

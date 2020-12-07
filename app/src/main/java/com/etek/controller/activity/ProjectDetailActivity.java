@@ -447,7 +447,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     public String getDetIdByGm(String gm) {
         byte[] bytes = DetIDConverter.GetDCByString(gm);
         byte[] bytes1 = DetIDConverter.Conv_DC2ID(bytes);
-        int detId = DataConverter.bytes2Int(bytes1);
+        int detId = DataConverter.lsbBytes2Int(bytes1);
         return String.valueOf(detId);
     }
 

@@ -132,13 +132,8 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         LinkedHashMap params = new LinkedHashMap();
         params.put("dwdm", contractCode);    // 输入合同编号
         params.put("xlh", authorizedCode);   // 输入授权码
-        String newUrl;
+        String newUrl = SommerUtils.attachHttpGetParams(AppConstants.DanningServer + AppConstants.ProjectFileDownload, params);
         // 测试服务器
-        if (false) {
-            newUrl = SommerUtils.attachHttpGetParams(AppConstants.DanningTestServer + AppConstants.ProjectFileDownload, params);
-        } else {
-            newUrl = SommerUtils.attachHttpGetParams(AppConstants.DanningServer + AppConstants.ProjectFileDownload, params);
-        }
         XLog.v("newUrl:" + newUrl);
         AsyncHttpCilentUtil.getOkHttpClient(newUrl, new Callback() {
 
