@@ -34,4 +34,16 @@ public class RptUtil {
             return Result.error(e.getMessage());
         }
     }
+
+    public static Result getRptDecode(String rspStr,String xlh){
+
+        try {
+            byte[] decode1 = Base64Utils.getDecodeBytes(rspStr);
+            byte[] decode2 = DES3Utils.decryptMode(decode1, DES3Utils.CRYPT_KEY_FRONT+xlh );
+            return Result.successOf(new String(decode2).trim());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error(e.getMessage());
+        }
+    }
 }

@@ -85,7 +85,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
     private void initDialog() {
         AuthorizedDownloadDialog dialog = new AuthorizedDownloadDialog();
         dialog.setOnMakeProjectListener(this);
-        dialog.show(getSupportFragmentManager(),"Dialog");
+        dialog.show(getSupportFragmentManager(), "Dialog");
     }
 
     /**
@@ -117,7 +117,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
 
     @Override
     public void getProjectFileContent(String contractCode, String authorizedCode) {
-        getProjectFile(contractCode,authorizedCode);
+        getProjectFile(contractCode, authorizedCode);
     }
 
     /**
@@ -134,27 +134,27 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         params.put("xlh", authorizedCode);   // 输入授权码
         String newUrl;
         // 测试服务器
-        if (Globals.isTest) {
+        if (false) {
             newUrl = SommerUtils.attachHttpGetParams(AppConstants.DanningTestServer + AppConstants.ProjectFileDownload, params);
         } else {
             newUrl = SommerUtils.attachHttpGetParams(AppConstants.DanningServer + AppConstants.ProjectFileDownload, params);
         }
-        XLog.v( "newUrl:" + newUrl);
+        XLog.v("newUrl:" + newUrl);
         AsyncHttpCilentUtil.getOkHttpClient(newUrl, new Callback() {
 
             @Override
             public void onFailure(Call call, IOException e) {
                 showLongToast(authorizedCode + "onFailure！" + e.getLocalizedMessage());
-                Log.d(TAG, "onFailure: "+e.getLocalizedMessage());
+                Log.d(TAG, "onFailure: " + e.getLocalizedMessage());
                 missProDialog();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.d(TAG, "onSuccess: "+response.toString());
+                Log.d(TAG, "onSuccess: " + response.toString());
                 setStringInfo("filesn", authorizedCode);
                 respStr = response.body().string();
-                Log.d(TAG, "onSuccess: respStr ="+respStr);
+                Log.d(TAG, "onSuccess: respStr =" + respStr);
                 missProDialog();
                 if (respStr == null || respStr.length() < 10) {
                     showToast("下载数据错误！");
@@ -165,23 +165,30 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                     projectFileDto = JSON.parseObject(respStr, ProjectFileDto.class);
                 } catch (Exception e) {
                     XLog.e(e);
-                    showToast("错误信息："+e.getMessage());
+                    showToast("错误信息：" + e.getMessage());
+                    return;
+                }
+
+                if (checkSameProject(projectFileDto)) {
+                    showStatusDialog("项目已下载！");
                     return;
                 }
 
                 Result detInfoResult = projectFileDto.parseContentAndSave(authorizedCode);
 
                 if (detInfoResult.isSuccess()) {
-                    Log.d(TAG, "onResponse: "+detInfoResult.toString());
+                    Log.d(TAG, "onResponse: " + detInfoResult.toString());
 
                     ProjectFileDto projectFile = (ProjectFileDto) detInfoResult.getData();
                     projectFile.setFileSn(authorizedCode);
-                    projectFile.setCompany(Globals.user.getCompanyCode());
+                    if (Globals.user != null) {
+                        projectFile.setCompany(Globals.user.getCompanyCode());
+                    }
                     projectFile.setMingma("");
                     String strInfo = JSON.toJSONString(projectFile, AppUtils.filter);
                     XLog.i(strInfo);
 
-                    sendCmdMessage(UPDATE,strInfo);
+                    sendCmdMessage(UPDATE, strInfo);
 
                     String msg = valifyProjectFile(projectFile);
                     if (msg != null && !StringUtils.isEmpty(msg)) {
@@ -196,6 +203,28 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         });
     }
 
+    /**
+     * 检查是否有同样的项目
+     *
+     * @param projectFileDto
+     */
+    private boolean checkSameProject(ProjectFileDto projectFileDto) {
+        if (projectFileDto == null) {
+            return true;
+        }
+
+        List<ProjectDownLoadEntity> projectDownLoadEntities = DBManager.getInstance().getProjectDownLoadEntityDao().loadAll();
+        if (projectDownLoadEntities != null && projectDownLoadEntities.size() != 0) {
+            for (ProjectDownLoadEntity projectDownLoadEntity : projectDownLoadEntities) {
+                if (projectDownLoadEntity.getHtbh().equals(projectFileDto.getHtbh())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private long saveProjectInfo(ProjectFileDto projectFile, String authorizedCode) {
         ProjectDownLoadEntity projectDownLoadEntity = new ProjectDownLoadEntity();
         projectDownLoadEntity.setXmbh(projectFile.getXmbh());
@@ -208,7 +237,17 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         projectDownLoadEntity.setMmwj(projectFile.getMmwj());
         projectDownLoadEntity.setFileSn(authorizedCode);
         DBManager.getInstance().getProjectDownLoadEntityDao().save(projectDownLoadEntity);
+        refreshData();
         return 0;
+    }
+
+    private void refreshData() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initData();
+            }
+        });
     }
 
     /**
@@ -354,7 +393,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
     /**
      * 发送handler消息
      */
-    private  void sendCmdMessage(int msg,String info) {
+    private void sendCmdMessage(int msg, String info) {
         Message message = new Message();
         message.what = msg;
         Bundle b = new Bundle();
@@ -367,30 +406,30 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
 
     //消息处理者,创建一个Handler的子类对象,目的是重写Handler的处理消息的方法(handleMessage())
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
 
 
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case UPDATE:
                     Bundle b = msg.getData();
                     String info = b.getString("info");
-                    if(StringUtils.isEmpty(info)){
+                    if (StringUtils.isEmpty(info)) {
                         return;
                     }
                     String url = AppConstants.ETEKTestServer + AppConstants.DETUnCheck;
                     AsyncHttpCilentUtil.httpPostJson(url, info, new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            XLog.e("IOException:"+e.getMessage());
+                            XLog.e("IOException:" + e.getMessage());
                         }
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String respStr = response.body().string();
                             if (!StringUtils.isEmpty(respStr)) {
-                                XLog.w("respStr is  "+ respStr);
+                                XLog.w("respStr is  " + respStr);
 
                             }
                         }

@@ -21,7 +21,7 @@
     <!-- <uses-permission android:name="android.permission.WRITE_SETTINGS" /> -->
     <!-- 蓝牙权限 -->
     <!-- Android6.0 蓝牙扫描才需要 -->
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -66,7 +66,10 @@
         <activity android:name=".activity.ProjectListActivity" />
         <activity android:name=".activity.ProjectImplementActivity" />
         <activity android:name=".activity.PowerBombActivity" />
-        <activity android:name=".activity.AuthorizedDownloadActivity"/>
+        <activity android:name=".activity.AuthorizedDownloadActivity" />
+        <activity android:name=".activity.AuthBombActivity2" />
+        <activity android:name=".activity.CheckDetailActivity" />
+
         <activity
             android:name=".activity.ProjectDetailActivity"
             android:theme="@style/activity_theme" />

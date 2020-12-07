@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <com.etek.controller.widget.ClearableEditText
-        android:hint="请输入合同编号"
+        android:hint="请输入单位编号"
         android:id="@+id/contract_code"
         android:maxLines="1"
         android:inputType="number"

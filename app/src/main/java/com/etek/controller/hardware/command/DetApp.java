@@ -1493,7 +1493,7 @@ public class DetApp {
 	 * @param cbobj			回调信息
 	 * @return
 	 */
-	public int DetsGetIDAndDC(StringBuilder strid,StringBuilder strDC,DetCallback cbobj){
+	public int DetsGetIDAndDC(StringBuilder strid,StringBuilder strDC,PowerCheckCallBack cbobj){
 		int ret;
 		final int RESP_LEN = 17;
 		final byte RESP_HEAD = (byte)0xb4;

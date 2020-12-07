@@ -2,15 +2,14 @@ package com.etek.controller.utils.location;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
+import com.etek.sommerlibrary.utils.NetUtil;
 
 import java.util.List;
 
@@ -128,11 +127,27 @@ public class DLocationUtils {
 
         String provider;
         // 获取可用的位置提供器，GPS或是NetWork
-        List<String> providers = mLocationManager.getProviders( getCriteria(), true );
+        List<String> providers = mLocationManager.getProviders(true );
         if (providers.contains( LocationManager.NETWORK_PROVIDER )) {
-            Log.i(TAG, "使用网络定位");
-            provider = LocationManager.NETWORK_PROVIDER;
-        } else {
+            if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && NetUtil.getNetType(mContext) >= 0){
+                Log.i(TAG, "使用网络定位 " );
+                provider = LocationManager.NETWORK_PROVIDER;
+            }else{
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    Log.i(TAG, "使用GPS定位");
+                    provider = LocationManager.GPS_PROVIDER;
+                }else{
+                    return DLocationWhat.ONLY_GPS_WORK;
+                }
+            }
+        } else if (providers.contains(LocationManager.GPS_PROVIDER)){
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                Log.i(TAG, "使用GPS定位");
+                provider = LocationManager.GPS_PROVIDER;
+            }else{
+                return DLocationWhat.ONLY_GPS_WORK;
+            }
+        }else {
             Log.i( TAG, "定位模式在仅限设备" );
             return DLocationWhat.ONLY_GPS_WORK;
         }

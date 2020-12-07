@@ -61,7 +61,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         initSupportActionBar(R.string.title_power_bomb);
         init();
         initView();
-//        getLocation();
     }
 
     private void initView() {
@@ -76,9 +75,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      */
     private void init() {
         this.mContext = this;
-        DLocationUtils.init(this);
     }
-
 
     int mBackKeyAction;
     long mActionTime;
@@ -145,67 +142,12 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-
-    /**
-     * 定位
-     */
-    private void getLocation() {
-        int status = DLocationUtils.getInstance().register(locationChangeListener);
-        switch (status) {
-            case NO_LOCATIONMANAGER:
-                //请求权限
-                ToastUtils.show(this, "没有定位权限");
-                DLocationTools.openAppSetting(mContext);
-                break;
-            case NO_PROVIDER:
-                //打开定位
-                ToastUtils.show(this, "尚未打开定位");
-                DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
-                break;
-            case ONLY_GPS_WORK:
-                //切换定位模式到【高精确度】或【节电】
-                ToastUtils.show(this, "切换定位模式到【高精确度】或【节电】");
-                DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
-                break;
-        }
-    }
-
-    /**
-     * 更新经纬度信息
-     */
-    public void updateGPSInfo(Location location) {
-        if (location != null) {
-            // TODO: 2020/11/20   获取到经纬度
-        }
-    }
-
-    /**
-     * 定位监听器
-     */
-    private OnLocationChangeListener locationChangeListener = new OnLocationChangeListener() {
-        @Override
-        public void getLastKnownLocation(Location location) {
-            updateGPSInfo(location);
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-            updateGPSInfo(location);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            //TODO
-        }
-    };
-
     /**
      * 注销
      */
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DLocationUtils.getInstance().unregister();
         if (powerAsyncTask != null) {
             powerAsyncTask.cancel(true);
         }
