@@ -362,7 +362,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
 
     /**
-     * 进行项目中所有的雷管的延时下载  todo
+     * 进行项目中所有的雷管的延时下载
      */
     private void allDetDownload() {
         if (detonators == null || detonators.size() == 0) {

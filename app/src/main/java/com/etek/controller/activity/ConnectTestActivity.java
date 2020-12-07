@@ -97,7 +97,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         backImag = findViewById(R.id.back_img);
         backImag.setOnClickListener(this);
         textTitle = findViewById(R.id.text_title);
-        textTitle.setText(R.string.title_act_connect_state);
+        textTitle.setText(R.string.title_activity_connecttest);
         textBtn = findViewById(R.id.text_btn);
         textBtn.setText("项目列表");
         textBtn.setOnClickListener(this);

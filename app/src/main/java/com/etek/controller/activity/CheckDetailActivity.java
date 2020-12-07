@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
@@ -52,15 +53,18 @@ import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+
 import static com.etek.controller.utils.location.DLocationWhat.NO_LOCATIONMANAGER;
 import static com.etek.controller.utils.location.DLocationWhat.NO_PROVIDER;
 import static com.etek.controller.utils.location.DLocationWhat.ONLY_GPS_WORK;
@@ -152,7 +156,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.get_location) {
-           // getLocation();
+            // getLocation();
         }
     }
 
@@ -318,11 +322,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         XLog.e("serverResult: " + serverResult.toString());
                         if (serverResult.getCwxx().contains("0")) {
                             ProjectFileDto projectFile = new ProjectFileDto();
-
-//                            ProInfoDto   detInfoDto = JSON.parseObject(data, ProInfoDto.class);
-//                            Log.d("TAG",detInfoDto.toString());
-//                            projectFile.setProInfo(detInfoDto);
-
                             projectFile.setCompany(projectInfoEntity.getCompanyName());
                             projectFile.setDwdm(projectInfoEntity.getCompanyCode());
                             projectFile.setXmbh(projectInfoEntity.getProCode());
@@ -344,23 +343,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                             if (isUnreg) {
                                 XLog.w("unRegDet:" + unRegDet);
                                 showStatusDialog("已存在已使用雷管！");
-//                                proId = storeProjectInfo(projectFile, serverResult);
-//                                if (proId != 0) {
-//                                    projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
-//                                            queryBuilder()
-//                                            .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-//                                }
                                 return;
                             }
-
-//                            proId = storeProjectInfo(projectFile, serverResult);
-//                            if (proId != 0) {
-//                                projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
-//                                        queryBuilder()
-//                                        .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-//                            } else {
-//                                showStatusDialog("已经存在有此项目");
-//                            }
                         } else {
                             showStatusDialog(serverResult.getCwxxms());
 //                        result = ActivityResult.successOf("上传丹灵服务器成功!");
@@ -492,8 +476,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 //        ProjectDownLoadEntity projectDownLoadEntity = gson.fromJson(data, ProjectDownLoadEntity.class);
 
         ProjectDownLoadEntity projectDownLoadEntity = DBManager.getInstance().getProjectDownLoadEntityDao().queryBuilder().where(ProjectDownLoadEntityDao.Properties.Htbh.eq(projectInfoEntity.getContractCode())).unique();
-        if (projectDownLoadEntity == null){
-            ToastUtils.show(this,"数据为空,无法检查，请去授权下载");
+        if (projectDownLoadEntity == null) {
+            ToastUtils.show(this, "数据为空,无法检查，请去授权下载");
             return;
         }
         if (!projectInfoEntity.getProCode().equals(projectDownLoadEntity.getXmbh())) {
@@ -519,12 +503,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
 
-    public class OffLineCheckTask extends AsyncTask<String, Integer, Integer>{
+    public class OffLineCheckTask extends AsyncTask<String, Integer, Integer> {
 
         private final String mmwj;
         private final String fileSn;
 
-        public OffLineCheckTask(String mmwj, String fileSn){
+        public OffLineCheckTask(String mmwj, String fileSn) {
             this.mmwj = mmwj;
             this.fileSn = fileSn;
         }
@@ -541,16 +525,16 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             missProDialog();
             if (integer == -1) {
                 showStatusDialog("本地数据获取失败！");
-            }else if (integer ==0){
+            } else if (integer == 0) {
                 checkDetailAdapter.notifyDataSetChanged();
-            }else {
+            } else {
                 showStatusDialog("存在已使用雷管" + integer + "个！");
             }
         }
 
         @Override
         protected Integer doInBackground(String... strings) {
-            Result rptDecode = RptUtil.getRptDecode(mmwj,fileSn);
+            Result rptDecode = RptUtil.getRptDecode(mmwj, fileSn);
             XLog.e(rptDecode);
             if (rptDecode.isSuccess()) {
                 String data2 = (String) rptDecode.getData();
@@ -560,14 +544,14 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     boolean isUnreg = false;
                     for (int i = 0; i < detonatorEntityList.size(); i++) {
                         for (Lg lg : serverResult.getLgs().getLg()) {
-                            if(detonatorEntityList.get(i).getCode().equalsIgnoreCase(lg.getUid())){
-                                if(lg.getGzmcwxx()!=0){
+                            if (detonatorEntityList.get(i).getCode().equalsIgnoreCase(lg.getUid())) {
+                                if (lg.getGzmcwxx() != 0) {
                                     isUnreg = true;
                                     unRegDet++;
                                     detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
                                     DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
                                     XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
-                                }else{
+                                } else {
                                     detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
                                     DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
                                     XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
@@ -575,7 +559,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                             }
                         }
                     }
-                    if(isUnreg){
+                    if (isUnreg) {
 //                        showStatusDialog("存在已使用雷管" + unRegDet + "个！");
                         return unRegDet;
                     }

@@ -33,9 +33,9 @@ public class DetonatorEntity {
 
     private String holePosition; // 雷管孔位
 
-    private int downLoadStatus; // 延时下载的状态吗
+    private int downLoadStatus = -1; // 延时下载的状态吗
 
-    private int testStatus;  // 连接检测状态码
+    private int testStatus = -1;  // 连接检测状态码
 
     private long projectInfoId;
 
