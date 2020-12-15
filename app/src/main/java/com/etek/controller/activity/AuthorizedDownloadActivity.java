@@ -1,6 +1,7 @@
 package com.etek.controller.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alibaba.fastjson.JSON;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ContractAdapter;
@@ -59,11 +61,11 @@ import okhttp3.Response;
 /**
  * 授权下载
  */
-public class AuthorizedDownloadActivity extends BaseActivity implements AuthorizedDownloadDialog.AuthorizedDownloadListener {
+public class AuthorizedDownloadActivity extends BaseActivity implements AuthorizedDownloadDialog.AuthorizedDownloadListener, BaseQuickAdapter.OnItemChildClickListener {
 
     private RecyclerView recycleView;
     private LinearLayout noDataView;
-    private List<ProjectDownLoadEntity> projectInfos = new ArrayList<>();
+    private List<ProjectInfoEntity> projectInfos = new ArrayList<>();
     private ContractAdapter contractAdapter;
     private String respStr = "";
     private static final int UPDATE = 10;
@@ -97,13 +99,14 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         recycleView.setLayoutManager(new LinearLayoutManager(this));
         contractAdapter = new ContractAdapter(R.layout.contract_item_view, projectInfos);
         recycleView.setAdapter(contractAdapter);
+        contractAdapter.setOnItemChildClickListener(this);
     }
 
     /**
      * 初始化数据
      */
     private void initData() {
-        List<ProjectDownLoadEntity> projectDownLoadEntities = DBManager.getInstance().getProjectDownLoadEntityDao().loadAll();
+        List<ProjectInfoEntity> projectDownLoadEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
 
         projectInfos.clear();
         if (projectDownLoadEntities != null && projectDownLoadEntities.size() > 0) {
@@ -113,6 +116,17 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
             noDataView.setVisibility(View.VISIBLE);
         }
         contractAdapter.notifyDataSetChanged();
+    }
+
+    // 列表的点击事件
+    @Override
+    public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+        ProjectInfoEntity projectInfoEntity = projectInfos.get(position);
+        Long projectId = projectInfoEntity.getId();
+
+        Intent intent = new Intent(this, AuthDownLoadDetailActivity.class);
+        intent.putExtra(AuthDownLoadDetailActivity.PROJECT_ID,projectId);
+        startActivity(intent);
     }
 
     @Override
@@ -164,10 +178,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                     return;
                 }
 
-                if (checkSameProject(projectFileDto)) {
-                    showStatusDialog("项目已下载！");
-                    return;
-                }
+                // TODO: 2020/12/10 这里需要检查文件是否已经下载
 
                 Result detInfoResult = projectFileDto.parseContentAndSave(authorizedCode);
 
@@ -185,12 +196,19 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
 
                     sendCmdMessage(UPDATE, strInfo);
 
-                    String msg = valifyProjectFile(projectFile);
-                    if (msg != null && !StringUtils.isEmpty(msg)) {
-                        showStatusDialog(msg);
+//                    String msg = valifyProjectFile(projectFile);
+//                    if (msg != null && !StringUtils.isEmpty(msg)) {
+//                        showStatusDialog(msg);
+//                        return;
+//                    }
+                    long projectId = storeProjectInfo(projectFile, authorizedCode);
+                    if (projectId == 0) {
+                        showStatusDialog("项目已下载！");
+                        Log.d(TAG, "onResponse: projectId = " + projectId);
                         return;
                     }
-                    long proId = saveProjectInfo(projectFile, authorizedCode);
+                    refreshData();
+//                     saveProjectInfo(projectFile, authorizedCode);
                 } else {
                     showStatusDialog(detInfoResult.getMessage());
                 }
@@ -276,7 +294,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
      */
     private long storeProjectInfo(final ProjectFileDto projectFile, String fileSn) {
 
-//        ThreadPoolUtils.getThreadPool().execute(()->{
         ProInfoDto mDetInfoDto = projectFile.getProInfo();
         XLog.v("proinfo:", mDetInfoDto);
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
@@ -311,11 +328,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                 detonatorBean.setUid(lg.getUid());
                 detonatorBean.setValidTime(lg.getYxq());
                 detonatorBean.setProjectInfoId(proId);
-//                                detonatorBean.set
-//                            detonatorBean.setProInfoBean(proInfoBean);
                 detonatorBean.setStatus(lg.getGzmcwxx());
-//                                detonatorBean.set
-//                               detonatorBean.setProInfoBean(detInfoDto);
                 detonatorEntityList.add(detonatorBean);
             }
             DBManager.getInstance().getDetonatorEntityDao().insertInTx(detonatorEntityList);
@@ -325,10 +338,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         if (!zbqys.getZbqy().isEmpty()) {
             List<PermissibleZoneEntity> permissibleZoneEntityList = new ArrayList<>();
             for (Zbqy zbqy : zbqys.getZbqy()) {
-//                                private String zbqssj;  //准爆起始时间
-//                                private String zbjzsj;  //准爆截止时间
                 PermissibleZoneEntity permissibleZone = new PermissibleZoneEntity();
-//                            permissibleZoneBean.setProInfoBean(proInfoBean);
                 permissibleZone.setName(zbqy.getZbqymc());
                 permissibleZone.setLatitude(Double.parseDouble(zbqy.getZbqywd()));
                 permissibleZone.setLongitude(Double.parseDouble(zbqy.getZbqyjd()));
@@ -337,10 +347,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                 permissibleZone.setStopTime(zbqy.getZbjzsj());
                 permissibleZone.setProjectInfoId(proId);
                 permissibleZoneEntityList.add(permissibleZone);
-//                                Dao<PermissibleZoneBean, Long> permissibleZoneDao = DatabaseHelper.getInstance(mcontext).getDao(PermissibleZoneBean.class);
-//                                permissibleZoneDao.create(permissibleZoneBean);
-//                                permissibleZoneBean.setStartTime(zbqy.getZbqssj());
-//                                permissibleZoneBean.setStopTime(zbqy.getZbjzsj());
             }
             DBManager.getInstance().getPermissibleZoneEntityDao().insertInTx(permissibleZoneEntityList);
         }
@@ -348,10 +354,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         if (!jbqys.getJbqy().isEmpty()) {
             List<ForbiddenZoneEntity> forbiddenZoneEntityList = new ArrayList<>();
             for (Jbqy jbqy : jbqys.getJbqy()) {
-//                                private String zbqssj;  //准爆起始时间
-//                                private String zbjzsj;  //准爆截止时间
                 ForbiddenZoneEntity forbiddenZoneEntity = new ForbiddenZoneEntity();
-//                forbiddenZoneEntity.setName(jbqy.getJbjzsj());
                 forbiddenZoneEntity.setLatitude(Double.parseDouble(jbqy.getJbqywd()));
                 forbiddenZoneEntity.setLongitude(Double.parseDouble(jbqy.getJbqyjd()));
                 forbiddenZoneEntity.setRadius(Integer.parseInt(jbqy.getJbqybj()));
@@ -359,10 +362,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                 forbiddenZoneEntity.setStopTime(jbqy.getJbjzsj());
                 forbiddenZoneEntity.setProjectInfoId(proId);
                 forbiddenZoneEntityList.add(forbiddenZoneEntity);
-//                                Dao<PermissibleZoneBean, Long> permissibleZoneDao = DatabaseHelper.getInstance(mcontext).getDao(PermissibleZoneBean.class);
-//                                permissibleZoneDao.create(permissibleZoneBean);
-//                                permissibleZoneBean.setStartTime(zbqy.getZbqssj());
-//                                permissibleZoneBean.setStopTime(zbqy.getZbjzsj());
             }
             DBManager.getInstance().getForbiddenZoneEntityDao().insertInTx(forbiddenZoneEntityList);
         }
@@ -375,13 +374,9 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                 controller.setName(sbbh.getSbbh());
                 controller.setProjectInfoId(proId);
                 controllerEntityList.add(controller);
-//                            detControllerBean.setProInfoBean(proInfoBean);
-//                            Dao<DetControllerBean, Long> detControllerDao = DatabaseHelper.getInstance(mcontext).getDao(DetControllerBean.class);
-//                            detControllerDao.create(detControllerBean);
             }
             DBManager.getInstance().getControllerEntityDao().insertInTx(controllerEntityList);
         }
-//        });
         return proId;
     }
 
@@ -433,4 +428,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
             }
         }
     };
+
+
 }
