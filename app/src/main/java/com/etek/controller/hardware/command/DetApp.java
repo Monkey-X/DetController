@@ -31,9 +31,9 @@ import com.etek.controller.hardware.util.DataConverter;
 
 public class DetApp {
 	private SerialCommBase m_commobj;
-	private DetCmd m_cmdObj;	
+	private DetCmd m_cmdObj;
 	private DetErrorCode m_detError;
-	
+
 	private String TAG = "DetApp";
 
 
@@ -55,14 +55,14 @@ public class DetApp {
 		System.out.println("Initialize....");
 
 		m_detError=new DetErrorCode((byte)0x00,0);
-		
+
 		m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
-		m_cmdObj = new DetCmd(m_commobj); 		
+		m_cmdObj = new DetCmd(m_commobj);
 
 		int ret = m_commobj.OpenPort();
-		
+
 		m_detError.Setter((byte)0x00, ret);
-		
+
 		return ret;
 	}
 
@@ -73,11 +73,11 @@ public class DetApp {
 		if(null!=m_commobj){
 			m_commobj.ClosePort();
 		}
-		
-		m_commobj = null;		
+
+		m_commobj = null;
 		m_detError = null;
 		Log.d(TAG, "Finalize: ");
-		
+
 		return;
 	}
 
@@ -101,14 +101,14 @@ public class DetApp {
 
 	/*
 	 * 功能：获取版本信息
-	 * */	
+	 * */
 	public String MainBoardGetVersion(){
 		StringBuilder strVer = new StringBuilder();
-		
+
 		int ret = m_cmdObj.BoardCmd31(strVer);
 
 		m_detError.Setter((byte)0x31, ret);
-		
+
 		return strVer.toString();
 	}
 
@@ -117,21 +117,21 @@ public class DetApp {
 	 * */
 	public String MainBoardGetConfig(){
 		StringBuilder strConfig = new StringBuilder();
-		
+
 		int ret = m_cmdObj.BoardCmd33(strConfig);
 
 		m_detError.Setter((byte)0x33, ret);
-		
+
 		return strConfig.toString();
 	}
-	
+
 	public String MainBoardGetSNO() {
 		StringBuilder strSNO = new StringBuilder();
-		
+
 		int ret = m_cmdObj.BoardCmd32(strSNO);
-		
+
 		m_detError.Setter((byte)0x32, ret);
-		
+
 		return strSNO.toString();
 	}
 
@@ -142,7 +142,7 @@ public class DetApp {
 		int ret = m_cmdObj.BoardCmd40();
 
 		m_detError.Setter((byte)0x40, ret);
-		
+
 		return ret;
 	}
 
@@ -150,7 +150,7 @@ public class DetApp {
 	 * 功能：总线电源关闭
 	 * */
 	public int MainBoardBusPowerOff() {
-		int ret = m_cmdObj.BoardCmd41();		
+		int ret = m_cmdObj.BoardCmd41();
 
 		m_detError.Setter((byte)0x41, ret);
 
@@ -163,9 +163,9 @@ public class DetApp {
 	 * */
 	public int MainBoardHVEnable() {
 		int ret = m_cmdObj.BoardCmd42();
-		
+
 		m_detError.Setter((byte)0x42, ret);
-		
+
 		return ret;
 	}
 
@@ -176,18 +176,18 @@ public class DetApp {
 	public int MainBoardSetBus(boolean bHigh) {
 		int ret = 0;
 		byte bCmd = 0x45;
-		
+
 		if(bHigh){
 			bCmd = 0x045;
 			ret = m_cmdObj.BoardCmd45();
 		}
 		else {
 			bCmd = 0x44;
-			ret = m_cmdObj.BoardCmd44();			
+			ret = m_cmdObj.BoardCmd44();
 		}
-		
+
 		m_detError.Setter(bCmd, ret);
-		
+
 		return ret;
 	}
 
@@ -209,10 +209,10 @@ public class DetApp {
 	 * */
 	public int MainBoardGetBusStatus() {
 		int ret = m_cmdObj.BoardCmd4B();
-		
+
 		m_detError.Setter((byte)0x4B, ret);
-		
-		return ret;	
+
+		return ret;
 	}
 
 	/***
@@ -263,12 +263,12 @@ public class DetApp {
 		ret = m_cmdObj.ModCmd50(strData);
 
 		m_detError.Setter((byte)0x50, ret);
-		
+
 		if(0!=ret) return -1;
-		
+
 		byte[] arr = DataConverter.hexStringToBytes(strData.toString());
 		ret = DataConverter.lsbBytes2Int(arr);
-		
+
 		return ret;
 	}
 
@@ -282,13 +282,13 @@ public class DetApp {
 		int ret;
 		StringBuilder strData = new StringBuilder();
 		ret = m_cmdObj.ModCmd52(nID,strData);
-		
+
 		if(0!=ret){
 			m_detError.Setter((byte)0x52, ret);
 			strData.setLength(0);
 			return "";
 		}
-		
+
 		int i;
 		int[] nval = new int[8];
 		String str0 = strData.toString();
@@ -297,12 +297,12 @@ public class DetApp {
 			ret = ret *0x10 + DataConverter.charToByte(str0.charAt(i+1));
 			nval[i/2]=ret;
 		}
-		
+
 		ret = nval[6];
 		ret = ret *0x100 + nval[5];
 		str0 = String.format("%02d%01d%02d%02d%c%03d%02d",
 				nval[0],nval[1],nval[2],nval[3],nval[4],ret,nval[7]);
-		
+
 		return str0;
 	}
 
@@ -315,14 +315,14 @@ public class DetApp {
 		int ret;
 		StringBuilder strData = new StringBuilder();
 		ret = m_cmdObj.ModCmd54(nID,strData);
-		
+
 		m_detError.Setter((byte)0x54, ret);
-		
+
 		if(0!=ret) return ret;
-		
+
 		byte[] arr = DataConverter.hexStringToBytes(strData.toString());
 		ret = DataConverter.lsbBytes2Int(arr);
-		
+
 		return ret;
 	}
 
@@ -334,11 +334,11 @@ public class DetApp {
 	 */
 	public int ModuleSetDelayTime(int nID,int nDT) {
 		int ret;
-		
-		ret = m_cmdObj.ModCmd55(nID,nDT);	
-		
+
+		ret = m_cmdObj.ModCmd55(nID,nDT);
+
 		m_detError.Setter((byte)0x55, ret);
-		
+
 		return ret;
 	}
 
@@ -351,9 +351,9 @@ public class DetApp {
 	public int ModuleSetIOStatus(int nID,byte bIO) {
 		int ret;
 		ret = m_cmdObj.ModCmd58(nID,bIO);
-		
+
 		m_detError.Setter((byte)0x58, ret);
-		
+
 		return ret;
 	}
 
@@ -365,9 +365,9 @@ public class DetApp {
 	public int ModuleSetDormantStatus(int nID) {
 		int ret;
 		ret = m_cmdObj.ModCmd59(nID);
-		
+
 		m_detError.Setter((byte)0x59, ret);
-		
+
 		return ret;
 	}
 
@@ -379,9 +379,9 @@ public class DetApp {
 	public int ModuleSetWakeupStatus(int nID) {
 		int ret;
 		ret = m_cmdObj.ModCmd5A(nID);
-		
+
 		m_detError.Setter((byte)0x5A, ret);
-		
+
 		return ret;
 	}
 
@@ -396,15 +396,15 @@ public class DetApp {
 		byte bCmd = 0x00;
 		if(bCharge) {
 			bCmd = 0x58;
-			ret = m_cmdObj.ModCmd5B(nID);			
+			ret = m_cmdObj.ModCmd5B(nID);
 		}
 		else {
 			bCmd = 0x5B;
-			ret = m_cmdObj.ModCmd5C(nID);			
+			ret = m_cmdObj.ModCmd5C(nID);
 		}
-		
+
 		m_detError.Setter(bCmd, ret);
-		
+
 		return ret;
 	}
 
@@ -416,9 +416,9 @@ public class DetApp {
 	public int ModuleCheckPowderCable(int nID) {
 		int ret;
 		ret = m_cmdObj.ModCmd5D(nID);
-		
+
 		m_detError.Setter((byte)0x5D, ret);
-		
+
 		return ret;
 	}
 
@@ -430,9 +430,9 @@ public class DetApp {
 	public int ModuleSingleCheck(int nID) {
 		int ret;
 		ret = m_cmdObj.ModCmd5E(nID);
-		
+
 		m_detError.Setter((byte)0x5E, ret);
-		
+
 		return ret;
 	}
 
@@ -453,11 +453,11 @@ public class DetApp {
 	 */
 	public int ModuleDelayTimeAdjust(int nID) {
 		int ret;
-		
+
 		ret = m_cmdObj.ModCmd60(nID);
-		
+
 		m_detError.Setter((byte)0x60, ret);
-		
+
 		return ret;
 	}
 
@@ -468,12 +468,12 @@ public class DetApp {
 	 */
 	public int ModuleCheckMoreEqual(int nID) {
 		int ret;
-		
+
 		ret = m_cmdObj.ModCmd61(nID);
-		
+
 		m_detError.Setter((byte)0x61, ret);
-		
-		return ret;		
+
+		return ret;
 	}
 
 	/***
@@ -483,12 +483,12 @@ public class DetApp {
 	 */
 	public int ModuleCheckLessThan(int nID) {
 		int ret;
-		
+
 		ret = m_cmdObj.ModCmd62(nID);
-		
+
 		m_detError.Setter((byte)0x62, ret);
-		
-		return ret;		
+
+		return ret;
 	}
 
 	/***
@@ -507,7 +507,7 @@ public class DetApp {
 
 		//	发送6字节同步指令应答
 		final byte[] CMD_SYN_RESPONSE = {0x42,0x65,0x6c,0x6c,0x65,0x20};
-				
+
 		DetCmd cmd = new DetCmd(m_commobj);
 
 		//	改成绝对路径
@@ -544,13 +544,13 @@ public class DetApp {
     	try {
     		for(k=0;k<WAIT_TIME_MS/100;k++) {
     			Thread.sleep(100);
-    			
+
     			float f =  WAIT_TIME_MS - k*100;
-    			
+
     	    	if(null!=cbobj)
     	    		cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
     		}
-    			
+
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -577,7 +577,7 @@ public class DetApp {
 	    		cbobj.DisplayText("未收到同步指令");
 		}
 		m_commobj.SetTimeout(3000);
-			
+
 		byte[] szData = m_commobj.RecvBlock(6);
 		if(null==szData) {
 	    	if(null!=cbobj)
@@ -608,7 +608,7 @@ public class DetApp {
 		    		cbobj.DisplayText("未收到 发送6字节应答指令 应答");
 		    	return -1;
 			}
-			
+
 			byte[] data = m_commobj.RecvBlock(1);
 			if(data[0]==0x47){
 				data = m_commobj.RecvBlock(5);
@@ -620,7 +620,7 @@ public class DetApp {
 				}
 				continue;
 			}
-			
+
 			if(data[0]==0x53) {
 				szData = new byte[7];
 				szData[0]=0x57;
@@ -630,7 +630,7 @@ public class DetApp {
 					break;
 				}
 			}
-			
+
 			if(data[0]==0x55) {
 				szData = new byte[6];
 				szData[0]=0x55;
@@ -656,7 +656,7 @@ public class DetApp {
 		szData[0]=0x44;szData[1]=0x50;szData[2]=0x00;
 		byte[] szSize = DataConverter.int2BytesLSB(nFizeSize);
 		System.arraycopy(szSize, 0, szData, 3, szSize.length);
-		
+
 		m_commobj.FlushComm();
 		ret = m_commobj.SendBlock(szData);
 		if(0!=ret) {
@@ -670,20 +670,20 @@ public class DetApp {
     	try {
     		for(k=0;k<WAIT_TIME_MS/100;k++) {
     			Thread.sleep(100);
-    			
+
     			float f =  WAIT_TIME_MS - k*100;
-    			
+
     	    	if(null!=cbobj)
     	    		cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
     		}
-    			
+
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		//	收到2字节参数包确认应答
-		//	5543 
+		//	5543
 		szData = m_commobj.RecvBlock(2);
 		if(null==szData) {
 	    	if(null!=cbobj)
@@ -696,29 +696,29 @@ public class DetApp {
 	    		cbobj.DisplayText("未收到同步指令 4345");
 	    	return -1;
 		}
-		
+
 		int n,i,nPackNum = 0;
 		szData = new byte[PACKAGE_SIZE];
 		byte[] szHeader = new byte[2];
 		boolean bLastPackage = false;
-		
+
 		if(nFizeSize%PACKAGE_SIZE==0) {
 			nPackNum = nFizeSize/PACKAGE_SIZE;
-		}			
+		}
 		else {
 			nPackNum = nFizeSize/PACKAGE_SIZE+1;
 		}
-		
+
 		szHeader[0] = 0x44;szHeader[1]=0x44;
-		
+
 		n = 0;
 		int readSize = -1; // 记录每次实际读取字节数
-		
+
     	if(null!=cbobj) {
     		cbobj.DisplayText("开始下载...");
     		cbobj.StartProgressbar();
     	}
-    		
+
 		try {
 			FileInputStream fis = new FileInputStream(strFilePath);
 			in = new BufferedInputStream(fis, PACKAGE_SIZE);
@@ -728,31 +728,31 @@ public class DetApp {
 			cbobj.DisplayText("打开主控板程序失败");
 			return -1;
 		}
-		
+
 		try {
 			while (null != in && (readSize = in.read(szData)) != -1)
 			{
 				if(readSize<PACKAGE_SIZE) {
-					for(i=readSize;i<PACKAGE_SIZE;i++) 
-						szData[i]=(byte)0xff;	
+					for(i=readSize;i<PACKAGE_SIZE;i++)
+						szData[i]=(byte)0xff;
 					bLastPackage = true;
 				}
-				
+
 				if(bLastPackage) {
 					szHeader[0]=0x44;szHeader[1]=0x46;
 				}
 
 				// 发送
-				m_commobj.FlushComm();				
+				m_commobj.FlushComm();
 				m_commobj.SendBlock(szHeader);
 				m_commobj.SendBlock(szData);
-				
+
 				byte[] rsp = m_commobj.RecvBlock(2);
 				if(null==rsp) {
 					cbobj.DisplayText("未收到升级包应答");
 					break;
 				}
-				
+
 				String strresp = DataConverter.bytes2HexString(rsp);
 
 				//0x57 55
@@ -773,14 +773,14 @@ public class DetApp {
 				n++;
 				if(null!=cbobj)
 					cbobj.SetProgressbarValue((n*100)/nPackNum);
-				
+
 				if(bLastPackage) break;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			in.close();
 		} catch (IOException e) {
@@ -798,25 +798,25 @@ public class DetApp {
     	try {
     		for(k=0;k<WAIT_TIME_MS/100;k++) {
     			Thread.sleep(100);
-    			
+
     			float f =  WAIT_TIME_MS - k*100;
-    			
+
     	    	if(null!=cbobj)
     	    		cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
     		}
-    			
+
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		if(null!=cbobj) {
 			cbobj.DisplayText("上电");
 			cbobj.DisplayText("升级完成！");
 		}
-    		
+
 		cmd.BoardPowerOn();
-		
+
 		return 0;
 	}
 
@@ -849,7 +849,7 @@ public class DetApp {
 		m_detError.Setter((byte)0x80, ret);
 		Log.d(TAG, "MainBoardInitialize: ret = "+ret);
 		if(0!=ret) return ret;
-		
+
 		//[0] //B0
 		//[1] //固定值21，有效数据包DAT长度
 		//[2~3] //硬件版本号，高字节在前，当前是v3.0.20
@@ -882,17 +882,17 @@ public class DetApp {
 				arrdata[1],arrdata[2],arrdata[3],arrdata[4],arrdata[5]);
 		//
 		String strConfig = "";
-		
+
 		byte bCheckResult = (byte)Byte.parseByte(str0.substring(40,42),16);
-		
+
 		if(null!=cbobj) {
-			cbobj.SetInitialCheckData(strHardwareVer, strUpdateHardwareVer, 
-					strSoftwareVer, 
-					strSNO, 
-					strConfig, 
+			cbobj.SetInitialCheckData(strHardwareVer, strUpdateHardwareVer,
+					strSoftwareVer,
+					strSNO,
+					strConfig,
 					bCheckResult);
 		}
-				
+
 		ret = bCheckResult;
 		return ret;
 	}
@@ -903,13 +903,13 @@ public class DetApp {
 	 */
 	public int CheckBusShortCircuit() {
 		int ret;
-		
+
 		DetCmd cmd = new DetCmd(m_commobj);
 		StringBuilder strData = new StringBuilder();
 		ret = cmd.BoardCmd81(strData);
-	
+
 		m_detError.Setter((byte)0x81, ret);
-		
+
 		return ret;
 	}
 
@@ -919,11 +919,11 @@ public class DetApp {
 	 */
 	public int ShutdownProc() {
 		int ret;
-		
+
 		DetCmd cmd = new DetCmd(m_commobj);
-		
+
 //		ret = this.MainBoardBusPowerOff();
-		
+
 		cmd.BoardPowerOff();
 		Log.d(TAG, "ShutdownProc");
 //		Log.d(TAG, "ShutdownProc: ret = "+ret);
@@ -941,52 +941,52 @@ public class DetApp {
 		int ret;
 		final int RESP_LEN = 0x19;
 		final byte RESP_HEAD = (byte)0xb2;
-		
+
 		DetCmd cmd = new DetCmd(m_commobj);
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
-		
-		if(null!=cbobj) 
+
+		if(null!=cbobj)
 			cbobj.DisplayText("单颗模组检测 开始...");
-		
+
 		ret = cmd.BoardSendCmd82();
 		if(0!=ret) return ret;
-		
-		if(null!=cbobj) 
+
+		if(null!=cbobj)
 			cbobj.StartProgressbar();
-		
-		while(true) {	
+
+		while(true) {
 			ret = prt.RecvBlock(RESP_LEN, resp);
 			if(0!=ret) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("单颗模组检测 超时无应答");
 				break;
 			}
-	
-			//	B2 LEN 完成百分比[1] ID[4] DC[8] DT[4] 
+
+			//	B2 LEN 完成百分比[1] ID[4] DC[8] DT[4]
 			String str0 = resp.GetRespData();
 
 			System.out.println("GetRespData:"+str0);
 
 			byte[] szdata = DataConverter.hexStringToBytes(str0);
-			
+
 			if(null==szdata) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("单颗模组检测 获取无效数据");
-				break;				
+				break;
 			}
 			if(szdata.length<RESP_LEN-1) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("单颗模组检测 获取数据长度不足");
-				break;	
+				break;
 			}
-						
+
 			if(szdata[0]!=(byte)RESP_HEAD) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("单颗模组检测 首字节无效");
 				break;
 			}
-						
+
 			ret = szdata[2];
 			if(ret<0) ret = ret + 0x100;
 
@@ -1022,7 +1022,7 @@ public class DetApp {
 
 			break;
 		}
-				
+
 		return ret;
 
 	}
@@ -1037,44 +1037,44 @@ public class DetApp {
 		final int RESP_LEN = 12;
 		final byte RESP_HEAD = (byte)0xb5;
 		Log.d(TAG, "PowerOnSelfCheck: ");
-		
+
 		DetCmd cmd = new DetCmd(m_commobj);
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
 
-		
-		if(null!=cbobj) 
+
+		if(null!=cbobj)
 			cbobj.DisplayText("总线上电与检测流程 开始...");
 
 		Log.d(TAG, "PowerOnSelfCheck: 总线上电与检测流程 开始...");
 		ret = cmd.BoardSendCmd85();
 		Log.d(TAG, "PowerOnSelfCheck: ret = "+ ret);
 		if(0!=ret) return ret;
-		
-		while(true) {	
+
+		while(true) {
 			ret = prt.RecvBlock(RESP_LEN, resp);
 			if(0!=ret) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("总线上电与检测流程 超时无应答");
 				break;
 			}
-	
+
 			String str0 = resp.GetRespData();
 			byte[] szdata = DataConverter.hexStringToBytes(str0);
-			
+
 			if(null==szdata) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("总线上电与检测流程  获取无效数据");
-				break;				
+				break;
 			}
 			if(szdata.length<RESP_LEN-1) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("总线上电与检测流程 获取数据长度不足");
-				break;	
+				break;
 			}
-						
+
 			if(szdata[0]!=(byte)RESP_HEAD) {
-				if(null!=cbobj) 
+				if(null!=cbobj)
 					cbobj.DisplayText("总线上电与检测流程 首数据无效");
 				break;
 			}
@@ -1096,8 +1096,13 @@ public class DetApp {
 			cbobj.DisplayText("总线上电与检测流 出错");
 			return -1;
 		}
+<<<<<<< HEAD
 				
 		return 0;
+=======
+
+		return ret;
+>>>>>>> f49f174cae93c15e0b92a18fdae1d828db1638c4
 	}
 
 	/***
@@ -1328,17 +1333,20 @@ public class DetApp {
 			if(null==szdata) {
 				if(null!=cbobj)
 					cbobj.DisplayText("雷管网络总线充电  获取无效数据");
+				ret = -1;
 				break;
 			}
 			if(szdata.length<RESP_LEN-1) {
 				if(null!=cbobj)
 					cbobj.DisplayText("雷管网络总线充电 获取数据长度不足");
+				ret = -1;
 				break;
 			}
 
 			if(szdata[0]!=(byte)RESP_HEAD) {
 				if(null!=cbobj)
 					cbobj.DisplayText("雷管网络总线充电 首数据无效");
+				ret = -1;
 				break;
 			}
 
@@ -1360,6 +1368,7 @@ public class DetApp {
 			if(ret==0x64) {
 				if(null!=cbobj)
 					cbobj.DisplayText("雷管网络总线充电 完成！");
+				ret = 0;
 				break;
 			}
 
@@ -1616,7 +1625,7 @@ public class DetApp {
 		if(ret!=0) {
 			System.out.println(String.format("核心板初始化自检 失败 %d", ret));
 		}
-		
+
 		ret = CheckBusShortCircuit();
 		if(ret!=0) {
 			System.out.println(String.format("总线短路与漏电检测 失败 %d", ret));
@@ -1634,8 +1643,8 @@ public class DetApp {
 //		if(ret!=0) {
 //			System.out.println(String.format("总线上电与检测流程 失败 %d", ret));
 //		}
-		
-		
+
+
 		return;
 	}
 
@@ -1649,13 +1658,13 @@ public class DetApp {
 			System.out.println("串口打开失败!");
 			return;
 		}
-		
+
 		testDetAPP();
-		
+
 		testDownloadProc();
-		
+
 		Finalize();
-		
+
 		return;
 	}
 
@@ -1666,10 +1675,10 @@ public class DetApp {
 	private void testDownloadProc() {
 
 		String strfile ="E:\\Kanbox\\Android\\Detocator\\ref\\CoreBrd1768_Std_v1.0.13.bin";
-		
+
 		DetApp detapp = new DetApp();
 		detapp.Initialize();
-		
+
 //		DetCallback cbobj = new DetCallback();
 //
 //		detapp.DownloadProc(strfile, cbobj);
