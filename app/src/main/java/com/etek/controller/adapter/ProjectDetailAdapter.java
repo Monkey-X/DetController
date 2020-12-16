@@ -16,17 +16,18 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.etek.controller.R;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 
 import java.util.List;
 
 public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdapter.ProjectDetailViewHolder> {
 
-    public List<DetonatorEntity> datas;
+    public List<ProjectDetonator> datas;
     private Context context;
     public OnItemClickListener onItemClickListener;
 
-    public ProjectDetailAdapter(Context context, List<DetonatorEntity> datas) {
+    public ProjectDetailAdapter(Context context, List<ProjectDetonator> datas) {
         this.context = context;
         this.datas = datas;
     }
@@ -41,7 +42,7 @@ public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdap
 
     @Override
     public void onBindViewHolder(@NonNull ProjectDetailAdapter.ProjectDetailViewHolder holder, int i) {
-        DetonatorEntity detonatorEntity = datas.get(i);
+        ProjectDetonator detonatorEntity = datas.get(i);
         holder.holePosition.setText(detonatorEntity.getHolePosition());
         holder.uidNum.setText(detonatorEntity.getCode());
         holder.number.setText(String.valueOf(i + 1));

@@ -50,9 +50,9 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.project_net:
-                startActivity(new Intent(this, ProjectDetailActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
-                break;
+//            case R.id.project_net:
+//                startActivity(new Intent(this, ProjectDetailActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
+//                break;
             case R.id.project_connect_test://连接检测
                 startActivity(new Intent(this, ConnectTestActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
@@ -69,9 +69,9 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 startActivity(new Intent(this, PowerBombActivity.class));
                 break;
 
-            case R.id.project_data_report://数据上传
-                startActivity(new Intent(this, ReportDetailActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
-                break;
+//            case R.id.project_data_report://数据上传
+//                startActivity(new Intent(this, ReportDetailActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
+//                break;
         }
     }
 
@@ -117,17 +117,17 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      */
     private void initView() {
         connectTest = findViewById(R.id.project_connect_test);
-        createNet = findViewById(R.id.project_net);
+//        createNet = findViewById(R.id.project_net);
         delayDownload = findViewById(R.id.project_delay_download);
         checkAuthorization = findViewById(R.id.project_check_authorization);
         powerBomb = findViewById(R.id.project_power_bomb);
-        dataReport = findViewById(R.id.project_data_report);
+//        dataReport = findViewById(R.id.project_data_report);
         connectTest.setOnClickListener(this);
         delayDownload.setOnClickListener(this);
         checkAuthorization.setOnClickListener(this);
         powerBomb.setOnClickListener(this);
-        dataReport.setOnClickListener(this);
-        createNet.setOnClickListener(this);
+//        dataReport.setOnClickListener(this);
+//        createNet.setOnClickListener(this);
     }
 
     /**
@@ -152,7 +152,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
 //                delayDownload.setClickable(false);
 //                checkAuthorization.setClickable(false);
 //                powerBomb.setClickable(false);
@@ -165,7 +165,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
 //                connectTest.setClickable(false);
 //                delayDownload.setClickable(true);
 //                checkAuthorization.setClickable(false);
@@ -178,7 +178,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
 //                connectTest.setClickable(false);
 //                delayDownload.setClickable(false);
 //                checkAuthorization.setClickable(true);
@@ -191,7 +191,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
-                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
+//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
 //                connectTest.setClickable(false);
 //                delayDownload.setClickable(false);
 //                powerBomb.setClickable(true);
@@ -204,7 +204,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                dataReport.setBackgroundResource(R.drawable.project_data_report);
+//                dataReport.setBackgroundResource(R.drawable.project_data_report);
 //                connectTest.setClickable(false);
 //                delayDownload.setClickable(false);
 //                checkAuthorization.setClickable(false);

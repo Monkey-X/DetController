@@ -138,7 +138,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 break;
 
             case R.id.home_project_implement://工程实施
-                startActivity(ProjectImplementActivity.class);
+                startActivity(ProjectManagerActivity.class);
                 break;
 
             case R.id.home_assist_function://辅助功能

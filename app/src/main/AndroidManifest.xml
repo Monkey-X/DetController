@@ -42,7 +42,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.AuthDownLoadDetailActivity"></activity>
+        <activity android:name=".activity.ProjectManagerActivity"></activity>
+        <activity android:name=".activity.AuthDownLoadDetailActivity" />
         <activity android:name=".activity.AboutActivity" />
         <activity
             android:name=".activity.LoginActivity"
@@ -63,7 +64,9 @@
         <activity android:name=".activity.CheckoutDetailActivity2" />
         <activity android:name=".activity.ReportDetailActivity2" />
         <activity android:name=".activity.HomeActivity2" />
-        <activity android:name=".activity.ProjectListActivity" />
+        <activity
+            android:name=".activity.ProjectListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.ProjectImplementActivity" />
         <activity android:name=".activity.PowerBombActivity" />
         <activity android:name=".activity.AuthorizedDownloadActivity" />

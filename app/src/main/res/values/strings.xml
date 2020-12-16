@@ -249,7 +249,7 @@
     <string name="home">首页</string>
     <string name="home_project_manage">方案管理</string>
     <string name="home_authorized_download">授权下载</string>
-    <string name="home_project_implement">工程实施</string>
+    <string name="home_project_implement">工程管理</string>
     <string name="home_assist_function">辅助功能</string>
     <string name="home_local_setting">本机设置</string>
     <string name="immediately_look">立即查看</string>

@@ -34,6 +34,7 @@ import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.scan.ScannerInterface;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -47,13 +48,13 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private static final String TAG = "ProjectDetailActivity";
     private EditText delayTimeNew;
     private RecyclerView recycleView;
-    private List<DetonatorEntity> detonators;
+    private List<ProjectDetonator> detonators;
     private long projectId;
     private ProjectDetailAdapter projectDetailAdapter;
     private EditText delayholein;
     private EditText delayholeout;
     private LinearLayout rootView;
-    private List<DetonatorEntity> mDetonatorEntities;
+    private List<ProjectDetonator> mDetonatorEntities;
     private ScannerInterface scanner;
 
     //*******重要
@@ -116,7 +117,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (projectId == -1) {
             return;
         }
-        mDetonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(projectId);
+        mDetonatorEntities = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(projectId);
         if (mDetonatorEntities != null && mDetonatorEntities.size() != 0) {
             detonators.addAll(mDetonatorEntities);
             projectDetailAdapter.notifyDataSetChanged();
@@ -168,7 +169,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     Toast.makeText(this, "未录入数据", Toast.LENGTH_SHORT);
                     return;
                 }
-                DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
+                DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
                 ToastUtils.show(this, "保存成功！");
                 break;
             case R.id.layoutHoleIn:
@@ -197,12 +198,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         int lastPosition = detonators.size() - 1;
-        DetonatorEntity detonatorEntity = detonators.get(lastPosition);
+        ProjectDetonator detonatorEntity = detonators.get(lastPosition);
         if (!TextUtils.isEmpty(detonatorEntity.getRelay())) {
             return;
         }
         if (detonators.size() >= 2) {
-            DetonatorEntity detonatorEntity1 = detonators.get(lastPosition - 1);
+            ProjectDetonator detonatorEntity1 = detonators.get(lastPosition - 1);
             String lastDelayTime = detonatorEntity1.getRelay();
             String holePosition = detonatorEntity1.getHolePosition();
             String[] split = holePosition.split("-");
@@ -211,7 +212,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             int newDelayTime = getIntFormString(lastDelayTime) + delayholeoutTime;
             detonatorEntity.setRelay(String.valueOf(newDelayTime));
             detonatorEntity.setHolePosition(String.valueOf(intFormString + 1) + "-" + 1);
-            DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
+            DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
             projectDetailAdapter.notifyDataSetChanged();
         }
     }
@@ -225,21 +226,20 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         int lastPosition = detonators.size() - 1;
-        DetonatorEntity detonatorEntity = detonators.get(lastPosition);
+        ProjectDetonator detonatorEntity = detonators.get(lastPosition);
         if (!TextUtils.isEmpty(detonatorEntity.getRelay())) {
             return;
         }
 
         if (detonators.size() == 1) {
             int startDelayTime = getIntFormString(delayTimeNew.getText().toString().trim());
-//            int area = getIntFormString(areaNum.getText().toString().trim());
             detonatorEntity.setRelay(String.valueOf(startDelayTime));
             detonatorEntity.setHolePosition(1 + "-" + 1);
             projectDetailAdapter.notifyDataSetChanged();
             return;
         }
 
-        DetonatorEntity detonatorEntity1 = detonators.get(lastPosition - 1);
+        ProjectDetonator detonatorEntity1 = detonators.get(lastPosition - 1);
         String lastDelayTime = detonatorEntity1.getRelay();
 
         String holePosition = detonatorEntity1.getHolePosition();
@@ -251,7 +251,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         int newDelayTime = getIntFormString(lastDelayTime) + delayholeinTime;
         detonatorEntity.setRelay(String.valueOf(newDelayTime));
         detonatorEntity.setHolePosition(first + "-" + String.valueOf(intFormString + 1));
-        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
+        DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
         projectDetailAdapter.notifyDataSetChanged();
     }
 
@@ -281,7 +281,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onDelayTimeClick(int position) {
         // 点击修改 延时
-        DetonatorEntity detonatorEntity = detonators.get(position);
+        ProjectDetonator detonatorEntity = detonators.get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         EditText changeDelayTime = view.findViewById(R.id.changeDelayTime);
@@ -298,7 +298,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
                 detonatorEntity.setRelay(nowDelayTime);
-                DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
+                DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 projectDetailAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
@@ -343,9 +343,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     // 删除条目
     private void deleteItemView(int position) {
 
-        DetonatorEntity detonatorEntity = detonators.get(position);
+        ProjectDetonator detonatorEntity = detonators.get(position);
         try {
-            DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
+            DBManager.getInstance().getProjectDetonatorDao().delete(detonatorEntity);
         } catch (Exception e) {
         }
         detonators.remove(position);
@@ -396,30 +396,30 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         // 扫描插入
         if (isInsertItem) {
             isInsertItem = false;
-            DetonatorEntity detonatorEntity = detonators.get(insertPosition);
-            DetonatorEntity detonatorEntity1 = new DetonatorEntity();
+            ProjectDetonator detonatorEntity = detonators.get(insertPosition);
+            ProjectDetonator detonatorEntity1 = new ProjectDetonator();
             detonatorEntity1.setRelay(detonatorEntity.getRelay());
             detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
             detonatorEntity1.setCode(strgm);
             detonatorEntity1.setDetId(getDetIdByGm(strgm));
             detonatorEntity1.setProjectInfoId(projectId);
-            DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity1);
+            DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity1);
             detonators.add(insertPosition, detonatorEntity1);
             projectDetailAdapter.notifyDataSetChanged();
             return;
         }
         if (detonators.size() != 0) {
-            DetonatorEntity detonatorEntity = detonators.get(detonators.size() - 1);
+            ProjectDetonator detonatorEntity = detonators.get(detonators.size() - 1);
             if (TextUtils.isEmpty(detonatorEntity.getRelay())) {
                 showStatusDialog("请设置录入雷管的延时后，再继续录入！");
                 return;
             }
         }
-        DetonatorEntity detonatorEntity = new DetonatorEntity();
+        ProjectDetonator detonatorEntity = new ProjectDetonator();
         detonatorEntity.setProjectInfoId(projectId);
         detonatorEntity.setCode(strgm);
         detonatorEntity.setDetId(getDetIdByGm(strgm));
-        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
+        DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
         detonators.add(detonatorEntity);
         projectDetailAdapter.notifyDataSetChanged();
     }
@@ -432,7 +432,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private boolean checkTheSameDet(String strgm) {
         if (detonators != null && detonators.size() != 0) {
             for (int i = 0; i < detonators.size(); i++) {
-                DetonatorEntity detonatorEntity = detonators.get(i);
+                ProjectDetonator detonatorEntity = detonators.get(i);
                 if (detonatorEntity.getCode().equals(strgm)) {
                     showStatusDialog("此雷管已扫描！");
                     recycleView.scrollToPosition(i);

@@ -33,6 +33,8 @@ public class DaoMaster extends AbstractDaoMaster {
         ControllerEntityDao.createTable(db, ifNotExists);
         DetonatorEntityDao.createTable(db, ifNotExists);
         ProjectDownLoadEntityDao.createTable(db, ifNotExists);
+        PendingProjectDao.createTable(db, ifNotExists);
+        ProjectDetonatorDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -49,6 +51,8 @@ public class DaoMaster extends AbstractDaoMaster {
         ControllerEntityDao.dropTable(db, ifExists);
         DetonatorEntityDao.dropTable(db, ifExists);
         ProjectDownLoadEntityDao.dropTable(db, ifExists);
+        PendingProjectDao.dropTable(db, ifExists);
+        ProjectDetonatorDao.dropTable(db, ifExists);
     }
 
     /**
@@ -79,6 +83,8 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(ControllerEntityDao.class);
         registerDaoClass(DetonatorEntityDao.class);
         registerDaoClass(ProjectDownLoadEntityDao.class);
+        registerDaoClass(PendingProjectDao.class);
+        registerDaoClass(ProjectDetonatorDao.class);
     }
 
     public DaoSession newSession() {
