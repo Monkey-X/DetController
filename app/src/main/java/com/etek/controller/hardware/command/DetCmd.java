@@ -517,8 +517,12 @@ public class DetCmd {
 		return BoardCmd(bcmd,szID,0,0xa0,strData);
 	}
 
-	public int ModCmd64(int nID){
-		return 0;
+	public int ModCmd64(int nID,StringBuilder strUIDH){
+		byte bcmd = 0x64;
+		byte[] szID = DataConverter.int2BytesLSB(nID);
+
+		strUIDH.setLength(0);
+		return BoardCmd(bcmd,szID,4,0xa1,strUIDH);
 	}
 
 	//	16、分组充电

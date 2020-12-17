@@ -492,6 +492,24 @@ public class DetApp {
 	}
 
 	/***
+	 * 獲取雷管的UID
+	 * @param nID
+	 * @param strUID
+	 * @return
+	 */
+	public int ModuleGetUID(int nID,StringBuilder strUID) {
+		StringBuilder struidh = new StringBuilder();
+		int ret = m_cmdObj.ModCmd64(nID, struidh);
+		if(0!=ret) return ret;
+
+		String struid = struidh.substring(0, 6)+String.format("%08X", nID);
+
+		strUID.append(0);
+		strUID.append(struid);
+		return 0;
+	}
+
+	/***
 	 * 下载主控板程序流程
 	 * @param strBINFileName
 	 * @return
@@ -1096,8 +1114,7 @@ public class DetApp {
 			cbobj.DisplayText("总线上电与检测流 出错");
 			return -1;
 		}
-
-		return ret;
+		return 0;
 	}
 
 	/***
@@ -1189,7 +1206,7 @@ public class DetApp {
 			if(null!=cbobj)
 				cbobj.SetDetsSettingResult(nIDs[n], szdata[3+n]);
 		}
-		return ret;
+		return 0;
 
 	}
 
@@ -1284,7 +1301,7 @@ public class DetApp {
 			if(null!=cbobj)
 				cbobj.SetDetsSettingResult(nIDs[n], szdata[3+n]);
 		}
-		return ret;
+		return 0;
 	}
 
 	/***
@@ -1378,7 +1395,7 @@ public class DetApp {
 			return -1;
 		}
 
-		return ret;
+		return 0;
 	}
 
 	/***
@@ -1469,7 +1486,7 @@ public class DetApp {
 			return -1;
 		}
 
-		return ret;
+		return 0;
 	}
 
 	/*
