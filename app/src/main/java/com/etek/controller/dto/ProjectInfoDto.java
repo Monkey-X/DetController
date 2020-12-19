@@ -4,6 +4,8 @@ package com.etek.controller.dto;
 
 
 import com.etek.controller.entity.DetController;
+import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,37 +44,20 @@ public class ProjectInfoDto {
 
     List<PermissibleZoneDto> permissibleZoneList;
 
-    List<DetController>  detControllers;
+    List<PendingProject>  detControllers;
 
-
-    public ProjectInfoDto(String proCode, String proName, String companyCode, String companyName, String contractCode, String contractName, String fileSn, Date createTime, Date applyDate, List<DetonatorDto> detonatorList, List<ForbiddenZoneDto> forbiddenZoneList, List<ControllerDto> controllerList, List<PermissibleZoneDto> permissibleZoneList, List<DetController> detControllers) {
-        this.proCode = proCode;
-        this.proName = proName;
-        this.companyCode = companyCode;
-        this.companyName = companyName;
-        this.contractCode = contractCode;
-        this.contractName = contractName;
-        this.fileSn = fileSn;
-        this.createTime = createTime;
-        this.applyDate = applyDate;
-        this.detonatorList = detonatorList;
-        this.forbiddenZoneList = forbiddenZoneList;
-        this.controllerList = controllerList;
-        this.permissibleZoneList = permissibleZoneList;
-        this.detControllers = detControllers;
-    }
 
     public ProjectInfoDto() {
     }
 
-    public List<DetController> getDetControllers() {
+    public List<PendingProject> getDetControllers() {
         return detControllers;
     }
 
-    public void setDetControllers(List<DetController> detControllers) {
+    public void setDetControllers(List<PendingProject> detControllers) {
         this.detControllers = detControllers;
     }
-    public void addDetControllers(DetController detController) {
+    public void addDetControllers(PendingProject detController) {
         if(this.detControllers==null){
             this.detControllers = new ArrayList<>();
         }

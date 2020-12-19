@@ -373,8 +373,22 @@ public class BaseActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(index, value.toString());
         editor.apply();
-
     }
+
+    // 保存延时设置
+    protected void setDelaySetting(String key,String delaySetting){
+        preferences = getSharedPreferences("detInfo", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(key,delaySetting);
+        editor.apply();
+    }
+
+    // 获取延时设置
+    protected String getDelaySetting(String key){
+        preferences = getSharedPreferences("detInfo", MODE_PRIVATE);
+        return preferences.getString(key,"");
+    }
+
 
     protected Boolean getBooleanInfo(String index) {
         preferences = getSharedPreferences("detInfo", MODE_PRIVATE);

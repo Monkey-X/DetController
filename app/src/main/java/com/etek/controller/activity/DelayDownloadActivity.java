@@ -31,8 +31,10 @@ import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
+import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -47,7 +49,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     private static final String TAG = "DelayDownloadActivity";
     private RecyclerView mDelayList;
-    private List<DetonatorEntity> detonators;
+    private List<ProjectDetonator> detonators;
     private ProjectDelayAdapter mProjectDelayAdapter;
     private List<ProjectInfoEntity> projectInfoEntities;
     private PopupWindow popWindow;
@@ -57,7 +59,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private ProjectInfoEntity mProjectInfoEntity;
     private int projectPosition = -1;
     private long proId;
-    private List<DetonatorEntity> detonatorEntityList;
+    private List<ProjectDetonator> detonatorEntityList;
     private DelayDownloadTask delayDownloadTask;
 
     @Override
@@ -111,7 +113,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 //        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
         //根据项目id获取雷管并展示页面
         if (proId >= 0){
-            detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+            detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             detonators.addAll(detonatorEntityList);
         }
     }
@@ -190,19 +192,19 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     private void showFiltrateData(int position) {
-        if (this.projectPosition == position) {
-            return;
-        }
-        projectPosition = position;
-        mProjectInfoEntity = projectInfoEntities.get(position);
-        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
-        detonators.clear();
-        if (detonatorEntities != null && detonatorEntities.size() > 0) {
-            detonators.addAll(detonatorEntities);
-        } else {
-            ToastUtils.show(DelayDownloadActivity.this, "项目未录入数据");
-        }
-        mProjectDelayAdapter.notifyDataSetChanged();
+//        if (this.projectPosition == position) {
+//            return;
+//        }
+//        projectPosition = position;
+//        mProjectInfoEntity = projectInfoEntities.get(position);
+//        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
+//        detonators.clear();
+//        if (detonatorEntities != null && detonatorEntities.size() > 0) {
+//            detonators.addAll(detonatorEntities);
+//        } else {
+//            ToastUtils.show(DelayDownloadActivity.this, "项目未录入数据");
+//        }
+//        mProjectDelayAdapter.notifyDataSetChanged();
     }
 
 
@@ -274,8 +276,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     // 删除条目
     private void deleteItemView(int position) {
         if (position <= detonators.size() - 1) {
-            DetonatorEntity detonatorEntity = detonators.get(position);
-            DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
+            ProjectDetonator detonatorEntity = detonators.get(position);
+            DBManager.getInstance().getProjectDetonatorDao().delete(detonatorEntity);
             detonators.remove(position);
             mProjectDelayAdapter.notifyDataSetChanged();
 //            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
@@ -290,11 +292,11 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onDelayTimeClick(int position) {
         // 点击修改 延时
-        DetonatorEntity detonatorEntity = detonators.get(position);
+        ProjectDetonator detonatorEntity = detonators.get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         EditText changeDelayTime = view.findViewById(R.id.changeDelayTime);
-        changeDelayTime.setText(detonatorEntity.getRelay());
+        changeDelayTime.setText(detonatorEntity.getRelay()+"");
         builder.setView(view);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
@@ -306,8 +308,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
-                detonatorEntity.setRelay(nowDelayTime);
-                DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
+                detonatorEntity.setRelay(Integer.parseInt(nowDelayTime));
+                DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 mProjectDelayAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
@@ -317,27 +319,27 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void makeSure(FastEditBean bean) {
-        // todo  进行批量修改
+        // Todo
         // 对第一个先设置延时
         int holePosition = bean.getStartNum() + bean.getHoleNum();
         int delayTime = bean.getStartTime();
-        DetonatorEntity detonatorEntity = detonators.get(bean.getStartNum() - 1);
-        detonatorEntity.setRelay(String.valueOf(delayTime));
+        ProjectDetonator detonatorEntity = detonators.get(bean.getStartNum() - 1);
+        detonatorEntity.setRelay(delayTime);
         for (int i = bean.getStartNum() + 1; i <= bean.getEndNum(); i++) {
-            DetonatorEntity detonatorEntity1 = detonators.get(i - 1);
+            ProjectDetonator detonatorEntity1 = detonators.get(i - 1);
             Log.d(TAG, "makeSure: holePosition = " + holePosition);
             Log.d(TAG, "makeSure: delayTime = " + delayTime);
             if (i < holePosition) {
                 delayTime = delayTime + bean.getHoleInTime();
-                detonatorEntity1.setRelay(String.valueOf(delayTime));
+                detonatorEntity1.setRelay(delayTime);
             } else if (holePosition == i) {
                 delayTime = delayTime + bean.getHoleOutTime();
-                detonatorEntity1.setRelay(String.valueOf(delayTime));
+                detonatorEntity1.setRelay(delayTime);
                 holePosition = holePosition + bean.getHoleNum();
             }
         }
         // 修改保存到数据库
-        DBManager.getInstance().getDetonatorEntityDao().saveInTx(detonators);
+        DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
         mProjectDelayAdapter.notifyDataSetChanged();
     }
 
@@ -347,17 +349,17 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
      * @param position
      */
     public void detSingleDownload(int position) {
-        DetonatorEntity detonatorEntity = detonators.get(position);
+        ProjectDetonator detonatorEntity = detonators.get(position);
         String detId = detonatorEntity.getDetId();
-        String relayTime = detonatorEntity.getRelay();
+        int relayTime = detonatorEntity.getRelay();
         int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
         Log.d(TAG, "detSingleDownload: detId = " + detId);
         Log.d(TAG, "detSingleDownload: MainBoardHVEnable = " + wakeupStatus);
         // 进行雷管的链接检测
-        int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId), Integer.parseInt(relayTime));
+        int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId),relayTime);
         Log.d(TAG, "detSingleDownload: downloadResult = " + downloadResult);
         detonatorEntity.setDownLoadStatus(downloadResult);
-        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
+        DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
     }
 
 

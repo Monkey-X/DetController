@@ -10,18 +10,19 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.etek.controller.R;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 
 import java.util.List;
 
 public class ConnectTestAdapter extends ProjectDetailAdapter {
 
-    public ConnectTestAdapter(Context context, List<DetonatorEntity> datas) {
+    public ConnectTestAdapter(Context context, List<ProjectDetonator> datas) {
         super(context, datas);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProjectDetailViewHolder holder, int i) {
-        DetonatorEntity detonatorEntity = datas.get(i);
+        ProjectDetonator detonatorEntity = datas.get(i);
         setTestStatus(holder.holePosition, detonatorEntity.getTestStatus());// 表示测试状态
         holder.uidNum.setText(detonatorEntity.getCode());
         holder.number.setText(String.valueOf(i + 1));

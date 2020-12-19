@@ -10,16 +10,17 @@ import android.widget.TextView;
 
 import com.etek.controller.R;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 
 import java.util.List;
 
 public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapter.ProjectDelayViewHolder> {
 
-    private List<DetonatorEntity> datas;
+    private List<ProjectDetonator> datas;
     private Context context;
     private ProjectDelayAdapter.OnItemClickListener onItemClickListener;
 
-    public ProjectDelayAdapter(Context context, List<DetonatorEntity> datas) {
+    public ProjectDelayAdapter(Context context, List<ProjectDetonator> datas) {
         this.context = context;
         this.datas = datas;
     }
@@ -35,11 +36,11 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ProjectDelayViewHolder holder, int i) {
-        DetonatorEntity detonatorEntity = datas.get(i);
+        ProjectDetonator detonatorEntity = datas.get(i);
         holder.holePosition.setText(detonatorEntity.getHolePosition());
         holder.uidNum.setText(detonatorEntity.getCode());
         holder.number.setText(String.valueOf(i + 1));
-        holder.delayTime.setText(detonatorEntity.getRelay());
+        holder.delayTime.setText(detonatorEntity.getRelay()+"");
         setDownLoadStatus(holder.itemStatus, detonatorEntity.getDownLoadStatus());
         holder.rootview.setOnClickListener(new View.OnClickListener() {
             @Override

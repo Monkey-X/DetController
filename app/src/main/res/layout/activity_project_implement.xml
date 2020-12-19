@@ -10,10 +10,9 @@
     <RelativeLayout
         android:id="@+id/project_connect_test"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="15dp"
-        android:layout_weight="1"
         android:background="@drawable/project_connect_test">
 
         <TextView
@@ -28,10 +27,9 @@
     <RelativeLayout
         android:id="@+id/project_delay_download"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginTop="12dp"
         android:layout_marginRight="15dp"
-        android:layout_weight="1"
         android:background="@drawable/project_delay_download">
 
         <TextView
@@ -46,10 +44,9 @@
     <RelativeLayout
         android:id="@+id/project_check_authorization"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginTop="12dp"
         android:layout_marginRight="15dp"
-        android:layout_weight="1"
         android:background="@drawable/project_check_authorization">
 
         <TextView
@@ -64,10 +61,9 @@
     <RelativeLayout
         android:id="@+id/project_power_bomb"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginTop="12dp"
         android:layout_marginRight="15dp"
-        android:layout_weight="1"
         android:background="@drawable/project_power_bomb">
 
         <TextView

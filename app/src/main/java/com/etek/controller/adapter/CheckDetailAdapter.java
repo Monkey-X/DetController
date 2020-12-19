@@ -5,16 +5,18 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.etek.controller.R;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
+
 import java.util.List;
 
-public class CheckDetailAdapter extends BaseQuickAdapter <DetonatorEntity, BaseViewHolder>{
+public class CheckDetailAdapter extends BaseQuickAdapter <ProjectDetonator, BaseViewHolder>{
 
-    public CheckDetailAdapter(int layoutResId, @Nullable List<DetonatorEntity> data) {
+    public CheckDetailAdapter(int layoutResId, @Nullable List<ProjectDetonator> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, DetonatorEntity item) {
+    protected void convert(BaseViewHolder helper, ProjectDetonator item) {
         helper.setText(R.id.number, helper.getAdapterPosition() + "");
         helper.setText(R.id.uid_num, item.getCode());
         if (item.getStatus() == 0) {

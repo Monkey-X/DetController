@@ -10,7 +10,9 @@ import com.etek.controller.R;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.fragment.ProjectDialog;
 import com.etek.controller.persistence.DBManager;
+import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -23,7 +25,7 @@ import java.util.List;
  */
 public class ProjectImplementActivity extends BaseActivity implements View.OnClickListener, ProjectDialog.OnMakeProjectListener {
 
-    private ProjectInfoEntity projectInfoEntity;
+    private PendingProject projectInfoEntity;
     private long proId = -1;
     private RelativeLayout connectTest;
     private RelativeLayout delayDownload;
@@ -31,6 +33,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     private RelativeLayout powerBomb;
     private RelativeLayout dataReport;
     private RelativeLayout createNet;
+    private long projectId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 break;
 
             case R.id.project_power_bomb://充电起爆
-                startActivity(new Intent(this, PowerBombActivity.class));
+                startActivity(new Intent(this, PowerBombActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
 
 //            case R.id.project_data_report://数据上传
@@ -79,14 +82,17 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      * 获取项目id
      */
     private void getProjectId() {
-        List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
-        if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
-            // 没有项目，创建项目
-            createProject();
-        } else {
-            ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(0);
-            proId = projectInfoEntity.getId();
-        }
+        Intent intent = getIntent();
+        proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
+
+//        List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+//        if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
+//            // 没有项目，创建项目
+//            createProject();
+//        } else {
+//            ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(0);
+//            proId = projectInfoEntity.getId();
+//        }
     }
 
     @Override
@@ -135,13 +141,13 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      */
     private void refreshData() {
         if (proId >= 0) {
-            projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+            projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         }
         if (projectInfoEntity == null) {
             return;
         }
 
-        String status = projectInfoEntity.getProjectImplementStates();
+        String status =String.valueOf(projectInfoEntity.getProjectStatus()) ;
         if (status == null) {//如果为空，给个默认值（默认第一个是可点击的）
             status = AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST;
         }

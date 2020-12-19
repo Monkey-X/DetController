@@ -18,30 +18,45 @@
 
         <TextView
             android:layout_width="0dp"
+            android:id="@+id/delay_edit"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:padding="3dp"
+            android:background="@drawable/seleted_status"
             android:gravity="center"
-            android:text="起始延时："
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/delay_time"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
-            android:inputType="number"
-            android:background="@null"
-            android:lines="1"
-            android:text="1000"
-            android:paddingLeft="15dp"
+            android:text="编辑"
             android:textSize="18sp" />
 
         <TextView
             android:layout_width="0dp"
+            android:padding="3dp"
+            android:id="@+id/project_handle"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="ms"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/seleted_status"
+            android:gravity="center"
+            android:text="操作"
             android:textSize="18sp" />
+
+<!--        <EditText-->
+<!--            android:id="@+id/delay_time"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="0.8"-->
+<!--            android:inputType="number"-->
+<!--            android:background="@null"-->
+<!--            android:lines="1"-->
+<!--            android:text="1000"-->
+<!--            android:paddingLeft="15dp"-->
+<!--            android:textSize="18sp" />-->
+
+<!--        <TextView-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="ms"-->
+<!--            android:textSize="18sp" />-->
     </LinearLayout>
 
     <View
@@ -63,86 +78,86 @@
         android:layout_height="2dp"
         android:background="@color/btn_gray_normal" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="5dp">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:padding="5dp">-->
 
-        <LinearLayout
-            android:id="@+id/layoutHoleIn"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:background="@drawable/seleted_status"
-            android:layout_height="wrap_content">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/layoutHoleIn"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="8dp"-->
+<!--            android:background="@drawable/seleted_status"-->
+<!--            android:layout_height="wrap_content">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="孔内延时："
-                android:textSize="16sp" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="孔内延时："-->
+<!--                android:textSize="16sp" />-->
 
-            <EditText
-                android:id="@+id/delayholein"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:lines="1"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:gravity="center"
-                android:inputType="numberSigned"
-                android:text="20"
-                android:textSize="18sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="ms"
-                android:textSize="18sp" />
+<!--            <EditText-->
+<!--                android:id="@+id/delayholein"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:lines="1"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@null"-->
+<!--                android:gravity="center"-->
+<!--                android:inputType="numberSigned"-->
+<!--                android:text="20"-->
+<!--                android:textSize="18sp" />-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="ms"-->
+<!--                android:textSize="18sp" />-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
-        <LinearLayout
-            android:id="@+id/layoutHoleOut"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/seleted_status"
-            android:layout_height="wrap_content">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/layoutHoleOut"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="8dp"-->
+<!--            android:layout_marginLeft="5dp"-->
+<!--            android:background="@drawable/seleted_status"-->
+<!--            android:layout_height="wrap_content">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="孔间延时："
-                android:textSize="16sp" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="孔间延时："-->
+<!--                android:textSize="16sp" />-->
 
-            <EditText
-                android:id="@+id/delayholeout"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:inputType="numberSigned"
-                android:gravity="center"
-                android:lines="1"
-                android:text="50"
-                android:textSize="18sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="ms"
-                android:textSize="18sp" />
+<!--            <EditText-->
+<!--                android:id="@+id/delayholeout"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@null"-->
+<!--                android:inputType="numberSigned"-->
+<!--                android:gravity="center"-->
+<!--                android:lines="1"-->
+<!--                android:text="50"-->
+<!--                android:textSize="18sp" />-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="ms"-->
+<!--                android:textSize="18sp" />-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
     <LinearLayout
         android:orientation="horizontal"
@@ -157,6 +172,7 @@
         <TextView
             android:text="读取录入"
             android:textSize="12sp"
+            android:padding="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

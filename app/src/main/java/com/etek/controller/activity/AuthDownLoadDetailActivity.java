@@ -18,6 +18,7 @@ import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AuthDownLoadDetailActivity extends BaseActivity {
@@ -33,6 +34,9 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
     private TextView contractCode;
     private TextView applyDate;
     private TextView devicesCode;
+    private View headView;
+    private List<DetonatorEntity> detonatorList = new ArrayList<>();
+    private AuthDownloadDetailAdapter authDownloadDetailAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,8 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
         getIntentData();
         initView();
         initData();
+
+
     }
 
     private void getIntentData() {
@@ -54,29 +60,34 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
     }
 
     private void initView() {
+//        headView = LayoutInflater.from(this).inflate(R.layout.list_head_view, null);
+//        proName = headView.findViewById(R.id.proName);
+//        proCode = headView.findViewById(R.id.proCode);
+//        companyName = headView.findViewById(R.id.companyName);
+//        companyCode = headView.findViewById(R.id.companyCode);
+//        contractName = headView.findViewById(R.id.contractName);
+//        contractCode = headView.findViewById(R.id.contractCode);
+//        applyDate = headView.findViewById(R.id.applyDate);
+//        devicesCode = headView.findViewById(R.id.devicesCode);
         detailList = findViewById(R.id.detail_list);
-        View headView = LayoutInflater.from(this).inflate(R.layout.list_head_view, null);
-        proName = headView.findViewById(R.id.proName);
-        proCode = headView.findViewById(R.id.proCode);
-        companyName = headView.findViewById(R.id.companyName);
-        companyCode = headView.findViewById(R.id.companyCode);
-        contractName = headView.findViewById(R.id.contractName);
-        contractCode = headView.findViewById(R.id.contractCode);
-        applyDate = headView.findViewById(R.id.applyDate);
-        devicesCode = headView.findViewById(R.id.devicesCode);
-        detailList.addView(headView);
+        authDownloadDetailAdapter = new AuthDownloadDetailAdapter(R.layout.item_auth_download, detonatorList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        detailList.setLayoutManager(linearLayoutManager);
+        detailList.setAdapter(authDownloadDetailAdapter);
+//        detailList.addView(headView,0);
     }
 
 
     private void initData() {
+
         if (projectInfoEntity != null) {
-            proName.setText(projectInfoEntity.getProName());
-            proCode.setText(projectInfoEntity.getProCode());
-            companyName.setText(projectInfoEntity.getCompanyName());
-            companyCode.setText(projectInfoEntity.getCompanyCode());
-            contractName.setText(projectInfoEntity.getCompanyName());
-            contractCode.setText(projectInfoEntity.getCompanyCode());
-            applyDate.setText(projectInfoEntity.getApplyDate().toString());
+//            proName.setText(projectInfoEntity.getProName());
+//            proCode.setText(projectInfoEntity.getProCode());
+//            companyName.setText(projectInfoEntity.getCompanyName());
+//            companyCode.setText(projectInfoEntity.getCompanyCode());
+//            contractName.setText(projectInfoEntity.getCompanyName());
+//            contractCode.setText(projectInfoEntity.getCompanyCode());
+//            applyDate.setText(projectInfoEntity.getApplyDate().toString());
 
             List<ControllerEntity> controllerList = projectInfoEntity.getControllerList();
             if (controllerList != null && controllerList.size() != 0) {
@@ -85,15 +96,13 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
                     String name = controllerEntity.getName();
                     stringBuilder.append(name).append("\n");
                 }
-                devicesCode.setText(stringBuilder.toString());
+//                devicesCode.setText(stringBuilder.toString());
             }
 
-            List<DetonatorEntity> detonatorList = projectInfoEntity.getDetonatorList();
-            if (!detonatorList.isEmpty()) {
-                AuthDownloadDetailAdapter authDownloadDetailAdapter = new AuthDownloadDetailAdapter(R.layout.item_auth_download, detonatorList);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-                detailList.setLayoutManager(linearLayoutManager);
-                detailList.setAdapter(authDownloadDetailAdapter);
+            List<DetonatorEntity> detonatorList1 = projectInfoEntity.getDetonatorList();
+            if (!detonatorList1.isEmpty()) {
+                this.detonatorList.addAll(detonatorList1);
+                authDownloadDetailAdapter.notifyDataSetChanged();
             }
 
         }

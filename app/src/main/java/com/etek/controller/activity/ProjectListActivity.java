@@ -24,6 +24,7 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +74,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
     private void initData() {
         List<PendingProject> pendingProjects = DBManager.getInstance().getPendingProjectDao().loadAll();
         projectInfos.clear();
+        Collections.reverse(pendingProjects);
         if (pendingProjects != null && pendingProjects.size() > 0) {
             noDataView.setVisibility(View.GONE);
             projectInfos.addAll(pendingProjects);
@@ -129,6 +131,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
                 PendingProject pendingProject = new PendingProject();
                 pendingProject.setProjectCode(projectCodeStr);
                 pendingProject.setDate(getCurrentTime());
+                pendingProject.setControllerId(getStringInfo(getString(R.string.controller_sno)));
                 DBManager.getInstance().getPendingProjectDao().insert(pendingProject);
                 initData();
                 dialog.dismiss();

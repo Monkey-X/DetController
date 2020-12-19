@@ -3,15 +3,11 @@ package com.etek.controller.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.common.AppIntentString;
-import com.etek.controller.persistence.DBManager;
-import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
-import java.util.List;
 
 /**
  * 检查授权
@@ -40,8 +36,8 @@ public class AuthBombActivity2 extends BaseActivity implements View.OnClickListe
      * 初始化View
      */
     private void initView() {
-        LinearLayout online = findViewById(R.id.online);
-        LinearLayout offline = findViewById(R.id.offline);
+        View online = findViewById(R.id.online);
+        View offline = findViewById(R.id.offline);
         online.setOnClickListener(this);
         offline.setOnClickListener(this);
     }

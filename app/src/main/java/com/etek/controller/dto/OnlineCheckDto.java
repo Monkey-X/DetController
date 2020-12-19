@@ -3,6 +3,7 @@ package com.etek.controller.dto;
 
 import com.etek.controller.entity.DetController;
 import com.etek.controller.entity.Detonator;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.StringTool;
 
@@ -79,6 +80,17 @@ public class OnlineCheckDto {
         wd = StringTool.getDoubleStr(detController.getLatitude());
         uid = "";
         dwdm = detController.getCompanyCode();
+    }
+
+    public void setProjectDets(List<ProjectDetonator> detonators) {
+        List<String> dets = new ArrayList<>();
+//            dets.add(detController.getDetList().get(0).getUid());
+        for (ProjectDetonator detonator : detonators) {
+            dets.add(detonator.getUid());
+
+        }
+//            uid =  detController.getDetList().get(0).getUid();
+        uid =  StringUtils.join(dets, ",");
     }
 
     public void setDets(List<Detonator> detonators) {

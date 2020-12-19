@@ -16,7 +16,7 @@ public class ProjectDetonator {
 
     private String detId;    // 管吗内部id
 
-    private String relay;     //雷管起爆延时时间 relay
+    private int relay;     //雷管起爆延时时间 relay
 
 
     private int status = -1;     //雷管工作码错误信息 0 正常 1 黑名单 2 已使用 3 不存在
@@ -55,11 +55,11 @@ public class ProjectDetonator {
         this.detId = detId;
     }
 
-    public String getRelay() {
+    public int getRelay() {
         return relay;
     }
 
-    public void setRelay(String relay) {
+    public void setRelay(int relay) {
         this.relay = relay;
     }
 
@@ -109,9 +109,9 @@ public class ProjectDetonator {
 
     private long projectInfoId;
 
-    @Generated(hash = 920499162)
+    @Generated(hash = 1223864513)
     public ProjectDetonator(Long id, String uid, String code, String detId,
-            String relay, int status, String holePosition, int downLoadStatus,
+            int relay, int status, String holePosition, int downLoadStatus,
             int testStatus, long projectInfoId) {
         this.id = id;
         this.uid = uid;

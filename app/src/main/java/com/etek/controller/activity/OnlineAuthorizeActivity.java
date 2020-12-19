@@ -1324,7 +1324,7 @@ public class OnlineAuthorizeActivity extends BaseActivity {
 
 //        XLog.d("from:", projectInfo);
         projectInfoDto.setCreateTime(new Date());
-        projectInfoDto.addDetControllers(detController);
+//        projectInfoDto.addDetControllers(detController);
 
 //        XLog.v("to: ", projectInfoDto);
         ValueFilter filter = (Object object, String name, Object v) -> {

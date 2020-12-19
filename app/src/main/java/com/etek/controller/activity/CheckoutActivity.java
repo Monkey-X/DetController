@@ -1162,7 +1162,7 @@ public class CheckoutActivity extends BaseActivity {
 //        XLog.d("from:", projectInfo);
         projectInfoDto.setCreateTime(new Date());
         detController.setContractId("");
-        projectInfoDto.addDetControllers(detController);
+//        projectInfoDto.addDetControllers(detController);
 
 //        XLog.v("to: ", projectInfoDto);
         return JSON.toJSONString(projectInfoDto);

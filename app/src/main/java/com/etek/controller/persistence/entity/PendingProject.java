@@ -15,13 +15,13 @@ import com.etek.controller.persistence.gen.PendingProjectDao;
 public class PendingProject {
 
     @Id(autoincrement = true)
-    long id;
+    Long id;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -197,6 +197,43 @@ public class PendingProject {
 
     private String fileSn;        //fileSn;    //合同名称
 
+    private double longitude ; //经度
+    private double latitude ; //纬度
+    private String reportStatus ; //上报状态
+    private String controllerId ; //起爆器设备编号(Sbbh)
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(String reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public String getControllerId() {
+        return controllerId;
+    }
+
+    public void setControllerId(String controllerId) {
+        this.controllerId = controllerId;
+    }
+
     @ToMany(referencedJoinProperty= "projectInfoId")
     List<ProjectDetonator> detonatorList;
 
@@ -208,11 +245,11 @@ public class PendingProject {
     @Generated(hash = 796773759)
     private transient PendingProjectDao myDao;
 
-    @Generated(hash = 219015989)
-    public PendingProject(long id, String date, String projectCode,
-            int projectStatus, String proCode, String proName, String companyCode,
-            String companyName, String contractCode, String contractName,
-            String fileSn) {
+    @Generated(hash = 1485658593)
+    public PendingProject(Long id, String date, String projectCode, int projectStatus, String proCode,
+            String proName, String companyCode, String companyName, String contractCode,
+            String contractName, String fileSn, double longitude, double latitude, String reportStatus,
+            String controllerId) {
         this.id = id;
         this.date = date;
         this.projectCode = projectCode;
@@ -224,6 +261,10 @@ public class PendingProject {
         this.contractCode = contractCode;
         this.contractName = contractName;
         this.fileSn = fileSn;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.reportStatus = reportStatus;
+        this.controllerId = controllerId;
     }
 
     @Generated(hash = 1532219714)

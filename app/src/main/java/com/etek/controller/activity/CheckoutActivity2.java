@@ -483,7 +483,7 @@ public class CheckoutActivity2 extends BaseActivity implements CheckOutAdapter2.
         }
         projectInfoDto.setCreateTime(new Date());
         detController.setContractId("");
-        projectInfoDto.addDetControllers(detController);
+//        projectInfoDto.addDetControllers(detController);
         return JSON.toJSONString(projectInfoDto);
     }
 

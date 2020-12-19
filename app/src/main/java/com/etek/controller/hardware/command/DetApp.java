@@ -504,7 +504,7 @@ public class DetApp {
 
 		String struid = struidh.substring(0, 6)+String.format("%08X", nID);
 
-		strUID.append(0);
+		strUID.setLength(0);
 		strUID.append(struid);
 		return 0;
 	}
@@ -1577,6 +1577,7 @@ public class DetApp {
 			if(ret>100){
 				String strerrmsg =new String();
 
+				Log.d(TAG, "DetsGetIDAndDC: ret ="+ret);
 				switch(ret){
 					case 110:
 					case 120:

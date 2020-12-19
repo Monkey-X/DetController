@@ -12,11 +12,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ContractAdapter;
 import com.etek.controller.common.AppConstants;
+import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
 import com.etek.controller.dto.Jbqy;
 import com.etek.controller.dto.Jbqys;
@@ -35,15 +37,12 @@ import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AppUtils;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.DateUtil;
-import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.NetUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +60,7 @@ import okhttp3.Response;
 /**
  * 授权下载
  */
-public class AuthorizedDownloadActivity extends BaseActivity implements AuthorizedDownloadDialog.AuthorizedDownloadListener, BaseQuickAdapter.OnItemChildClickListener {
+public class AuthorizedDownloadActivity extends BaseActivity implements AuthorizedDownloadDialog.AuthorizedDownloadListener, BaseQuickAdapter.OnItemClickListener {
 
     private RecyclerView recycleView;
     private LinearLayout noDataView;
@@ -99,7 +98,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         recycleView.setLayoutManager(new LinearLayoutManager(this));
         contractAdapter = new ContractAdapter(R.layout.contract_item_view, projectInfos);
         recycleView.setAdapter(contractAdapter);
-        contractAdapter.setOnItemChildClickListener(this);
+        contractAdapter.setOnItemClickListener(this);
     }
 
     /**
@@ -118,9 +117,9 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         contractAdapter.notifyDataSetChanged();
     }
 
-    // 列表的点击事件
+
     @Override
-    public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         ProjectInfoEntity projectInfoEntity = projectInfos.get(position);
         Long projectId = projectInfoEntity.getId();
 
@@ -216,43 +215,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         });
     }
 
-    /**
-     * 检查是否有同样的项目
-     *
-     * @param projectFileDto
-     */
-    private boolean checkSameProject(ProjectFileDto projectFileDto) {
-        if (projectFileDto == null) {
-            return true;
-        }
-
-        List<ProjectDownLoadEntity> projectDownLoadEntities = DBManager.getInstance().getProjectDownLoadEntityDao().loadAll();
-        if (projectDownLoadEntities != null && projectDownLoadEntities.size() != 0) {
-            for (ProjectDownLoadEntity projectDownLoadEntity : projectDownLoadEntities) {
-                if (projectDownLoadEntity.getHtbh().equals(projectFileDto.getHtbh())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private long saveProjectInfo(ProjectFileDto projectFile, String authorizedCode) {
-        ProjectDownLoadEntity projectDownLoadEntity = new ProjectDownLoadEntity();
-        projectDownLoadEntity.setXmbh(projectFile.getXmbh());
-        projectDownLoadEntity.setXmmc(projectFile.getXmmc());
-        projectDownLoadEntity.setDwdm(projectFile.getDwdm());
-        projectDownLoadEntity.setDwmc(projectFile.getDwmc());
-        projectDownLoadEntity.setHtbh(projectFile.getHtbh());
-        projectDownLoadEntity.setHtmc(projectFile.getHtmc());
-        projectDownLoadEntity.setHtmc(projectFile.getHtmc());
-        projectDownLoadEntity.setMmwj(projectFile.getMmwj());
-        projectDownLoadEntity.setFileSn(authorizedCode);
-        DBManager.getInstance().getProjectDownLoadEntityDao().save(projectDownLoadEntity);
-        refreshData();
-        return 0;
-    }
 
     private void refreshData() {
         runOnUiThread(new Runnable() {
@@ -331,6 +293,12 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
                 detonatorBean.setStatus(lg.getGzmcwxx());
                 detonatorEntityList.add(detonatorBean);
             }
+           // todo 进行的测试
+            ArrayList<DetonatorEntity> detonatorEntities = JSON.parseObject(AppIntentString.textString, new TypeReference<ArrayList<DetonatorEntity>>() {
+            });
+            detonatorEntityList.addAll(detonatorEntities);
+            // todo
+
             DBManager.getInstance().getDetonatorEntityDao().insertInTx(detonatorEntityList);
         }
 
@@ -428,6 +396,4 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
             }
         }
     };
-
-
 }

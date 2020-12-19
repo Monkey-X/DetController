@@ -2,11 +2,11 @@ package com.etek.controller.activity;
 
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,32 +16,40 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.ValueFilter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.common.Globals;
 import com.etek.controller.dto.Jbqy;
 import com.etek.controller.dto.Jbqys;
 import com.etek.controller.dto.Lg;
 import com.etek.controller.dto.Lgs;
 import com.etek.controller.dto.OnlineCheckDto;
 import com.etek.controller.dto.OnlineCheckResp;
-import com.etek.controller.dto.ProjectDownLoadEntity;
 import com.etek.controller.dto.ProjectFileDto;
+import com.etek.controller.dto.ProjectInfoDto;
 import com.etek.controller.dto.Sbbhs;
+import com.etek.controller.dto.WhiteBlackController;
 import com.etek.controller.dto.Zbqy;
 import com.etek.controller.dto.Zbqys;
+import com.etek.controller.enums.CheckRuleEnum;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
+import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.controller.persistence.gen.DetonatorEntityDao;
-import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
+import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
+import com.etek.controller.utils.BeanPropertiesUtil;
+import com.etek.controller.utils.DetUtil;
+import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.utils.location.DLocationTools;
@@ -49,7 +57,6 @@ import com.etek.controller.utils.location.DLocationUtils;
 import com.etek.controller.utils.location.OnLocationChangeListener;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -74,6 +81,7 @@ import static com.etek.controller.utils.location.DLocationWhat.ONLY_GPS_WORK;
  */
 public class CheckDetailActivity extends BaseActivity implements View.OnClickListener {
 
+    private static final String TAG = "CheckDetailActivity";
     private long proId;
     private TextView contractCode;
     private TextView controllerId;
@@ -83,11 +91,15 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private TextView controllerTime;
     private RecyclerView detonatorList;
     private CheckDetailAdapter checkDetailAdapter;
-    private List<DetonatorEntity> detonatorEntityList;
-    private ProjectInfoEntity projectInfoEntity;
+    private List<ProjectDetonator> projectDetonatorList;
+    private PendingProject pendingProject;
     private int GO_TO_GPS = 150;
     private StringBuilder uid = new StringBuilder();
     private String type;
+
+    private List<String> whiteList;
+    private List<String> blackList;
+    private ProjectInfoEntity projectInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +108,69 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         getProjectId();
         initView();
         getLocation();
+        getWhiteBlackList();
+    }
+
+    // 获取黑白名单
+    private void getWhiteBlackList() {
+        whiteList = new ArrayList<>();
+        blackList = new ArrayList<>();
+        String url = AppConstants.ETEKTestServer + AppConstants.WhiteBlackList;
+        AsyncHttpCilentUtil.getOkHttpClient(url, new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                XLog.e("IOException:", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String respStr = response.body().string();
+                if (!StringUtils.isEmpty(respStr)) {
+                    WhiteBlackController whiteBlackController = JSON.parseObject(respStr, WhiteBlackController.class);
+                    List<WhiteBlackController.Hbmd> hbmds = whiteBlackController.getHbmd();
+                    if (hbmds != null && !hbmds.isEmpty()) {
+                        for (WhiteBlackController.Hbmd hbmd : hbmds) {
+                            if (hbmd.getStatus() == 2) {
+                                whiteList.add(hbmd.getSbbh());
+                            } else if (hbmd.getStatus() == 1) {
+                                blackList.add(hbmd.getSbbh());
+                            }
+                        }
+                    }
+                    XLog.d("white:" + whiteList);
+                    XLog.d("black:" + blackList);
+                }
+            }
+        });
+    }
+
+    /**
+     * 检查起爆是否在黑名单中
+     *
+     * @param sn 起爆器编号
+     * @return
+     */
+    private boolean isInBlackList(String sn) {
+        if (blackList != null && !blackList.isEmpty()) {
+            for (String s : blackList) {
+                if (s.equalsIgnoreCase(sn))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    // 检查起爆器是否在白名单中
+    private boolean isInWhiteList(String sn) {
+        if (whiteList != null && !whiteList.isEmpty()) {
+            for (String s : whiteList) {
+                if (s.equalsIgnoreCase(sn))
+                    return true;
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -112,8 +187,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
         XLog.d("proId: " + proId);
         if (proId >= 0) {
-            projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-            detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+            pendingProject = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
+            projectDetonatorList = pendingProject.getDetonatorList();
         }
     }
 
@@ -130,26 +205,22 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         detonatorList = findViewById(R.id.check_detonator_list);
         getLocation.setOnClickListener(this);
         detonatorList.setLayoutManager(new LinearLayoutManager(this));
-        checkDetailAdapter = new CheckDetailAdapter(R.layout.detonator_list_item, detonatorEntityList);
+        checkDetailAdapter = new CheckDetailAdapter(R.layout.detonator_list_item, projectDetonatorList);
         detonatorList.setAdapter(checkDetailAdapter);
 
-        if (projectInfoEntity != null) {
+        if (pendingProject != null) {
             //合同编号
-            contractCode.setText(projectInfoEntity.getContractCode());
+            contractCode.setText(pendingProject.getContractCode());
             //起爆器编号
-            controllerId.setText(projectInfoEntity.getControllerId());
+            controllerId.setText(getStringInfo(getString(R.string.controller_sno)));
             //地标
-            if (projectInfoEntity.getLongitude() != 0 || projectInfoEntity.getLatitude() != 0) {
+            if (pendingProject.getLongitude() != 0 || pendingProject.getLatitude() != 0) {
                 DecimalFormat df = new DecimalFormat("0.000000");
-                String loc = df.format(projectInfoEntity.getLongitude()) + "  ,  " + df.format(projectInfoEntity.getLatitude());
-                locationLongitude.setText("" + projectInfoEntity.getLongitude());
-                locationLatitude.setText("" + projectInfoEntity.getLatitude());
+                String loc = df.format(pendingProject.getLongitude()) + "  ,  " + df.format(pendingProject.getLatitude());
+                locationLongitude.setText("" + pendingProject.getLongitude());
+                locationLatitude.setText("" + pendingProject.getLatitude());
             }
-            //起爆器时间
-            if (projectInfoEntity.getBlastTime() != null) {
-                String timeStr = DateUtil.getDateStr(projectInfoEntity.getBlastTime());
-                controllerTime.setText(timeStr);
-            }
+            controllerTime.setText(pendingProject.getDate());
         }
     }
 
@@ -216,8 +287,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             String latitude = df.format(location.getLatitude());
             locationLongitude.setText(longitude);
             locationLatitude.setText(latitude);
-            projectInfoEntity.setLongitude(Double.parseDouble(longitude));
-            projectInfoEntity.setLatitude(Double.parseDouble(latitude));
+            pendingProject.setLongitude(Double.parseDouble(longitude));
+            pendingProject.setLatitude(Double.parseDouble(latitude));
             XLog.e("DLocationUtils:  " + longitude + "  ,  " + latitude);
         }
     }
@@ -248,25 +319,33 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if (item.getItemId() == android.R.id.home) {
             finish();//返回按钮
         } else if (item.getItemId() == R.id.action_check) {//检查
-            if (TextUtils.isEmpty(locationLongitude.getText().toString().trim())) {
-                ToastUtils.show(mContext, "当前经度为空");
-            } else if (TextUtils.isEmpty(locationLatitude.getText().toString().trim())) {
-                ToastUtils.show(mContext, "当前纬度为空");
-            } else {
-                if ("online".equals(type)) {//在线检查
-                    getVerifyResult(projectInfoEntity);
-                } else if ("offline".equals(type)) {//离线检查
-                    offlineCheck();
-                }
-            }
+            // 点击进行检查操作
+            projectCheckData();
         }
         return true;
     }
 
     /**
+     * 进行规则的检查
+     */
+    private void projectCheckData() {
+        if (TextUtils.isEmpty(locationLongitude.getText().toString().trim())) {
+            ToastUtils.show(mContext, "当前经度为空");
+        } else if (TextUtils.isEmpty(locationLatitude.getText().toString().trim())) {
+            ToastUtils.show(mContext, "当前纬度为空");
+        } else {
+            if ("online".equals(type)) {//在线检查
+                getVerifyResult(pendingProject);
+            } else if ("offline".equals(type)) {//离线检查
+                offlineCheck();
+            }
+        }
+    }
+
+    /**
      * 获取验证结果
      */
-    private void getVerifyResult(ProjectInfoEntity projectInfoEntity) {
+    private void getVerifyResult(PendingProject projectInfoEntity) {
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
         onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
         onlineCheckDto.setHtid(projectInfoEntity.getContractCode());
@@ -274,15 +353,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         onlineCheckDto.setWd(projectInfoEntity.getLatitude() + "");
         onlineCheckDto.setXmbh(projectInfoEntity.getProCode());
         onlineCheckDto.setSbbh(projectInfoEntity.getControllerId());
-        for (int i = 0; i < detonatorEntityList.size(); i++) {
-            if (i == 0) {
-                uid.append(detonatorEntityList.get(i).getCode());
-            } else {
-                uid.append("," + detonatorEntityList.get(i).getCode());
-            }
-        }
-        XLog.e("uid: " + uid.toString());
-        onlineCheckDto.setUid(uid.toString());
+        onlineCheckDto.setProjectDets(projectDetonatorList);
         String rptJson = JSON.toJSONString(onlineCheckDto, SerializerFeature.WriteMapNullValue);
         XLog.e("rptJson: " + rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
@@ -290,46 +361,46 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             showToast("数据编码出错：" + result.getMessage());
             return;
         }
+        showProDialog("在线检查中...");
         String url = AppConstants.DanningServer + AppConstants.OnlineDownload;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());
         String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-        XLog.e("newUrl: " + newUrl);
+        Log.d(TAG, "newUrl: " + newUrl);
         AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                XLog.e("IOException: " + e.getMessage());
-                dismissProgressBar();
+                missProDialog();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                dismissProgressBar();
+                missProDialog();
                 String respStr = response.body().string();
                 if (StringUtils.isEmpty(respStr)) {
-                    XLog.e("respStr is null ");
+                    Log.d(TAG, "respStr is null");
                     return;
                 }
-                XLog.e("respStr: " + respStr);
+                Log.d(TAG, "respStr: " + respStr);
                 OnlineCheckResp serverResult = null;
                 try {
                     Result rptDecode = RptUtil.getRptDecode(respStr);
-                    XLog.e("respStr: " + rptDecode);
+                    Log.d(TAG, "respStr: " + rptDecode);
                     if (rptDecode.isSuccess()) {
                         String data = (String) rptDecode.getData();
-                        XLog.e("resp:" + data);
+                        Log.d(TAG, "resp:" + data);
                         serverResult = JSON.parseObject(data, OnlineCheckResp.class);
-                        XLog.e("serverResult: " + serverResult.toString());
+                        Log.d(TAG, "serverResult: " + serverResult.toString());
                         if (serverResult.getCwxx().contains("0")) {
                             ProjectFileDto projectFile = new ProjectFileDto();
-                            projectFile.setCompany(projectInfoEntity.getCompanyName());
-                            projectFile.setDwdm(projectInfoEntity.getCompanyCode());
-                            projectFile.setXmbh(projectInfoEntity.getProCode());
-                            projectFile.setHtbh(projectInfoEntity.getControllerId());
 
+                            projectFile.setCompany(Globals.user.getCompanyName());
+                            projectFile.setDwdm(Globals.user.getCompanyCode());
+                            projectFile.setXmbh(pendingProject.getProCode());
+                            projectFile.setHtbh(pendingProject.getContractCode());
                             int unRegDet = 0;
                             boolean isUnreg = false;
-                            for (DetonatorEntity detonator : detonatorEntityList) {
+                            for (ProjectDetonator detonator : projectDetonatorList) {
                                 for (Lg lg : serverResult.getLgs().getLg()) {
                                     if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {
                                         if (lg.getGzmcwxx() != 0) {
@@ -340,31 +411,38 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                                     }
                                 }
                             }
+                            refreshData();
                             if (isUnreg) {
-                                XLog.w("unRegDet:" + unRegDet);
+                                Log.d(TAG, "unRegDet:" + unRegDet);
                                 showStatusDialog("已存在已使用雷管！");
+                                long projectId = storeProjectInfo(projectFile, serverResult);
+                                uploadData(projectId);
                                 return;
                             }
+
+                            showStatusDialog("完全匹配,允许爆破！");
+                            long projectId = storeProjectInfo(projectFile, serverResult);
+                            uploadData(projectId);
+
                         } else {
                             showStatusDialog(serverResult.getCwxxms());
-//                        result = ActivityResult.successOf("上传丹灵服务器成功!");
                         }
                     }
                 } catch (Exception e) {
-                    XLog.e("解析错误：" + e.getMessage());
+                    Log.d(TAG, "解析错误：" + e.getMessage());
                 }
             }
         });
     }
 
     /**
-     * 存储数据
+     *
+     * @param projectFile
+     * @param onlineCheckResp
      */
-    private long storeProjectInfo(final ProjectFileDto projectFile, OnlineCheckResp onlineCheckResp) {
+    private long storeProjectInfo(ProjectFileDto projectFile, OnlineCheckResp onlineCheckResp) {
 
-//        ThreadPoolUtils.getThreadPool().execute(()->{
-//        ProInfoDto mDetInfoDto = projectFile.getProInfo();
-        XLog.v("onlineCheckResp:" + onlineCheckResp);
+        XLog.v("onlineCheckResp:"+ onlineCheckResp);
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setApplyDate(onlineCheckResp.getSqrq());
         projectInfoEntity.setProCode(projectFile.getXmbh());
@@ -381,22 +459,27 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if (proId == 0) {
             return 0;
         }
-        XLog.v("proid:" + proId);
-        // get detonators to database by sommer 19.01.07
+        XLog.v("proid:"+proId);
         Lgs lgs = onlineCheckResp.getLgs();
         if (!lgs.getLg().isEmpty()) {
             List<DetonatorEntity> detonatorEntityList = new ArrayList<>();
             for (Lg lg : lgs.getLg()) {
 
                 DetonatorEntity detonatorBean = new DetonatorEntity();
+                if (StringUtils.isEmpty(lg.getFbh())) {
+                    for (ProjectDetonator detonator : pendingProject.getDetonatorList()) {
+                        if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {
+                            lg.setFbh(detonator.getCode());
+                            detonator.setStatus(lg.getGzmcwxx());
+                        }
+                    }
+                }
                 detonatorBean.setCode(lg.getFbh());
                 detonatorBean.setWorkCode(lg.getGzm());
                 detonatorBean.setUid(lg.getUid());
                 detonatorBean.setValidTime(lg.getYxq());
                 detonatorBean.setProjectInfoId(proId);
-//              detonatorBean.setdetonatorBean.setProInfoBean(proInfoBean);
                 detonatorBean.setStatus(lg.getGzmcwxx());
-//               detonatorBean.setdetonatorBean.setProInfoBean(detInfoDto);
                 detonatorEntityList.add(detonatorBean);
             }
             DBManager.getInstance().getDetonatorEntityDao().insertInTx(detonatorEntityList);
@@ -406,10 +489,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if (!zbqys.getZbqy().isEmpty()) {
             List<PermissibleZoneEntity> permissibleZoneEntityList = new ArrayList<>();
             for (Zbqy zbqy : zbqys.getZbqy()) {
-//              private String zbqssj;  //准爆起始时间
-//              private String zbjzsj;  //准爆截止时间
                 PermissibleZoneEntity permissibleZone = new PermissibleZoneEntity();
-//              permissibleZoneBean.setProInfoBean(proInfoBean);
                 permissibleZone.setName(zbqy.getZbqymc());
                 permissibleZone.setLatitude(Double.parseDouble(zbqy.getZbqywd()));
                 permissibleZone.setLongitude(Double.parseDouble(zbqy.getZbqyjd()));
@@ -418,10 +498,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 permissibleZone.setStopTime(zbqy.getZbjzsj());
                 permissibleZone.setProjectInfoId(proId);
                 permissibleZoneEntityList.add(permissibleZone);
-//              Dao<PermissibleZoneBean, Long> permissibleZoneDao = DatabaseHelper.getInstance(mcontext).getDao(PermissibleZoneBean.class);
-//              permissibleZoneDao.create(permissibleZoneBean);
-//              permissibleZoneBean.setStartTime(zbqy.getZbqssj());
-//              permissibleZoneBean.setStopTime(zbqy.getZbjzsj());
             }
             DBManager.getInstance().getPermissibleZoneEntityDao().insertInTx(permissibleZoneEntityList);
         }
@@ -429,10 +505,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if (!jbqys.getJbqy().isEmpty()) {
             List<ForbiddenZoneEntity> forbiddenZoneEntityList = new ArrayList<>();
             for (Jbqy jbqy : jbqys.getJbqy()) {
-//              private String zbqssj;  //准爆起始时间
-//              private String zbjzsj;  //准爆截止时间
                 ForbiddenZoneEntity forbiddenZoneEntity = new ForbiddenZoneEntity();
-//              forbiddenZoneEntity.setName(jbqy.getJbjzsj());
                 forbiddenZoneEntity.setLatitude(Double.parseDouble(jbqy.getJbqywd()));
                 forbiddenZoneEntity.setLongitude(Double.parseDouble(jbqy.getJbqyjd()));
                 forbiddenZoneEntity.setRadius(Integer.parseInt(jbqy.getJbqybj()));
@@ -440,10 +513,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 forbiddenZoneEntity.setStopTime(jbqy.getJbjzsj());
                 forbiddenZoneEntity.setProjectInfoId(proId);
                 forbiddenZoneEntityList.add(forbiddenZoneEntity);
-//              Dao<PermissibleZoneBean, Long> permissibleZoneDao = DatabaseHelper.getInstance(mcontext).getDao(PermissibleZoneBean.class);
-//              permissibleZoneDao.create(permissibleZoneBean);
-//              permissibleZoneBean.setStartTime(zbqy.getZbqssj());
-//              permissibleZoneBean.setStopTime(zbqy.getZbjzsj());
             }
             DBManager.getInstance().getForbiddenZoneEntityDao().insertInTx(forbiddenZoneEntityList);
         }
@@ -456,119 +525,274 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 controller.setName(sbbh.getSbbh());
                 controller.setProjectInfoId(proId);
                 controllerEntityList.add(controller);
-//              etControllerBean.setProInfoBean(proInfoBean);
-//              Dao<DetControllerBean, Long> detControllerDao = DatabaseHelper.getInstance(mcontext).getDao(DetControllerBean.class);
-//              detControllerDao.create(detControllerBean);
             }
             DBManager.getInstance().getControllerEntityDao().insertInTx(controllerEntityList);
         }
-//        });
         return proId;
+    }
+
+    public String getReportDto() {
+        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
+        XLog.d("getReportDto:"+projectInfo.toString());
+
+        try {
+            BeanPropertiesUtil.copyProperties(projectInfo, projectInfoDto);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+//        XLog.d("from:", projectInfo);
+        projectInfoDto.setCreateTime(new Date());
+        projectInfoDto.addDetControllers(pendingProject);
+
+//        XLog.v("to: ", projectInfoDto);
+        ValueFilter filter = (Object object, String name, Object v) -> {
+            if (v == null) return "";
+            return v;
+        };
+        return JSON.toJSONString(projectInfoDto, filter);
+    }
+
+    private void uploadData(long projectId) {
+
+        if (projectId!=0) {
+            projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
+                    queryBuilder()
+                    .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+        }
+
+        String rptJson = getReportDto();
+        if(rptJson==null){
+            return;
+        }
+
+        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
+
+        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: "+e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String respStr = response.body().string();
+                if (!StringUtils.isEmpty(respStr)) {
+                    Log.d(TAG, "onResponse: "+respStr);
+                }
+            }
+        });
+    }
+
+    private void refreshData() {
+        DBManager.getInstance().getProjectDetonatorDao().saveInTx(projectDetonatorList);
+        checkDetailAdapter.notifyDataSetChanged();
     }
 
     /**
      * 离线检查
      */
     private void offlineCheck() {
-        //测试模拟授权下载数据json
-//        String data = JsonUtils.getData();
-//        Gson gson = new Gson();
-//        ProjectDownLoadEntity projectDownLoadEntity = gson.fromJson(data, ProjectDownLoadEntity.class);
 
-        ProjectDownLoadEntity projectDownLoadEntity = DBManager.getInstance().getProjectDownLoadEntityDao().queryBuilder().where(ProjectDownLoadEntityDao.Properties.Htbh.eq(projectInfoEntity.getContractCode())).unique();
-        if (projectDownLoadEntity == null) {
-            ToastUtils.show(this, "数据为空,无法检查，请去授权下载");
+        String controllerId = pendingProject.getControllerId();
+        if (isInBlackList(controllerId)) {
+            showStatusDialog("起爆器未注册，不允许起爆");
             return;
         }
-        if (!projectInfoEntity.getProCode().equals(projectDownLoadEntity.getXmbh())) {
-            ToastUtils.show(this, "项目编号检查错误");
+        List<ProjectInfoEntity> projectInfoEntityList = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder()
+                .orderDesc(ProjectInfoEntityDao.Properties.CreateTime)
+                .limit(100).list();
+        if (projectInfoEntityList.size() == 0) {
+            showStatusDialog("请下载离线文件！");
+            return;
         }
-        if (!projectInfoEntity.getProName().equals(projectDownLoadEntity.getXmmc())) {
-            ToastUtils.show(this, "项目名称检查错误");
+        Long detInProjectId = isDetInProject(projectInfoEntityList);
+        if (detInProjectId == -1) {
+            showStatusDialog("没有找到雷管规则所对应的项目");
+            return;
         }
-        if (!projectInfoEntity.getCompanyCode().equals(projectDownLoadEntity.getDwdm())) {
-            ToastUtils.show(this, "单位代码检查错误");
+        ProjectInfoEntity projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
+                queryBuilder()
+                .where(ProjectInfoEntityDao.Properties.Id.eq(detInProjectId)).unique();
+        if (projectInfo == null) {
+            showStatusDialog("没有找到雷管规则所对应的项目");
+            return;
         }
-        if (!projectInfoEntity.getCompanyName().equals(projectDownLoadEntity.getDwmc())) {
-            ToastUtils.show(this, "单位名称检查错误");
+
+        if (!checkControllerData(projectInfo)) {
+            showStatusDialog("起爆器未注册，不允许起爆");
+            return;
         }
-        if (!projectInfoEntity.getContractCode().equals(projectDownLoadEntity.getHtbh())) {
-            ToastUtils.show(this, "合同编号检查错误");
+        if (checkForbiddenZone(projectInfo)) {
+            showStatusDialog("在禁爆区域");
+            return;
         }
-        if (!projectInfoEntity.getContractName().equals(projectDownLoadEntity.getHtmc())) {
-            ToastUtils.show(this, "合同名称检查错误");
+        if (!checkPermissibleZone(projectInfo)) {
+            showStatusDialog("不在准爆区域");
+            return;
         }
-        OffLineCheckTask offLineCheckTask = new OffLineCheckTask(projectDownLoadEntity.getMmwj(), projectDownLoadEntity.getFileSn());
-        offLineCheckTask.execute();
+
+        // 最后检查雷管的数量
+        checkDetonatorData(projectInfo,detInProjectId);
+
     }
 
-
-    public class OffLineCheckTask extends AsyncTask<String, Integer, Integer> {
-
-        private final String mmwj;
-        private final String fileSn;
-
-        public OffLineCheckTask(String mmwj, String fileSn) {
-            this.mmwj = mmwj;
-            this.fileSn = fileSn;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showProDialog("检测中...");
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            missProDialog();
-            if (integer == -1) {
-                showStatusDialog("本地数据获取失败！");
-            } else if (integer == 0) {
-                checkDetailAdapter.notifyDataSetChanged();
-            } else {
-                showStatusDialog("存在已使用雷管" + integer + "个！");
-            }
-        }
-
-        @Override
-        protected Integer doInBackground(String... strings) {
-            Result rptDecode = RptUtil.getRptDecode(mmwj, fileSn);
-            XLog.e(rptDecode);
-            if (rptDecode.isSuccess()) {
-                String data2 = (String) rptDecode.getData();
-                OnlineCheckResp serverResult = JSON.parseObject(data2, OnlineCheckResp.class);
-                if (serverResult.getCwxx().contains("0")) {
-                    int unRegDet = 0;
-                    boolean isUnreg = false;
-                    for (int i = 0; i < detonatorEntityList.size(); i++) {
-                        for (Lg lg : serverResult.getLgs().getLg()) {
-                            if (detonatorEntityList.get(i).getCode().equalsIgnoreCase(lg.getUid())) {
-                                if (lg.getGzmcwxx() != 0) {
-                                    isUnreg = true;
-                                    unRegDet++;
-                                    detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
-                                    DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
-                                    XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
-                                } else {
-                                    detonatorEntityList.get(i).setStatus(lg.getGzmcwxx());
-                                    DBManager.getInstance().getDetonatorEntityDao().update(detonatorEntityList.get(i));
-                                    XLog.e("cwxx：" + lg.getGzmcwxx() + "  " + "lg：" + lg.getUid());
-                                }
-                            }
+    /**
+     * 检查项目中的雷管信息
+     *
+     * @param projectInfo
+     * @param detInProjectId
+     */
+    private void checkDetonatorData(ProjectInfoEntity projectInfo, Long detInProjectId) {
+        List<DetonatorEntity> detonatorList = projectInfo.getDetonatorList();
+        if (detonatorList != null && detonatorList.size() != 0) {
+            int unUserCount = detonatorList.size();
+            int unRegiestCount = 0;
+            boolean isUnUsed;
+            for (ProjectDetonator projectDetonator : projectDetonatorList) {
+                isUnUsed = true;
+                for (DetonatorEntity detonatorEntity : detonatorList) {
+                    if (projectDetonator.getCode().equalsIgnoreCase(detonatorEntity.getCode())
+                            && projectDetonator.getUid().equalsIgnoreCase(detonatorEntity.getUid())) {
+                        if (!DetUtil.getAcCodeFromDet(detonatorEntity).equalsIgnoreCase(detonatorEntity.getWorkCode()))
+                            break;
+                        unUserCount--;
+                        if (unUserCount < 0) {
+                            unUserCount = 0;
                         }
-                    }
-                    if (isUnreg) {
-//                        showStatusDialog("存在已使用雷管" + unRegDet + "个！");
-                        return unRegDet;
+                        isUnUsed = false;
+                        projectDetonator.setStatus(0);
                     }
                 }
-                return 0;
-            } else {
-                XLog.e("解密失败：" + rptDecode.getMessage());
-                return -1;
+                if (isUnUsed) {
+                    projectDetonator.setStatus(1);
+                    unRegiestCount++;
+                }
             }
+
+            refreshData();
+            if (unRegiestCount > 0) {
+                showStatusDialog(CheckRuleEnum.UNREG_DET.getMessage() + unRegiestCount);
+                return;
+            }
+            showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
+            uploadData(detInProjectId);
         }
     }
+
+    /**
+     * 检查是否在准爆区域
+     *
+     * @param projectInfo
+     */
+    private boolean checkPermissibleZone(ProjectInfoEntity projectInfo) {
+        List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
+        if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
+            for (PermissibleZoneEntity permissibleZoneEntity : permissibleZoneList) {
+                LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), permissibleZoneEntity.getRadius());
+                if (pendingProject.getLatitude() > range.getMinLat()
+                        && pendingProject.getLatitude() < range.getMaxLat()
+                        && pendingProject.getLongitude() > range.getMinLng()
+                        && pendingProject.getLongitude() < range.getMaxLng()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查起爆器的是否存在文件中
+     *
+     * @param projectInfo
+     */
+    private boolean checkControllerData(ProjectInfoEntity projectInfo) {
+        List<ControllerEntity> controllerList = projectInfo.getControllerList();
+        if (controllerList != null && controllerList.size() != 0) {
+            for (ControllerEntity controllerEntity : controllerList) {
+                if (controllerEntity.getName().equalsIgnoreCase(pendingProject.getControllerId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否在禁止区域
+     *
+     * @param projectInfo
+     * @return
+     */
+    private boolean checkForbiddenZone(ProjectInfoEntity projectInfo) {
+        List<ForbiddenZoneEntity> forbiddenZoneList = projectInfo.getForbiddenZoneList();
+        if (forbiddenZoneList != null && forbiddenZoneList.size() != 0) {
+            for (ForbiddenZoneEntity forbiddenZoneEntity : forbiddenZoneList) {
+                LocationUtil.LocationRange range = LocationUtil.getAround(forbiddenZoneEntity.getLatitude(), forbiddenZoneEntity.getLongitude(), forbiddenZoneEntity.getRadius());
+                if (pendingProject.getLatitude() > range.getMinLat()
+                        && pendingProject.getLatitude() < range.getMaxLat()
+                        && pendingProject.getLongitude() > range.getMinLng()
+                        && pendingProject.getLongitude() < range.getMinLng()) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+
+    }
+
+    // 检查雷管是否在下载的离线文件中
+    private long isDetInProject(List<ProjectInfoEntity> projectInfoEntityList) {
+        for (ProjectInfoEntity projectInfoEntity : projectInfoEntityList) {
+            for (DetonatorEntity detonatorEntity : projectInfoEntity.getDetonatorList()) {
+                for (ProjectDetonator detonator : projectDetonatorList) {
+                    if (detonator.getCode().equalsIgnoreCase(detonatorEntity.getCode())) {
+                        return projectInfoEntity.getId();
+                    }
+                }
+            }
+
+        }
+        return -1;
+
+    }
+
+
+//    public class OffLineCheckTask extends AsyncTask<String, Integer, Integer> {
+//
+//
+//        private final List<ProjectInfoEntity> projectInfoEntities;
+//
+//        public OffLineCheckTask(List<ProjectInfoEntity> projectInfoEntities) {
+//            this.projectInfoEntities = projectInfoEntities;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            showProDialog("检测中...");
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Integer integer) {
+//            super.onPostExecute(integer);
+//            missProDialog();
+//            if (integer == -1) {
+//                showStatusDialog("本地数据获取失败！");
+//            } else if (integer == 0) {
+//                checkDetailAdapter.notifyDataSetChanged();
+//            } else {
+//                showStatusDialog("存在已使用雷管" + integer + "个！");
+//            }
+//        }
+//
+//        @Override
+//        protected Integer doInBackground(String... strings) {
+//
+//        }
+//    }
 }

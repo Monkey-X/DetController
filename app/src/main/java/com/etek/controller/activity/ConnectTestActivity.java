@@ -28,8 +28,10 @@ import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
+import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -48,7 +50,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private TextView textBtn;
     private RecyclerView recycleView;
     private ConnectTestAdapter connectTestAdapter;
-    private List<DetonatorEntity> connectData = new ArrayList<>();
+    private List<ProjectDetonator> connectData = new ArrayList<>();
     private List<ProjectInfoEntity> projectInfoEntities;
     private PopupWindow popWindow;
     private RecyclerView rvFiltrate;
@@ -58,7 +60,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private int projectPosition = -1;
     private TestAsyncTask testAsyncTask;
     private long proId;
-    private List<DetonatorEntity> detonatorEntityList;
+    private List<ProjectDetonator> detonatorEntityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +87,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 //        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
         //根据项目id获取雷管并展示
         if (proId >= 0) {
-            detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+            detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             connectData.addAll(detonatorEntityList);
         }
     }
@@ -179,19 +181,19 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 获取筛选的数据并展示
      */
     private void showFiltrateData(int position) {
-        if (projectPosition == position) {
-            return;
-        }
-        this.projectPosition = position;
-        mProjectInfoEntity = projectInfoEntities.get(position);
-        mDetonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
-        connectData.clear();
-        if (mDetonatorEntities != null && mDetonatorEntities.size() > 0) {
-            connectData.addAll(mDetonatorEntities);
-        } else {
-            ToastUtils.show(ConnectTestActivity.this, "项目未录入数据");
-        }
-        connectTestAdapter.notifyDataSetChanged();
+//        if (projectPosition == position) {
+//            return;
+//        }
+//        this.projectPosition = position;
+//        mProjectInfoEntity = projectInfoEntities.get(position);
+//        mDetonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
+//        connectData.clear();
+//        if (mDetonatorEntities != null && mDetonatorEntities.size() > 0) {
+//            connectData.addAll(mDetonatorEntities);
+//        } else {
+//            ToastUtils.show(ConnectTestActivity.this, "项目未录入数据");
+//        }
+//        connectTestAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -229,7 +231,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private void showAllDet() {
         // 筛选后点击展示全部
         if (proId >= 0) {
-            List<DetonatorEntity> list = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+            List<ProjectDetonator> list = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             connectData.clear();
             connectData.addAll(list);
             connectTestAdapter.notifyDataSetChanged();
@@ -253,8 +255,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             return;
         }
 
-        List<DetonatorEntity> missConnect = new ArrayList<>();
-        for (DetonatorEntity connectDatum : connectData) {
+        List<ProjectDetonator> missConnect = new ArrayList<>();
+        for (ProjectDetonator connectDatum : connectData) {
             if (connectDatum.getTestStatus() != 0) {
                 missConnect.add(connectDatum);
             }
@@ -352,8 +354,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     // 删除条目
     private void deleteItemView(int position) {
         if (position <= connectData.size() - 1) {
-            DetonatorEntity detonatorEntity = connectData.get(position);
-            DBManager.getInstance().getDetonatorEntityDao().delete(detonatorEntity);
+            ProjectDetonator detonatorEntity = connectData.get(position);
+            DBManager.getInstance().getProjectDetonatorDao().delete(detonatorEntity);
             connectData.remove(position);
             connectTestAdapter.notifyDataSetChanged();
 //            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
@@ -377,7 +379,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * @param position
      */
     public void detSingleCheck(int position) {
-        DetonatorEntity detonatorEntity = connectData.get(position);
+        ProjectDetonator detonatorEntity = connectData.get(position);
         String detId = detonatorEntity.getDetId();
         Log.d(TAG, "detSingleCheck: detId = " + detId);
         int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
@@ -386,7 +388,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
         detonatorEntity.setTestStatus(testResult);
-        DBManager.getInstance().getDetonatorEntityDao().save(detonatorEntity);
+        DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
     }
 
     private void updateProjectStatus() {

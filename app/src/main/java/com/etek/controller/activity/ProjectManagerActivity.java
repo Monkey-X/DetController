@@ -31,7 +31,7 @@ public class ProjectManagerActivity extends BaseActivity implements View.OnClick
                 startActivity(new Intent(this,ProjectListActivity.class));
                 break;
             case R.id.project_data_report:
-                startActivity(new Intent(this,ProjectListActivity.class));
+                startActivity(new Intent(this,ReportListActivity.class));
                 break;
         }
     }

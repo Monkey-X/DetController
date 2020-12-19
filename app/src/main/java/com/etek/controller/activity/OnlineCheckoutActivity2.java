@@ -266,7 +266,7 @@ public class OnlineCheckoutActivity2 extends BaseActivity implements CheckOutAda
         }
         projectInfoDto.setCreateTime(new Date());
         detController.setContractId("");
-        projectInfoDto.addDetControllers(detController);
+//        projectInfoDto.addDetControllers(detController);
         return JSON.toJSONString(projectInfoDto);
     }
 }
