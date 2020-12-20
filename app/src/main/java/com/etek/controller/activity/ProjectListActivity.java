@@ -103,7 +103,12 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         EditText projectCode = view.findViewById(R.id.changeDelayTime);
         TextView textTitle = view.findViewById(R.id.text_title);
         textTitle.setText("项目编号：");
-        projectCode.setHint("YYYYMMDD");
+        String projectNum = getProjectNum();
+        if (TextUtils.isEmpty(projectNum)) {
+            projectCode.setHint("yyyymmdd-1");
+        }else {
+            projectCode.setText(projectNum);
+        }
         builder.setView(view);
         builder.setCancelable(false);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -139,6 +144,39 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         });
         builder.create().show();
     }
+
+    /**
+     * 获取项目编号
+     */
+    private String getProjectNum() {
+
+        String stringInfo = getStringInfo(AppIntentString.PROJECT_ID);
+        String projectNum = "";
+        if (TextUtils.isEmpty(stringInfo)) {
+            String dateString = getDateString();
+            projectNum =  dateString+"-1";
+        }else{
+            if (stringInfo.contains("-")) {
+                String[] split = stringInfo.split("-");
+                if (split[0].equalsIgnoreCase(getDateString())) {
+                    projectNum =  split[0]+"-" +(Integer.parseInt(split[1])+1);
+                }else{
+                    String dateString = getDateString();
+                    projectNum =  dateString+"-1";
+                }
+            }
+        }
+        setStringInfo(AppIntentString.PROJECT_ID,projectNum);
+        return projectNum;
+    }
+
+
+   public String  getDateString(){
+       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+       Date date = new Date(System.currentTimeMillis());
+       String format = simpleDateFormat.format(date);
+       return format;
+   }
 
 
     /**

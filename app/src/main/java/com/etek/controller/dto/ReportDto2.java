@@ -8,6 +8,8 @@ import com.etek.controller.entity.DetController;
 import com.etek.controller.entity.Detonator;
 import com.etek.controller.model.User;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.StringTool;
@@ -136,7 +138,7 @@ public class ReportDto2 {
     }
 
 
-    public void setDetControllerWithoutDet2(String userInfo, ProjectInfoEntity projectInfoEntity) {
+    public void setDetControllerWithoutDet2(String userInfo, PendingProject projectInfoEntity) {
         sbbh = projectInfoEntity.getControllerId();
 //        htid = detController.getProjectId();
 //        xmbh = detController.getContractId();
@@ -147,8 +149,8 @@ public class ReportDto2 {
         jd = StringTool.getDoubleStr(projectInfoEntity.getLongitude());
         wd = StringTool.getDoubleStr(projectInfoEntity.getLatitude());
         uid = "";
-        if (projectInfoEntity.getBlastTime() != null) {
-            bpsj = DateUtil.getDateStr(projectInfoEntity.getBlastTime());
+        if (projectInfoEntity.getDate() != null) {
+            bpsj = projectInfoEntity.getDate();
         }
 //        bprysfz = projectInfoEntity.getUserIDCode();
         User user = JSON.parseObject(userInfo, User.class);
@@ -157,10 +159,10 @@ public class ReportDto2 {
         dwdm = projectInfoEntity.getCompanyCode();
     }
 
-    public void setDets2(List<DetonatorEntity> detonatorEntities) {
+    public void setDets2(List<ProjectDetonator> detonatorEntities) {
         List<String> dets = new ArrayList<>();
-        for (DetonatorEntity detonatorEntity : detonatorEntities) {
-            dets.add(detonatorEntity.getCode());
+        for (ProjectDetonator detonatorEntity : detonatorEntities) {
+            dets.add(detonatorEntity.getUid());
         }
         uid = StringUtils.join(dets, ",");
     }

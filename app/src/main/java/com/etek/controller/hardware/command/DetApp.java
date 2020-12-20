@@ -30,6 +30,7 @@ import com.etek.controller.hardware.util.DataConverter;
 
 
 public class DetApp {
+	private static final int MAX_TRY = 3;
 	private SerialCommBase m_commobj;
 	private DetCmd m_cmdObj;
 	private DetErrorCode m_detError;
@@ -333,12 +334,22 @@ public class DetApp {
 	 * @return
 	 */
 	public int ModuleSetDelayTime(int nID,int nDT) {
-		int ret;
+		int ret =0;
 
-		ret = m_cmdObj.ModCmd55(nID,nDT);
+		for (int i = 0; i < MAX_TRY; i++) {
 
-		m_detError.Setter((byte)0x55, ret);
+			ret = m_cmdObj.ModCmd55(nID,nDT);
 
+			m_detError.Setter((byte)0x55, ret);
+			if (ret ==0) {
+				break;
+			}
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		return ret;
 	}
 
@@ -428,11 +439,21 @@ public class DetApp {
 	 * @return
 	 */
 	public int ModuleSingleCheck(int nID) {
-		int ret;
-		ret = m_cmdObj.ModCmd5E(nID);
+		int ret = 0;
 
-		m_detError.Setter((byte)0x5E, ret);
+		for(int i=0;i<MAX_TRY;i++){
+			ret = m_cmdObj.ModCmd5E(nID);
 
+			m_detError.Setter((byte)0x5E, ret);
+			if (ret ==0){
+				break;
+			}
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		return ret;
 	}
 

@@ -7,6 +7,8 @@ public class AppIntentString {
     public static final String PROJECT_ID = "projectId";
     public static final String DELAY_SETTING = "delay_setting";
 
+    public static final String PROJECT_NUM = "project_num";
+
     public static final String PROJECT_IMPLEMENT_CONNECT_TEST = "1";//连接检测
     public static final String PROJECT_IMPLEMENT_DELAY_DOWNLOAD = "2";//延时下载
     public static final String PROJECT_IMPLEMENT_ONLINE_AUTHORIZE = "3";//检查授权

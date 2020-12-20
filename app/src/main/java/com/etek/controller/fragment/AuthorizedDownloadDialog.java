@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.etek.controller.R;
+import com.etek.controller.common.Globals;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 public class AuthorizedDownloadDialog extends DialogFragment implements View.OnClickListener {
@@ -48,6 +49,8 @@ public class AuthorizedDownloadDialog extends DialogFragment implements View.OnC
         View rootView = inflater.inflate(R.layout.authorized_download_dialog, null);
         contractCode = rootView.findViewById(R.id.contract_code);
         authorizedCode = rootView.findViewById(R.id.authorized_code);
+        String companyCode = Globals.user.getCompanyCode();
+        contractCode.setText(companyCode);
         cancel = rootView.findViewById(R.id.cancel);
         makeSure = rootView.findViewById(R.id.makeSure);
         cancel.setOnClickListener(this);
@@ -65,7 +68,7 @@ public class AuthorizedDownloadDialog extends DialogFragment implements View.OnC
             case R.id.makeSure://确定
                 String strContractCode = getString(contractCode);
                 if (TextUtils.isEmpty(strContractCode)) {
-                    ToastUtils.show(getContext(), "请输入合同编号！");
+                    ToastUtils.show(getContext(), "请输入单位编号！");
                     return;
                 }
 

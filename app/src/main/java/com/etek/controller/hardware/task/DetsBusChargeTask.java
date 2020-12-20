@@ -25,7 +25,7 @@ public class DetsBusChargeTask extends AsyncTask<String, Integer, Integer> {
     protected void onPreExecute() {
         super.onPreExecute();
         ITaskCallback iTaskCallback = iTaskCallbackWeakReference.get();
-        iTaskCallback.showProgressDialog("总线充电中...",ITaskCallback.CHARGE_TYPE);
+        iTaskCallback.showProgressDialog("雷管充电中...",ITaskCallback.CHARGE_TYPE);
     }
 
     @Override

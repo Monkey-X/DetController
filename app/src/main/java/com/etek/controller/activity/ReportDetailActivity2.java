@@ -26,8 +26,11 @@ import com.etek.controller.minaclient.DetMessage;
 import com.etek.controller.minaclient.MessageCodecFactory;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
+import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.ListUtil;
@@ -70,8 +73,8 @@ public class ReportDetailActivity2 extends BaseActivity {
     private TextView controllerLocation;
     private TextView controllerTime;
     private RecyclerView detonatorList;
-    private ProjectInfoEntity projectInfoEntity;
-    private List<DetonatorEntity> detonatorEntityList;
+    private PendingProject projectInfoEntity;
+    private List<ProjectDetonator> detonatorEntityList;
     private ReportDetailAdapter reportDetailAdapter;
     private List<ReportDto2> reportDtos;
     private int result = 0;
@@ -107,8 +110,8 @@ public class ReportDetailActivity2 extends BaseActivity {
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
         XLog.d("proIds: " + proId);
-        projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-        detonatorEntityList = DBManager.getInstance().getDetonatorEntityDao().queryBuilder().where(DetonatorEntityDao.Properties.ProjectInfoId.eq(proId)).list();
+        projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(ProjectDetonatorDao.Properties.Id.eq(proId)).unique();
+        detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
     }
 
     /**
@@ -151,21 +154,18 @@ public class ReportDetailActivity2 extends BaseActivity {
             String loc = df.format(projectInfoEntity.getLongitude()) + "  ,  " + df.format(projectInfoEntity.getLatitude());
             controllerLocation.setText(loc);
             //起爆器时间
-            if (projectInfoEntity.getBlastTime() != null) {
-                String timeStr = DateUtil.getDateStr(projectInfoEntity.getBlastTime());
-                controllerTime.setText(timeStr);
-            }
+            controllerTime.setText(projectInfoEntity.getDate());
 
             reportDtos = getReportDto(getStringInfo("userInfo"),projectInfoEntity);
         }
     }
 
-    private List<ReportDto2> getReportDto(String userInfo, ProjectInfoEntity projectInfoEntity) {
+    private List<ReportDto2> getReportDto(String userInfo, PendingProject projectInfoEntity) {
         XLog.e("projectInfoEntity: " + projectInfoEntity.toString());
         List<ReportDto2> reportDtos = new ArrayList<>();
         if (detonatorEntityList != null && !detonatorEntityList.isEmpty()) {
-            List<List<DetonatorEntity>> lists = ListUtil.fixedGrouping(detonatorEntityList, MAX_GROUP);
-            for (List<DetonatorEntity> list : lists) {
+            List<List<ProjectDetonator>> lists = ListUtil.fixedGrouping(detonatorEntityList, MAX_GROUP);
+            for (List<ProjectDetonator> list : lists) {
                 ReportDto2 reportDto = new ReportDto2();
                 reportDto.setDetControllerWithoutDet2(userInfo,projectInfoEntity);
                 reportDto.setDets2(list);
@@ -272,7 +272,7 @@ public class ReportDetailActivity2 extends BaseActivity {
     /**
      * 上传中爆
      */
-    private void UPZBThread(List<DetonatorEntity> detonatorEntities) {
+    private void UPZBThread(List<ProjectDetonator> detonatorEntities) {
         Globals.zhongbaoAddress = getStringInfo("zhongbaoAddress");
         ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
         XLog.d("zhognbao: reportServerEnum " + Globals.zhongbaoAddress + reportServerEnum);
@@ -478,7 +478,7 @@ public class ReportDetailActivity2 extends BaseActivity {
     }
 
 
-    private List<String> createMessageList(List<DetonatorEntity> detonators) {
+    private List<String> createMessageList(List<ProjectDetonator> detonators) {
         List<String> msgs = new ArrayList<String>();
         if (detonators == null)
             return null;
@@ -498,12 +498,12 @@ public class ReportDetailActivity2 extends BaseActivity {
         message.setLng(projectInfoEntity.getLongitude());
         message.setLat(projectInfoEntity.getLatitude());
         message.setSn(projectInfoEntity.getControllerId());
-        String timestamp;
-        if (projectInfoEntity.getBlastTime() != null) {
-            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(projectInfoEntity.getBlastTime());
-        } else {
-            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
-        }
+        String timestamp = projectInfoEntity.getDate();
+//        if (projectInfoEntity.getBlastTime() != null) {
+//            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(projectInfoEntity.getBlastTime());
+//        } else {
+//            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
+//        }
 
         message.setQbDate(timestamp);
         message.setPackCount(packs + 1);

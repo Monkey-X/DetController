@@ -1,5 +1,6 @@
 package com.etek.controller.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,6 +59,11 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        // TODO: 2020/12/19  
+        // TODO: 2020/12/19
+        PendingProject pendingProject = projects.get(position);
+        Long id = pendingProject.getId();
+        Intent intent = new Intent(this,ReportDetailActivity2.class);
+        intent.putExtra(AppIntentString.PROJECT_ID,id);
+        startActivity(intent);
     }
 }

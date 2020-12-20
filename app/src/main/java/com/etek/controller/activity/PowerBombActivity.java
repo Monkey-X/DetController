@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
-import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.task.BusDisChargeTask;
 import com.etek.controller.hardware.task.CheckDropOffTask;
 import com.etek.controller.hardware.task.DetnoateTask;
@@ -21,17 +18,7 @@ import com.etek.controller.hardware.task.DetsBusChargeTask;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.SetBLTask;
-import com.etek.controller.hardware.test.DetCallback;
-import com.etek.controller.hardware.test.PowerCheckCallBack;
-import com.etek.controller.utils.location.DLocationTools;
-import com.etek.controller.utils.location.DLocationUtils;
-import com.etek.controller.utils.location.OnLocationChangeListener;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.utils.ToastUtils;
-
-import static com.etek.controller.utils.location.DLocationWhat.NO_LOCATIONMANAGER;
-import static com.etek.controller.utils.location.DLocationWhat.NO_PROVIDER;
-import static com.etek.controller.utils.location.DLocationWhat.ONLY_GPS_WORK;
 
 /**
  * 充电起爆
@@ -279,10 +266,18 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void setChargeData(int nVoltage, int nCurrent) {
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showstring.setText(String.format("当前：电压 %d   电流:%d", nVoltage, nCurrent));
+                String str = "";
+                float fc = nCurrent / 1000;
+                if (fc >= 1) {
+                    str = String.format("%dmA", fc);
+                } else {
+                    str = "< 1mA";
+                }
+                showstring.setText(String.format("当前：电压 %d   电流:%s", nVoltage, str));
             }
         });
     }
