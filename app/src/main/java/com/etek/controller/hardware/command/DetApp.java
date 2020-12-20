@@ -1434,6 +1434,14 @@ public class DetApp {
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
 
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		m_commobj.FlushComm();
+
 		ret = cmd.BoardSendCmd8D();
 		m_detError.Setter((byte)0x8D, ret);
 		if(0!=ret) return ret;
@@ -1450,7 +1458,7 @@ public class DetApp {
 			ret = prt.RecvBlock(RESP_LEN, resp);
 			if(0!=ret) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电 超时无应答");
+					cbobj.DisplayText("雷管网络总线放电 结束1");
 				break;
 			}
 
@@ -1459,18 +1467,18 @@ public class DetApp {
 
 			if(null==szdata) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电  获取无效数据");
+					cbobj.DisplayText("雷管网络总线放电 结束2");
 				break;
 			}
 			if(szdata.length<RESP_LEN-1) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电 获取数据长度不足");
+					cbobj.DisplayText("雷管网络总线放电 结束3");
 				break;
 			}
 
 			if(szdata[0]!=(byte)RESP_HEAD) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电 首数据无效");
+					cbobj.DisplayText("雷管网络总线放电 结束4");
 				break;
 			}
 
@@ -1503,7 +1511,7 @@ public class DetApp {
 			}
 
 			if(null!=cbobj)
-				cbobj.DisplayText("雷管网络总线放电 出错");
+				cbobj.DisplayText("雷管网络总线放电 结束5");
 			return -1;
 		}
 

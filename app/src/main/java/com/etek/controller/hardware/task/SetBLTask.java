@@ -24,6 +24,13 @@ public class SetBLTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected Integer doInBackground(String... strings) {
         int result = DetApp.getInstance().MainBoardSetBL(bHigh);
+        if (!bHigh) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return result;
     }
 

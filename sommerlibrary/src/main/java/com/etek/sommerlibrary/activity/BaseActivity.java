@@ -90,8 +90,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void missProDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
+        if (progressDialog != null) { progressDialog.dismiss();
         }
     }
 

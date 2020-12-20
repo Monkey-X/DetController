@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.common.AppIntentString;
 import com.etek.controller.hardware.task.BusDisChargeTask;
 import com.etek.controller.hardware.task.CheckDropOffTask;
 import com.etek.controller.hardware.task.DetnoateTask;
@@ -18,6 +20,9 @@ import com.etek.controller.hardware.task.DetsBusChargeTask;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.SetBLTask;
+import com.etek.controller.persistence.DBManager;
+import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 /**
@@ -41,14 +46,21 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     private boolean isBombing = false;
     private View powerBank;
+    private long proId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_power_bomb);
         initSupportActionBar(R.string.title_power_bomb);
+        getProjectId();
         init();
         initView();
+    }
+
+    private void getProjectId() {
+        Intent intent = getIntent();
+        proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
     }
 
     private void initView() {
@@ -69,43 +81,47 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     long mActionTime;
     int mOkKeyAction;
 
+    boolean isCanBomb = false;
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 
         int keyCode = event.getKeyCode();
         int action = event.getAction();
 
-        if (keyCode == 19 && action == KeyEvent.ACTION_DOWN) {
-            mBackKeyAction = KeyEvent.ACTION_DOWN;  //记录按下状态
-            if (mActionTime == 0) {
-                mActionTime = System.currentTimeMillis();
+        if (isCanBomb) {
+
+            if (keyCode == 19 && action == KeyEvent.ACTION_DOWN) {
+                mBackKeyAction = KeyEvent.ACTION_DOWN;  //记录按下状态
+                if (mActionTime == 0) {
+                    mActionTime = System.currentTimeMillis();
+                }
+            }
+
+            if (keyCode == 19 && action == KeyEvent.ACTION_UP) {
+                mBackKeyAction = KeyEvent.ACTION_UP;  //记录松下状态
+                mActionTime = 0;
+            }
+
+            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_DOWN) {
+                mOkKeyAction = KeyEvent.ACTION_DOWN;   //记录按下状态
+                if (mActionTime == 0) {
+                    mActionTime = System.currentTimeMillis();
+                }
+            }
+
+            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_UP) {
+                mOkKeyAction = KeyEvent.ACTION_UP;    //记录松下状态
+                mActionTime = 0;
+            }
+
+            //长按，左右侧键  todo
+            if (isLongPress() && mBackKeyAction == KeyEvent.ACTION_DOWN && mOkKeyAction == KeyEvent.ACTION_DOWN) {
+                //  长按左右键之后进行起爆操作 todo  进行起爆操作
+                DetonateAllDet();
             }
         }
 
-        if (keyCode == 19 && action == KeyEvent.ACTION_UP) {
-            mBackKeyAction = KeyEvent.ACTION_UP;  //记录松下状态
-            mActionTime = 0;
-        }
-
-        if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            mOkKeyAction = KeyEvent.ACTION_DOWN;   //记录按下状态
-            if (mActionTime == 0) {
-                mActionTime = System.currentTimeMillis();
-            }
-        }
-
-        if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_UP) {
-            mOkKeyAction = KeyEvent.ACTION_UP;    //记录松下状态
-            mActionTime = 0;
-        }
-
-        //长按，左右侧键  todo
-        if (isLongPress() && mBackKeyAction == KeyEvent.ACTION_DOWN && mOkKeyAction == KeyEvent.ACTION_DOWN) {
-            //  长按左右键之后进行起爆操作 todo  进行起爆操作
-
-            DetonateAllDet();
-
-        }
 
         return super.dispatchKeyEvent(event);
 
@@ -113,6 +129,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     private void DetonateAllDet() {
         // 进行网络起爆
+        isCanBomb = false;
         if (!isBombing) {
             isBombing = true;
             showProDialog("起爆中...");
@@ -259,10 +276,35 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         missProDialog();
         if (result == 0) {
             toastText.setText("起爆成功！");
+            // 起爆成功，改变项目状态
+            changeProjectStatus();
         } else {
-            // 网络起爆失败,进行总线放电
-            startDisChangeTask();
+            showFialDialog();
         }
+    }
+
+    private void changeProjectStatus() {
+        PendingProject pendingProject = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
+        pendingProject.setProjectStatus(Integer.parseInt(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT));
+        DBManager.getInstance().getPendingProjectDao().save(pendingProject);
+    }
+
+    /**
+     *
+     */
+    private void showFialDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("起爆失败！");
+        builder.setCancelable(false);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                // 网络起爆失败,进行总线放电
+                startDisChangeTask();
+            }
+        });
+        builder.create().show();
     }
 
     @Override
@@ -271,14 +313,15 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String str = "";
-                float fc = nCurrent / 1000;
+                String strAm = "";
+                double fc = nCurrent * 1.0 / 1000;
                 if (fc >= 1) {
-                    str = String.format("%dmA", fc);
+                    strAm = String.format("%dmA", ((int) fc));
                 } else {
-                    str = "< 1mA";
+                    strAm = "< 1mA";
                 }
-                showstring.setText(String.format("当前：电压 %d   电流:%s", nVoltage, str));
+                double fv = nVoltage * 1.0 / 1000;
+                showstring.setText(String.format("当前：电压 %.1fV   电流:%s", fv, strAm));
             }
         });
     }
@@ -294,6 +337,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 toastText.setText("请同时按下上下按钮进行起爆操作！");
+                isCanBomb = true;
                 powerBank.setVisibility(View.GONE);
                 if (checkDropOffTask != null) {
                     checkDropOffTask.cancel(true);

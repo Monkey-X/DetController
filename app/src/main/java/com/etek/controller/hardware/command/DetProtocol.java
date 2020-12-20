@@ -15,10 +15,11 @@ import com.etek.controller.hardware.util.DataConverter;
 import java.util.Arrays;
 
 public class DetProtocol {
+	private static final String TAG = "DetProtocol";
 	private SerialCommBase m_commobj;
 	private final boolean DEBUG_PRINT = true;
 
-	public DetProtocol(SerialCommBase serialobj){
+	public DetProtocol(SerialCommBase serialobj) {
 		m_commobj = serialobj;
 	}
 
@@ -27,7 +28,7 @@ public class DetProtocol {
 	 * nLen: 输入字节流长度
 	 * szdata: 字节流
 	 * */
-	private byte GetCRC8(int nLen,byte[] szdata) {
+	private byte GetCRC8(int nLen, byte[] szdata) {
 		int wcrc = 0x00;
 		int i,j;
 
@@ -63,7 +64,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			System.out.println(String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
+			Log.d(TAG, "SendBlock: " + String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
 		}
 		int ret = m_commobj.SendBlock(szcmd);
 		return ret;
@@ -78,6 +79,7 @@ public class DetProtocol {
 	public int RecvBlock(int nLen,DetResponse resp) {
 		byte[] data =  m_commobj.RecvBlock(nLen);
 		if(null==data) return m_commobj.GetErrorCode();
+		Log.d(TAG, "RecvBlock: "+String.format("\t命令：%s", DataConverter.bytes2HexString(data)));
 
 		//check crc8;
 		int n = data.length;
@@ -125,7 +127,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			System.out.println(String.format("\t命令：%s",DataConverter.bytes2HexString(szcmd)));
+			Log.d(TAG, "SendRecv: " + String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
 		}
 
 		long t0 = System.currentTimeMillis();
@@ -136,12 +138,12 @@ public class DetProtocol {
 		long t1 = System.currentTimeMillis();
 
 		if(DEBUG_PRINT) {
-			System.out.println(String.format("命令：%02X\t耗时:%d ms",bCmd,t1-t0));
-			if(null==data)
-				System.out.println("应答: 无");
-			else{
+			Log.d(TAG, "SendRecv: " + String.format("命令：%02X\t耗时:%d ms", bCmd, t1 - t0));
+			if (null == data)
+				Log.d(TAG, "SendRecv: 应答: 无");
+			else {
 				String strout = DataConverter.bytes2HexString(data);
-				System.out.println(String.format("\t应答：%s",strout));
+				Log.d(TAG, "SendRecv: " + String.format("\t应答：%s", strout));
 			}
 		}
 

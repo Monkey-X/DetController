@@ -20,7 +20,7 @@ public class DetnoateTask extends AsyncTask<String, Integer, Integer> {
 
     @Override
     protected Integer doInBackground(String... strings) {
-        int result = DetApp.getInstance().ModuleDetonate(-1);
+        int result = DetApp.getInstance().ModuleDetonate(0);
         return result;
     }
 

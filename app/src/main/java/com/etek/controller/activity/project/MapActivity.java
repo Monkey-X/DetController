@@ -1,0 +1,106 @@
+package com.etek.controller.activity.project;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MyLocationData;
+import com.etek.controller.R;
+import com.etek.sommerlibrary.activity.BaseActivity;
+
+/**
+ * 百度地图查看位置信息
+ */
+public class MapActivity extends BaseActivity implements View.OnClickListener {
+
+    private TextView longitude;
+    private TextView latitude;
+    private MapView mMapView;
+    private BaiduMap map;
+    private LocationClient mLocationClient;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
+        initSupportActionBar(R.string.activity_map);
+        initView();
+        initMap();
+    }
+
+    private void initView() {
+        longitude = findViewById(R.id.longitude);
+        latitude = findViewById(R.id.latitude);
+        mMapView = (MapView) findViewById(R.id.bmapView);
+        map = mMapView.getMap();
+        View refresh = findViewById(R.id.refresh);
+        refresh.setOnClickListener(this);
+    }
+
+    private void initMap() {
+        map.setMyLocationEnabled(true);
+        //定位初始化
+        mLocationClient = new LocationClient(this);
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true); // 打开gps
+        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setScanSpan(1000);
+        mLocationClient.setLocOption(option);
+        MyLocationListener myLocationListener = new MyLocationListener();
+        mLocationClient.registerLocationListener(myLocationListener);
+        mLocationClient.start();
+    }
+
+    public class MyLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            //mapView 销毁后不在处理新接收的位置
+            if (location == null || mMapView == null) {
+                return;
+            }
+            longitude.setText(location.getLongitude()+"");
+            latitude.setText(location.getLatitude()+"");
+            MyLocationData locData = new MyLocationData.Builder()
+                    .accuracy(location.getRadius())
+                    // 此处设置开发者获取到的方向信息，顺时针0-360
+                    .direction(location.getDirection()).latitude(location.getLatitude())
+                    .longitude(location.getLongitude()).build();
+            map.setMyLocationData(locData);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        // 刷新地图
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+        mMapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
+        mMapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        mLocationClient.stop();
+        map.setMyLocationEnabled(false);
+        mMapView.onDestroy();
+        mMapView = null;
+    }
+}

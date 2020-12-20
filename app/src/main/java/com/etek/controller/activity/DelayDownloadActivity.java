@@ -60,6 +60,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private DelayDownloadTask delayDownloadTask;
     private ProgressDialog progressValueDialog;
     private SoundPoolHelp soundPoolHelp;
+    private boolean isCancelDownLoad = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -421,6 +422,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         @Override
         protected Integer doInBackground(String... strings) {
             for (int i = 0; i < detonators.size(); i++) {
+                if (isCancelDownLoad) {
+                    return null;
+                }
                 detSingleDownload(i);
                 publishProgress(i);
             }
@@ -437,6 +441,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         protected void onPreExecute() {
             super.onPreExecute();
             showTextProgressDialog();
+            isCancelDownLoad = false;
         }
 
         @Override
@@ -469,6 +474,16 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         progressValueDialog.setCancelable(false);
         progressValueDialog.setCanceledOnTouchOutside(false);
         progressValueDialog.setMax(detonators.size());
+        progressValueDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO: 2020/12/20
+                isCancelDownLoad = true;
+                if (delayDownloadTask !=null) {
+                    delayDownloadTask.cancel(true);
+                }
+            }
+        });
         progressValueDialog.show();
     }
 }

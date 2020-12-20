@@ -203,7 +203,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.project_handle:
                 // 跳转操作界面，连接检测，延时下载,检查授权
-                if (mDetonatorEntities.size() == 0) {
+                if (detonators.size() == 0) {
                     showStatusDialog("请先进行雷管组网！");
                     return;
                 }

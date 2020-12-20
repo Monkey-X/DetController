@@ -5,89 +5,45 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:padding="2dp"
+        android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/det_sn"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:text="序号"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:layout_height="wrap_content"/>
+        <View
+            android:layout_width="1dp"
+            android:background="@color/btn_gray_normal"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:text="管码"
+            android:id="@+id/det_code"
+            android:layout_weight="2"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_height="wrap_content"/>
+        <View
+            android:layout_width="1dp"
+            android:background="@color/btn_gray_normal"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:text="状态"
+            android:id="@+id/det_status"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="管码："
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/detCode"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content"/>
     </LinearLayout>
-
-    <LinearLayout
-        android:padding="2dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="UID："
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/uidCode"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:padding="2dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="工作码状态："
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/workCode"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:padding="2dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="有效期："
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/validDate"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <View
-        android:layout_marginTop="3dp"
-        android:layout_width="match_parent"
-        android:background="@color/btn_gray_normal"
-        android:layout_height="2dp"/>
 
 </LinearLayout>

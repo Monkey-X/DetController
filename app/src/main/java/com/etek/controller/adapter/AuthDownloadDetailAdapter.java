@@ -7,7 +7,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.etek.controller.R;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class AuthDownloadDetailAdapter extends BaseQuickAdapter<DetonatorEntity, BaseViewHolder> {
@@ -18,11 +17,27 @@ public class AuthDownloadDetailAdapter extends BaseQuickAdapter<DetonatorEntity,
 
     @Override
     protected void convert(BaseViewHolder helper, DetonatorEntity item) {
-       helper.setText(R.id.detCode,item.getCode());
-       helper.setText(R.id.uidCode,item.getUid());
-       helper.setText(R.id.workCode,item.getStatus()+"");
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String format = simpleDateFormat.format(item.getValidTime());
-        helper.setText(R.id.validDate,format);
+        helper.setText(R.id.det_sn, helper.getPosition() + "");
+        helper.setText(R.id.det_code, item.getCode());
+        String strStauts = getStrStauts(item.getStatus());
+        helper.setText(R.id.det_status, strStauts);
+    }
+
+    private String getStrStauts(int status) {
+        String strStatus = "";
+        if (status == 0) {
+            strStatus = "正常";
+        } else if (status == 1) {
+            strStatus ="黑名单";
+        }else if (status == 2){
+            strStatus ="已使用";
+        }else if (status == 3){
+            strStatus ="不存在";
+        }else {
+            strStatus= "未知";
+        }
+        return strStatus;
     }
 }
+
+

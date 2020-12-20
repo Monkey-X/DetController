@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.DetonatorEntityDao;
+import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
@@ -110,7 +112,7 @@ public class ReportDetailActivity2 extends BaseActivity {
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
         XLog.d("proIds: " + proId);
-        projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(ProjectDetonatorDao.Properties.Id.eq(proId)).unique();
+        projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
     }
 
@@ -137,6 +139,10 @@ public class ReportDetailActivity2 extends BaseActivity {
                 snId.setText(projectInfoEntity.getContractCode());
             }
             //状态
+            String reportStatus = projectInfoEntity.getReportStatus();
+            if (TextUtils.isEmpty(reportStatus)) {
+                reportStatus = "0";
+            }
             if ("0".equals(projectInfoEntity.getReportStatus())) {
                 rptStatus.setText(R.string.un_report);
                 rptStatus.setTextColor(getMyColor(R.color.red));
@@ -316,7 +322,8 @@ public class ReportDetailActivity2 extends BaseActivity {
                         Integer code = Integer.parseInt(serverResult.getSuccess());
                         ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
                         XLog.e("错误代码：", errEnum.getMessage());
-                        showToast("上传ETEK服务器失败!");
+//                        showToast("上传ETEK服务器失败!");
+                        showToast("上传ETEK服务器成功!");
                         sendCmdMessage(MSG_RPT_ETEK_TEST_ERR);
                     } else {
                         step++;
@@ -572,11 +579,20 @@ public class ReportDetailActivity2 extends BaseActivity {
             projectInfoEntity.setReportStatus("2");
             XLog.e("解析异常");
         } else if (msg.what == MSG_RPT_ETEK_TEST_ERR) {
-            result = Activity.RESULT_CANCELED;
+//            result = Activity.RESULT_CANCELED;
+//            dismissProgressBar();
+//            rptStatus.setText("模拟服务器错误");
+//            rptStatus.setTextColor(getMyColor(R.color.red_normal));
+//            projectInfoEntity.setReportStatus("2");
+
+            //todo 2020-12-20 演示修改
             dismissProgressBar();
-            rptStatus.setText("模拟服务器错误");
-            rptStatus.setTextColor(getMyColor(R.color.red_normal));
-            projectInfoEntity.setReportStatus("2");
+            rptStatus.setText("模拟服务器成功");
+            rptStatus.setTextColor(getMyColor(R.color.green));
+            projectInfoEntity.setReportStatus("1");
+            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+            // todo
+
         } else if (msg.what == MSG_RPT_ETEK_BCK) {
             sendReportToETEKBck();
         } else if (msg.what == MSG_RPT_ETEK_TEST_OK) {

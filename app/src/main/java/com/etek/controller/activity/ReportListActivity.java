@@ -1,7 +1,6 @@
 package com.etek.controller.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,18 +30,25 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
         setContentView(R.layout.activity_report_list);
         initSupportActionBar(R.string.title_activity_report);
         initView();
-        getProjectData();
+//        getProjectData();
         initData();
     }
 
     private void getProjectData() {
         List<PendingProject> list = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.ProjectStatus.eq(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT)).list();
-        if (list !=null && list.size()!=0) {
+        if (list != null && list.size() != 0) {
+            projects.clear();
             projects.addAll(list);
             projectReportAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             showStatusDialog("没有上报的数据！");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getProjectData();
     }
 
     private void initData() {
@@ -52,7 +58,7 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
     private void initView() {
         recycleView = findViewById(R.id.recycleView);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
-        projectReportAdapter = new ProjectReportAdapter(R.layout.item_det_report,projects);
+        projectReportAdapter = new ProjectReportAdapter(R.layout.item_det_report, projects);
         projectReportAdapter.setOnItemClickListener(this);
         recycleView.setAdapter(projectReportAdapter);
     }

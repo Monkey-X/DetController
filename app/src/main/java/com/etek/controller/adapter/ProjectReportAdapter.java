@@ -1,6 +1,7 @@
 package com.etek.controller.adapter;
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -22,6 +23,9 @@ public class ProjectReportAdapter extends BaseQuickAdapter<PendingProject, BaseV
         helper.setText(R.id.det_size, item.getDetonatorList().size() + "");
         helper.setText(R.id.rpt_time, item.getDate());
         String reportStatus = item.getReportStatus();
+        if (TextUtils.isEmpty(reportStatus)) {
+            reportStatus = "0";
+        }
         int status = Integer.parseInt(reportStatus);
         if (status == 0) {
             helper.setText(R.id.contrl_status, "未上报");

@@ -2,9 +2,7 @@ package com.etek.controller.activity;
 
 
 import android.app.ProgressDialog;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.SoundPool;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,7 +37,6 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -66,6 +63,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private List<ProjectDetonator> detonatorEntityList;
     private ProgressDialog progressValueDialog;
     private SoundPoolHelp soundPoolHelp;
+
+    // 是否取消连接检测
+    private boolean isCancelTest = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -397,7 +397,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      *
      * @param position
      */
-    public void detSingleCheck(int position) {
+    public boolean detSingleCheck(int position) {
         ProjectDetonator detonatorEntity = connectData.get(position);
         String detId = detonatorEntity.getDetId();
         Log.d(TAG, "detSingleCheck: detId = " + detId);
@@ -406,9 +406,13 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         // 进行雷管的链接检测
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
-        playSound(testResult == 0);
+        StringBuilder stringBuilder = new StringBuilder();
+        testResult = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
         detonatorEntity.setTestStatus(testResult);
+        detonatorEntity.setUid(stringBuilder.toString());
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
+        playSound(testResult == 0);
+        return testResult == 0;
     }
 
     private void playSound(boolean b) {
@@ -431,9 +435,20 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public class TestAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
         protected Integer doInBackground(String... strings) {
+            int success = 0;
+            int fial = 0;
             for (int i = 0; i < connectData.size(); i++) {
-                detSingleCheck(i);
-                publishProgress(i);
+
+                if (isCancelTest) {
+                    return null;
+                }
+                boolean b = detSingleCheck(i);
+                if (b) {
+                    success++;
+                } else {
+                    fial++;
+                }
+                publishProgress(i, success, fial);
             }
             return null;
         }
@@ -442,12 +457,14 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPreExecute() {
             super.onPreExecute();
             showTextProgressDialog();
+            isCancelTest = false;
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             updateProgress(values[0]);
+            updateResult(values[1], values[2]);
         }
 
         @Override
@@ -471,6 +488,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    public void updateResult(int success, int fial) {
+        if (progressValueDialog != null) {
+            progressValueDialog.setMessage(String.format("成功：%d\t失败：%d", success, fial));
+        }
+    }
+
     /**
      * 显示进度条
      */
@@ -481,6 +504,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         progressValueDialog.setCancelable(false);
         progressValueDialog.setCanceledOnTouchOutside(false);
         progressValueDialog.setMax(connectData.size());
+        progressValueDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO: 2020/12/20
+                isCancelTest = true;
+                if (testAsyncTask !=null) {
+                    testAsyncTask.cancel(true);
+                }
+            }
+        });
         progressValueDialog.show();
     }
 }

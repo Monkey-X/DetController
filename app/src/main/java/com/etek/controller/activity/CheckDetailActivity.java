@@ -19,6 +19,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.ValueFilter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.MapActivity;
 import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
@@ -214,11 +215,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             //起爆器编号
             controllerId.setText(getStringInfo(getString(R.string.controller_sno)));
             //地标
+            locationLongitude.setText("" + AppIntentString.strGratitude);
+            locationLatitude.setText("" + AppIntentString.strLatitude);
             if (pendingProject.getLongitude() != 0 || pendingProject.getLatitude() != 0) {
                 DecimalFormat df = new DecimalFormat("0.000000");
                 String loc = df.format(pendingProject.getLongitude()) + "  ,  " + df.format(pendingProject.getLatitude());
-                locationLongitude.setText("" + pendingProject.getLongitude());
-                locationLatitude.setText("" + pendingProject.getLatitude());
             }
             controllerTime.setText(pendingProject.getDate());
         }
@@ -227,7 +228,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.get_location) {
-            // getLocation();
+            // 跳转地图界面
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -335,17 +338,50 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             ToastUtils.show(mContext, "当前纬度为空");
         } else {
             if ("online".equals(type)) {//在线检查
-                getVerifyResult(pendingProject);
+                getVerifyResult2(pendingProject);
             } else if ("offline".equals(type)) {//离线检查
-                offlineCheck();
+                offlineCheck2();
             }
         }
+    }
+
+    // TODO: 2020/12/20 演示
+    private void getVerifyResult2(PendingProject pendingProject) {
+        //todo 2020-12-20 演示
+        showProDialog("规则检查中...");
+        detonatorList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                missProDialog();
+                changeDetStatus();
+                showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
+            }
+        },2000);
+        return;
+        //todo
+    }
+
+    // 演示
+    private void offlineCheck2() {
+        //todo 2020-12-20 演示
+        showProDialog("规则检查中...");
+        detonatorList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                missProDialog();
+                changeDetStatus();
+                showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
+            }
+        },2000);
+        return;
+        //todo
     }
 
     /**
      * 获取验证结果
      */
     private void getVerifyResult(PendingProject projectInfoEntity) {
+
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
         onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
         onlineCheckDto.setHtid(projectInfoEntity.getContractCode());
@@ -596,7 +632,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 离线检查
      */
     private void offlineCheck() {
-
         String controllerId = pendingProject.getControllerId();
         if (isInBlackList(controllerId)) {
             showStatusDialog("起爆器未注册，不允许起爆");
@@ -638,6 +673,16 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         // 最后检查雷管的数量
         checkDetonatorData(projectInfo,detInProjectId);
 
+    }
+
+    // todo 刷新雷管状态，演示
+    private void changeDetStatus() {
+        for (int i = 0; i < projectDetonatorList.size(); i++) {
+            ProjectDetonator projectDetonator = projectDetonatorList.get(i);
+            projectDetonator.setStatus(0);
+        }
+        checkDetailAdapter.notifyDataSetChanged();
+        DBManager.getInstance().getProjectDetonatorDao().saveInTx(projectDetonatorList);
     }
 
     /**

@@ -42,9 +42,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ReportListActivity"></activity>
+        <activity android:name=".activity.project.MapActivity"></activity>
+        <activity android:name=".activity.ReportListActivity" />
         <activity android:name=".activity.ProjectManagerActivity" />
-        <activity android:name=".activity.AuthDownLoadDetailActivity" />
+        <activity android:name=".activity.project.AuthDownLoadDetailActivity" />
         <activity android:name=".activity.AboutActivity" />
         <activity
             android:name=".activity.LoginActivity"

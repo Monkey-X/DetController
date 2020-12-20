@@ -20,7 +20,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="90dp"
         android:gravity="center"
-        android:text="EDFP"
+        android:text="雷管E联_D"
         android:textColor="@color/white"
         android:textSize="28sp" />
 
