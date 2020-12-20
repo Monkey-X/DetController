@@ -22,6 +22,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
+        initSupportActionBar(R.string.home_local_setting);
         initView();
     }
 

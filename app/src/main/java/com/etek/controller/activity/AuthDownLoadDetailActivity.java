@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -42,11 +44,10 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth_down_load_detail);
+        initSupportActionBar(R.string.title_activity_detail_download);
         getIntentData();
         initView();
         initData();
-
-
     }
 
     private void getIntentData() {

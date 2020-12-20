@@ -14,6 +14,7 @@ public class ProjectManagerActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_manager);
+        initSupportActionBar(R.string.home_project_implement);
         initView();
     }
 

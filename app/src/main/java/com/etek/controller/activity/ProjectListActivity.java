@@ -19,6 +19,7 @@ import com.etek.controller.adapter.ProjectListAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * 项目列表页
  */
-public class ProjectListActivity extends BaseActivity implements View.OnClickListener, BaseQuickAdapter.OnItemClickListener {
+public class ProjectListActivity extends BaseActivity implements View.OnClickListener, BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
 
     private RecyclerView recycleView;
     private View noDataView;
@@ -65,6 +66,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         projectListAdapter = new ProjectListAdapter(R.layout.item_list_project, projectInfos);
         recycleView.setAdapter(projectListAdapter);
         projectListAdapter.setOnItemClickListener(this);
+        projectListAdapter.setOnItemLongClickListener(this);
 
     }
 
@@ -197,5 +199,40 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         Intent intent = new Intent(mContext, ProjectDetailActivity.class);
         intent.putExtra(AppIntentString.PROJECT_ID, pendingProject.getId());
         startActivity(intent);
+    }
+
+    /**
+     * 工程列表中的工程长按删除
+     * @param adapter
+     * @param view
+     * @param position
+     * @return
+     */
+    @Override
+    public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+        PendingProject pendingProject = projectInfos.get(position);
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("确定删除吗？");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //删除数据
+                DBManager.getInstance().getPendingProjectDao().delete(pendingProject);
+                List<ProjectDetonator> projectDetonators = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(pendingProject.getId());
+                DBManager.getInstance().getProjectDetonatorDao().deleteInTx(projectDetonators);
+                projectInfos.remove(position);
+                projectListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+        return true;
     }
 }

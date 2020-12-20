@@ -38,6 +38,9 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 雷管组网界面
+ */
 public class ProjectDetailActivity extends BaseActivity implements View.OnClickListener, ProjectDetailAdapter.OnItemClickListener, DelaySettingDialog.OnDelaySettingListener {
 
     private static final String TAG = "ProjectDetailActivity";
@@ -57,6 +60,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private DetDelayBean detDelayBean;
     private int scanType;
     private boolean isScan = false;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -481,7 +485,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     createDetData(strgm);
                 } else {
                     // 扫描失败
-                    showStatusDialog("扫描失败！");
+                    showAutoMissDialog("扫描失败！");
                     isInsertItem = false;
                 }
             }
@@ -523,6 +527,28 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 //        projectDetailAdapter.notifyDataSetChanged();
     }
 
+
+    public void showAutoMissDialog(String msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialog = builder.create();
+        alertDialog.show();
+        rootView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (alertDialog !=null) {
+                    alertDialog.dismiss();
+                }
+            }
+        },1000);
+    }
+
     /**
      * 判断是否有相同的雷管
      * @param strgm
@@ -533,7 +559,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             for (int i = 0; i < detonators.size(); i++) {
                 ProjectDetonator detonatorEntity = detonators.get(i);
                 if (detonatorEntity.getCode().equals(strgm)) {
-                    showStatusDialog("此雷管已扫描！");
+                    showAutoMissDialog("此雷管已扫描！");
                     recycleView.scrollToPosition(i);
                     return true;
                 }
@@ -595,7 +621,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             super.onPostExecute(result);
             missProDialog();
             if (TextUtils.isEmpty(result)) {
-                showStatusDialog("获取雷管码失败！");
+                showAutoMissDialog("获取雷管码失败！");
             } else {
                 createProjectDetData(result, type);
             }
@@ -604,6 +630,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     // 根据孔内或者孔间设置延时
     private void createProjectDetData(String detCode, int type) {
+        if (checkTheSameDet(detCode)) {
+            return;
+        }
         Log.d(TAG, "createProjectDetData: type = " + type);
         ProjectDetonator projectDetonator = new ProjectDetonator();
         projectDetonator.setProjectInfoId(projectId);

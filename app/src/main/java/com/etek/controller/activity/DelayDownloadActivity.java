@@ -1,10 +1,10 @@
 package com.etek.controller.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,23 +17,20 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDelayAdapter;
-import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
-import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -61,6 +58,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private long proId;
     private List<ProjectDetonator> detonatorEntityList;
     private DelayDownloadTask delayDownloadTask;
+    private ProgressDialog progressValueDialog;
+    private SoundPoolHelp soundPoolHelp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +69,25 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         initView();
         initRecycleView();
         initProject();
+        initSoundPool();
+    }
+
+    private void initSoundPool() {
+        soundPoolHelp = new SoundPoolHelp(this);
+        soundPoolHelp.initSound();
+    }
+
+    private void playSound(boolean b) {
+        if (soundPoolHelp != null) {
+            soundPoolHelp.playSound(b);
+        }
+    }
+
+
+    private void releaseSound() {
+        if (soundPoolHelp != null) {
+            soundPoolHelp.releaseSound();
+        }
     }
 
     /**
@@ -357,6 +375,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         Log.d(TAG, "detSingleDownload: MainBoardHVEnable = " + wakeupStatus);
         // 进行雷管的链接检测
         int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId),relayTime);
+        playSound(downloadResult == 0);
         Log.d(TAG, "detSingleDownload: downloadResult = " + downloadResult);
         detonatorEntity.setDownLoadStatus(downloadResult);
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
@@ -381,6 +400,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (delayDownloadTask != null) {
             delayDownloadTask.cancel(true);
         }
+        releaseSound();
     }
 
 
@@ -396,28 +416,59 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     /**
      * 异步进行 雷管的延时下载
      */
-    public class DelayDownloadTask extends AsyncTask {
+    public class DelayDownloadTask extends AsyncTask<String, Integer, Integer> {
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showProDialog("下载中...");
-        }
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
+        protected Integer doInBackground(String... strings) {
             for (int i = 0; i < detonators.size(); i++) {
                 detSingleDownload(i);
+                publishProgress(i);
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Object o) {
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            updateProgress(values[0]);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showTextProgressDialog();
+        }
+
+        @Override
+        protected void onPostExecute(Integer o) {
             super.onPostExecute(o);
             missProDialog();
             mProjectDelayAdapter.notifyDataSetChanged();
             updateProjectStatus();
+            dissProgressDialog();
         }
+    }
+
+
+    public void dissProgressDialog() {
+        if (progressValueDialog != null) {
+            progressValueDialog.dismiss();
+        }
+    }
+
+    public void updateProgress(int values) {
+        if (progressValueDialog != null) {
+            progressValueDialog.setProgress(values);
+        }
+    }
+
+    private void showTextProgressDialog() {
+        progressValueDialog = new ProgressDialog(this);
+        progressValueDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressValueDialog.setTitle("下载中...");
+        progressValueDialog.setCancelable(false);
+        progressValueDialog.setCanceledOnTouchOutside(false);
+        progressValueDialog.setMax(detonators.size());
+        progressValueDialog.show();
     }
 }

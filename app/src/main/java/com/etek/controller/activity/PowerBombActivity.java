@@ -29,7 +29,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private int GO_TO_GPS = 150;
     private TextView toastText;
     private TextView showstring;
-    private TextView powerBank;
+
     private String TAG = "PowerBombActivity";
     private PowerOnSelfCheckTask powerAsyncTask;
     private ProgressDialog progressValueDialog;
@@ -40,6 +40,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private AlertDialog startBombDialog;
 
     private boolean isBombing = false;
+    private View powerBank;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -316,6 +317,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         checkDropOffTask = new CheckDropOffTask(this);
         checkDropOffTask.execute();
     }
+
+
 
 
     /**

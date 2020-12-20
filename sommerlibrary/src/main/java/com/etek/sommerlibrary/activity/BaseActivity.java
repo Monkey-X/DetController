@@ -114,8 +114,6 @@ public class BaseActivity extends AppCompatActivity {
             builder.setCancelable(true); //设置按钮是否可以按返回键取消,false则不可以取消
             android.support.v7.app.AlertDialog dialog = builder.create(); //创建对话框
             dialog.setCanceledOnTouchOutside(false); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
-
-
             dialog.show();
         });
 

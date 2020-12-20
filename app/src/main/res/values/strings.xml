@@ -272,6 +272,7 @@
     <string name="online_detail">在线详情</string>
     <string name="offline_detail">离线详情</string>
     <string name="action_check">检查</string>
+    <string name="title_activity_detail_download">下载详情</string>
 
 
 </resources>

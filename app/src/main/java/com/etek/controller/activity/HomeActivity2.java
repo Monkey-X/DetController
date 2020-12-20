@@ -119,6 +119,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     }
 
     private void initView() {
+        startTime = System.currentTimeMillis();
         projectManage = findViewById(R.id.home_project_manage);
         projectImplement = findViewById(R.id.home_project_implement);
         assistFunction = findViewById(R.id.home_assist_function);
@@ -133,11 +134,10 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.home_project_manage://授权下载
-//                startActivity(NetWorkActivity.class);//方案管理
                 startActivity(AuthorizedDownloadActivity.class);
                 break;
 
-            case R.id.home_project_implement://工程实施
+            case R.id.home_project_implement://工程管理
                 startActivity(ProjectManagerActivity.class);
                 break;
 
@@ -165,7 +165,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onSart: ");
-        startTime = System.currentTimeMillis();
     }
 
     @Override
