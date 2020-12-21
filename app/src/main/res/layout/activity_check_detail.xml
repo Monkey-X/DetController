@@ -138,6 +138,7 @@
         </RelativeLayout>
 
         <Button
+            android:visibility="invisible"
             android:id="@+id/get_location"
             android:text="地图"
             android:padding="8dp"

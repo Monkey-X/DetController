@@ -336,7 +336,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                toastText.setText("请同时按下上下按钮进行起爆操作！");
+                toastText.setText("请同时长按上下按钮1秒进行起爆操作！");
                 isCanBomb = true;
                 powerBank.setVisibility(View.GONE);
                 if (checkDropOffTask != null) {
