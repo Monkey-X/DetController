@@ -157,8 +157,9 @@ public class DetIDConverter {
         nval[3] = Byte.parseByte(strDC.substring(5, 7));
         nval[4] = (byte) strDC.charAt(7);
         int ret = Integer.parseInt(strDC.substring(8, 11));
-        nval[5] = (byte) (ret & 0xff);
-        nval[6] = (byte) ((ret - nval[5]) / 0x100);
+        nval[5]=(byte)(ret&0xff);
+        ret = ret - DataConverter.getByteValue(nval[5]);
+        nval[6] = (byte)(ret/0x100);
         nval[7] = Byte.parseByte(strDC.substring(11, 13));
         return nval;
     }
