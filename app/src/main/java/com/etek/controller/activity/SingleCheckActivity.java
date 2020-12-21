@@ -92,7 +92,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         Log.d(TAG, "SetSingleModuleCheckData: checkResult=" + DataConverter.getByteValue(bCheckResult));
 
                         SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
-                        singleCheckEntity.setRelay(String.valueOf(nDT));
+                        singleCheckEntity.setRelay(String.valueOf(0xffffffffL&nDT));
                         singleCheckEntity.setDetId(nID);
                         singleCheckEntity.setDC(DetIDConverter.GetDisplayDC(szDC));
                         int checkResult = DataConverter.getByteValue(bCheckResult);
@@ -122,9 +122,21 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     }
                 });
                 Log.d(TAG, "onClick: CheckSingleModule = " + result);
+                showResult(result);
                 showSingleCheckData(null);
             }
         }.start();
+    }
+
+    private void showResult(int result) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (result != 0) {
+                    ToastUtils.showShort(SingleCheckActivity.this,"检测失败："+result);
+                }
+            }
+        });
     }
 
     private void showSingleCheckData(SingleCheckEntity singleCheckEntity) {
