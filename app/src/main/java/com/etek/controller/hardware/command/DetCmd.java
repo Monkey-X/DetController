@@ -360,6 +360,16 @@ public class DetCmd {
 		int ret = prt.SendBlock(szcmd);
 		return ret;
 	}
+
+	/***
+	 * 雷管网络起爆（完成后自动下电），主控板需要在1E版本后
+	 * @return
+	 */
+	public int BoardCmd8F(){
+		byte bcmd = (byte)0x8F;
+		StringBuilder strData = new StringBuilder();
+		return BoardCmd(bcmd,null,0x01,0xbf,strData);
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 

@@ -462,24 +462,9 @@ public class DetApp {
 	 * @return
 	 */
 	public int ModuleDetonate(int nID) {
-		int nid =0xffffffff;
-
-		m_cmdObj.ModCmd5F(nid);
-		try {
-			Thread.sleep(25);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		m_cmdObj.ModCmd5F(nid);
-		try {
-			Thread.sleep(25);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		m_cmdObj.BoardCmd41();
-
-		return 0;
+	    int ret;
+	    ret = m_cmdObj.BoardCmd8F();
+		return ret;
 	}
 
 
