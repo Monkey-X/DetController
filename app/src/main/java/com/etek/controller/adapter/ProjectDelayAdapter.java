@@ -19,6 +19,7 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
     private List<ProjectDetonator> datas;
     private Context context;
     private ProjectDelayAdapter.OnItemClickListener onItemClickListener;
+    private int selectedPosition = -1; // 表示选中的效果
 
     public ProjectDelayAdapter(Context context, List<ProjectDetonator> datas) {
         this.context = context;
@@ -36,6 +37,7 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ProjectDelayViewHolder holder, int i) {
+        holder.itemView.setSelected(selectedPosition == i);
         ProjectDetonator detonatorEntity = datas.get(i);
         holder.holePosition.setText(detonatorEntity.getHolePosition());
         holder.uidNum.setText(detonatorEntity.getCode());
@@ -46,6 +48,8 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
+                    selectedPosition = i;
+                    notifyDataSetChanged();
                     onItemClickListener.onItemClick(v, i);
                 }
             }
@@ -66,7 +70,8 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
             view.setText(R.string.str_success);
             view.setTextColor(view.getContext().getColor(R.color.palegreen));
         } else if (status == -1){
-           view.setText("");
+           view.setText("未下载");
+            view.setTextColor(view.getContext().getColor(R.color.lightgrey));
         }else{
             view.setText(R.string.str_faile);
             view.setTextColor(view.getContext().getColor(R.color.red_normal));

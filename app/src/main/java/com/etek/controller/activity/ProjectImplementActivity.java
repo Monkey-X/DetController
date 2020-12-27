@@ -148,10 +148,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                delayDownload.setClickable(false);
-                checkAuthorization.setClickable(false);
-                powerBomb.setClickable(false);
-                connectTest.setClickable(true);
+//                delayDownload.setClickable(false);
+//                checkAuthorization.setClickable(false);
+//                powerBomb.setClickable(false);
+//                connectTest.setClickable(true);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1://延时下载有颜色，其余四个置灰(不可点击)
@@ -159,10 +159,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(true);
-                checkAuthorization.setClickable(false);
-                powerBomb.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(true);
+//                checkAuthorization.setClickable(false);
+//                powerBomb.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1://检查授权有颜色，其余四个置灰(不可点击)
@@ -170,10 +170,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
-                checkAuthorization.setClickable(true);
-                powerBomb.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(false);
+//                checkAuthorization.setClickable(true);
+//                powerBomb.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1://充电起爆有颜色，其余四个置灰(不可点击)
@@ -181,10 +181,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
-                powerBomb.setClickable(true);
-                checkAuthorization.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(false);
+//                powerBomb.setClickable(true);
+//                checkAuthorization.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1://数据上传有颜色，其余四个置灰(不可点击)
@@ -192,10 +192,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
-                checkAuthorization.setClickable(false);
-                powerBomb.setClickable(false);
+//                connectTest.setClickable(false);
+//                delayDownload.setClickable(false);
+//                checkAuthorization.setClickable(false);
+//                powerBomb.setClickable(false);
                 break;
         }
     }

@@ -43,4 +43,14 @@
 
     </LinearLayout>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_margin="20dp"
+        android:text="雷管放电"
+        android:id="@+id/det_disCharge"
+        android:textSize="18sp"
+        android:background="@drawable/selected_new"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>

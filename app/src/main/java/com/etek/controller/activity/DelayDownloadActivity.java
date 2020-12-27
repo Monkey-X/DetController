@@ -2,6 +2,7 @@ package com.etek.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -29,10 +30,13 @@ import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
+import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
+import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -61,6 +65,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private ProgressDialog progressValueDialog;
     private SoundPoolHelp soundPoolHelp;
     private boolean isCancelDownLoad = false;
+    private TextView allDet;
+    private TextView downLoadFail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +85,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     private void playSound(boolean b) {
-        if (soundPoolHelp != null) {
+        if (soundPoolHelp != null && !b) {
             soundPoolHelp.playSound(b);
+            VibrateUtil.vibrate(DelayDownloadActivity.this,150);
         }
     }
 
@@ -115,6 +122,11 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         textBtn.setOnClickListener(this);
 
         mDelayList = findViewById(R.id.delayList);
+
+        allDet = findViewById(R.id.all_det);
+        downLoadFail = findViewById(R.id.download_fail);
+        allDet.setOnClickListener(this);
+        downLoadFail.setOnClickListener(this);
     }
 
     private void initRecycleView() {
@@ -155,6 +167,49 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 // 批量编辑
                 changeAllEdit();
                 break;
+            case R.id.all_det:
+                showAllDet();
+                checkShow(1);
+                break;
+            case R.id.download_fail:
+                showDownloadFail();
+                checkShow(2);
+                break;
+        }
+    }
+    private void checkShow(int type) {
+        if (type == 1) {
+            downLoadFail.setSelected(false);
+            allDet.setSelected(true);
+        } else if (type == 2) {
+            downLoadFail.setSelected(true);
+            allDet.setSelected(false);
+        }
+    }
+
+    private void showDownloadFail() {
+        if (detonators == null || detonators.size() == 0) {
+            ToastUtils.show(this, "未录入数据");
+            return;
+        }
+
+        List<ProjectDetonator> missConnect = new ArrayList<>();
+        for (ProjectDetonator connectDatum : detonators) {
+            if (connectDatum.getDownLoadStatus() != 0) {
+                missConnect.add(connectDatum);
+            }
+        }
+        detonators.clear();
+        detonators.addAll(missConnect);
+        mProjectDelayAdapter.notifyDataSetChanged();
+    }
+
+    private void showAllDet() {
+        if (proId >= 0){
+            detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
+            detonators.clear();
+            detonators.addAll(detonatorEntityList);
+            mProjectDelayAdapter.notifyDataSetChanged();
         }
     }
 
@@ -246,7 +301,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 220);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -406,11 +461,70 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
 
     private void updateProjectStatus(){
-        ProjectInfoEntity projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-        if (projectInfoEntity!=null) {
-            projectInfoEntity.setProjectImplementStates(AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE);
-            DBManager.getInstance().getProjectInfoEntityDao().save(projectInfoEntity);
+        List<ProjectDetonator> projectDetonators = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(proId);
+        if (projectDetonators == null || projectDetonators.size() == 0) {
+            return;
         }
+        int successNum = 0;
+        int faileNum = 0;
+        for (ProjectDetonator projectDetonator : projectDetonators) {
+            if (projectDetonator.getDownLoadStatus() == 0) {
+                successNum++;
+            } else {
+                faileNum++;
+            }
+        }
+        if (successNum == projectDetonators.size()) {
+            //全部检测测功了，更新项目状态和，提示进去延时下载
+            updateAndHint();
+        } else {
+            // 未全部检测成功，展示检测结果
+            showTestResult(projectDetonators.size(), successNum, faileNum);
+        }
+    }
+
+    // 更新项目状态
+    private void updateAndHint() {
+        PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
+        if (projectInfoEntity != null) {
+            projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1);
+            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+        }
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("下载成功，请进行规则检查！");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(DelayDownloadActivity.this, AuthBombActivity2.class);
+                intent.putExtra(AppIntentString.PROJECT_ID, proId);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+    // 展示检测的结果
+    private void showTestResult(int size, int successNum, int faileNum) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setTitle(String.format("共下载雷管：%d发", size));
+        builder.setMessage(String.format("成功：%d\t失败：%d", successNum, faileNum));
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.create().show();
     }
 
 

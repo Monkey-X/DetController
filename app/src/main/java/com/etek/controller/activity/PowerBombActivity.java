@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.etek.controller.R;
@@ -68,6 +69,9 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         powerBank = findViewById(R.id.power_bank);
         showstring = findViewById(R.id.showString);
         powerBank.setOnClickListener(this);
+
+        Button detDisCharge = findViewById(R.id.det_disCharge);
+        detDisCharge.setOnClickListener(this);
     }
 
     /**
@@ -160,9 +164,16 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        toastText.setText("");
-        powerAsyncTask = new PowerOnSelfCheckTask(this);
-        powerAsyncTask.execute();
+        switch (v.getId()) {
+            case R.id.det_disCharge:
+                startDisChangeTask();
+                break;
+            case R.id.power_bank:
+                toastText.setText("");
+                powerAsyncTask = new PowerOnSelfCheckTask(this);
+                powerAsyncTask.execute();
+                break;
+        }
     }
 
     public void StartChargeTask() {
@@ -187,6 +198,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         progressValueDialog.setCancelable(false);
         progressValueDialog.setCanceledOnTouchOutside(false);
         progressValueDialog.setMax(100);
+        progressValueDialog.setProgressPercentFormat(null);
         progressValueDialog.show();
     }
 
@@ -284,9 +296,31 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void changeProjectStatus() {
-        PendingProject pendingProject = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
-        pendingProject.setProjectStatus(Integer.parseInt(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT));
-        DBManager.getInstance().getPendingProjectDao().save(pendingProject);
+        PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
+        if (projectInfoEntity != null) {
+            projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1);
+            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+        }
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("起爆成功，请进行数据上报！");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(PowerBombActivity.this, ReportListActivity.class);
+                intent.putExtra(AppIntentString.PROJECT_ID, proId);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     /**
