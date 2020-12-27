@@ -392,6 +392,11 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     }
 
+    @Override
+    public void onHolePostionClick(int position) {
+
+    }
+
     /**
      * 单个雷管的链接测试
      *

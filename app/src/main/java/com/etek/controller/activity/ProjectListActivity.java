@@ -20,13 +20,12 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
+import com.etek.controller.utils.DateStringUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +37,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
     private View noDataView;
     private List<PendingProject> projectInfos = new ArrayList<>();
     private ProjectListAdapter projectListAdapter;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,17 +100,16 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void showCreateProjectDialog() {
+        if (alertDialog != null && alertDialog.isShowing()) {
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         EditText projectCode = view.findViewById(R.id.changeDelayTime);
         TextView textTitle = view.findViewById(R.id.text_title);
-        textTitle.setText("项目编号：");
+        textTitle.setText("工程编号：");
         String projectNum = getProjectNum();
-        if (TextUtils.isEmpty(projectNum)) {
-            projectCode.setHint("yyyymmdd-1");
-        }else {
-            projectCode.setText(projectNum);
-        }
+        projectCode.setText(projectNum);
         builder.setView(view);
         builder.setCancelable(false);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -124,74 +123,61 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
             public void onClick(DialogInterface dialog, int which) {
                 String projectCodeStr = projectCode.getText().toString().trim();
                 if (TextUtils.isEmpty(projectCodeStr)) {
-                    ToastUtils.showShort(ProjectListActivity.this, "请输入项目编号！");
+                    ToastUtils.showShort(ProjectListActivity.this, "请输入工程编号！");
                     return;
                 }
                 if (!projectInfos.isEmpty()) {
                     for (PendingProject projectInfo : projectInfos) {
                         if (projectInfo.getProjectCode().equals(projectCodeStr)) {
-                            ToastUtils.showShort(ProjectListActivity.this, "项目编号已存在！");
+                            ToastUtils.showShort(ProjectListActivity.this, "工程编号已存在！");
                             return;
                         }
                     }
                 }
+                createNewProject(projectCodeStr);
                 PendingProject pendingProject = new PendingProject();
                 pendingProject.setProjectCode(projectCodeStr);
-                pendingProject.setDate(getCurrentTime());
+                pendingProject.setDate(DateStringUtils.getCurrentTime());
                 pendingProject.setControllerId(getStringInfo(getString(R.string.controller_sno)));
                 DBManager.getInstance().getPendingProjectDao().insert(pendingProject);
                 initData();
+                recycleView.scrollToPosition(0);
                 dialog.dismiss();
             }
         });
-        builder.create().show();
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void createNewProject(String stringInfo) {
+        String projectNum = "";
+        String dateString = DateStringUtils.getDateString();
+        if (TextUtils.isEmpty(stringInfo)) {
+            projectNum = dateString + "-1";
+        } else {
+            if (stringInfo.contains("-")) {
+                String[] split = stringInfo.split("-");
+                if (split[0].equalsIgnoreCase(dateString)) {
+                    projectNum = split[0] + "-" + (Integer.parseInt(split[1]) + 1);
+                } else {
+                    projectNum = dateString + "-1";
+                }
+            }
+        }
+        setStringInfo(AppIntentString.PROJECT_ID, projectNum);
     }
 
     /**
      * 获取项目编号
      */
     private String getProjectNum() {
-
-        String stringInfo = getStringInfo(AppIntentString.PROJECT_ID);
-        String projectNum = "";
-        if (TextUtils.isEmpty(stringInfo)) {
-            String dateString = getDateString();
-            projectNum =  dateString+"-1";
-        }else{
-            if (stringInfo.contains("-")) {
-                String[] split = stringInfo.split("-");
-                if (split[0].equalsIgnoreCase(getDateString())) {
-                    projectNum =  split[0]+"-" +(Integer.parseInt(split[1])+1);
-                }else{
-                    String dateString = getDateString();
-                    projectNum =  dateString+"-1";
-                }
-            }
+        String projectNum = getStringInfo(AppIntentString.PROJECT_ID);
+        if (TextUtils.isEmpty(projectNum)) {
+            String dateString = DateStringUtils.getDateString();
+            projectNum = dateString + "-1";
         }
-        setStringInfo(AppIntentString.PROJECT_ID,projectNum);
         return projectNum;
     }
-
-
-   public String  getDateString(){
-       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-       Date date = new Date(System.currentTimeMillis());
-       String format = simpleDateFormat.format(date);
-       return format;
-   }
-
-
-    /**
-     * 获取当前的时间
-     * @return
-     */
-    private String getCurrentTime(){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
-        Date date = new Date(System.currentTimeMillis());
-        String format = simpleDateFormat.format(date);
-        return format;
-    }
-
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

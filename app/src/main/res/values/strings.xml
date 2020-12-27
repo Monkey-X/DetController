@@ -275,5 +275,9 @@
     <string name="title_activity_detail_download">下载详情</string>
     <string name="activity_map">地图</string>
 
+    <string name="delay_start_time">起始延时：%1s ms</string>
+    <string name="delay_hole_in_time">T2：%1s ms</string>
+    <string name="delay_hole_out_time">T1：%1s ms</string>
+
 
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,16 +15,32 @@
         android:orientation="horizontal"
         android:padding="10dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:id="@+id/delay_edit"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:padding="3dp"
             android:background="@drawable/seleted_status"
-            android:gravity="center"
-            android:text="编辑"
-            android:textSize="18sp" />
+            android:orientation="horizontal"
+            android:id="@+id/delay_edit"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="起始时间:"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/delayStartTime"
+                android:text="1000"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=" ms"
+                android:textSize="18sp" />
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="0dp"
@@ -70,6 +85,7 @@
         android:id="@+id/recycleView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:scrollbars="vertical"
         android:layout_weight="1" />
 
 
@@ -149,39 +165,39 @@
 <!--                android:text="50"-->
 <!--                android:textSize="18sp" />-->
 <!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center"-->
-<!--                android:text="ms"-->
-<!--                android:textSize="18sp" />-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:gravity="center"-->
+    <!--                android:text="ms"-->
+    <!--                android:textSize="18sp" />-->
 
-<!--        </LinearLayout>-->
+    <!--        </LinearLayout>-->
 
-<!--    </LinearLayout>-->
+    <!--    </LinearLayout>-->
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View
-            android:layout_width="wrap_content"
-            android:background="@color/btn_gray_normal"
-            android:layout_weight="1"
-            android:layout_height="1dp"/>
-        <TextView
-            android:text="读取录入"
-            android:textSize="12sp"
-            android:padding="2dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+    <!--    <LinearLayout-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:gravity="center_vertical"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content">-->
+    <!--        <View-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:background="@color/btn_gray_normal"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:layout_height="1dp"/>-->
+    <!--        <TextView-->
+    <!--            android:text="读取录入"-->
+    <!--            android:textSize="12sp"-->
+    <!--            android:padding="2dp"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"/>-->
 
-        <View
-            android:layout_width="wrap_content"
-            android:background="@color/btn_gray_normal"
-            android:layout_weight="1"
-            android:layout_height="1dp"/>
-    </LinearLayout>
+    <!--        <View-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:background="@color/btn_gray_normal"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:layout_height="1dp"/>-->
+    <!--    </LinearLayout>-->
 
     <LinearLayout
         android:paddingBottom="8dp"
@@ -191,39 +207,86 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/seleted_status"
+            android:orientation="horizontal"
             android:id="@+id/hole_out"
-            android:text="孔间"
-            android:background="@drawable/seleted_status"
-            android:padding="5dp"
-            android:gravity="center"
-            android:textSize="18sp"
+            android:layout_margin="2dp"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="T1:"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="+"
+                android:visibility="gone"
+                android:id="@+id/numTypeOut"
+                android:textSize="18sp" />
+            <TextView
+                android:text="1000"
+                android:id="@+id/holeOutTime"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=" ms"
+                android:textSize="18sp" />
+        </LinearLayout>
+        <!--        <TextView-->
+        <!--            android:id="@+id/hole_nochange"-->
+        <!--            android:text="不变"-->
+        <!--            android:background="@drawable/seleted_status"-->
+        <!--            android:padding="5dp"-->
+        <!--            android:gravity="center"-->
+        <!--            android:textSize="18sp"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_margin="2dp"-->
+        <!--            android:layout_weight="1"-->
+        <!--            android:layout_height="wrap_content"/>-->
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_margin="2dp"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/hole_nochange"
-            android:text="不变"
+            android:layout_height="match_parent"
             android:background="@drawable/seleted_status"
-            android:padding="5dp"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_margin="2dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
-        <TextView
+            android:orientation="horizontal"
             android:id="@+id/hole_in"
-            android:text="孔内"
-            android:background="@drawable/seleted_status"
-            android:padding="5dp"
-            android:gravity="center"
-            android:textSize="18sp"
             android:layout_margin="2dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="T2:"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="+"
+                android:visibility="gone"
+                android:id="@+id/numTypeIn"
+                android:textSize="18sp" />
+            <TextView
+                android:text="1000"
+                android:id="@+id/holeInTime"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=" ms"
+                android:textSize="18sp" />
+        </LinearLayout>
     </LinearLayout>
 
 

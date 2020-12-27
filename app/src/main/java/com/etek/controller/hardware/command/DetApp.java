@@ -482,6 +482,8 @@ public class DetApp {
 		return 0;
 	}
 
+
+
 	/***
 	 * 模组延时参数校准
 	 * @param nID

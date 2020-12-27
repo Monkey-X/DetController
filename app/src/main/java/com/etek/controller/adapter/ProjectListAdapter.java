@@ -11,13 +11,20 @@ import java.util.List;
 
 public class ProjectListAdapter extends BaseQuickAdapter<PendingProject, BaseViewHolder> {
 
+    private boolean isNewProject = false;
+
     public ProjectListAdapter(int layoutResId, @Nullable List<PendingProject> data) {
         super(layoutResId, data);
     }
 
     @Override
     protected void convert(BaseViewHolder helper, PendingProject item) {
-               helper.setText(R.id.project_code,item.getProjectCode());
-               helper.setText(R.id.create_date,item.getDate());
+        int adapterPosition = helper.getAdapterPosition();
+        helper.setText(R.id.project_code, item.getProjectCode());
+        helper.setText(R.id.create_date, item.getDate());
+    }
+
+    public void isNewProject(boolean isNewProject) {
+        this.isNewProject = isNewProject;
     }
 }

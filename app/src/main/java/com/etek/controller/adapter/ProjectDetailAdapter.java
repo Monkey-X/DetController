@@ -26,6 +26,7 @@ public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdap
     public List<ProjectDetonator> datas;
     private Context context;
     public OnItemClickListener onItemClickListener;
+    private int selectedPosition = -1; // 表示选中的效果
 
     public ProjectDetailAdapter(Context context, List<ProjectDetonator> datas) {
         this.context = context;
@@ -42,6 +43,8 @@ public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdap
 
     @Override
     public void onBindViewHolder(@NonNull ProjectDetailAdapter.ProjectDetailViewHolder holder, int i) {
+
+        holder.itemView.setSelected(i == selectedPosition);
         ProjectDetonator detonatorEntity = datas.get(i);
         holder.holePosition.setText(detonatorEntity.getHolePosition());
         holder.uidNum.setText(detonatorEntity.getCode());
@@ -51,6 +54,8 @@ public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdap
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
+                    selectedPosition = i;
+                    notifyDataSetChanged();
                     onItemClickListener.onItemClick(v, i);
                 }
             }
@@ -63,11 +68,25 @@ public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdap
                 }
             }
         });
+        holder.holePosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    selectedPosition = i;
+                    notifyDataSetChanged();
+                    onItemClickListener.onHolePostionClick(i);
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return datas.size();
+    }
+
+    public void setSelectedPosition(int i) {
+        selectedPosition = i;
     }
 
 
@@ -93,6 +112,8 @@ public class ProjectDetailAdapter extends RecyclerView.Adapter<ProjectDetailAdap
         void onItemClick(View view, int position);
 
         void onDelayTimeClick(int position);
+
+        void onHolePostionClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {

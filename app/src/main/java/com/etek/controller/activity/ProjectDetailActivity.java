@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -33,11 +34,12 @@ import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.scan.ScannerInterface;
+import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * 雷管组网界面
  */
@@ -62,6 +64,16 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private boolean isScan = false;
     private AlertDialog alertDialog;
 
+    private int START_TIME_TYPE = 1;
+    private int HOLE_IN_TYPE = 2;
+    private int HOLE_OUT_TYPE = 3;
+    private TextView delayStartTime;
+    private AlertDialog delayAlertDialog;
+    private TextView holeTimeOut;
+    private TextView holeTimeIn;
+    private TextView numTypeIn;
+    private TextView numTypeOut;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +92,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             if (detDelayBean != null) {
                 this.detDelayBean = detDelayBean;
             }
+        }
+        if (detDelayBean == null) {
+            detDelayBean = new DetDelayBean();
         }
     }
 
@@ -131,10 +146,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (mDetonatorEntities != null && mDetonatorEntities.size() != 0) {
             detonators.addAll(mDetonatorEntities);
             projectDetailAdapter.notifyDataSetChanged();
-        } else {
-            if (detDelayBean == null) {
-                showDelaySettingDialog();
-            }
         }
     }
 
@@ -150,9 +161,13 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         textBtn.setOnClickListener(this);
 
         // TODO: 2020/12/17
-        View delayText = findViewById(R.id.delay_edit);
+        View layoutStartTime = findViewById(R.id.delay_edit);
+        delayStartTime = findViewById(R.id.delayStartTime);
+
+        delayStartTime.setText(detDelayBean.getStartTime()+"");
+
         View projectHandle = findViewById(R.id.project_handle);
-        delayText.setOnClickListener(this);
+        layoutStartTime.setOnClickListener(this);
         projectHandle.setOnClickListener(this);
 
 
@@ -167,11 +182,30 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         View layoutHoleIn = findViewById(R.id.hole_in);
         // 孔间
         View layoutHoleOut = findViewById(R.id.hole_out);
-        View layoutHoleNoChange = findViewById(R.id.hole_nochange);
 
-        layoutHoleNoChange.setOnClickListener(this);
+//        View layoutHoleNoChange = findViewById(R.id.hole_nochange);
+//        layoutHoleNoChange.setOnClickListener(this);
         layoutHoleIn.setOnClickListener(this);
         layoutHoleOut.setOnClickListener(this);
+
+        numTypeIn = findViewById(R.id.numTypeIn);
+        numTypeOut = findViewById(R.id.numTypeOut);
+        holeTimeIn = findViewById(R.id.holeInTime);
+        holeTimeOut = findViewById(R.id.holeOutTime);
+        if (detDelayBean.getHoleInTime() >= 0) {
+            numTypeIn.setVisibility(View.VISIBLE);
+        } else {
+            numTypeIn.setVisibility(View.GONE);
+        }
+
+        if (detDelayBean.getHoleOutTime() >= 0) {
+            holeTimeOut.setVisibility(View.VISIBLE);
+        } else {
+            holeTimeOut.setVisibility(View.GONE);
+        }
+        holeTimeIn.setText(detDelayBean.getHoleInTime()+"");
+        holeTimeOut.setText(detDelayBean.getHoleOutTime()+"");
+
     }
 
     @Override
@@ -184,22 +218,25 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.hole_in:
                 // 设置孔内延时
-                ReadDetNumTask readDetNumTask = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
-                readDetNumTask.execute();
+//                ReadDetNumTask readDetNumTask = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
+//                readDetNumTask.execute();
+                setDelayDialog("孔间延时", HOLE_IN_TYPE, holeTimeIn);
                 break;
             case R.id.hole_out:
                 // 设置孔间延时
-                ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
-                readDetNumTask1.execute();
+//                ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
+//                readDetNumTask1.execute();
+                setDelayDialog("孔间延时", HOLE_OUT_TYPE, holeTimeOut);
                 break;
-            case R.id.hole_nochange:
-                // 延时不变
-                ReadDetNumTask readDetNumTask2 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
-                readDetNumTask2.execute();
-                break;
+//            case R.id.hole_nochange:
+//                // 延时不变
+//                ReadDetNumTask readDetNumTask2 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
+//                readDetNumTask2.execute();
+//                break;
             case R.id.delay_edit:
                 // 弹出修改延时的对话框
-                showDelaySettingDialog();
+//                showDelaySettingDialog();
+                setDelayDialog("起始延时", START_TIME_TYPE, delayStartTime);
                 break;
             case R.id.project_handle:
                 // 跳转操作界面，连接检测，延时下载,检查授权
@@ -215,9 +252,80 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void showDelaySettingDialog() {
-        DelaySettingDialog delaySettingDialog = new DelaySettingDialog();
-        delaySettingDialog.setOnDelaySettingListener(this);
-        delaySettingDialog.show(getSupportFragmentManager(), "delaySettingDialog");
+//        DelaySettingDialog delaySettingDialog = new DelaySettingDialog();
+//        delaySettingDialog.setOnDelaySettingListener(this);
+//        delaySettingDialog.show(getSupportFragmentManager(), "delaySettingDialog");
+        // TODO: 2020/12/27  设置起始延时
+
+    }
+
+    /**
+     * 设置起始时间，孔间延时，孔内延时
+     *
+     * @param title
+     * @param type
+     * @param delayText
+     */
+    private void setDelayDialog(String title, int type, TextView delayText) {
+        if (delayAlertDialog != null && delayAlertDialog.isShowing()) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
+        TextView textTitle = view.findViewById(R.id.text_title);
+        textTitle.setText(title);
+        EditText changeDelayTime = view.findViewById(R.id.changeDelayTime);
+        if (type == START_TIME_TYPE) {
+            changeDelayTime.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        } else {
+            changeDelayTime.setInputType(EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_SIGNED);
+        }
+        builder.setView(view);
+        builder.setCancelable(false);
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String time = changeDelayTime.getText().toString().trim();
+                if (TextUtils.isEmpty(time)) {
+                    ToastUtils.showShort(ProjectDetailActivity.this, "请设置延时！");
+                    return;
+                }
+                int intTime = Integer.parseInt(time);
+                if (Math.abs(intTime) > 15000) {
+                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                    return;
+                }
+                if (type == HOLE_IN_TYPE) {
+                    if (intTime >= 0) {
+                        numTypeIn.setVisibility(View.VISIBLE);
+                    } else {
+                        numTypeIn.setVisibility(View.GONE);
+                    }
+                    detDelayBean.setHoleInTime(intTime);
+                } else if (type == HOLE_OUT_TYPE) {
+                    if (intTime >= 0) {
+                        numTypeOut.setVisibility(View.VISIBLE);
+                    } else {
+                        numTypeOut.setVisibility(View.GONE);
+                    }
+                    detDelayBean.setHoleOutTime(intTime);
+                }else{
+                    detDelayBean.setStartTime(intTime);
+                }
+                setDelaySetting(AppIntentString.DELAY_SETTING, JSON.toJSONString(detDelayBean));
+                delayText.setText(String.valueOf(intTime));
+                dialog.dismiss();
+            }
+        });
+        delayAlertDialog = builder.create();
+        delayAlertDialog.setCanceledOnTouchOutside(false);
+        delayAlertDialog.show();
     }
 
     /**
@@ -295,13 +403,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         projectDetailAdapter.setOnItemClickListener(this);
     }
 
-
-    //  数字型的字符串转为数字
-    public int getIntFormString(String stringNum) {
-        int i = Integer.parseInt(stringNum);
-        return i;
-    }
-
     @Override
     public void onItemClick(View view, int position) {
         // 点击条目
@@ -315,8 +416,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         EditText changeDelayTime = view.findViewById(R.id.changeDelayTime);
+        changeDelayTime.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         changeDelayTime.setText(detonatorEntity.getRelay() + "");
         builder.setView(view);
+        builder.setCancelable(false);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -328,6 +431,37 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
                 detonatorEntity.setRelay(Integer.parseInt(nowDelayTime));
+                DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
+                projectDetailAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+    @Override
+    public void onHolePostionClick(int position) {
+        //  设置孔位
+        ProjectDetonator detonatorEntity = detonators.get(position);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
+        EditText changeDelayTime = view.findViewById(R.id.changeDelayTime);
+        TextView textTitle = view.findViewById(R.id.text_title);
+        textTitle.setText("修改孔位号：");
+        changeDelayTime.setText(detonatorEntity.getHolePosition() + "");
+        builder.setView(view);
+        builder.setCancelable(false);
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String holePosition = changeDelayTime.getText().toString().trim();
+                detonatorEntity.setHolePosition(holePosition);
                 DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 projectDetailAdapter.notifyDataSetChanged();
                 dialog.dismiss();
@@ -430,31 +564,50 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void makeCancel() {
-        if (this.detDelayBean == null) {
-            // 没有设置延时，提示设置延时
-            showDelaySettingDialog();
-            showStatusDialog("请配置延时！");
-        }
+//        if (this.detDelayBean == null) {
+//            // 没有设置延时，提示设置延时
+//            showDelaySettingDialog();
+//            showStatusDialog("请配置延时！");
+//        }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d(TAG, "onKeyUp: keyCode = " + keyCode);
         // 左边189 右边190  中间188
-            if (keyCode == 189 && event.getAction() == KeyEvent.ACTION_DOWN) {
-                scanType = AppIntentString.TYPE_HOLE_OUT;
-                return true;
-            }
-            // 中间按钮
-            if (keyCode == 188 && event.getAction() == KeyEvent.ACTION_DOWN) {
-                scanType = AppIntentString.TYPE_HOLE_NO_CHANGE;
-                return true;
-            }
-            // 右边按钮
-            if (keyCode == 190 && event.getAction() == KeyEvent.ACTION_DOWN) {
-                scanType = AppIntentString.TYPE_HOLE_IN;
-                return true;
-            }
+        if (keyCode == 189 && event.getAction() == KeyEvent.ACTION_DOWN) {
+            scanType = AppIntentString.TYPE_HOLE_NO_CHANGE;
+            return true;
+        }
+        // 中间按钮
+        if (keyCode == 188 && event.getAction() == KeyEvent.ACTION_DOWN) {
+            scanType = AppIntentString.TYPE_HOLE_IN;
+            return true;
+        }
+        // 右边按钮
+        if (keyCode == 190 && event.getAction() == KeyEvent.ACTION_DOWN) {
+            scanType = AppIntentString.TYPE_HOLE_OUT;
+            return true;
+        }
+
+        // 按钮7
+        if (keyCode == 14 && event.getAction() == KeyEvent.ACTION_DOWN) {
+            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
+            readDetNumTask1.execute();
+            return true;
+        }
+        //按钮8
+        if (keyCode == 15 && event.getAction() == KeyEvent.ACTION_DOWN) {
+            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
+            readDetNumTask1.execute();
+            return true;
+        }
+        // 按钮9
+        if (keyCode == 16 && event.getAction() == KeyEvent.ACTION_DOWN) {
+            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
+            readDetNumTask1.execute();
+            return true;
+        }
         Log.d(TAG, "onKeyDown: scanType = " + scanType);
         return super.onKeyUp(keyCode, event);
     }
@@ -475,6 +628,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             }
 
             Log.d(TAG, "onReceive: scanResult = " + scanResult);
+
+            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
 
             //*******重要
             if (intent.getAction().equals(RES_ACTION)) {
@@ -528,7 +683,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
 
-    public void showAutoMissDialog(String msg){
+    public void showAutoMissDialog(String msg) {
+        if (alertDialog != null && alertDialog.isShowing()) {
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(msg);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -560,6 +718,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 ProjectDetonator detonatorEntity = detonators.get(i);
                 if (detonatorEntity.getCode().equals(strgm)) {
                     showAutoMissDialog("此雷管已扫描！");
+                    projectDetailAdapter.setSelectedPosition(i);
+                    projectDetailAdapter.notifyDataSetChanged();
                     recycleView.scrollToPosition(i);
                     return true;
                 }
@@ -620,6 +780,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             missProDialog();
+            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
             if (TextUtils.isEmpty(result)) {
                 showAutoMissDialog("获取雷管码失败！");
             } else {
@@ -642,7 +803,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         projectDetonator.setUid(getDetUid(detId));
         if (detonators.size() == 0) {
             projectDetonator.setHolePosition("1-1");
-            projectDetonator.setRelay(detDelayBean.getStartTime());
+            String startTime = delayStartTime.getText().toString().trim();
+            projectDetonator.setRelay(Integer.valueOf(startTime));
         } else {
             ProjectDetonator projectDetonatorLast = detonators.get(detonators.size() - 1);
             int lastDelayTime = projectDetonatorLast.getRelay();
@@ -654,6 +816,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
         DBManager.getInstance().getProjectDetonatorDao().save(projectDetonator);
         detonators.add(projectDetonator);
+        projectDetailAdapter.setSelectedPosition(detonators.size() - 1);
         projectDetailAdapter.notifyDataSetChanged();
         recycleView.scrollToPosition(detonators.size() - 1);
     }
@@ -665,8 +828,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
         switch (type) {
             case AppIntentString.TYPE_HOLE_IN:
-            case AppIntentString.TYPE_HOLE_NO_CHANGE:
                 nextHolePostion = split[0] + "-" + (Integer.parseInt(split[1]) + 1);
+                break;
+            case AppIntentString.TYPE_HOLE_NO_CHANGE:
+                nextHolePostion = lastHolePostion;
                 break;
             case AppIntentString.TYPE_HOLE_OUT:
                 nextHolePostion = (Integer.parseInt(split[0]) + 1) + "-1";
@@ -682,17 +847,24 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         int nextDelayTime = 0;
         switch (type) {
             case AppIntentString.TYPE_HOLE_IN:
-                nextDelayTime = delayTime + detDelayBean.getHoleInTime();
+                String holeInTime = holeTimeIn.getText().toString().trim();
+                nextDelayTime = delayTime + getIntFormString(holeInTime);
                 break;
             case AppIntentString.TYPE_HOLE_OUT:
-                nextDelayTime = delayTime + detDelayBean.getHoleOutTime();
+                String holeOutTime = holeTimeOut.getText().toString().trim();
+                nextDelayTime = delayTime + getIntFormString(holeOutTime);
                 break;
             case AppIntentString.TYPE_HOLE_NO_CHANGE:
                 nextDelayTime = delayTime;
                 break;
         }
         return nextDelayTime;
+    }
 
+    //  数字型的字符串转为数字
+    public int getIntFormString(String stringNum) {
+        int i = Integer.parseInt(stringNum);
+        return i;
     }
 
 
@@ -700,7 +872,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private String getDetUid(String detId) {
         StringBuilder stringBuilder = new StringBuilder();
         int i = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
-        Log.d(TAG, "getDetUid: "+stringBuilder.toString());
+        Log.d(TAG, "getDetUid: " + stringBuilder.toString());
         return stringBuilder.toString();
     }
 
