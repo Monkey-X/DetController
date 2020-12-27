@@ -149,7 +149,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     if (singleCheckEntityList != null && singleCheckEntityList.size()!=0) {
                         for (SingleCheckEntity checkEntity : singleCheckEntityList) {
                             if (checkEntity.getDetId() == singleCheckEntity.getDetId()) {
-                                showStatusDialog("此雷管已检测！");
+                                showStatusDialog("检测成功  该发雷管已检测！");
                                 return;
                             }
                         }

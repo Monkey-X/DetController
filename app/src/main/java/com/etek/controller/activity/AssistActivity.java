@@ -32,7 +32,9 @@ public class AssistActivity extends BaseActivity implements View.OnClickListener
      */
     private void initView() {
         View view = findViewById(R.id.single_det_check);
+        View lineCheck = findViewById(R.id.project_power_bomb);
         view.setOnClickListener(this);
+        lineCheck.setOnClickListener(this);
 //        mRecyclerView = findViewById(R.id.rv_list);
 //        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
@@ -80,7 +82,15 @@ public class AssistActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        Intent singleIntent = new Intent(AssistActivity.this, SingleCheckActivity.class);
-        startActivity(singleIntent);
+        switch (v.getId()) {
+            case R.id.single_det_check:
+                Intent singleIntent = new Intent(AssistActivity.this, SingleCheckActivity.class);
+                startActivity(singleIntent);
+                break;
+            case R.id.project_power_bomb:
+                Intent lineIntent = new Intent(AssistActivity.this, LineCheckActivity.class);
+                startActivity(lineIntent);
+                break;
+        }
     }
 }
