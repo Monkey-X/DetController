@@ -16,12 +16,15 @@ import java.util.List;
 
 public class ConnectTestAdapter extends ProjectDetailAdapter {
 
+    private int selectedPosition = -1; // 表示选中的效果
+
     public ConnectTestAdapter(Context context, List<ProjectDetonator> datas) {
         super(context, datas);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProjectDetailViewHolder holder, int i) {
+        holder.itemView.setSelected(selectedPosition == i);
         ProjectDetonator detonatorEntity = datas.get(i);
         setTestStatus(holder.holePosition, detonatorEntity.getTestStatus());// 表示测试状态
         holder.uidNum.setText(detonatorEntity.getCode());
@@ -31,6 +34,8 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
+                    selectedPosition = i;
+                    notifyDataSetChanged();
                     onItemClickListener.onItemClick(v, i);
                 }
             }
@@ -43,10 +48,11 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
             view.setText(R.string.str_success);
             view.setTextColor(view.getContext().getColor(R.color.palegreen));
         } else if (teststatus == -1){
-            view.setText("");
-        }else{
-            view.setText(R.string.str_miss);
+            view.setText("未检测");
             view.setTextColor(view.getContext().getColor(R.color.lightgrey));
+        }else{
+            view.setText("失败");
+            view.setTextColor(view.getContext().getColor(R.color.red_normal));
         }
 //        switch (teststatus) {
 //            case 0:

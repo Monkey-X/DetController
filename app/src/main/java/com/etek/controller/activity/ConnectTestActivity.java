@@ -1,8 +1,10 @@
 package com.etek.controller.activity;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,10 +31,12 @@ import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
-import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
+import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -66,6 +70,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     // 是否取消连接检测
     private boolean isCancelTest = false;
+    private TextView missEvent;
+    private TextView falseConnect;
+    private TextView allDet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +91,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         soundPoolHelp = new SoundPoolHelp(this);
         soundPoolHelp.initSound();
     }
-
-
-
-
 
     /**
      * 获取项目id
@@ -123,9 +126,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         textBtn.setOnClickListener(this);
         textBtn.setVisibility(View.GONE);
 
-        TextView missEvent = findViewById(R.id.miss_event);
-        TextView falseConnect = findViewById(R.id.false_connect);
-        TextView allDet = findViewById(R.id.all_det);
+        missEvent = findViewById(R.id.miss_event);
+        falseConnect = findViewById(R.id.false_connect);
+        allDet = findViewById(R.id.all_det);
 
         missEvent.setOnClickListener(this);
         falseConnect.setOnClickListener(this);
@@ -233,16 +236,35 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             case R.id.miss_event:
                 // 筛选失联
                 changeMissEvent();
+                checkShow(1);
                 break;
             case R.id.false_connect:
                 // 筛选误接
                 changeFalseConnect();
+                checkShow(2);
                 break;
             case R.id.all_det:
                 // 展示全部
                 showAllDet();
+                checkShow(3);
                 break;
 
+        }
+    }
+
+    private void checkShow(int type) {
+        if (type == 1) {
+            missEvent.setSelected(true);
+            falseConnect.setSelected(false);
+            allDet.setSelected(false);
+        } else if (type == 2) {
+            missEvent.setSelected(false);
+            falseConnect.setSelected(true);
+            allDet.setSelected(false);
+        } else if (type == 3) {
+            missEvent.setSelected(false);
+            falseConnect.setSelected(false);
+            allDet.setSelected(true);
         }
     }
 
@@ -292,7 +314,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     private void shouPopuWindow(View view, int position) {
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
-        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 220);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -305,7 +327,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             }
         });
         TextView downloadAgain = popuView.findViewById(R.id.insert_item);
-        downloadAgain.setText("测试");
+        downloadAgain.setText("检测");
         downloadAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -363,7 +385,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         }
 
         releaseSound();
-        checkAllDetStatus();
         super.onDestroy();
     }
 
@@ -421,18 +442,82 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void playSound(boolean b) {
-        if (soundPoolHelp!=null) {
+        if (soundPoolHelp != null && !b) {
             soundPoolHelp.playSound(b);
+            VibrateUtil.vibrate(ConnectTestActivity.this, 150);
         }
     }
 
 
+    /**
+     * 更新展示检测的结果
+     */
     private void updateProjectStatus() {
-        ProjectInfoEntity projectInfoEntity = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder().where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-        if (projectInfoEntity != null) {
-            projectInfoEntity.setProjectImplementStates(AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD);
-            DBManager.getInstance().getProjectInfoEntityDao().save(projectInfoEntity);
+        // TODO: 2020/12/27  连接检测结速了，要展示结果或者提示进入延时下载操作
+        List<ProjectDetonator> projectDetonators = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(proId);
+        if (projectDetonators == null || projectDetonators.size() == 0) {
+            return;
         }
+        int successNum = 0;
+        int faileNum = 0;
+        for (ProjectDetonator projectDetonator : projectDetonators) {
+            if (projectDetonator.getTestStatus() == 0) {
+                successNum++;
+            } else {
+                faileNum++;
+            }
+        }
+        if (successNum == projectDetonators.size()) {
+            //全部检测测功了，更新项目状态和，提示进去延时下载
+            updateAndHint();
+        } else {
+            // 未全部检测成功，展示检测结果
+            showTestResult(projectDetonators.size(), successNum, faileNum);
+        }
+    }
+
+    // 更新项目状态
+    private void updateAndHint() {
+        PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
+        if (projectInfoEntity != null) {
+            projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1);
+            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("检测成功，请进行延时下载！");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(ConnectTestActivity.this, DelayDownloadActivity.class);
+                intent.putExtra(AppIntentString.PROJECT_ID, proId);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+    // 展示检测的结果
+    private void showTestResult(int size, int successNum, int faileNum) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setTitle(String.format("共检测雷管：%d发", size));
+        builder.setMessage(String.format("成功：%d\t失败：%d", successNum, faileNum));
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.create().show();
     }
 
 
@@ -440,20 +525,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public class TestAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
         protected Integer doInBackground(String... strings) {
-            int success = 0;
-            int fial = 0;
             for (int i = 0; i < connectData.size(); i++) {
 
                 if (isCancelTest) {
                     return null;
                 }
                 boolean b = detSingleCheck(i);
-                if (b) {
-                    success++;
-                } else {
-                    fial++;
-                }
-                publishProgress(i, success, fial);
             }
             return null;
         }
@@ -469,15 +546,14 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             updateProgress(values[0]);
-            updateResult(values[1], values[2]);
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
             connectTestAdapter.notifyDataSetChanged();
-            updateProjectStatus();
             dissProgressDialog();
+            updateProjectStatus();
         }
     }
 

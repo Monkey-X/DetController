@@ -31,9 +31,6 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     private RelativeLayout delayDownload;
     private RelativeLayout checkAuthorization;
     private RelativeLayout powerBomb;
-    private RelativeLayout dataReport;
-    private RelativeLayout createNet;
-    private long projectId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +50,6 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-//            case R.id.project_net:
-//                startActivity(new Intent(this, ProjectDetailActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
-//                break;
             case R.id.project_connect_test://连接检测
                 startActivity(new Intent(this, ConnectTestActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
@@ -71,10 +65,6 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
             case R.id.project_power_bomb://充电起爆
                 startActivity(new Intent(this, PowerBombActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;
-
-//            case R.id.project_data_report://数据上传
-//                startActivity(new Intent(this, ReportDetailActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
-//                break;
         }
     }
 
@@ -147,75 +137,65 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
             return;
         }
 
-        String status =String.valueOf(projectInfoEntity.getProjectStatus()) ;
-        if (status == null) {//如果为空，给个默认值（默认第一个是可点击的）
-            status = AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST;
+        int projectStatus = projectInfoEntity.getProjectStatus();
+        if (projectStatus == 0) {//如果为空，给个默认值（默认第一个是可点击的）
+            projectStatus = AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1;
         }
 
-        switch (status) {
-            case AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST://连接检测有颜色，其余四个置灰(不可点击)
+        switch (projectStatus) {
+            case AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1://连接检测有颜色，其余四个置灰(不可点击)
                 connectTest.setBackgroundResource(R.drawable.project_connect_test);
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-//                delayDownload.setClickable(false);
-//                checkAuthorization.setClickable(false);
-//                powerBomb.setClickable(false);
-//                dataReport.setClickable(false);
-//                connectTest.setClickable(true);
+                delayDownload.setClickable(false);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
+                connectTest.setClickable(true);
                 break;
 
-            case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD://延时下载有颜色，其余四个置灰(不可点击)
+            case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1://延时下载有颜色，其余四个置灰(不可点击)
                 connectTest.setBackgroundResource(R.drawable.un_project_connect_test);
                 delayDownload.setBackgroundResource(R.drawable.project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(true);
-//                checkAuthorization.setClickable(false);
-//                powerBomb.setClickable(false);
-//                dataReport.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(true);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
                 break;
 
-            case AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE://检查授权有颜色，其余四个置灰(不可点击)
+            case AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1://检查授权有颜色，其余四个置灰(不可点击)
                 connectTest.setBackgroundResource(R.drawable.un_project_connect_test);
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(false);
-//                checkAuthorization.setClickable(true);
-//                powerBomb.setClickable(false);
-//                dataReport.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(false);
+                checkAuthorization.setClickable(true);
+                powerBomb.setClickable(false);
                 break;
 
-            case AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB://充电起爆有颜色，其余四个置灰(不可点击)
+            case AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1://充电起爆有颜色，其余四个置灰(不可点击)
                 connectTest.setBackgroundResource(R.drawable.un_project_connect_test);
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
-//                dataReport.setBackgroundResource(R.drawable.un_project_data_report);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(false);
-//                powerBomb.setClickable(true);
-//                checkAuthorization.setClickable(false);
-//                dataReport.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(false);
+                powerBomb.setClickable(true);
+                checkAuthorization.setClickable(false);
                 break;
 
-            case AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT://数据上传有颜色，其余四个置灰(不可点击)
+            case AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1://数据上传有颜色，其余四个置灰(不可点击)
                 connectTest.setBackgroundResource(R.drawable.un_project_connect_test);
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                dataReport.setBackgroundResource(R.drawable.project_data_report);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(false);
-//                checkAuthorization.setClickable(false);
-//                dataReport.setClickable(true);
-//                powerBomb.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(false);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
                 break;
         }
     }

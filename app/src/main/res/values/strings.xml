@@ -255,11 +255,11 @@
     <string name="immediately_look">立即查看</string>
     <string name="project_list">项目列表</string>
     <string name="project_create_net">1. 雷管组网</string>
-    <string name="project_connect_test">2. 连接检测</string>
-    <string name="project_delay_download">3. 延时下载</string>
-    <string name="project_check_authorization">4. 检查授权</string>
-    <string name="project_power_bomb">5. 充电起爆</string>
-    <string name="project_data_report">6. 数据上传</string>
+    <string name="project_connect_test">连接检测</string>
+    <string name="project_delay_download">延时下载</string>
+    <string name="project_check_authorization">检查授权</string>
+    <string name="project_power_bomb">充电起爆</string>
+    <string name="project_data_report">数据上传</string>
     <string name="str_success">成功</string>
     <string name="str_faile">失败</string>
     <string name="str_miss">失联</string>
