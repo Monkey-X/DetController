@@ -531,6 +531,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     return null;
                 }
                 boolean b = detSingleCheck(i);
+                publishProgress(i);
             }
             return null;
         }
