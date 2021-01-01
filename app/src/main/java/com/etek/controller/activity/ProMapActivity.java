@@ -212,11 +212,10 @@ public class ProMapActivity extends BaseActivity {
              * @return
              */
             @Override
-            public boolean onMapPoiClick(MapPoi mapPoi) {
+            public void onMapPoiClick(MapPoi mapPoi) {
                 XLog.v(  "onMapPoiClick getName: "+mapPoi.getName() );
                 XLog.v(  "onMapPoiClick getUid: "+mapPoi.getUid() );
                 XLog.v(  "onMapPoiClick getPosition: "+mapPoi.getPosition() );
-                return false;
             }
         };//点击获取经纬度；
         mBaiduMap.setOnMapClickListener(listener);

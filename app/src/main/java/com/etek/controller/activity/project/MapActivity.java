@@ -9,8 +9,12 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.model.LatLng;
 import com.etek.controller.R;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
@@ -45,6 +49,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
     private void initMap() {
         map.setMyLocationEnabled(true);
+        map.setCompassEnable(true);
+        MapStatus.Builder builder = new MapStatus.Builder();
+        builder.zoom(16.0f);
+        map.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         //定位初始化
         mLocationClient = new LocationClient(this);
         LocationClientOption option = new LocationClientOption();
@@ -72,6 +80,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
                     .direction(location.getDirection()).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             map.setMyLocationData(locData);
+            // 显示定位到的位置
+            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+            MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(latLng);
+            map.animateMapStatus(update);
         }
     }
 

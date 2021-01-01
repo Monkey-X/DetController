@@ -148,11 +148,10 @@ public class SelectMapActivity extends BaseActivity {
              * @return
              */
             @Override
-            public boolean onMapPoiClick(MapPoi mapPoi) {
+            public void onMapPoiClick(MapPoi mapPoi) {
                 XLog.v(  " getName: "+ mapPoi.getName() );
                 XLog.v(  " getUid: "+ mapPoi.getUid() );
                 XLog.v(  " getPosition: "+ mapPoi.getPosition() );
-                return false;
             }
         };//点击获取经纬度；
         mBaiduMap.setOnMapClickListener(listener);

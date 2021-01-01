@@ -15,16 +15,6 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.PoiDetailInfo;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
-import com.baidu.mapapi.search.poi.PoiDetailResult;
-import com.baidu.mapapi.search.poi.PoiDetailSearchResult;
-import com.baidu.mapapi.search.poi.PoiIndoorResult;
-import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
-import com.baidu.mapapi.search.poi.PoiResult;
-import com.baidu.mapapi.search.poi.PoiSearch;
-import com.baidu.mapapi.search.poi.PoiSortType;
 import com.etek.controller.R;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.entity.DetReportDetail;
@@ -70,9 +60,6 @@ public class DetInfoDetailActivity extends BaseActivity {
         DetReportInfo detInf = (DetReportInfo) getIntent().getSerializableExtra("detReport");
 
         token = detInf.getMsg();
-//        XLog.v( token);
-//        timeStr = intent.getStringExtra("timeStr");
-//        device = intent.getStringExtra("device");
         location = intent.getStringExtra("location");
         TextView tvDevice = findViewById(R.id.det_device_id);
         tvDevice.setText(detInf.getDevice());
@@ -95,94 +82,6 @@ public class DetInfoDetailActivity extends BaseActivity {
             }
         });
         initToolBar(R.string.title_activity_det_detail);
-
-        // 将GPS设备采集的原始GPS坐标转换成百度坐标
-//        CoordinateConverter converter = new CoordinateConverter();
-//        converter.from(CoordinateConverter.CoordType.GPS);
-//
-//// sourceLatLng待转换坐标
-//        LatLng oriCoord = new LatLng(detReportInfo.getLatitude(), detReportInfo.getLongitude());
-//        converter.coord(oriCoord);
-//        LatLng desLatLng = converter.convert();
-
-//        getDetAddressPOI(desLatLng);
-//        getDetAddress(desLatLng);
-    }
-
-
-    private void getDetAddressPOI(LatLng desLatLng) {
-        PoiSearch mPoiSearch;
-        mPoiSearch = PoiSearch.newInstance();
-
-
-        OnGetPoiSearchResultListener poiListener = new OnGetPoiSearchResultListener() {
-
-
-            @Override
-            public void onGetPoiResult(PoiResult result) {
-                if (result == null || result.error == SearchResult.ERRORNO.RESULT_NOT_FOUND) {
-                    ToastUtils.show(mContext, "未找到结果", Toast.LENGTH_LONG);
-                }
-
-                if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-                    XLog.v(JSON.toJSONString(result));
-                    ToastUtils.show(mContext, JSON.toJSONString(result));
-                    return;
-                }
-
-                if (result.error == SearchResult.ERRORNO.AMBIGUOUS_KEYWORD) {
-                    ToastUtils.show(mContext, "SearchResult.ERRORNO.AMBIGUOUS_KEYWORD");
-                }
-            }
-
-            @Override
-            public void onGetPoiDetailResult(PoiDetailResult result) {
-                if (result.error != SearchResult.ERRORNO.NO_ERROR) {
-                    ToastUtils.show(mContext, "抱歉，未找到结果", Toast.LENGTH_SHORT);
-                } else {
-                    ToastUtils.show(mContext,
-                            result.getName() + ": " + result.getAddress(),
-                            Toast.LENGTH_SHORT);
-                }
-            }
-
-            @Override
-            public void onGetPoiDetailResult(PoiDetailSearchResult poiDetailSearchResult) {
-                if (poiDetailSearchResult.error != SearchResult.ERRORNO.NO_ERROR) {
-                    ToastUtils.show(mContext, "抱歉，未找到结果");
-                } else {
-                    List<PoiDetailInfo> poiDetailInfoList = poiDetailSearchResult.getPoiDetailInfoList();
-                    if (null == poiDetailInfoList || poiDetailInfoList.isEmpty()) {
-                        ToastUtils.show(mContext, "抱歉，检索结果为空");
-                        return;
-                    }
-
-                    for (int i = 0; i < poiDetailInfoList.size(); i++) {
-                        PoiDetailInfo poiDetailInfo = poiDetailInfoList.get(i);
-                        if (null != poiDetailInfo) {
-                            ToastUtils.show(mContext,
-                                    poiDetailInfo.getName() + ": " + poiDetailInfo.getAddress(),
-                                    Toast.LENGTH_SHORT);
-                        }
-                    }
-                }
-
-            }
-
-            @Override
-            public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
-
-            }
-        };
-
-        mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
-        mPoiSearch.searchNearby(new PoiNearbySearchOption()
-                .keyword("公司")
-                .sortType(PoiSortType.distance_from_near_to_far)
-                .location(desLatLng)
-                .radius(50)
-                .pageNum(1));
-
     }
 
 
