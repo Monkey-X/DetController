@@ -16,7 +16,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:scaleType="centerCrop"
-            android:text="序号: " />
+            android:text="工程编号: " />
 
         <TextView
             android:id="@+id/sn_id"

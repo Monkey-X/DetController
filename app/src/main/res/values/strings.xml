@@ -81,7 +81,7 @@
     <string name="title_activity_detinfo">雷管上报信息</string>
     <string name="title_activity_det_detail">雷管上报信息详情</string>
     <string name="device_id">起爆器编号：</string>
-    <string name="dev_location">地&#160;&#160;&#160;&#160;标：</string>
+    <string name="dev_location">经纬度：</string>
     <string name="dev_time">起爆器时间：</string>
     <string name="file_sn">文件号：</string>
     <string name="dev_address">地&#160;&#160;&#160;&#160;&#160;&#160;址：</string>

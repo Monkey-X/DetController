@@ -25,6 +25,9 @@ public class ContractAdapter extends BaseQuickAdapter<ProjectInfoEntity, BaseVie
         if (!TextUtils.isEmpty(contractName) || !TextUtils.isEmpty(contractCode)){
             ((TextView) helper.getView(R.id.contract_name)).setText(contractName);//合同名称
             ((TextView) helper.getView(R.id.contract_code)).setText(contractCode);//合同编号
+        }else{
+            ((TextView) helper.getView(R.id.contract_name)).setText(item.getProName());//合同名称
+            ((TextView) helper.getView(R.id.contract_code)).setText(item.getProCode());//合同编号
         }
     }
 }

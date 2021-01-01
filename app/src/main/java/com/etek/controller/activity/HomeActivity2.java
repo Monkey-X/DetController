@@ -5,24 +5,22 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
+import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
+import com.etek.controller.entity.AppUpdateBean;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.fragment.MainBoardDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.model.User;
 import com.etek.controller.scan.ScannerInterface;
+import com.etek.controller.utils.UpdateAppUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.utils.ToastUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 首页
@@ -54,13 +52,43 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         unlockScanKey();
 
         getUserInfo();
+
+        // 进行app升级的检查
+        checkAppUpdate();
+    }
+
+    private void checkAppUpdate() {
+        UpdateAppUtils.checkAppUpdate(AppIntentString.APP_DOWNLOAD_URL, this, new UpdateAppUtils.AppUpdateCallback() {
+            @Override
+            public void onSuccess(AppUpdateBean updateInfo) {
+                if (updateInfo != null && updateInfo.getResult() != null) {
+                    AppUpdateBean.ResultBean.AppBean app = updateInfo.getResult().getApp();
+                    AppUpdateBean.ResultBean.MainBoardBean mainBoard = updateInfo.getResult().getMainBoard();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            checkAppData(app,mainBoard);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
+    private void checkAppData(AppUpdateBean.ResultBean.AppBean app, AppUpdateBean.ResultBean.MainBoardBean mainBoard) {
+        // TODO: 2021/1/1 升级信息的判断
     }
 
     private void getUserInfo() {
         String userStr = getPreInfo("userInfo");
         if (TextUtils.isEmpty(userStr)) {
             startActivity(UserInfoActivity.class);
-        }else{
+        } else {
             Globals.user = JSON.parseObject(userStr, User.class);
         }
     }

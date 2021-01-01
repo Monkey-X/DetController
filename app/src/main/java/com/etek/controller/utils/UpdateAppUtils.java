@@ -9,10 +9,13 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
+
 import com.elvishew.xlog.XLog;
 
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.dto.AppResp;
+import com.etek.controller.entity.AppUpdateBean;
 import com.etek.controller.model.UpdateAppResp;
 import com.google.gson.Gson;
 
@@ -22,6 +25,8 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+
+import static com.etek.controller.utils.UploadHelper.TAG;
 
 
 /**
@@ -64,6 +69,35 @@ public class UpdateAppUtils {
                     }
 
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    updateCallback.onError();
+                }
+            }
+        });
+
+    }
+    public static void checkAppUpdate(String url, Context context, AppUpdateCallback updateCallback) {
+        AsyncHttpCilentUtil.httpPost(url,null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: "+ call.request());
+                updateCallback.onError();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String updateJson = response.body().string();
+                XLog.d( "onSuccess:" + updateJson);
+                try {
+
+                    XLog.d( "updateJson:" + updateJson);
+                    Gson gson = new Gson();
+                    AppUpdateBean result = gson.fromJson(updateJson, AppUpdateBean.class);
+                    XLog.d( "result:" + result);
+                    if (result != null) {
+                        updateCallback.onSuccess(result);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     updateCallback.onError();
@@ -145,6 +179,12 @@ public class UpdateAppUtils {
     // 错误回调
     public interface UpdateCallback {
         void onSuccess(AppResp updateInfo);
+
+        void onError();
+    }
+
+    public interface AppUpdateCallback {
+        void onSuccess(AppUpdateBean updateInfo);
 
         void onError();
     }

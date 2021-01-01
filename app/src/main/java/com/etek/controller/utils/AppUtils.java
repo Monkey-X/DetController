@@ -3,6 +3,8 @@ package com.etek.controller.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 
@@ -46,4 +48,15 @@ public class AppUtils {
         if (v == null) return "";
         return v;
     };
+
+    public static int getAppVersion(Context context){
+        try {
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            int versionCode = packageInfo.versionCode;
+            return versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }
