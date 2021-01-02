@@ -456,6 +456,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (delayDownloadTask != null) {
             delayDownloadTask.cancel(true);
         }
+
+        // 必须总线下电
+        DetApp.getInstance().MainBoardBusPowerOff();
+
         releaseSound();
     }
 

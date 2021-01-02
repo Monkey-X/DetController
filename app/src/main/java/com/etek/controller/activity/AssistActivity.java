@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.etek.controller.R;
+import com.etek.controller.hardware.command.DetApp;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 /**
@@ -92,5 +93,13 @@ public class AssistActivity extends BaseActivity implements View.OnClickListener
                 startActivity(lineIntent);
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // 必须总线下电
+        DetApp.getInstance().MainBoardBusPowerOff();
     }
 }
