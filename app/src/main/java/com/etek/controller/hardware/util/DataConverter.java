@@ -129,5 +129,4 @@ public class DataConverter {
 		if(n>=0) return n;
 		return (long)(0x100000000L+n);
 	}
-
 }

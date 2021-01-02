@@ -14,6 +14,9 @@ public class DetIDConverter {
     private static final String TAG = "DetIDConverter";
     private static Map<Integer, String> m_mapDeskCode = new HashMap<Integer, String>();
 
+    //  起爆器的厂商代码
+    public static byte m_bMID = 99;
+
     static {
         m_mapDeskCode.put(99, "ZYX123456");
         m_mapDeskCode.put(61, "D23456789");
@@ -45,7 +48,7 @@ public class DetIDConverter {
      * @param dskCode    机台号
      * @return 8字节的管码编号
      */
-    public byte[] Conv_ID2DC(byte[] ID, byte facCode, byte dskCode) {
+    public static byte[] Conv_ID2DC(byte[] ID, byte facCode, byte dskCode) {
         long hexID;
         long tmp;
         long ID3;
@@ -146,6 +149,10 @@ public class DetIDConverter {
     public static byte[] GetDCByString(String strDC) {
         byte[] nval = new byte[8];
 
+        if(12==strDC.length()){
+            return GetDCByOldQRString(strDC);
+        }
+
         if (strDC.length() < 13)
             return null;
 
@@ -165,6 +172,34 @@ public class DetIDConverter {
     }
 
     /***
+     * 通过旧的二维码（12位）获取管码信息
+     * @param strDC
+     * @return
+     */
+    private static byte[] GetDCByOldQRString(String strDC) {
+        byte[] nval = new byte[8];
+
+        if (strDC.length() < 12)
+            return null;
+
+        //sprintf((char*)str,”%02d %01d %02d %02d %c%03d%02d”,
+        //DC[0], DC[1], DC[2], DC[3], DC[4], DC[5]|(DC[6]<<8), DC[7]);
+        nval[0]= 61;
+        nval[1] = Byte.parseByte(strDC.substring(0,1));
+        nval[2] = Byte.parseByte(strDC.substring(1,3));
+        nval[3] = Byte.parseByte(strDC.substring(3,5));
+        nval[4] = 0x44;	//D
+
+        int ret = Integer.parseInt(strDC.substring(5, 8));
+        nval[5]=(byte)(ret&0xff);
+        ret = ret - DataConverter.getByteValue(nval[5]);
+        nval[6] = (byte)(ret/0x100);
+
+        nval[7] = Byte.parseByte(strDC.substring(8, 10));
+        return nval;
+    }
+
+    /***
      * 检测雷管二维码的检验有效性
      * @param strQRCode    二维码字符串，长度必须大于等于17
      * @return
@@ -176,6 +211,11 @@ public class DetIDConverter {
         int nxor, nlen;
 
         nlen = strQRCode.length();
+        //  旧12位的二维码
+        if(12==nlen){
+            return VerifyOldQRCheckValue(strQRCode);
+        }
+
         if (nlen < 17) {
             Log.d(TAG, "VerifyQRCheckValue: false");
             return false;
@@ -183,6 +223,13 @@ public class DetIDConverter {
 
         //	获取前15个字符的字节流
         byte[] charr = strQRCode.getBytes();
+        if(99!=m_bMID){
+            if(charr[0]!=m_bMID){
+                Log.d(TAG, "VerifyQRCheckValue: 和起爆器厂商编码不一致！");
+                return false;
+            }
+        }
+
         int[] nval = new int[15];
         for (i = 0; i < 15; i++) nval[i] = DataConverter.getByteValue((byte) charr[i]);
 
@@ -201,6 +248,40 @@ public class DetIDConverter {
         return true;
     }
 
+    /***
+     * 校验旧的12位条码
+     * @param strQRCode
+     * @return
+     */
+    private static boolean VerifyOldQRCheckValue(String strQRCode){
+        int[] nval = new int[8];
+        nval[0]= 61;
+        nval[1] = Integer.parseInt(strQRCode.substring(0,1));
+        nval[2] = Integer.parseInt(strQRCode.substring(1,3));
+        nval[3] = Integer.parseInt(strQRCode.substring(3,5));
+        nval[4] = 0x44;//D
+
+        int n = Integer.parseInt(strQRCode.substring(5,8));
+        nval[5] = n&0xff;
+        nval[6]=(n-nval[5])/0x100;
+        nval[7] = Integer.parseInt(strQRCode.substring(8,10));
+
+        //  校验
+        n = 0;
+        for(int i=0;i<8;i++) n = n + nval[i];
+        n = n %100;
+
+        //  校验值比较
+        int nxor = Integer.parseInt(strQRCode.substring(10,12));
+
+        if(n!=nxor) return false;
+
+        return true;
+    }
+
+    public static void SetMID(byte bMID){
+        m_bMID = bMID;
+    }
 
     /***
      * 雷管管码、ID和二维码相关类测试

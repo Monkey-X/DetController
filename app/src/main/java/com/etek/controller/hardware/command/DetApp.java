@@ -37,6 +37,8 @@ public class DetApp {
 
 	private String TAG = "DetApp";
 
+	//	起爆器厂商编码
+	private static byte m_bMID = 99;
 
 	private DetApp(){}
 
@@ -921,6 +923,11 @@ public class DetApp {
 		strSNO = String.format("%c%02X%02X%02X%02X%02X",
 				arrdata[0],
 				arrdata[1],arrdata[2],arrdata[3],arrdata[4],arrdata[5]);
+
+		//	设置MID
+		m_bMID = arrdata[1];
+		DetIDConverter.SetMID(m_bMID);
+
 		//
 		String strConfig = "";
 
@@ -1052,8 +1059,16 @@ public class DetApp {
 			byte bResult = szdata[23];
 
 			//	ID
-			int nid = DataConverter.bytes2Int(id);
-			int ndt = DataConverter.bytes2Int(dt);
+			int nid = DataConverter.lsbBytes2Int(id);
+			int ndt = DataConverter.lsbBytes2Int(dt);
+
+			//	比较起爆器厂商编码
+			if(99!=m_bMID){
+				if(dc[0]!=m_bMID){
+					cbobj.DisplayText("单颗模组检测 和起爆器编码不一致！");
+					return -1;
+				}
+			}
 
 			ret = 0;
 			if(null!=cbobj) {
