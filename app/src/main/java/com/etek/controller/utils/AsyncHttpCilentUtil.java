@@ -124,4 +124,25 @@ public class AsyncHttpCilentUtil {
     }
 
 
+    /**
+     * Get请求
+     */
+    public static void httpGet(final String url, final Callback callback) {
+        new Thread(() -> {
+            HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLogger());
+            logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .addNetworkInterceptor(logInterceptor)
+                    .build();
+
+            Request request = new Request
+                    .Builder()
+                    .get()
+                    .url(url)
+                    .build();
+            okHttpClient.newCall(request).enqueue(callback);
+        }).start();
+    }
+
 }

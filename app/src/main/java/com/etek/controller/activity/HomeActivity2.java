@@ -81,7 +81,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     }
 
     private void checkAppData(AppUpdateBean.ResultBean.AppBean app, AppUpdateBean.ResultBean.MainBoardBean mainBoard) {
-        // TODO: 2021/1/1 升级信息的判断
+        //优先判断app是否需要升级，在判断主控板是否需要升级
+        Log.e(TAG,app.toString() + "   " + mainBoard.toString());
     }
 
     private void getUserInfo() {

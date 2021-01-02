@@ -78,7 +78,7 @@ public class UpdateAppUtils {
 
     }
     public static void checkAppUpdate(String url, Context context, AppUpdateCallback updateCallback) {
-        AsyncHttpCilentUtil.httpPost(url,null, new Callback() {
+        AsyncHttpCilentUtil.httpGet(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure: "+ call.request());
