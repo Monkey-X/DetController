@@ -159,6 +159,16 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.UpdateActivity" /> <!-- <service android:name=".service.BLeSerialPortService" /> -->
         <service android:name=".service.DownLoadAppService" />
+        <provider
+            android:name=".provider.InstallProvider"
+            android:authorities="com.etek.controller.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/install_provider_paths" />
+        </provider>
+
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"

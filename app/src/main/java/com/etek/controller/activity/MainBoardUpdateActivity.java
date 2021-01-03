@@ -100,7 +100,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                     e.printStackTrace();
                 }
 
-                int result = DetApp.getInstance().DownloadProc("/test/CoreBrd1768_Std_v1.0.1A.bin", new DetCallback() {
+                int result = DetApp.getInstance().DownloadProc("/test/MainBoard.bin", new DetCallback() {
                     @Override
                     public void DisplayText(String strText) {
                         Log.d(TAG, "DisplayText: " + strText);
