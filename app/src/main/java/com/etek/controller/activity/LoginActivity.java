@@ -1,11 +1,14 @@
 package com.etek.controller.activity;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.etek.controller.R;
@@ -13,7 +16,7 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private EditText userName;
     private EditText password;
@@ -52,6 +55,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         password = findViewById(R.id.password);
         TextView login = findViewById(R.id.login);
         login.setOnClickListener(this);
+
+        RadioGroup radiaGrop = findViewById(R.id.radioGroup);
+        RadioButton wifi = findViewById(R.id.wifi);
+        RadioButton mobileData = findViewById(R.id.mobileData);
+        radiaGrop.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId) {
+            case R.id.wifi:
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                break;
+            case R.id.mobileData:
+                startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                break;
+        }
     }
 
     @Override
