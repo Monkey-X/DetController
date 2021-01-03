@@ -196,19 +196,19 @@ public class UpdateAppUtils {
      * 调用系统安装器安装apk
      *
      * @param context 上下文
-     * @param authority FileProvider对应的authority
      * @param file apk文件
      */
-    public static void installApk(Context context, String authority, File file) {
+    public static void installApk(Context context, File file) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri data;
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Uri apkuri = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            data = FileProvider.getUriForFile(context, authority, file);
+            apkuri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         } else {
-            data = Uri.fromFile(file);
+            apkuri = Uri.fromFile(file);
         }
-        intent.setDataAndType(data, "application/vnd.android.package-archive");
+        intent.setDataAndType(apkuri, "application/vnd.android.package-archive");
         context.startActivity(intent);
     }
 
