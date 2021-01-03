@@ -636,7 +636,17 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 //获取扫描结果
                 if (scanResult.length() > 0 && DetIDConverter.VerifyQRCheckValue(scanResult)) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
                     // 扫描成功
-                    String strgm = scanResult.substring(0, 13);
+                    String strgm="";
+                    //  12位条码
+                    if(scanResult.length()==12){
+                        byte[] dc = DetIDConverter.GetDCByOldQRString(scanResult);
+                        strgm = DetIDConverter.GetDisplayDC(dc);
+                    }
+                    else{
+                        strgm = scanResult.substring(0, 13);
+                    }
+
+
                     createDetData(strgm);
                 } else {
                     // 扫描失败

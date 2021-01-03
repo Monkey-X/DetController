@@ -920,7 +920,7 @@ public class DetApp {
 		//[8~13] //设备序列号
 		String strSNO = str0.substring(12,24);
 		byte[] arrdata = DataConverter.hexStringToBytes(strSNO);
-		strSNO = String.format("%c%02X%02X%02X%02X%02X",
+		strSNO = String.format("%c%02d%02X%02X%02X%02X",
 				arrdata[0],
 				arrdata[1],arrdata[2],arrdata[3],arrdata[4],arrdata[5]);
 

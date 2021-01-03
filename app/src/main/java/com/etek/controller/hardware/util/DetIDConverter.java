@@ -176,7 +176,7 @@ public class DetIDConverter {
      * @param strDC
      * @return
      */
-    private static byte[] GetDCByOldQRString(String strDC) {
+    public static byte[] GetDCByOldQRString(String strDC) {
         byte[] nval = new byte[8];
 
         if (strDC.length() < 12)
@@ -223,15 +223,18 @@ public class DetIDConverter {
 
         //	获取前15个字符的字节流
         byte[] charr = strQRCode.getBytes();
-        if(99!=m_bMID){
-            if(charr[0]!=m_bMID){
-                Log.d(TAG, "VerifyQRCheckValue: 和起爆器厂商编码不一致！");
-                return false;
-            }
-        }
 
         int[] nval = new int[15];
         for (i = 0; i < 15; i++) nval[i] = DataConverter.getByteValue((byte) charr[i]);
+
+        int ret = Integer.parseInt(strQRCode.substring(0,2));
+        if(99!=m_bMID){
+            if(ret!=m_bMID){
+                String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",ret,m_bMID);
+                Log.d(TAG, strmsg);
+                return false;
+            }
+        }
 
         //	计算校验值
         nxor = 0;
@@ -254,6 +257,13 @@ public class DetIDConverter {
      * @return
      */
     private static boolean VerifyOldQRCheckValue(String strQRCode){
+
+        if(61!=m_bMID){
+            String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",61,m_bMID);
+            Log.d(TAG, strmsg);
+            return false;
+        }
+
         int[] nval = new int[8];
         nval[0]= 61;
         nval[1] = Integer.parseInt(strQRCode.substring(0,1));

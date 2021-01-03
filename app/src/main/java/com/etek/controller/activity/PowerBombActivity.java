@@ -21,9 +21,11 @@ import com.etek.controller.hardware.task.DetsBusChargeTask;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.SetBLTask;
+import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.gen.PendingProjectDao;
+import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 /**
@@ -49,6 +51,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private View powerBank;
     private long proId;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         getProjectId();
         init();
         initView();
+
+        initSound();
     }
 
     private void getProjectId() {
@@ -80,6 +85,21 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private void init() {
         this.mContext = this;
     }
+
+    private SoundPoolHelp soundPoolHelp;
+    /**
+     * 初始化音效
+     */
+    private void initSound() {
+        soundPoolHelp = new SoundPoolHelp(this);
+        soundPoolHelp.initSound();
+    }
+    private void releaseSound() {
+        if (soundPoolHelp!=null) {
+            soundPoolHelp.releaseSound();
+        }
+    }
+
 
     int mBackKeyAction;
     long mActionTime;
@@ -135,6 +155,10 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         // 进行网络起爆
         isCanBomb = false;
         if (!isBombing) {
+            // 蜂鸣+震动1秒钟
+            soundPoolHelp.playSound(true);
+            VibrateUtil.vibrate(this, 1000);
+
             isBombing = true;
             showProDialog("起爆中...");
             Log.d(TAG, "DetonateAllDet: ");
@@ -156,6 +180,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     protected void onDestroy() {
+        releaseSound();
+
         super.onDestroy();
         if (powerAsyncTask != null) {
             powerAsyncTask.cancel(true);
