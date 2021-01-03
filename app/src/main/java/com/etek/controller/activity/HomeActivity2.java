@@ -84,7 +84,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            checkAppData(app,mainBoard);
+                            checkAppData(app, mainBoard);
                         }
                     });
                 }
@@ -92,27 +92,28 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
             @Override
             public void onError() {
-                Log.e(TAG,"check app update error");
+                Log.e(TAG, "check app update error");
             }
         });
     }
 
     private void checkAppData(AppUpdateBean.ResultBean.AppBean app, AppUpdateBean.ResultBean.MainBoardBean mainBoard) {
         //app更新
-        if (AppUtils.getAppVersion(HomeActivity2.this) < app.getVersionCode()){
-            showUpdateDialog(appUpdate,app,mainBoard);
+        if (AppUtils.getAppVersion(HomeActivity2.this) < app.getVersionCode()) {
+            showUpdateDialog(appUpdate, app, mainBoard);
             return;
         }
 
         //主控制板更新
-        if (0 < mainBoard.getVersionCode()){
-            showUpdateDialog(mainBoardupdate,app,mainBoard);
+        if (0 < mainBoard.getVersionCode()) {
+            showUpdateDialog(mainBoardupdate, app, mainBoard);
         }
     }
 
     /**
-     *根据flag弹更新提示框
-     * @param flag  0代表app更新    1代表控制板更新
+     * 根据flag弹更新提示框
+     *
+     * @param flag      0代表app更新    1代表控制板更新
      * @param app
      * @param mainBoard
      */
@@ -123,25 +124,25 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                if (flag == appUpdate){
+                if (flag == appUpdate) {
                     String downloadUrl = app.getDownloadUrl();
-                    if (!TextUtils.isEmpty(downloadUrl) && downloadUrl.startsWith("http")){
-                        downLoadFile(0,downloadUrl,FileUtils.ExternalStorageDirectory + File.separator + "test","雷管E联.apk");
-                    }else{
-                        ToastUtils.show(HomeActivity2.this,"下载链接错误，请检查");
+                    if (!TextUtils.isEmpty(downloadUrl) && downloadUrl.startsWith("http")) {
+                        downLoadFile(0, downloadUrl, FileUtils.ExternalStorageDirectory + File.separator + "test", "雷管E联.apk");
+                    } else {
+                        ToastUtils.show(HomeActivity2.this, "下载链接错误，请检查");
                     }
-                }else if (flag == mainBoardupdate){
+                } else if (flag == mainBoardupdate) {
                     String downloadUrl = mainBoard.getDownloadUrl();
-                    if (!TextUtils.isEmpty(downloadUrl) && downloadUrl.startsWith("http")){
-                        downLoadFile(1,downloadUrl,FileUtils.ExternalStorageDirectory + File.separator + "test","MainBoard.bin");
-                    }else{
-                        ToastUtils.show(HomeActivity2.this,"下载链接错误，请检查");
+                    if (!TextUtils.isEmpty(downloadUrl) && downloadUrl.startsWith("http")) {
+                        downLoadFile(1, downloadUrl, FileUtils.ExternalStorageDirectory + File.separator + "test", "MainBoard.bin");
+                    } else {
+                        ToastUtils.show(HomeActivity2.this, "下载链接错误，请检查");
                     }
                 }
             }
         });
 
-        if (flag == appUpdate && app.getVersionType() == 0){
+        if (flag == appUpdate && app.getVersionType() == 0) {
             builder.setNegativeButton("取消更新", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -150,7 +151,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
             });
         }
 
-        if (flag == mainBoardupdate && mainBoard.getVersionType() == 0){
+        if (flag == mainBoardupdate && mainBoard.getVersionType() == 0) {
             builder.setNegativeButton("取消更新", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -164,12 +165,13 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
     /**
      * 下载文件
-     * @param flag  0代表下载.apk文件，  1代表下载.bin文件
-     * @param downloadUrl  下载地址
-     * @param path  文件保存路径
-     * @param fileName  文件名称
+     *
+     * @param flag        0代表下载.apk文件，  1代表下载.bin文件
+     * @param downloadUrl 下载地址
+     * @param path        文件保存路径
+     * @param fileName    文件名称
      */
-    private void downLoadFile(int flag,String downloadUrl,String path,String fileName) {
+    private void downLoadFile(int flag, String downloadUrl, String path, String fileName) {
         update.setVisibility(View.VISIBLE);
         File targetFile = new File(path + File.separator + fileName);
         if (targetFile.exists()) {
@@ -178,7 +180,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DownloadUtil.get().download(downloadUrl,path, fileName, new DownloadUtil.OnDownloadListener() {
+                DownloadUtil.get().download(downloadUrl, path, fileName, new DownloadUtil.OnDownloadListener() {
                     @Override
                     public void onDownloadSuccess(File file) {
                         HomeActivity2.this.runOnUiThread(new Runnable() {
@@ -186,10 +188,10 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                             public void run() {
                                 Log.e(TAG, "file下载完成: " + file.getName());
                                 update.setVisibility(View.GONE);
-                                if (flag == appUpdate){
+                                if (flag == appUpdate) {
                                     UpdateAppUtils.installApk(HomeActivity2.this, file);
-                                }else if (flag == mainBoardupdate){
-                                    HomeActivity2.this.startActivity(new Intent(HomeActivity2.this,MainBoardUpdateActivity.class));
+                                } else if (flag == mainBoardupdate) {
+                                    HomeActivity2.this.startActivity(new Intent(HomeActivity2.this, MainBoardUpdateActivity.class));
                                 }
                             }
                         });
@@ -209,7 +211,12 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
                     @Override
                     public void onDownloadFailed(Exception e) {
-                        update.setVisibility(View.GONE);
+                        HomeActivity2.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                update.setVisibility(View.GONE);
+                            }
+                        });
                         Log.e(TAG, "Exception: " + e.getMessage());
                     }
                 });
