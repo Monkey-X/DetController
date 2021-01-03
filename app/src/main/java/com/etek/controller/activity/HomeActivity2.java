@@ -13,6 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
@@ -29,6 +31,8 @@ import com.etek.controller.utils.UpdateAppUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;
+
+import org.jsoup.helper.StringUtil;
 
 import java.io.File;
 
@@ -52,6 +56,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     private int appUpdate = 0;
     private int mainBoardupdate = 1;
     private AlertDialog updateDialog;
+    private MainBoardInfoBean mainBoardInfoBean;
 
 
     @Override
@@ -70,8 +75,24 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
         getUserInfo();
 
+        getMainBoardInfo();
         // 进行app升级的检查
         checkAppUpdate();
+    }
+
+    /**
+     * 获取主控板信息
+     */
+    private void getMainBoardInfo() {
+        String preInfo = getPreInfo(getString(R.string.mainBoardInfo_sp));
+        if (!StringUtil.isBlank(preInfo)) {
+            try {
+                mainBoardInfoBean = JSON.parseObject(preInfo, MainBoardInfoBean.class);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                XLog.e(e.getMessage());
+            }
+        }
     }
 
     private void checkAppUpdate() {
@@ -105,8 +126,11 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         }
 
         //主控制板更新
-        if (0 < mainBoard.getVersionCode()) {
-            showUpdateDialog(mainBoardupdate, app, mainBoard);
+        if (mainBoardInfoBean != null) {
+            String strSoftwareVer = mainBoardInfoBean.getStrSoftwareVer();
+            if (mainBoard.getVersionName().compareTo(strSoftwareVer) > 0) {
+                showUpdateDialog(mainBoardupdate, app, mainBoard);
+            }
         }
     }
 

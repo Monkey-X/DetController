@@ -26,31 +26,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <LinearLayout
-
-        android:layout_alignParentRight="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:gravity="center"
-        android:layout_alignParentBottom="true"
+    <RelativeLayout
+        android:id="@+id/power_bank"
+        android:layout_below="@+id/toast_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/power_bank"
-            android:src="@mipmap/kaishi"
-            android:layout_width="150dp"
-            android:layout_height="150dp"/>
+        android:layout_height="100dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/project_power_bomb">
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/project_power_bomb"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+    </RelativeLayout>
 
-    <Button
+
+    <RelativeLayout
+        android:layout_below="@+id/power_bank"
         android:layout_width="match_parent"
-        android:layout_margin="20dp"
-        android:text="雷管放电"
+        android:layout_height="100dp"
         android:id="@+id/det_disCharge"
-        android:textSize="18sp"
-        android:background="@drawable/selected_new"
-        android:layout_alignParentBottom="true"
-        android:layout_height="wrap_content"/>
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/un_project_power_bomb">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="雷管放电"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+    </RelativeLayout>
 
 </RelativeLayout>

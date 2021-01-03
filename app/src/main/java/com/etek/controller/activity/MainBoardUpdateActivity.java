@@ -41,10 +41,12 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_board_update);
         initSupportActionBar(R.string.title_main_board_update);
-        View update = findViewById(R.id.update);
+        View update = findViewById(R.id.AppUpdate);
+        View MainBoardUpdate = findViewById(R.id.MainBoardUpdate);
         initData();
 
-        update.setOnClickListener(this);
+//        update.setOnClickListener(this);
+        MainBoardUpdate.setOnClickListener(this);
 
         checkMainBoardInfo();
 

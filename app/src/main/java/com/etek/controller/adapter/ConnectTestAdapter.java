@@ -45,13 +45,13 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
 
     public void setTestStatus(TextView view, int teststatus) {
         if (teststatus == 0) {
-            view.setText(R.string.str_success);
+            view.setText("OK");
             view.setTextColor(view.getContext().getColor(R.color.palegreen));
         } else if (teststatus == -1){
-            view.setText("未检测");
+            view.setText("--");
             view.setTextColor(view.getContext().getColor(R.color.lightgrey));
         }else{
-            view.setText("失败");
+            view.setText("X");
             view.setTextColor(view.getContext().getColor(R.color.red_normal));
         }
 //        switch (teststatus) {

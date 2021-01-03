@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/seleted_status"
         android:padding="8dp"
-        android:text="主控板升级"
+        android:text="应用升级"
         android:textSize="16sp" />
 
     <View

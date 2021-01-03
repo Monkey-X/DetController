@@ -374,6 +374,11 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (connectData == null || connectData.size() == 0) {
             return;
         }
+        for (ProjectDetonator connectDatum : connectData) {
+            connectDatum.setTestStatus(-1);
+        }
+        DBManager.getInstance().getProjectDetonatorDao().saveInTx(connectData);
+        connectTestAdapter.notifyDataSetChanged();
         testAsyncTask = new TestAsyncTask();
         testAsyncTask.execute();
     }

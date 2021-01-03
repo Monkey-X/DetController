@@ -12,12 +12,26 @@
     <include layout="@layout/dialog_main_board"/>
 
     <TextView
-        android:id="@+id/update"
-        android:text="升 级"
+        android:id="@+id/AppUpdate"
+        android:visibility="gone"
+        android:text="APP 升 级"
         android:textStyle="bold"
         android:padding="15dp"
         android:gravity="center"
         android:layout_margin="25dp"
+        android:background="@drawable/seleted_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/MainBoardUpdate"
+        android:text="主控板升级"
+        android:textStyle="bold"
+        android:padding="15dp"
+        android:gravity="center"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
         android:background="@drawable/seleted_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

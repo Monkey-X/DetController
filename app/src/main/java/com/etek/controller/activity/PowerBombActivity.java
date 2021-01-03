@@ -75,7 +75,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         showstring = findViewById(R.id.showString);
         powerBank.setOnClickListener(this);
 
-        Button detDisCharge = findViewById(R.id.det_disCharge);
+        View detDisCharge = findViewById(R.id.det_disCharge);
         detDisCharge.setOnClickListener(this);
     }
 

@@ -1,5 +1,7 @@
 package com.etek.controller.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -354,11 +356,41 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             public void run() {
                 missProDialog();
                 changeDetStatus();
-                showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
+                goToBomb();
+//                showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
             }
         },2000);
         return;
         //todo
+    }
+
+
+    private void goToBomb() {
+        PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
+        if (projectInfoEntity != null) {
+            projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1);
+            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("检查成功，请进行充电起爆！");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(CheckDetailActivity.this, PowerBombActivity.class);
+                intent.putExtra(AppIntentString.PROJECT_ID, proId);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     // 演示
