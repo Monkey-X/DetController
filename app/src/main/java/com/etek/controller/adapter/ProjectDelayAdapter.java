@@ -67,13 +67,13 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
 
     public void setDownLoadStatus(TextView view, int status) {
         if (status == 0) {
-            view.setText(R.string.str_success);
+            view.setText("OK");
             view.setTextColor(view.getContext().getColor(R.color.palegreen));
         } else if (status == -1){
-           view.setText("未下载");
+           view.setText("--");
             view.setTextColor(view.getContext().getColor(R.color.lightgrey));
         }else{
-            view.setText(R.string.str_faile);
+            view.setText("X");
             view.setTextColor(view.getContext().getColor(R.color.red_normal));
         }
     }

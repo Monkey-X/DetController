@@ -445,6 +445,12 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (detonators == null || detonators.size() == 0) {
             return;
         }
+
+        for (ProjectDetonator connectDatum : detonators) {
+            connectDatum.setDownLoadStatus(-1);
+        }
+        DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
+        mProjectDelayAdapter.notifyDataSetChanged();
         delayDownloadTask = new DelayDownloadTask();
         delayDownloadTask.execute();
     }
