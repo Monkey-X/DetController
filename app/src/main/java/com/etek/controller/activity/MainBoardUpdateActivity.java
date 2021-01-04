@@ -23,9 +23,12 @@ import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.model.User;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.jsoup.helper.StringUtil;
+
+import java.io.File;
 
 public class MainBoardUpdateActivity extends BaseActivity implements View.OnClickListener {
 
@@ -92,6 +95,12 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
+
+        File targetFile = new File( FileUtils.ExternalStorageDirectory + File.separator + "test"+ File.separator + "MainBoard.bin");
+        if (!targetFile.exists()) {
+            ToastUtils.showShort(this,"升级文件不存在！");
+            return;
+        }
         showProDialog("升级中...");
         new Thread() {
             @Override
