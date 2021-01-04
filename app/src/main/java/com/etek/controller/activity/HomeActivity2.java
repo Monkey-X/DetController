@@ -128,7 +128,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         //主控制板更新
         if (mainBoardInfoBean != null) {
             String strSoftwareVer = mainBoardInfoBean.getStrSoftwareVer();
-            if (mainBoard.getVersionName().compareTo(strSoftwareVer) > 0) {
+            if (mainBoard.getVersionName().compareToIgnoreCase(strSoftwareVer) > 0) {
                 showUpdateDialog(mainBoardupdate, app, mainBoard);
             }
         }

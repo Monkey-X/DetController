@@ -199,9 +199,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         if (detDelayBean.getHoleOutTime() >= 0) {
-            holeTimeOut.setVisibility(View.VISIBLE);
+            numTypeOut.setVisibility(View.VISIBLE);
         } else {
-            holeTimeOut.setVisibility(View.GONE);
+            numTypeOut.setVisibility(View.GONE);
         }
         holeTimeIn.setText(detDelayBean.getHoleInTime()+"");
         holeTimeOut.setText(detDelayBean.getHoleOutTime()+"");
@@ -430,6 +430,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
+                int intDelayTime = Integer.parseInt(nowDelayTime);
+                if (Math.abs(intDelayTime) > 15000) {
+                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                    return;
+                }
                 detonatorEntity.setRelay(Integer.parseInt(nowDelayTime));
                 DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 projectDetailAdapter.notifyDataSetChanged();
