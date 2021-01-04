@@ -258,11 +258,14 @@ public class DetIDConverter {
      */
     private static boolean VerifyOldQRCheckValue(String strQRCode){
 
-        if(61!=m_bMID){
-            String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",61,m_bMID);
-            Log.d(TAG, strmsg);
-            return false;
+        if(99!=m_bMID){
+            if(61!=m_bMID){
+                String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",61,m_bMID);
+                Log.d(TAG, strmsg);
+                return false;
+            }
         }
+
 
         int[] nval = new int[8];
         nval[0]= 61;

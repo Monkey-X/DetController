@@ -555,6 +555,9 @@ public class DetApp {
 
 		//	改成绝对路径
 		String strFilePath = Environment.getExternalStorageDirectory().getPath()+strBINFileName;
+
+		Log.d(TAG, String.format("文件路径：%s",strFilePath));
+
         File file = new File(strFilePath);
         if (!file.exists() || !file.isFile()) {
         	if(null!=cbobj)
@@ -926,6 +929,7 @@ public class DetApp {
 
 		//	设置MID
 		m_bMID = arrdata[1];
+		m_bMID =99;
 		DetIDConverter.SetMID(m_bMID);
 
 		//
