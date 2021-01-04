@@ -359,7 +359,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if (keyCode == KeyEvent.KEYCODE_BUTTON_1) {
+        if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
             allDetConnectTest();
             return true;
         }
@@ -539,7 +539,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     return null;
                 }
                 boolean b = detSingleCheck(i);
-                publishProgress(i);
+                publishProgress(i + 1);
             }
             return null;
         }

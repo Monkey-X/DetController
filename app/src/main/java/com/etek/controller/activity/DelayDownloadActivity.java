@@ -35,7 +35,6 @@ import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
-import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -332,7 +331,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if (keyCode == KeyEvent.KEYCODE_BUTTON_1) {
+        if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
             allDetDownload();
             return true;
         }
@@ -550,7 +549,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                     return null;
                 }
                 detSingleDownload(i);
-                publishProgress(i);
+                publishProgress(i+1);
             }
             return null;
         }

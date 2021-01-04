@@ -35,6 +35,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
     private TextView softwareVer;
     private TextView sno;
     private MainboardTask mainboardTask;
+    private MainboardTask mainboardTask1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +157,8 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
             public void run() {
                 missProDialog();
                 if (result == 0) {
+                    mainboardTask1 = new MainboardTask();
+                    mainboardTask1.execute();
                     ToastUtils.show(MainBoardUpdateActivity.this, "升级完成！");
                 } else {
                     ToastUtils.show(MainBoardUpdateActivity.this, "升级失败！");
@@ -185,6 +188,8 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                     mainBoardInfoBean.setStrSoftwareVer(strSoftwareVer);
                     mainBoardInfoBean.setStrSNO(strSNO);
                     mainBoardInfoBean.setStrConfig(strConfig);
+                    setStringInfo(getString(R.string.controller_sno), strSNO);
+                    setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
                 }
             });
             return mainBoardInfoBean;
