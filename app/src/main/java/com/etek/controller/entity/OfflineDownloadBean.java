@@ -5,66 +5,66 @@ package com.etek.controller.entity;
  */
 public class OfflineDownloadBean {
     // 箱条码
-    String Xtm;
+    String xtm;
     // 盒条码
-    String Htm;
+    String htm;
     // 发编码
-    String Fbh;
+    String fbh;
     // 合同编号
-    String Htid;
+    String htid;
     // 项目编号
-    String Xmbh;
+    String xmbh;
     // 起爆器编号
-    String Sbbh;
+    String sbbh;
     // 单位代码
     String dwdm;
 
     public String getXtm() {
-        return Xtm;
+        return xtm;
     }
 
     public void setXtm(String xtm) {
-        Xtm = xtm;
+        this.xtm = xtm;
     }
 
     public String getHtm() {
-        return Htm;
+        return htm;
     }
 
     public void setHtm(String htm) {
-        Htm = htm;
+        this.htm = htm;
     }
 
     public String getFbh() {
-        return Fbh;
+        return fbh;
     }
 
     public void setFbh(String fbh) {
-        Fbh = fbh;
+        this.fbh = fbh;
     }
 
     public String getHtid() {
-        return Htid;
+        return htid;
     }
 
     public void setHtid(String htid) {
-        Htid = htid;
+        this.htid = htid;
     }
 
     public String getXmbh() {
-        return Xmbh;
+        return xmbh;
     }
 
     public void setXmbh(String xmbh) {
-        Xmbh = xmbh;
+        this.xmbh = xmbh;
     }
 
     public String getSbbh() {
-        return Sbbh;
+        return sbbh;
     }
 
     public void setSbbh(String sbbh) {
-        Sbbh = sbbh;
+        this.sbbh = sbbh;
     }
 
     public String getDwdm() {

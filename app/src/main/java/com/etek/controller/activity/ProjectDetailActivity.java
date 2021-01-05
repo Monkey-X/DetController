@@ -74,6 +74,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private TextView numTypeIn;
     private TextView numTypeOut;
 
+    // 初始时间的状态
+    private boolean isStartTimeChange = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -316,6 +319,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     }
                     detDelayBean.setHoleOutTime(intTime);
                 }else{
+                    // 设置的是起始的时间
+                    isStartTimeChange = true;
                     detDelayBean.setStartTime(intTime);
                 }
                 setDelaySetting(AppIntentString.DELAY_SETTING, JSON.toJSONString(detDelayBean));
@@ -646,8 +651,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     if(scanResult.length()==12){
                         byte[] dc = DetIDConverter.GetDCByOldQRString(scanResult);
                         strgm = DetIDConverter.GetDisplayDC(dc);
-                    }
-                    else{
+                    } else{
                         strgm = scanResult.substring(0, 13);
                     }
 
@@ -675,7 +679,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             isInsertItem = false;
             ProjectDetonator detonatorEntity = detonators.get(insertPosition);
             ProjectDetonator detonatorEntity1 = new ProjectDetonator();
-            detonatorEntity1.setRelay(detonatorEntity.getRelay());
+            if (isStartTimeChange) {
+                isStartTimeChange = false;
+                detonatorEntity1.setRelay(detDelayBean.getStartTime());
+            }else{
+                detonatorEntity1.setRelay(detonatorEntity.getRelay());
+            }
             detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
             detonatorEntity1.setCode(strgm);
             detonatorEntity1.setProjectInfoId(projectId);
@@ -860,6 +869,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private int getNextDelayTime(int delayTime, int type) {
 
         int nextDelayTime = 0;
+        if (isStartTimeChange) {
+            isStartTimeChange = false;
+            nextDelayTime = detDelayBean.getStartTime();
+            return nextDelayTime;
+        }
+
         switch (type) {
             case AppIntentString.TYPE_HOLE_IN:
                 String holeInTime = holeTimeIn.getText().toString().trim();

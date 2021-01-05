@@ -126,13 +126,13 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         textBtn.setOnClickListener(this);
         textBtn.setVisibility(View.GONE);
 
-        missEvent = findViewById(R.id.miss_event);
-        falseConnect = findViewById(R.id.false_connect);
-        allDet = findViewById(R.id.all_det);
-
-        missEvent.setOnClickListener(this);
-        falseConnect.setOnClickListener(this);
-        allDet.setOnClickListener(this);
+//        missEvent = findViewById(R.id.miss_event);
+//        falseConnect = findViewById(R.id.false_connect);
+//        allDet = findViewById(R.id.all_det);
+//
+//        missEvent.setOnClickListener(this);
+//        falseConnect.setOnClickListener(this);
+//        allDet.setOnClickListener(this);
 
         recycleView = findViewById(R.id.recycleView);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -235,38 +235,38 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.miss_event:
                 // 筛选失联
-                changeMissEvent();
-                checkShow(1);
+//                changeMissEvent();
+//                checkShow(1);
                 break;
             case R.id.false_connect:
                 // 筛选误接
-                changeFalseConnect();
-                checkShow(2);
+//                changeFalseConnect();
+//                checkShow(2);
                 break;
             case R.id.all_det:
                 // 展示全部
-                showAllDet();
-                checkShow(3);
+//                showAllDet();
+//                checkShow(3);
                 break;
 
         }
     }
 
-    private void checkShow(int type) {
-        if (type == 1) {
-            missEvent.setSelected(true);
-            falseConnect.setSelected(false);
-            allDet.setSelected(false);
-        } else if (type == 2) {
-            missEvent.setSelected(false);
-            falseConnect.setSelected(true);
-            allDet.setSelected(false);
-        } else if (type == 3) {
-            missEvent.setSelected(false);
-            falseConnect.setSelected(false);
-            allDet.setSelected(true);
-        }
-    }
+//    private void checkShow(int type) {
+//        if (type == 1) {
+//            missEvent.setSelected(true);
+//            falseConnect.setSelected(false);
+//            allDet.setSelected(false);
+//        } else if (type == 2) {
+//            missEvent.setSelected(false);
+//            falseConnect.setSelected(true);
+//            allDet.setSelected(false);
+//        } else if (type == 3) {
+//            missEvent.setSelected(false);
+//            falseConnect.setSelected(false);
+//            allDet.setSelected(true);
+//        }
+//    }
 
     private void showAllDet() {
         // 筛选后点击展示全部
