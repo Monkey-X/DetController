@@ -396,6 +396,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         // 对第一个先设置延时
         int holePosition = bean.getStartNum() + bean.getHoleNum();
         int delayTime = bean.getStartTime();
+        int lastHoleOutTime = delayTime;
         ProjectDetonator detonatorEntity = detonators.get(bean.getStartNum() - 1);
         detonatorEntity.setRelay(delayTime);
         for (int i = bean.getStartNum() + 1; i <= bean.getEndNum(); i++) {
@@ -406,7 +407,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 delayTime = delayTime + bean.getHoleInTime();
                 detonatorEntity1.setRelay(delayTime);
             } else if (holePosition == i) {
-                delayTime = delayTime + bean.getHoleOutTime();
+                delayTime = lastHoleOutTime + bean.getHoleOutTime();
+                lastHoleOutTime = delayTime;
                 detonatorEntity1.setRelay(delayTime);
                 holePosition = holePosition + bean.getHoleNum();
             }

@@ -1,6 +1,7 @@
 package com.etek.controller.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -16,10 +17,21 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 public class LineCheckActivity extends BaseActivity implements View.OnClickListener {
 
 
-    private TextView checkLineResult;
     private TextView dianya;
     private TextView dianliu;
     private String TAG = "LineCheckActivity";
+
+    private Handler handler = new Handler();
+
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            int i = DetApp.getInstance().CheckBusShortCircuit();
+            // TODO: 2021/1/6
+            handler.postDelayed(runnable, 500);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,19 +40,22 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
         initSupportActionBar(R.string.title_act_line_check);
         initView();
         initDate();
+
+        checkLineData();
+    }
+
+    private void checkLineData() {
+        handler.postDelayed(runnable, 500);
     }
 
     /**
      * 初始化View
      */
     private void initView() {
-        checkLineResult = findViewById(R.id.check_line_result);
-        TextView checkLine = findViewById(R.id.check_line);
+        TextView cancelCheck = findViewById(R.id.cancel_check);
         dianya = findViewById(R.id.dianya);
         dianliu = findViewById(R.id.dianliu);
-        TextView checkM = findViewById(R.id.check_m);
-        checkLine.setOnClickListener(this);
-        checkM.setOnClickListener(this);
+        cancelCheck.setOnClickListener(this);
     }
 
     /**
@@ -53,13 +68,33 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.check_line:
-                checkShort();
-                break;
-            case R.id.check_m:
-                checkVA();
+            case R.id.cancel_check:
+                // 取消检测
+                cancelLineCheck();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (handler != null) {
+            if (runnable != null) {
+                handler.removeCallbacks(runnable);
+            }
+            handler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    /**
+     * 取消循环检测
+     */
+    private void cancelLineCheck() {
+        if (handler != null) {
+            handler.removeCallbacks(runnable);
+            handler.removeCallbacksAndMessages(null);
+        }
+
     }
 
     // 检查总线电流和电压
@@ -97,7 +132,6 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
 
     // 检查短路
     private void checkShort() {
-        showProDialog("检测中...");
         new Thread() {
             @Override
             public void run() {
@@ -113,12 +147,6 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                missProDialog();
-                if (result == 0) {
-                    checkLineResult.setText("正常");
-                }else {
-                    checkLineResult.setText("异常");
-                }
             }
         });
     }

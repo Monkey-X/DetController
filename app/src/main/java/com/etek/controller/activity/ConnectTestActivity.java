@@ -233,16 +233,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     showPopWindow();
                 }
                 break;
-            case R.id.miss_event:
+//            case R.id.miss_event:
                 // 筛选失联
 //                changeMissEvent();
 //                checkShow(1);
-                break;
-            case R.id.false_connect:
+//                break;
+//            case R.id.false_connect:
                 // 筛选误接
 //                changeFalseConnect();
 //                checkShow(2);
-                break;
+//                break;
             case R.id.all_det:
                 // 展示全部
 //                showAllDet();

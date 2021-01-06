@@ -586,17 +586,17 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         Log.d(TAG, "onKeyUp: keyCode = " + keyCode);
         // 左边189 右边190  中间188
         if (keyCode == 189 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            scanType = AppIntentString.TYPE_HOLE_NO_CHANGE;
+            scanType = AppIntentString.TYPE_HOLE_IN;
             return true;
         }
         // 中间按钮
         if (keyCode == 188 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            scanType = AppIntentString.TYPE_HOLE_IN;
+            scanType = AppIntentString.TYPE_HOLE_OUT;
             return true;
         }
         // 右边按钮
         if (keyCode == 190 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            scanType = AppIntentString.TYPE_HOLE_OUT;
+            scanType = AppIntentString.TYPE_HOLE_IN;
             return true;
         }
 
@@ -607,11 +607,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return true;
         }
         //按钮8
-        if (keyCode == 15 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
-            readDetNumTask1.execute();
-            return true;
-        }
+//        if (keyCode == 15 && event.getAction() == KeyEvent.ACTION_DOWN) {
+//            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
+//            readDetNumTask1.execute();
+//            return true;
+//        }
         // 按钮9
         if (keyCode == 16 && event.getAction() == KeyEvent.ACTION_DOWN) {
             ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
@@ -679,12 +679,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             isInsertItem = false;
             ProjectDetonator detonatorEntity = detonators.get(insertPosition);
             ProjectDetonator detonatorEntity1 = new ProjectDetonator();
-            if (isStartTimeChange) {
-                isStartTimeChange = false;
-                detonatorEntity1.setRelay(detDelayBean.getStartTime());
-            }else{
-                detonatorEntity1.setRelay(detonatorEntity.getRelay());
-            }
+            detonatorEntity1.setRelay(detonatorEntity.getRelay());
             detonatorEntity1.setHolePosition(detonatorEntity.getHolePosition());
             detonatorEntity1.setCode(strgm);
             detonatorEntity1.setProjectInfoId(projectId);
@@ -831,10 +826,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             projectDetonator.setRelay(Integer.valueOf(startTime));
         } else {
             ProjectDetonator projectDetonatorLast = detonators.get(detonators.size() - 1);
-            int lastDelayTime = projectDetonatorLast.getRelay();
-            String lastHolePosition = projectDetonatorLast.getHolePosition();
-            int nextDelayTime = getNextDelayTime(lastDelayTime, type);
-            String nextHolePosition = getNextHolePosition(lastHolePosition, type);
+            int nextDelayTime = getNextDelayTime(projectDetonatorLast, type);
+            String nextHolePosition = getNextHolePosition(projectDetonatorLast, type);
             projectDetonator.setHolePosition(nextHolePosition);
             projectDetonator.setRelay(nextDelayTime);
         }
@@ -846,7 +839,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     // 根据上个的空位号获取下一个的空位号
-    private String getNextHolePosition(String lastHolePostion, int type) {
+    private String getNextHolePosition(ProjectDetonator projectDetonatorLast, int type) {
+
+        String lastHolePostion = projectDetonatorLast.getHolePosition();
         String nextHolePostion = "";
         String[] split = lastHolePostion.split("-");
 
@@ -866,7 +861,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     // 根据类型获取新的延时
-    private int getNextDelayTime(int delayTime, int type) {
+    private int getNextDelayTime(ProjectDetonator projectDetonatorLast, int type) {
 
         int nextDelayTime = 0;
         if (isStartTimeChange) {
@@ -875,20 +870,35 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return nextDelayTime;
         }
 
+        int delayTime = projectDetonatorLast.getRelay();
+
         switch (type) {
             case AppIntentString.TYPE_HOLE_IN:
                 String holeInTime = holeTimeIn.getText().toString().trim();
                 nextDelayTime = delayTime + getIntFormString(holeInTime);
                 break;
             case AppIntentString.TYPE_HOLE_OUT:
+                int lastHoleOutTime = getHoleOutTime();
                 String holeOutTime = holeTimeOut.getText().toString().trim();
-                nextDelayTime = delayTime + getIntFormString(holeOutTime);
+                nextDelayTime = lastHoleOutTime + getIntFormString(holeOutTime);
                 break;
             case AppIntentString.TYPE_HOLE_NO_CHANGE:
                 nextDelayTime = delayTime;
                 break;
         }
         return nextDelayTime;
+    }
+
+    // 获取下一个孔间的时间
+    private int getHoleOutTime() {
+        for (int i = detonators.size()-1; i >= 0 ; i--) {
+            ProjectDetonator projectDetonator = detonators.get(i);
+            String holePosition = projectDetonator.getHolePosition();
+            if (holePosition.split("-")[1].equals("1")) {
+                return  projectDetonator.getRelay();
+            }
+        }
+        return detDelayBean.getStartTime();
     }
 
     //  数字型的字符串转为数字
