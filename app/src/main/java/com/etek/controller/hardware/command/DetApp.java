@@ -553,32 +553,40 @@ public class DetApp {
 
 		DetCmd cmd = new DetCmd(m_commobj);
 
-		//	改成绝对路径
-		String strFilePath = Environment.getExternalStorageDirectory().getPath()+strBINFileName;
-
-		Log.d(TAG, String.format("文件路径：%s",strFilePath));
-
-        File file = new File(strFilePath);
-        if (!file.exists() || !file.isFile()) {
-        	if(null!=cbobj)
-        		cbobj.DisplayText("文件不存在");
-            return -1;
-        }
-        nFizeSize = (int) file.length();
-
 		//	核心板5V供电
+		Log.d(TAG, String.format("核心板5V供电"));
 		ret = cmd.BoardPowerOn();
 		if(0!=ret) {
 			if(null!=cbobj)
 				cbobj.DisplayText("核心板5V供电失败!");
+
+			Log.d(TAG, String.format("核心板5V供电失败!"));
 			return -1;
 		}
 
+		//	改成绝对路径
+		String strFilePath = Environment.getExternalStorageDirectory().getPath()+strBINFileName;
+		Log.d(TAG, String.format("文件路径：%s",strFilePath));
+        File file = new File(strFilePath);
+        if (!file.exists() || !file.isFile()) {
+        	if(null!=cbobj)
+        		cbobj.DisplayText("文件不存在");
+
+			Log.d(TAG, String.format("文件不存在"));
+            return -1;
+        }
+        nFizeSize = (int) file.length();
+
+
+
 		//	将BL引脚拉低
+		Log.d(TAG, String.format("BL电平拉低"));
 		ret = cmd.BoardSetBL(false);
 		if(0!=ret) {
 			if(null!=cbobj)
 				cbobj.DisplayText("BL电平拉低失败!");
+
+			Log.d(TAG, String.format("BL电平拉低失败!"));
 			return -1;
 		}
 
@@ -603,10 +611,13 @@ public class DetApp {
 		}
 
 		//	将BL脚置高（此时核心板进入BL状态）
+		Log.d(TAG, String.format("BL脚置高"));
 		ret = cmd.BoardSetBL(true);
 		if(0!=ret) {
         	if(null!=cbobj)
         		cbobj.DisplayText("BL脚置高失败!");
+
+			Log.d(TAG, String.format("BL脚置高失败!"));
             return -1;
 		}
 
@@ -621,13 +632,17 @@ public class DetApp {
 		if(0!=ret) {
 	    	if(null!=cbobj)
 	    		cbobj.DisplayText("未收到同步指令");
+
+			Log.d(TAG, String.format("未收到同步指令0"));
 		}
-		m_commobj.SetTimeout(3000);
+		m_commobj.SetTimeout(5000);
 
 		byte[] szData = m_commobj.RecvBlock(6);
 		if(null==szData) {
 	    	if(null!=cbobj)
 	    		cbobj.DisplayText("未收到同步指令");
+
+			Log.d(TAG, String.format("未收到同步指令1"));
 	    	return -1;
 		}
 		String str0 = DataConverter.bytes2HexString(szData);
@@ -635,6 +650,8 @@ public class DetApp {
 		if(!"476173746f6e".equals(str0)) {
 	    	if(null!=cbobj)
 	    		cbobj.DisplayText("未收到同步指令 476173746f6e");
+
+			Log.d(TAG, String.format("未收到同步指令 476173746f6e"));
 	    	return -1;
 		}
 
@@ -644,6 +661,8 @@ public class DetApp {
 		if(0!=ret) {
         	if(null!=cbobj)
         		cbobj.DisplayText("发送同步指令应答 失败!");
+
+			Log.d(TAG, String.format("发送同步指令应答 失败!"));
             return -1;
 		}
 
@@ -652,6 +671,8 @@ public class DetApp {
 			if(0!=ret) {
 		    	if(null!=cbobj)
 		    		cbobj.DisplayText("未收到 发送6字节应答指令 应答");
+
+				Log.d(TAG, String.format("未收到 发送6字节应答指令 应答"));
 		    	return -1;
 			}
 
@@ -690,6 +711,7 @@ public class DetApp {
 
 		//	收到7字节确认指令？
 		//	53 68 69 HWL HWH BWL BWH	HW：硬件版本，BW:Bootloader（固件）版本
+		Log.d(TAG, String.format("确认指令"));
 		str0 = DataConverter.bytes2HexString(szData);
 		if("536869".equals(str0.subSequence(0, 6))){
         	if(null!=cbobj)
@@ -730,18 +752,25 @@ public class DetApp {
 
 		//	收到2字节参数包确认应答
 		//	5543
+		Log.d(TAG, String.format("收到2字节参数包确认应答"));
 		szData = m_commobj.RecvBlock(2);
+		/*
 		if(null==szData) {
 	    	if(null!=cbobj)
 	    		cbobj.DisplayText("收到2字节参数包确认应答 失败");
+
+			Log.d(TAG, String.format("收到2字节参数包确认应答 失败"));
 	    	return -1;
 		}
 		str0 = DataConverter.bytes2HexString(szData);
 		if(!"5543".equals(str0)) {
 	    	if(null!=cbobj)
-	    		cbobj.DisplayText("未收到同步指令 4345");
+	    		cbobj.DisplayText("未收到同步指令 5543");
+
+			Log.d(TAG, String.format("未收到同步指令 5543"));
 	    	return -1;
 		}
+	*/
 
 		int n,i,nPackNum = 0;
 		szData = new byte[PACKAGE_SIZE];
@@ -764,6 +793,8 @@ public class DetApp {
     		cbobj.DisplayText("开始下载...");
     		cbobj.StartProgressbar();
     	}
+
+		Log.d(TAG, String.format("开始下载..."));
 
 		try {
 			FileInputStream fis = new FileInputStream(strFilePath);
@@ -923,12 +954,12 @@ public class DetApp {
 		//[8~13] //设备序列号
 		String strSNO = str0.substring(12,24);
 		byte[] arrdata = DataConverter.hexStringToBytes(strSNO);
-		strSNO = String.format("%c%02d%02X%02X%02X%02X",
+		strSNO = String.format("%c%02X%02X%02X%02X%02X",
 				arrdata[0],
 				arrdata[1],arrdata[2],arrdata[3],arrdata[4],arrdata[5]);
 
 		//	设置MID
-		m_bMID = arrdata[1];
+		m_bMID = DataConverter.bcd2Hex(arrdata[1]);
 		m_bMID =99;
 		DetIDConverter.SetMID(m_bMID);
 
