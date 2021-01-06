@@ -19,6 +19,10 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.ValueFilter;
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.MapActivity;
@@ -55,9 +59,6 @@ import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
-import com.etek.controller.utils.location.DLocationTools;
-import com.etek.controller.utils.location.DLocationUtils;
-import com.etek.controller.utils.location.OnLocationChangeListener;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -110,9 +111,51 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         setContentView(R.layout.activity_check_detail);
         getProjectId();
         initView();
-        getLocation();
+        initLocationOption();
         getWhiteBlackList();
     }
+
+    /**
+     * 初始化定位信息
+     */
+    private void initLocationOption() {
+        LocationClient locationClient = new LocationClient(getApplicationContext());
+//声明LocationClient类实例并配置定位参数
+        LocationClientOption locationOption = new LocationClientOption();
+        MyLocationListener myLocationListener = new MyLocationListener();
+        //注册监听函数
+        locationClient.registerLocationListener(myLocationListener);
+        locationOption.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+//可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
+        locationOption.setCoorType("gcj02");
+        locationOption.setScanSpan(1000);
+        locationOption.setLocationNotify(true);
+        locationOption.setOpenGps(true);
+        locationClient.setLocOption(locationOption);
+        locationClient.start();
+    }
+
+
+    /**
+     * 实现定位回调
+     */
+    public class MyLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location){
+            //获取纬度信息
+            double latitude = location.getLatitude();
+            //获取经度信息
+            double longitude = location.getLongitude();
+
+            locationLongitude.setText("" + longitude);
+            locationLatitude.setText("" + latitude);
+            if (pendingProject!=null) {
+                pendingProject.setLatitude(latitude);
+                pendingProject.setLongitude(longitude);
+            }
+        }
+    }
+
 
     // 获取黑白名单
     private void getWhiteBlackList() {
@@ -216,14 +259,15 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             contractCode.setText(pendingProject.getContractCode());
             //起爆器编号
             controllerId.setText(getStringInfo(getString(R.string.controller_sno)));
-            //地标
-            locationLongitude.setText("" + AppIntentString.strGratitude);
-            locationLatitude.setText("" + AppIntentString.strLatitude);
-            if (pendingProject.getLongitude() != 0 || pendingProject.getLatitude() != 0) {
-                DecimalFormat df = new DecimalFormat("0.000000");
-                String loc = df.format(pendingProject.getLongitude()) + "  ,  " + df.format(pendingProject.getLatitude());
-            }
+
             controllerTime.setText(pendingProject.getDate());
+            //地标
+//            locationLongitude.setText("" + AppIntentString.strGratitude);
+//            locationLatitude.setText("" + AppIntentString.strLatitude);
+//            if (pendingProject.getLongitude() != 0 || pendingProject.getLatitude() != 0) {
+//                DecimalFormat df = new DecimalFormat("0.000000");
+//                String loc = df.format(pendingProject.getLongitude()) + "  ,  " + df.format(pendingProject.getLatitude());
+//            }
         }
     }
 
@@ -235,50 +279,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             startActivity(intent);
         }
     }
-
-    /**
-     * 定位
-     */
-    private void getLocation() {
-        int status = DLocationUtils.getInstance().register(locationChangeListener);
-        XLog.e("status: " + status);
-        switch (status) {
-            case NO_LOCATIONMANAGER:
-                //请求权限
-                ToastUtils.show(this, "没有定位权限");
-                DLocationTools.openAppSetting(mContext);
-                break;
-            case NO_PROVIDER:
-                //打开定位
-                ToastUtils.show(this, "尚未打开定位");
-                DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
-                break;
-            case ONLY_GPS_WORK:
-                //切换定位模式到【高精确度】或【节电】
-                ToastUtils.show(this, "切换定位模式到【高精确度】或【节电】");
-                DLocationTools.openGpsSettings(mContext, GO_TO_GPS);
-                break;
-        }
-    }
-
-    /**
-     * 定位监听器
-     */
-    private OnLocationChangeListener locationChangeListener = new OnLocationChangeListener() {
-        @Override
-        public void getLastKnownLocation(Location location) {
-            updateGPSInfo(location);
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-            updateGPSInfo(location);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    };
 
     /**
      * 更新经纬度信息
@@ -304,7 +304,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DLocationUtils.getInstance().unregister();
     }
 
     /**
