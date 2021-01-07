@@ -427,12 +427,18 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         ProjectDetonator detonatorEntity = detonators.get(position);
         String detId = detonatorEntity.getDetId();
         int relayTime = detonatorEntity.getRelay();
-        int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
+        //int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
         Log.d(TAG, "detSingleDownload: detId = " + detId);
-        Log.d(TAG, "detSingleDownload: MainBoardHVEnable = " + wakeupStatus);
+        //Log.d(TAG, "detSingleDownload: MainBoardHVEnable = " + wakeupStatus);
         // 进行雷管的链接检测
         int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId),relayTime);
         playSound(downloadResult == 0);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         Log.d(TAG, "detSingleDownload: downloadResult = " + downloadResult);
         detonatorEntity.setDownLoadStatus(downloadResult);
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);

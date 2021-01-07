@@ -45,6 +45,13 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         initView();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 必须总线下电
+        DetApp.getInstance().MainBoardBusPowerOff();
+    }
+
     /**
      * 初始化View
      */
