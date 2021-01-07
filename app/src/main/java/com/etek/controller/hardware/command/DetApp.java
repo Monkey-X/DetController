@@ -155,7 +155,9 @@ public class DetApp {
 	public int MainBoardBusPowerOff() {
 		int ret = m_cmdObj.BoardCmd41();
 
-		m_detError.Setter((byte)0x41, ret);
+		if(null!=m_detError) {
+			m_detError.Setter((byte)0x41, ret);
+		}
 
 		Log.d(TAG, "MainBoardBusPowerOff: "+ ret);
 		return ret;
@@ -985,11 +987,22 @@ public class DetApp {
 	 * @return
 	 */
 	public int CheckBusShortCircuit(StringBuilder strData) {
-		int ret;
+		int ret=0;
+		int i;
 
 		DetCmd cmd = new DetCmd(m_commobj);
-		ret = cmd.BoardCmd81(strData);
 
+		for(i=0;i<MAX_TRY;i++){
+			ret = cmd.BoardCmd81(strData);
+			if(0==ret)
+				break;
+
+			try {
+				Thread.sleep(100);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
 		m_detError.Setter((byte)0x81, ret);
 
 		return ret;
@@ -1114,7 +1127,6 @@ public class DetApp {
 		}
 
 		return ret;
-
 	}
 
 	/***
