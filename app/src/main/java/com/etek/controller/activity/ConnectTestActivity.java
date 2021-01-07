@@ -28,6 +28,8 @@ import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.task.DetsBusChargeTask;
+import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
@@ -46,7 +48,7 @@ import java.util.List;
 /**
  * 连接检测
  */
-public class ConnectTestActivity extends BaseActivity implements View.OnClickListener, ProjectDetailAdapter.OnItemClickListener {
+public class ConnectTestActivity extends BaseActivity implements View.OnClickListener, ProjectDetailAdapter.OnItemClickListener, ITaskCallback {
 
     private static final String TAG = "ConnectTestActivity";
     private LinearLayout backImag;
@@ -73,6 +75,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private TextView missEvent;
     private TextView falseConnect;
     private TextView allDet;
+    private ProgressDialog busChargeProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -374,13 +377,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (connectData == null || connectData.size() == 0) {
             return;
         }
-        for (ProjectDetonator connectDatum : connectData) {
-            connectDatum.setTestStatus(-1);
-        }
-        DBManager.getInstance().getProjectDetonatorDao().saveInTx(connectData);
-        connectTestAdapter.notifyDataSetChanged();
-        testAsyncTask = new TestAsyncTask();
-        testAsyncTask.execute();
+        // 连接检测前需要进行总线上电操作
+        DetsBusChargeTask detsBusChargeTask = new DetsBusChargeTask(this);
+        detsBusChargeTask.execute();
     }
 
     @Override
@@ -554,33 +553,82 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            updateProgress(values[0]);
+            updateTestProgress(values[0]);
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
             connectTestAdapter.notifyDataSetChanged();
-            dissProgressDialog();
+            dissTestProgressDialog();
             updateProjectStatus();
         }
     }
 
+    @Override
+    public void showProgressDialog(String msg, int type) {
+        busChargeProgressDialog = new ProgressDialog(this);
+        busChargeProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        busChargeProgressDialog.setMessage("系统准备中...");
+        busChargeProgressDialog.setCancelable(false);
+        busChargeProgressDialog.setCanceledOnTouchOutside(false);
+        busChargeProgressDialog.setMax(100);
+        busChargeProgressDialog.setProgressPercentFormat(null);
+        busChargeProgressDialog.show();
+    }
+
+    @Override
+    public void setProgressValue(int value) {
+        if (busChargeProgressDialog != null) {
+            busChargeProgressDialog.setProgress(value);
+        }
+    }
+
+    @Override
     public void dissProgressDialog() {
+        if (busChargeProgressDialog != null) {
+            busChargeProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void setDisplayText(String msg) {
+        Log.d(TAG, "setDisplayText: " + msg);
+    }
+
+    @Override
+    public void postResult(int result, int type) {
+        dissProgressDialog();
+        if (result == 0) {
+            //  充电成功了，才进行检测
+            for (ProjectDetonator connectDatum : connectData) {
+                connectDatum.setTestStatus(-1);
+            }
+            DBManager.getInstance().getProjectDetonatorDao().saveInTx(connectData);
+            connectTestAdapter.notifyDataSetChanged();
+            testAsyncTask = new TestAsyncTask();
+            testAsyncTask.execute();
+        } else {
+            showStatusDialog("系统准备失败！");
+        }
+    }
+
+    @Override
+    public void setChargeData(int nVoltage, int nCurrent) {
+
+    }
+
+
+    public void dissTestProgressDialog() {
         if (progressValueDialog != null) {
             progressValueDialog.dismiss();
         }
     }
 
-    public void updateProgress(int values) {
+
+    public void updateTestProgress(int values) {
         if (progressValueDialog != null) {
             progressValueDialog.setProgress(values);
-        }
-    }
-
-    public void updateResult(int success, int fial) {
-        if (progressValueDialog != null) {
-            progressValueDialog.setMessage(String.format("成功：%d\t失败：%d", success, fial));
         }
     }
 
