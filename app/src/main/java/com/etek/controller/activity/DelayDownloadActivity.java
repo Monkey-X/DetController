@@ -333,7 +333,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
             allDetDownload();
             return true;

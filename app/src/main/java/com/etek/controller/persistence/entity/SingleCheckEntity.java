@@ -20,6 +20,21 @@ public class SingleCheckEntity {
 
     private int testStatus;  // 连接检测状态码
 
+    @Override
+    public String toString() {
+        return "SingleCheckEntity{" +
+                "id=" + id +
+                ", uid='" + uid + '\'' +
+                ", relay='" + relay + '\'' +
+                ", detId=" + detId +
+                ", DC='" + DC + '\'' +
+                ", testStatus=" + testStatus +
+                ", projectInfoId=" + projectInfoId +
+                ", batch=" + batch +
+                ", date='" + date + '\'' +
+                '}';
+    }
+
     private long projectInfoId; // 工程id
 
     private  int batch;  // 批次

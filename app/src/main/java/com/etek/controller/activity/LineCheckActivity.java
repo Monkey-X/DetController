@@ -111,7 +111,6 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
             handler.removeCallbacksAndMessages(null);
         }
         releaseSound();
-
         // 必须总线下电
         DetApp.getInstance().MainBoardBusPowerOff();
 

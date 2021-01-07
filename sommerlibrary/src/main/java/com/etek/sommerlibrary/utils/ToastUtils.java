@@ -2,6 +2,7 @@ package com.etek.sommerlibrary.utils;
 
 import android.content.Context;
 import android.os.Looper;
+import android.view.Gravity;
 import android.widget.Toast;
 
 
@@ -52,6 +53,7 @@ public class ToastUtils {
                 toast.setText(text);
             }else{
                 toast= Toast.makeText(context, text, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
             }
             toast.show();
         } catch (Exception e) {//子线程中Toast异常情况处理

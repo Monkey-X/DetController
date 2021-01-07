@@ -19,8 +19,5 @@ public class SingleCheckAdapter extends BaseQuickAdapter<SingleCheckEntity, Base
     protected void convert(BaseViewHolder helper, SingleCheckEntity item) {
         helper.setText(R.id.uid_num, item.getDC());
         helper.setText(R.id.delaytime, item.getRelay());
-//        String s = item.getTestStatus() == 1 ? "成功" : "失败";
-//
-//        helper.setText(R.id.det_status, s+item.getTestStatus());
     }
 }

@@ -23,6 +23,7 @@ import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.test.BusChargeCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.hardware.test.PowerCheckCallBack;
+import com.etek.controller.hardware.test.SingleCheckCallBack;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.test.DetCallback;
@@ -1031,7 +1032,7 @@ public class DetApp {
 	 * @param
 	 * @return
 	 */
-	public int CheckSingleModule(DetCallback cbobj) {
+	public int CheckSingleModule(SingleCheckCallBack cbobj) {
 
 		int ret;
 		final int RESP_LEN = 0x19;
@@ -1046,9 +1047,6 @@ public class DetApp {
 
 		ret = cmd.BoardSendCmd82();
 		if(0!=ret) return ret;
-
-		if(null!=cbobj)
-			cbobj.StartProgressbar();
 
 		while(true) {
 			ret = prt.RecvBlock(RESP_LEN, resp);
@@ -1084,9 +1082,6 @@ public class DetApp {
 
 			ret = szdata[2];
 			if(ret<0) ret = ret + 0x100;
-
-			if(null!=cbobj)
-				cbobj.SetProgressbarValue(ret);
 
 			if(ret<100)
 				continue;
