@@ -28,6 +28,8 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.task.DetsBusChargeTask;
+import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -45,7 +47,7 @@ import java.util.List;
 /**
  * 延时下载
  */
-public class DelayDownloadActivity extends BaseActivity implements View.OnClickListener, ProjectDelayAdapter.OnItemClickListener, FastEditDialog.OnMakeSureListener {
+public class DelayDownloadActivity extends BaseActivity implements View.OnClickListener, ProjectDelayAdapter.OnItemClickListener, FastEditDialog.OnMakeSureListener, ITaskCallback {
 
     private static final String TAG = "DelayDownloadActivity";
     private RecyclerView mDelayList;
@@ -66,6 +68,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private boolean isCancelDownLoad = false;
     private TextView allDet;
     private TextView downLoadFail;
+    private ProgressDialog busChargeProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -453,13 +456,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             return;
         }
 
-        for (ProjectDetonator connectDatum : detonators) {
-            connectDatum.setDownLoadStatus(-1);
-        }
-        DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
-        mProjectDelayAdapter.notifyDataSetChanged();
-        delayDownloadTask = new DelayDownloadTask();
-        delayDownloadTask.execute();
+        // 延时下载前需要进行总线上电操作
+        DetsBusChargeTask detsBusChargeTask = new DetsBusChargeTask(this);
+        detsBusChargeTask.execute();
+
     }
 
 
@@ -544,6 +544,61 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         builder.create().show();
     }
 
+    // ----雷管总线上电回调-----
+    @Override
+    public void showProgressDialog(String msg, int type) {
+        busChargeProgressDialog = new ProgressDialog(this);
+        busChargeProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        busChargeProgressDialog.setMessage("系统准备中...");
+        busChargeProgressDialog.setCancelable(false);
+        busChargeProgressDialog.setCanceledOnTouchOutside(false);
+        busChargeProgressDialog.setMax(100);
+        busChargeProgressDialog.setProgressPercentFormat(null);
+        busChargeProgressDialog.show();
+    }
+
+    @Override
+    public void setProgressValue(int value) {
+        if (busChargeProgressDialog!=null) {
+            busChargeProgressDialog.setProgress(value);
+        }
+    }
+
+    @Override
+    public void dissProgressDialog() {
+        if (busChargeProgressDialog!=null) {
+            busChargeProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void setDisplayText(String msg) {
+        Log.d(TAG, "setDisplayText: "+ msg);
+    }
+
+    @Override
+    public void postResult(int result, int type) {
+        dissProgressDialog();
+        if (result == 0) {
+            for (ProjectDetonator connectDatum : detonators) {
+                connectDatum.setDownLoadStatus(-1);
+            }
+            DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
+            mProjectDelayAdapter.notifyDataSetChanged();
+            delayDownloadTask = new DelayDownloadTask();
+            delayDownloadTask.execute();
+        }else{
+            showStatusDialog("系统准备失败！");
+        }
+    }
+
+    @Override
+    public void setChargeData(int nVoltage, int nCurrent) {
+
+    }
+
+    // ----雷管总线上电回调-----
+
 
     /**
      * 异步进行 雷管的延时下载
@@ -565,7 +620,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            updateProgress(values[0]);
+            updateDelayProgress(values[0]);
         }
 
         @Override
@@ -581,18 +636,18 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             missProDialog();
             mProjectDelayAdapter.notifyDataSetChanged();
             updateProjectStatus();
-            dissProgressDialog();
+            dissDelayProgressDialog();
         }
     }
 
 
-    public void dissProgressDialog() {
+    public void dissDelayProgressDialog() {
         if (progressValueDialog != null) {
             progressValueDialog.dismiss();
         }
     }
 
-    public void updateProgress(int values) {
+    public void updateDelayProgress(int values) {
         if (progressValueDialog != null) {
             progressValueDialog.setProgress(values);
         }

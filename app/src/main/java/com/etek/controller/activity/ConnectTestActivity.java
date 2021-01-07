@@ -387,11 +387,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (testAsyncTask != null) {
             testAsyncTask.cancel(true);
         }
-
+        releaseSound();
         // 必须总线下电
         DetApp.getInstance().MainBoardBusPowerOff();
-
-        releaseSound();
         super.onDestroy();
     }
 
