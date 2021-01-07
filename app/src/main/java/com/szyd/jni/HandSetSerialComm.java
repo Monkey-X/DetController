@@ -115,7 +115,7 @@ public class HandSetSerialComm extends SerialCommBase {
 		String str0="";
 
 		int ret = WaitTimeout();
-		System.out.println("RecvBlock -->WaitTimeout:"+ret);
+		Log.d(TAG,"RecvBlock -->WaitTimeout:"+ret);
 		if(0!=ret) {
 			m_nErrorCode = DetErrorCode.ERR_COMM_RECV_TIMEOUT;
 			return null;
@@ -128,7 +128,7 @@ public class HandSetSerialComm extends SerialCommBase {
 		try {
 			is = new FileInputStream(m_fd);
 			int bufflenth = is.available();//获得数据长度
-			System.out.println("RecvBlock -->bufflenth:"+bufflenth);
+			Log.d(TAG,"RecvBlock -->bufflenth:"+bufflenth);
 
 			//	不能全部都收回来
 			if(bufflenth>nLen)
@@ -181,25 +181,25 @@ public class HandSetSerialComm extends SerialCommBase {
 		int ret;
 
 		if(null==m_fd) {
-			System.out.println("function SendRec,m_fd 为空");
+			Log.d(TAG,"function SendRec,m_fd 为空");
 			m_nErrorCode = DetErrorCode.ERR_COMM_NOT_OPEN;
 			return null;
 		}
 
-		System.out.println("function SendRec,FlushComm start...");
+		Log.d(TAG,"function SendRec,FlushComm start...");
 		//	清除缓冲
 		FlushComm();
-		System.out.println("function SendRec,FlushComm end...");
+		Log.d(TAG,"function SendRec,FlushComm end...");
 
 		//	发送
 		ret = SendBlock(szcmd);
-		System.out.println("function SendRec,SendBlock end...");
+		Log.d(TAG,"function SendRec,SendBlock end...");
 		if(0!=ret) {
-			System.out.println("function SendRec,SendBlock 返回为空");
+			Log.d(TAG,"function SendRec,SendBlock 返回为空");
 			return null;
 		}
 
-		System.out.println("function SendRec,RecvBlock start...");
+		Log.d(TAG,"function SendRec,RecvBlock start...");
 		//	接收
 		return RecvBlock(nLen);
 	}
@@ -217,12 +217,12 @@ public class HandSetSerialComm extends SerialCommBase {
 		try {
 			is = new FileInputStream(m_fd);
 			int bufflenth = is.available();//获得数据长度
-			System.out.println("function FlushComm,bufflenth:"+ bufflenth);
+			Log.d(TAG,"function FlushComm,bufflenth:"+ bufflenth);
 
 			while (bufflenth != 0) {
 				bytes = new byte[bufflenth];//初始化byte数组
 				is.read(bytes);
-				System.out.println("function FlushComm,bytes:"+ Arrays.toString(bytes));
+				Log.d(TAG,"function FlushComm,bytes:"+ Arrays.toString(bytes));
 
 				bufflenth = is.available();
 			}
@@ -256,7 +256,7 @@ public class HandSetSerialComm extends SerialCommBase {
 		try {
 			is = new FileInputStream(m_fd);
 			int bufflenth = is.available();//获得数据长度
-			System.out.println("WaitTimeout -->bufflenth:"+bufflenth);
+			Log.d(TAG,"WaitTimeout -->bufflenth:"+bufflenth);
 			while(true){
 				if(bufflenth>0) break;
 				Thread.sleep(10);

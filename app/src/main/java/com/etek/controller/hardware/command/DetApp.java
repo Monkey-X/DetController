@@ -984,11 +984,10 @@ public class DetApp {
 	 * 总线短路与漏电检测
 	 * @return
 	 */
-	public int CheckBusShortCircuit() {
+	public int CheckBusShortCircuit(StringBuilder strData) {
 		int ret;
 
 		DetCmd cmd = new DetCmd(m_commobj);
-		StringBuilder strData = new StringBuilder();
 		ret = cmd.BoardCmd81(strData);
 
 		m_detError.Setter((byte)0x81, ret);
@@ -1720,7 +1719,8 @@ public class DetApp {
 			System.out.println(String.format("核心板初始化自检 失败 %d", ret));
 		}
 
-		ret = CheckBusShortCircuit();
+		StringBuilder strData = new StringBuilder();
+		ret = CheckBusShortCircuit(strData);
 		if(ret!=0) {
 			System.out.println(String.format("总线短路与漏电检测 失败 %d", ret));
 		}

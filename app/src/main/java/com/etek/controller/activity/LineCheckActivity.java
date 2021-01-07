@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.etek.controller.R;
 import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.util.SoundPoolHelp;
+import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -22,12 +24,16 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     private String TAG = "LineCheckActivity";
 
     private Handler handler = new Handler();
+    private SoundPoolHelp soundPoolHelp;
 
 
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            int i = DetApp.getInstance().CheckBusShortCircuit();
+            StringBuilder strData = new StringBuilder();
+            int i = DetApp.getInstance().CheckBusShortCircuit(strData);
+            showResult(i,strData.toString());
+
             // TODO: 2021/1/6
             handler.postDelayed(runnable, 500);
         }
@@ -40,8 +46,10 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
         initSupportActionBar(R.string.title_act_line_check);
         initView();
         initDate();
+        initSound();
 
         checkLineData();
+
     }
 
     private void checkLineData() {
@@ -56,6 +64,24 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
         dianya = findViewById(R.id.dianya);
         dianliu = findViewById(R.id.dianliu);
         cancelCheck.setOnClickListener(this);
+    }
+    /**
+     * 初始化音效
+     */
+    private void initSound() {
+        soundPoolHelp = new SoundPoolHelp(this);
+        soundPoolHelp.initSound();
+    }
+    private void releaseSound() {
+        if (soundPoolHelp!=null) {
+            soundPoolHelp.releaseSound();
+        }
+    }
+    private void playSound(boolean b) {
+        if (soundPoolHelp != null && !b) {
+            soundPoolHelp.playSound(b);
+            VibrateUtil.vibrate(LineCheckActivity.this, 150);
+        }
     }
 
     /**
@@ -84,6 +110,7 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
             }
             handler.removeCallbacksAndMessages(null);
         }
+        releaseSound();
     }
 
     /**
@@ -119,13 +146,44 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
                 if (ret != 0) {
                     Log.d(TAG, "获取电压电流 失败 " + ret);
                     ToastUtils.show(LineCheckActivity.this, "获取电压电流 失败 " + ret);
-                } else {
+                    return;
+                }
+
+                Log.d(TAG, String.format("返回数据:%s",data));
+                if(data.length()<18){
+                    dianya.setText("返回数据错误，长度不足!");
+                    dianliu.setText("");
+                    return;
+                }
+
+                String strResult = data.substring(16,2);
+                if("00"==strResult){
+                    dianya.setText("未检测");
+                    dianliu.setText("");
+                    return;
+                }
+
+                if("00"==strResult) {
                     float fv = (float) (Integer.parseInt(data.substring(0, 8), 16) * 1.00);
                     float fc = (float) (Integer.parseInt(data.substring(8, 16), 16) * 1.00);
                     dianya.setText(fv + "mV");
                     dianliu.setText(fc + "mA");
                     Log.d(TAG, String.format("电压：%.2fmV\t电流：%,2fmA", fv, fc));
+                    return;
                 }
+                if("0A"==strResult){
+                    playSound(false);
+                    dianya.setText("总线漏电");
+                    dianliu.setText("");
+                    return;
+                }
+                if("0F"==strResult){
+                    playSound(false);
+                    dianya.setText("总线短路");
+                    dianliu.setText("");
+                    return;
+                }
+
             }
         });
     }
@@ -135,9 +193,10 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
         new Thread() {
             @Override
             public void run() {
-                int i = DetApp.getInstance().CheckBusShortCircuit();
+                StringBuilder strData = new StringBuilder();
+                int i = DetApp.getInstance().CheckBusShortCircuit(strData);
                 Log.d(TAG, "CheckBusShortCircuit result = " + i);
-                showResult(i);
+                showResult(i,strData.toString());
             }
         }.start();
     }
