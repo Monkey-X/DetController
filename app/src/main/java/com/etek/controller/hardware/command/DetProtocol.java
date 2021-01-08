@@ -79,7 +79,7 @@ public class DetProtocol {
 	public int RecvBlock(int nLen,DetResponse resp) {
 		byte[] data =  m_commobj.RecvBlock(nLen);
 		if(null==data) return m_commobj.GetErrorCode();
-		Log.d(TAG, "RecvBlock: "+String.format("\t命令：%s", DataConverter.bytes2HexString(data)));
+		Log.d(TAG, "RecvBlock: "+String.format("\t应答：%s", DataConverter.bytes2HexString(data)));
 
 		//check crc8;
 		int n = data.length;
