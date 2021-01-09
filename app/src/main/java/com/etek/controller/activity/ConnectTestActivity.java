@@ -28,7 +28,7 @@ import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.controller.hardware.task.DetsBusChargeTask;
+import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
@@ -378,7 +378,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         // 连接检测前需要进行总线上电操作
-        DetsBusChargeTask detsBusChargeTask = new DetsBusChargeTask(this);
+        PowerOnSelfCheckTask detsBusChargeTask = new PowerOnSelfCheckTask(this);
         detsBusChargeTask.execute();
     }
 
