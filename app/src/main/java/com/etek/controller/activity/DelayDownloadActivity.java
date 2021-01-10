@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -69,6 +70,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private TextView allDet;
     private TextView downLoadFail;
     private ProgressDialog busChargeProgressDialog;
+    private View progressView;
+    private View startTest;
+    private ProgressBar progress;
+    private View cancelTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +134,15 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         downLoadFail = findViewById(R.id.download_fail);
         allDet.setOnClickListener(this);
         downLoadFail.setOnClickListener(this);
+
+        progressView = findViewById(R.id.progress_view);
+        startTest = findViewById(R.id.startTest);
+        progress = findViewById(R.id.progress);
+        cancelTest = findViewById(R.id.cancel_test);
+
+        startTest.setOnClickListener(this);
+        cancelTest.setOnClickListener(this);
+
     }
 
     private void initRecycleView() {
@@ -176,6 +190,15 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             case R.id.download_fail:
                 showDownloadFail();
                 checkShow(2);
+                break;
+            case R.id.cancel_test:
+                // 放弃检测
+                isCancelDownLoad = true;
+                changeProgressView(true);
+                break;
+            case R.id.startTest:
+                // 开始下载
+                allDetDownload();
                 break;
         }
     }
@@ -495,7 +518,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             updateAndHint();
         } else {
             // 未全部检测成功，展示检测结果
-            showTestResult(projectDetonators.size(), successNum, faileNum);
+            if (!isCancelDownLoad) {
+                showTestResult(projectDetonators.size(), successNum, faileNum);
+            }
         }
     }
 
@@ -554,6 +579,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         busChargeProgressDialog.setMax(100);
         busChargeProgressDialog.setProgressPercentFormat(null);
         busChargeProgressDialog.show();
+
+        changeProgressView(false);
     }
 
     @Override
@@ -588,6 +615,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             delayDownloadTask.execute();
         }else{
             showStatusDialog("系统准备失败！");
+
+            changeProgressView(true);
         }
     }
 
@@ -611,7 +640,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                     return null;
                 }
                 detSingleDownload(i);
-                publishProgress(i+1);
+                publishProgress(i);
             }
             return null;
         }
@@ -625,17 +654,18 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showTextProgressDialog();
+//            showTextProgressDialog();
             isCancelDownLoad = false;
         }
 
         @Override
         protected void onPostExecute(Integer o) {
             super.onPostExecute(o);
-            missProDialog();
+//            missProDialog();
             mProjectDelayAdapter.notifyDataSetChanged();
             updateProjectStatus();
-            dissDelayProgressDialog();
+            changeProgressView(true);
+//            dissDelayProgressDialog();
         }
     }
 
@@ -647,9 +677,14 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     public void updateDelayProgress(int values) {
-        if (progressValueDialog != null) {
-            progressValueDialog.setProgress(values);
+//        if (progressValueDialog != null) {
+//            progressValueDialog.setProgress(values);
+//        }
+        if (progress !=null) {
+            progress.setProgress(values + 1 );
         }
+        mProjectDelayAdapter.setSelectedPostion(values);
+        mDelayList.scrollToPosition(values);
     }
 
     private void showTextProgressDialog() {
@@ -670,5 +705,19 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             }
         });
         progressValueDialog.show();
+    }
+
+
+    // 改变进度显示界面
+    private void changeProgressView(boolean isVisible){
+        if (isVisible) {
+            startTest.setVisibility(View.VISIBLE);
+            progressView.setVisibility(View.GONE);
+        }else{
+            startTest.setVisibility(View.GONE);
+            progressView.setVisibility(View.VISIBLE);
+            progress.setProgress(0);
+            progress.setMax(detonators.size());
+        }
     }
 }

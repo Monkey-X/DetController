@@ -17,13 +17,53 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/btn_gray_normal" />
+        android:layout_height="40dp"
+        android:background="@drawable/normal">
+
+        <LinearLayout
+            android:id="@+id/progress_view"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/cancel_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/seleted_status"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:text="取消" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/startTest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/seleted_status"
+            android:gravity="center"
+            android:text="开 始 下 载" />
+
+    </RelativeLayout>
 
     <LinearLayout
-        android:padding="5dp"
+        android:padding="2dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -62,9 +102,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1" />
-
-
-
 
     </LinearLayout>
 

@@ -78,6 +78,11 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
         }
     }
 
+    public void setSelectedPostion(int position){
+        selectedPosition = position;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return datas.size();
