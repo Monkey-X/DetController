@@ -43,6 +43,7 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -161,6 +162,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         //根据项目id获取雷管并展示页面
         if (proId >= 0){
             detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
+            Collections.sort(detonatorEntityList);
             detonators.addAll(detonatorEntityList);
         }
     }
@@ -233,6 +235,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (proId >= 0){
             detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             detonators.clear();
+            Collections.sort(detonatorEntityList);
             detonators.addAll(detonatorEntityList);
             mProjectDelayAdapter.notifyDataSetChanged();
         }

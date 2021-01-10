@@ -44,6 +44,8 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -117,6 +119,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         //根据项目id获取雷管并展示
         if (proId >= 0) {
             detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
+            Collections.sort(detonatorEntityList);
             connectData.addAll(detonatorEntityList);
         }
     }
@@ -301,6 +304,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (proId >= 0) {
             List<ProjectDetonator> list = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             connectData.clear();
+            Collections.sort(list);
             connectData.addAll(list);
             connectTestAdapter.notifyDataSetChanged();
         }

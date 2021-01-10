@@ -1,11 +1,11 @@
 package com.etek.controller.persistence.entity;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 @Entity
-public class ProjectDetonator {
+public class ProjectDetonator implements Comparable<ProjectDetonator> {
 
     @Id(autoincrement = true)
     Long id;
@@ -129,4 +129,14 @@ public class ProjectDetonator {
     public ProjectDetonator() {
     }
 
+    // 利用空位进行排序
+    @Override
+    public int compareTo(ProjectDetonator o) {
+        String holePosition = this.getHolePosition();
+        String[] split = holePosition.split("-");
+        int thisNum = Integer.parseInt(split[0] + split[1]);
+        String[] split1 = o.getHolePosition().split("-");
+        int num = Integer.parseInt(split1[0] + split1[1]);
+        return thisNum - num;
+    }
 }

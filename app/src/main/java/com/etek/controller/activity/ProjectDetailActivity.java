@@ -39,6 +39,8 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 /**
  * 雷管组网界面
@@ -147,6 +149,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
         mDetonatorEntities = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(projectId);
         if (mDetonatorEntities != null && mDetonatorEntities.size() != 0) {
+            Collections.sort(mDetonatorEntities);
             detonators.addAll(mDetonatorEntities);
             projectDetailAdapter.notifyDataSetChanged();
         }
