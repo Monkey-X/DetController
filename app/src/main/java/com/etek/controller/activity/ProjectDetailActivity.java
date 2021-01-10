@@ -686,8 +686,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             String detId = getDetIdByGm(strgm);
             detonatorEntity1.setDetId(detId);
             detonatorEntity1.setUid(getDetUid(detId));
-            DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity1);
+            DBManager.getInstance().getProjectDetonatorDao().deleteInTx(detonators);
             detonators.add(insertPosition, detonatorEntity1);
+            DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
             projectDetailAdapter.notifyDataSetChanged();
             return;
         }
