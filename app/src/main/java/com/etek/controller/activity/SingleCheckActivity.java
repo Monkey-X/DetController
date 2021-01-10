@@ -46,6 +46,8 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
 
     private boolean singleClick = false;
 
+    private int m_nLastDetID = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +70,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         }
     }
     private void playSound(boolean b) {
-        if (soundPoolHelp != null && !b) {
+        if (soundPoolHelp != null) {
             soundPoolHelp.playSound(b);
             VibrateUtil.vibrate(SingleCheckActivity.this, 150);
         }
@@ -104,6 +106,9 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         if (singleClick) {
             return;
         }
+
+        Log.d(TAG, "开始检测...");
+
         singleClick = true;
         // 调用接口进行检测
         new Thread() {
@@ -113,9 +118,15 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     if (cancelSingleCheck) {
                         return;
                     }
+
+                    Log.d(TAG, "总线短路和漏电检测");
+                    // 总线短路和漏电检测
                     StringBuilder strData = new StringBuilder();
                     int i = DetApp.getInstance().CheckBusShortCircuit(strData);
                     showBusShortResult(i,strData.toString());
+
+                    Log.d(TAG, "获取雷管信息...");
+
                     int result = DetApp.getInstance().CheckSingleModule(new SingleCheckCallBack() {
                         @Override
                         public void DisplayText(String strText) {
@@ -123,6 +134,14 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         }
                         @Override
                         public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
+                            Log.d(TAG,String.format("上一个棵雷管ID:%08X",m_nLastDetID));
+                            if(m_nLastDetID==nID){
+                                Log.d(TAG, "showSingleCheckData: 同一颗雷管");
+                                return;
+                            }
+                            //  缓存上一颗
+                            m_nLastDetID = nID;
+
                             SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
                             singleCheckEntity.setRelay(String.valueOf(0xffffffffL&nDT));
                             singleCheckEntity.setDetId(nID);
@@ -134,7 +153,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         }
                     });
                     try {
-                        sleep(500);
+                        sleep(50);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -197,6 +216,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                             }
                         }
                     }
+                    playSound(true);
                     singleCheckEntityList.add(singleCheckEntity);
                     singleCheckAdapter.notifyDataSetChanged();
                     checkNum.setText(singleCheckEntityList.size() + "");

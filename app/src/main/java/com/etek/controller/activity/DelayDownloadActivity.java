@@ -28,7 +28,7 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.controller.hardware.task.DetsBusChargeTask;
+import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
@@ -456,7 +456,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         }
 
         // 延时下载前需要进行总线上电操作
-        DetsBusChargeTask detsBusChargeTask = new DetsBusChargeTask(this);
+        PowerOnSelfCheckTask detsBusChargeTask = new PowerOnSelfCheckTask(this);
         detsBusChargeTask.execute();
 
     }

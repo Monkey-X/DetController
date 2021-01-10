@@ -1125,7 +1125,7 @@ public class DetApp {
 	}
 
 	/***
-	 * 总线上电与检测流程
+	 * 总线上电与检测流程（也叫：总线充电）
 	 * @param
 	 * @return
 	 */
@@ -1384,7 +1384,7 @@ public class DetApp {
 	}
 
 	/***
-	 * 雷管网络总线充电
+	 * 雷管网络总线充电（也叫：雷管充电）
 	 * @param cbobj
 	 * @return
 	 */
@@ -1478,7 +1478,7 @@ public class DetApp {
 	}
 
 	/***
-	 * 雷管网络总线放电
+	 * 雷管网络总线放电（雷管放电）
 	 * @param cbobj
 	 * @return
 	 */
