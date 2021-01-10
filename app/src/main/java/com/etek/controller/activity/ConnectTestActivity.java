@@ -29,8 +29,8 @@ import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.ITaskCallback;
+import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.DetonatorEntity;
@@ -270,9 +270,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             case R.id.cancel_test:
                 // 放弃检测
                 isCancelTest = true;
-                if (testAsyncTask !=null) {
-                    testAsyncTask.cancel(true);
-                }
                 changeProgressView(true);
                 break;
             case R.id.startTest:
@@ -505,7 +502,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             updateAndHint();
         } else {
             // 未全部检测成功，展示检测结果
-            showTestResult(projectDetonators.size(), successNum, faileNum);
+            if (!isCancelTest) {
+                showTestResult(projectDetonators.size(), successNum, faileNum);
+            }
         }
     }
 
