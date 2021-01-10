@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -76,6 +77,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private TextView falseConnect;
     private TextView allDet;
     private ProgressDialog busChargeProgressDialog;
+    private View progressView;
+    private TextView startTest;
+    private ProgressBar progress;
+    private TextView cancelTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,13 +134,23 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         textBtn.setOnClickListener(this);
         textBtn.setVisibility(View.GONE);
 
-//        missEvent = findViewById(R.id.miss_event);
-//        falseConnect = findViewById(R.id.false_connect);
-//        allDet = findViewById(R.id.all_det);
-//
-//        missEvent.setOnClickListener(this);
-//        falseConnect.setOnClickListener(this);
-//        allDet.setOnClickListener(this);
+        missEvent = findViewById(R.id.miss_event);
+        falseConnect = findViewById(R.id.false_connect);
+        allDet = findViewById(R.id.all_det);
+
+        missEvent.setOnClickListener(this);
+        falseConnect.setOnClickListener(this);
+        allDet.setOnClickListener(this);
+
+        progressView = findViewById(R.id.progress_view);
+        startTest = findViewById(R.id.startTest);
+        progress = findViewById(R.id.progress);
+        cancelTest = findViewById(R.id.cancel_test);
+
+        startTest.setOnClickListener(this);
+        cancelTest.setOnClickListener(this);
+
+
 
         recycleView = findViewById(R.id.recycleView);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -236,40 +251,53 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     showPopWindow();
                 }
                 break;
-//            case R.id.miss_event:
-                // 筛选失联
-//                changeMissEvent();
-//                checkShow(1);
-//                break;
-//            case R.id.false_connect:
+            case R.id.miss_event:
+                 //筛选失联
+                changeMissEvent();
+                checkShow(1);
+                break;
+            case R.id.false_connect:
                 // 筛选误接
-//                changeFalseConnect();
-//                checkShow(2);
-//                break;
+                changeFalseConnect();
+                checkShow(2);
+                break;
             case R.id.all_det:
                 // 展示全部
-//                showAllDet();
-//                checkShow(3);
+                showAllDet();
+                checkShow(3);
+                break;
+
+            case R.id.cancel_test:
+                // 放弃检测
+                isCancelTest = true;
+                if (testAsyncTask !=null) {
+                    testAsyncTask.cancel(true);
+                }
+                changeProgressView(true);
+                break;
+            case R.id.startTest:
+                // 开始检测
+                allDetConnectTest();
                 break;
 
         }
     }
 
-//    private void checkShow(int type) {
-//        if (type == 1) {
-//            missEvent.setSelected(true);
-//            falseConnect.setSelected(false);
-//            allDet.setSelected(false);
-//        } else if (type == 2) {
-//            missEvent.setSelected(false);
-//            falseConnect.setSelected(true);
-//            allDet.setSelected(false);
-//        } else if (type == 3) {
-//            missEvent.setSelected(false);
-//            falseConnect.setSelected(false);
-//            allDet.setSelected(true);
-//        }
-//    }
+    private void checkShow(int type) {
+        if (type == 1) {
+            missEvent.setSelected(true);
+            falseConnect.setSelected(false);
+            allDet.setSelected(false);
+        } else if (type == 2) {
+            missEvent.setSelected(false);
+            falseConnect.setSelected(true);
+            allDet.setSelected(false);
+        } else if (type == 3) {
+            missEvent.setSelected(false);
+            falseConnect.setSelected(false);
+            allDet.setSelected(true);
+        }
+    }
 
     private void showAllDet() {
         // 筛选后点击展示全部
@@ -536,7 +564,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     return null;
                 }
                 boolean b = detSingleCheck(i);
-                publishProgress(i + 1);
+                publishProgress(i);
             }
             return null;
         }
@@ -544,8 +572,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showTextProgressDialog();
             isCancelTest = false;
+//            showTextProgressDialog();
         }
 
         @Override
@@ -558,7 +586,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
             connectTestAdapter.notifyDataSetChanged();
-            dissTestProgressDialog();
+//            dissTestProgressDialog();
+            changeProgressView(true);
             updateProjectStatus();
         }
     }
@@ -573,6 +602,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         busChargeProgressDialog.setMax(100);
         busChargeProgressDialog.setProgressPercentFormat(null);
         busChargeProgressDialog.show();
+
+        changeProgressView(false);
     }
 
     @Override
@@ -608,6 +639,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             testAsyncTask.execute();
         } else {
             showStatusDialog("系统准备失败！");
+
+            changeProgressView(true);
         }
     }
 
@@ -625,9 +658,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
 
     public void updateTestProgress(int values) {
-        if (progressValueDialog != null) {
-            progressValueDialog.setProgress(values);
+//        if (progressValueDialog != null) {
+//            progressValueDialog.setProgress(values);
+//        }
+        if (progress !=null) {
+            progress.setProgress(values + 1 );
         }
+
+        connectTestAdapter.setSelectedPostion(values);
+        recycleView.scrollToPosition(values);
     }
 
     /**
@@ -651,5 +690,18 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             }
         });
         progressValueDialog.show();
+    }
+
+    // 改变进度显示界面
+    private void changeProgressView(boolean isVisible){
+        if (isVisible) {
+            startTest.setVisibility(View.VISIBLE);
+            progressView.setVisibility(View.GONE);
+        }else{
+            startTest.setVisibility(View.GONE);
+            progressView.setVisibility(View.VISIBLE);
+            progress.setProgress(0);
+            progress.setMax(connectData.size());
+        }
     }
 }

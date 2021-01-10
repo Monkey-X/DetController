@@ -42,6 +42,11 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
         });
     }
 
+    public void setSelectedPostion(int position){
+        selectedPosition = position;
+        notifyDataSetChanged();
+    }
+
 
     public void setTestStatus(TextView view, int teststatus) {
         if (teststatus == 0) {
