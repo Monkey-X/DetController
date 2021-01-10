@@ -137,6 +137,9 @@ public class ProjectDetonator implements Comparable<ProjectDetonator> {
         int thisNum = Integer.parseInt(split[0] + split[1]);
         String[] split1 = o.getHolePosition().split("-");
         int num = Integer.parseInt(split1[0] + split1[1]);
+        if (thisNum - num == 0) {
+            return (int) (o.getId() - this.getId());
+        }
         return thisNum - num;
     }
 }
