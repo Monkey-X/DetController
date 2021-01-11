@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -39,7 +41,6 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 /**
@@ -166,7 +167,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
         textBtn.setOnClickListener(this);
 
-        // TODO: 2020/12/17
         View layoutStartTime = findViewById(R.id.delay_edit);
         delayStartTime = findViewById(R.id.delayStartTime);
 
@@ -459,6 +459,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         EditText changeDelayTime = view.findViewById(R.id.changeDelayTime);
+        changeDelayTime.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        changeDelayTime.setKeyListener(DigitsKeyListener.getInstance("1234567890-"));
         TextView textTitle = view.findViewById(R.id.text_title);
         textTitle.setText("修改孔位号：");
         changeDelayTime.setText(detonatorEntity.getHolePosition() + "");

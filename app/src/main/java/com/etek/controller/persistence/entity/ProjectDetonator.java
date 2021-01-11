@@ -133,13 +133,18 @@ public class ProjectDetonator implements Comparable<ProjectDetonator> {
     @Override
     public int compareTo(ProjectDetonator o) {
         String holePosition = this.getHolePosition();
-        String[] split = holePosition.split("-");
-        int thisNum = Integer.parseInt(split[0] + split[1]);
-        String[] split1 = o.getHolePosition().split("-");
-        int num = Integer.parseInt(split1[0] + split1[1]);
-        if (thisNum - num == 0) {
+        String[] thisSplit = holePosition.split("-");
+        String[] oSplit = o.getHolePosition().split("-");
+        int thisFirstNum = Integer.parseInt(thisSplit[0]);
+        int thisSecondNum = Integer.parseInt(thisSplit[1]);
+        int oFirstNum = Integer.parseInt(oSplit[0]);
+        int oSecondNum = Integer.parseInt(oSplit[1]);
+        if (thisFirstNum != oFirstNum) {
+            return thisFirstNum - oFirstNum;
+        }else if (thisSecondNum != oSecondNum){
+            return thisSecondNum - oSecondNum;
+        }else{
             return (int) (o.getId() - this.getId());
         }
-        return thisNum - num;
     }
 }
