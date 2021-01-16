@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -105,9 +106,16 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
 
     private void goToOfflineEditActivity() {
         Intent intent = new Intent(this, OfflineEditActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,200);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 200 && resultCode == RESULT_OK) {
+            refreshData();
+        }
+    }
     /**
      * 初始化View
      */

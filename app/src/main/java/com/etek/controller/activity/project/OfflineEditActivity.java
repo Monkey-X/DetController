@@ -76,6 +76,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
     private OfflineEditAdapter offlineEditAdapter;
 
     private String TAG = "OfflineEditActivity";
+    private long proId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +134,14 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             case R.id.add_det:
                 showDetOfflineDialog();
                 break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (proId != 0) {
+            setResult(RESULT_OK);
         }
     }
 
@@ -258,7 +267,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
                             updateETEKData(strInfo);
 
-                            long proId = storeProjectInfo(projectFile, serverResult);
+                            proId = storeProjectInfo(projectFile, serverResult);
                             if (proId != 0) {
                                 showStatusDialog("项目保存成功！");
 

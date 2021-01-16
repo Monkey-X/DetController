@@ -1,7 +1,6 @@
 package com.etek.controller.activity;
 
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,14 +11,11 @@ import android.widget.TextView;
 import com.etek.controller.R;
 import com.etek.controller.adapter.SingleCheckAdapter;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.test.SingleCheckCallBack;
 import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.hardware.util.SoundPoolHelp;
-import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.SingleCheckEntity;
-import com.etek.controller.persistence.gen.SingleCheckEntityDao;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -48,6 +44,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
 
     private int m_nLastDetID = -1;
     private boolean m_bLastDetRemoved = true;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +171,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         @Override
                         public void SetProgressbarValue(int npos){
                             // 显示“检测中...”和百分比
+                            showCheckSingleProgress(npos);
 
                         }
                     });
@@ -185,6 +183,26 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                 }
             }
         }.start();
+    }
+
+    // 展示进度
+    private void showCheckSingleProgress(int npos) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressDialog == null) {
+                    progressDialog = new ProgressDialog(SingleCheckActivity.this);
+                    progressDialog.setMax(100);
+                    progressDialog.show();
+                }
+                progressDialog.setProgress(npos);
+                if (npos >= 100) {
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
+                }
+            }
+        });
     }
 
     private void showBusShortResult(int ret, String data) {

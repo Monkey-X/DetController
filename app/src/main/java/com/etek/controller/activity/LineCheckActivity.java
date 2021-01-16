@@ -26,9 +26,6 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     private Handler handler = new Handler();
     private SoundPoolHelp soundPoolHelp;
 
-    private boolean isCanQuit = false;
-
-
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -57,7 +54,8 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
                     return;
                 } else if (ret == 2) {
                     // 等于2 才可以退出
-                    isCanQuit = true;
+                    DetApp.getInstance().MainBoardSetBL(true);
+                    finish();
                 }
             }
         });
@@ -86,7 +84,9 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     private void initView() {
         View backImg = findViewById(R.id.back_img);
         TextView textTitle = findViewById(R.id.text_title);
+        TextView textBtn = findViewById(R.id.text_btn);
         textTitle.setText("线路检测");
+        textBtn.setVisibility(View.GONE);
         backImg.setOnClickListener(this);
         TextView cancelCheck = findViewById(R.id.cancel_check);
         dianya = findViewById(R.id.dianya);
@@ -116,7 +116,6 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
      * 页面展示的数据
      */
     private void initDate() {
-        //TODO 通过接口获取数据并展示
     }
 
     @Override
@@ -127,19 +126,14 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
                 cancelLineCheck();
                 break;
             case R.id.back_img:
-                if (isCanQuit) {
-                    finish();
-                }
+                cancelLineCheck();
                 break;
         }
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (isCanQuit) {
-            finish();
-        }
+        cancelLineCheck();
     }
 
     @Override
@@ -161,12 +155,9 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
      * 取消循环检测
      */
     private void cancelLineCheck() {
-        if (handler != null) {
-            handler.removeCallbacks(runnable);
-            handler.removeCallbacksAndMessages(null);
-        }
-
+        DetApp.getInstance().MainBoardSetBL(false);
     }
+
 
     // 检查总线电流和电压
     private void checkVA() {
