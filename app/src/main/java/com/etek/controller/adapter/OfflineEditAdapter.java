@@ -37,7 +37,24 @@ public class OfflineEditAdapter extends RecyclerView.Adapter<OfflineEditAdapter.
         offlineEditViewHolder.numPostion.setText(String.valueOf(i+1));
         Detonator detonator = datas.get(i);
         offlineEditViewHolder.detCode.setText(detonator.getDetCode());
-        offlineEditViewHolder.detStatus.setText(detonator.getStatusName());
+        offlineEditViewHolder.detStatus.setText(getStatusName(detonator.getStatus()));
+    }
+
+
+    private String  getStatusName(int status) {
+        String statusName = "";
+        if (status == 0) {
+            statusName = "正常";
+        } else if (status == 1) {
+            statusName = "未注册";
+        } else if (status == 2) {
+            statusName = "已使用";
+        } else if (status == 3) {
+            statusName = "不存在";
+        } else {
+            statusName = "异常";
+        }
+        return statusName;
     }
 
     @Override

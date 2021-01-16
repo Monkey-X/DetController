@@ -398,7 +398,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             DBManager.getInstance().getControllerEntityDao().insertInTx(controllerEntityList);
         }
 
-//        });
         return proId;
     }
 

@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.serializer.ValueFilter;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
@@ -75,10 +74,6 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-
-import static com.etek.controller.utils.location.DLocationWhat.NO_LOCATIONMANAGER;
-import static com.etek.controller.utils.location.DLocationWhat.NO_PROVIDER;
-import static com.etek.controller.utils.location.DLocationWhat.ONLY_GPS_WORK;
 
 /**
  * 检查详情页
@@ -216,7 +211,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             }
             return false;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -339,30 +334,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             ToastUtils.show(mContext, "当前纬度为空");
         } else {
             if ("online".equals(type)) {//在线检查
-                getVerifyResult2(pendingProject);
+                getVerifyResult(pendingProject);
             } else if ("offline".equals(type)) {//离线检查
-                offlineCheck2();
+                offlineCheck();
             }
         }
     }
-
-    // TODO: 2020/12/20 演示
-    private void getVerifyResult2(PendingProject pendingProject) {
-        //todo 2020-12-20 演示
-        showProDialog("规则检查中...");
-        detonatorList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                missProDialog();
-                changeDetStatus();
-                goToBomb();
-//                showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
-            }
-        },2000);
-        return;
-        //todo
-    }
-
 
     private void goToBomb() {
         PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
@@ -392,21 +369,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         builder.create().show();
     }
 
-    // 演示
-    private void offlineCheck2() {
-        //todo 2020-12-20 演示
-        showProDialog("规则检查中...");
-        detonatorList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                missProDialog();
-                changeDetStatus();
-                showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
-            }
-        },2000);
-        return;
-        //todo
-    }
 
     /**
      * 获取验证结果
@@ -437,69 +399,89 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                missProDialog();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        missProDialog();
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                missProDialog();
-                String respStr = response.body().string();
-                if (StringUtils.isEmpty(respStr)) {
-                    Log.d(TAG, "respStr is null");
-                    return;
-                }
-                Log.d(TAG, "respStr: " + respStr);
-                OnlineCheckResp serverResult = null;
-                try {
-                    Result rptDecode = RptUtil.getRptDecode(respStr);
-                    Log.d(TAG, "respStr: " + rptDecode);
-                    if (rptDecode.isSuccess()) {
-                        String data = (String) rptDecode.getData();
-                        Log.d(TAG, "resp:" + data);
-                        serverResult = JSON.parseObject(data, OnlineCheckResp.class);
-                        Log.d(TAG, "serverResult: " + serverResult.toString());
-                        if (serverResult.getCwxx().contains("0")) {
-                            ProjectFileDto projectFile = new ProjectFileDto();
 
-                            projectFile.setCompany(Globals.user.getCompanyName());
-                            projectFile.setDwdm(Globals.user.getCompanyCode());
-                            projectFile.setXmbh(pendingProject.getProCode());
-                            projectFile.setHtbh(pendingProject.getContractCode());
-                            int unRegDet = 0;
-                            boolean isUnreg = false;
-                            for (ProjectDetonator detonator : projectDetonatorList) {
-                                for (Lg lg : serverResult.getLgs().getLg()) {
-                                    if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {
-                                        if (lg.getGzmcwxx() != 0) {
-                                            detonator.setStatus(lg.getGzmcwxx());
-                                            isUnreg = true;
-                                            unRegDet++;
-                                        }
-                                    }
-                                }
-                            }
-                            refreshData();
-                            if (isUnreg) {
-                                Log.d(TAG, "unRegDet:" + unRegDet);
-                                showStatusDialog("已存在已使用雷管！");
-                                long projectId = storeProjectInfo(projectFile, serverResult);
-                                uploadData(projectId);
-                                return;
-                            }
-
-                            showStatusDialog("完全匹配,允许爆破！");
-                            long projectId = storeProjectInfo(projectFile, serverResult);
-                            uploadData(projectId);
-
-                        } else {
-                            showStatusDialog(serverResult.getCwxxms());
-                        }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 展示在线检查的结果
+                        showOnlineCheck(response);
                     }
-                } catch (Exception e) {
-                    Log.d(TAG, "解析错误：" + e.getMessage());
-                }
+                });
             }
         });
+    }
+
+    private void showOnlineCheck(Response response) {
+        missProDialog();
+        String respStr = null;
+        try {
+            respStr = response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (StringUtils.isEmpty(respStr)) {
+            Log.d(TAG, "respStr is null");
+            return;
+        }
+        Log.d(TAG, "respStr: " + respStr);
+        OnlineCheckResp serverResult = null;
+        try {
+            Result rptDecode = RptUtil.getRptDecode(respStr);
+            Log.d(TAG, "respStr: " + rptDecode);
+            if (rptDecode.isSuccess()) {
+                String data = (String) rptDecode.getData();
+                Log.d(TAG, "resp:" + data);
+                serverResult = JSON.parseObject(data, OnlineCheckResp.class);
+                Log.d(TAG, "serverResult: " + serverResult.toString());
+                if (serverResult.getCwxx().contains("0")) {
+                    ProjectFileDto projectFile = new ProjectFileDto();
+
+                    projectFile.setCompany(Globals.user.getCompanyName());
+                    projectFile.setDwdm(Globals.user.getCompanyCode());
+                    projectFile.setXmbh(pendingProject.getProCode());
+                    projectFile.setHtbh(pendingProject.getContractCode());
+                    int unRegDet = 0;
+                    boolean isUnreg = false;
+                    for (ProjectDetonator detonator : projectDetonatorList) {
+                        for (Lg lg : serverResult.getLgs().getLg()) {
+                            if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {
+                                if (lg.getGzmcwxx() != 0) {
+                                    detonator.setStatus(lg.getGzmcwxx());
+                                    isUnreg = true;
+                                    unRegDet++;
+                                }
+                            }
+                        }
+                    }
+                    refreshData();
+                    if (isUnreg) {
+                        Log.d(TAG, "unRegDet:" + unRegDet);
+                        showStatusDialog("已存在已使用雷管！");
+                        long projectId = storeProjectInfo(projectFile, serverResult);
+//                                uploadData(projectId);
+                        return;
+                    }
+
+                    showStatusDialog("完全匹配,允许爆破！");
+                    long projectId = storeProjectInfo(projectFile, serverResult);
+//                            uploadData(projectId);
+                } else {
+                    showStatusDialog(serverResult.getCwxxms());
+                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "解析错误：" + e.getMessage());
+        }
     }
 
     /**
@@ -598,61 +580,52 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         return proId;
     }
 
-    public String getReportDto() {
-        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
-        XLog.d("getReportDto:"+projectInfo.toString());
+//    public String getReportDto() {
+//        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
+//        try {
+//            BeanPropertiesUtil.copyProperties(projectInfo, projectInfoDto);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+////        XLog.d("from:", projectInfo);
+//        projectInfoDto.setCreateTime(new Date());
+//        projectInfoDto.addDetControllers(pendingProject);
+//        return JSON.toJSONString(projectInfoDto);
+//    }
 
-        try {
-            BeanPropertiesUtil.copyProperties(projectInfo, projectInfoDto);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-//        XLog.d("from:", projectInfo);
-        projectInfoDto.setCreateTime(new Date());
-        projectInfoDto.addDetControllers(pendingProject);
-
-//        XLog.v("to: ", projectInfoDto);
-        ValueFilter filter = (Object object, String name, Object v) -> {
-            if (v == null) return "";
-            return v;
-        };
-        return JSON.toJSONString(projectInfoDto, filter);
-    }
-
-    private void uploadData(long projectId) {
-
-        if (projectId!=0) {
-            projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
-                    queryBuilder()
-                    .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-        }
-
-        String rptJson = getReportDto();
-        if(rptJson==null){
-            return;
-        }
-
-        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
-
-        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure: "+e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String respStr = response.body().string();
-                if (!StringUtils.isEmpty(respStr)) {
-                    Log.d(TAG, "onResponse: "+respStr);
-                }
-            }
-        });
-    }
+//    private void uploadData(long projectId) {
+//
+//        if (projectId!=0) {
+//            projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
+//                    queryBuilder()
+//                    .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+//        }
+//
+//        String rptJson = getReportDto();
+//        if(rptJson==null){
+//            return;
+//        }
+//
+//        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
+//
+//        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
+//
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Log.d(TAG, "onFailure: "+e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String respStr = response.body().string();
+//                if (!StringUtils.isEmpty(respStr)) {
+//                    Log.d(TAG, "onResponse: "+respStr);
+//                }
+//            }
+//        });
+//    }
 
     private void refreshData() {
         DBManager.getInstance().getProjectDetonatorDao().saveInTx(projectDetonatorList);
@@ -668,6 +641,14 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             showStatusDialog("起爆器未注册，不允许起爆");
             return;
         }
+
+        // 如果起爆器在白名单中直接允许起爆
+        if (isInWhiteList(controllerId)) {
+            changeDetStatus();
+            goToBomb();
+            return;
+        }
+
         List<ProjectInfoEntity> projectInfoEntityList = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder()
                 .orderDesc(ProjectInfoEntityDao.Properties.CreateTime)
                 .limit(100).list();
@@ -754,8 +735,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 showStatusDialog(CheckRuleEnum.UNREG_DET.getMessage() + unRegiestCount);
                 return;
             }
-            showStatusDialog(CheckRuleEnum.SUCCESS.getMessage());
-            uploadData(detInProjectId);
+            goToBomb();
+//            uploadData(detInProjectId);
         }
     }
 
@@ -836,39 +817,4 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         return -1;
 
     }
-
-
-//    public class OffLineCheckTask extends AsyncTask<String, Integer, Integer> {
-//
-//
-//        private final List<ProjectInfoEntity> projectInfoEntities;
-//
-//        public OffLineCheckTask(List<ProjectInfoEntity> projectInfoEntities) {
-//            this.projectInfoEntities = projectInfoEntities;
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            showProDialog("检测中...");
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Integer integer) {
-//            super.onPostExecute(integer);
-//            missProDialog();
-//            if (integer == -1) {
-//                showStatusDialog("本地数据获取失败！");
-//            } else if (integer == 0) {
-//                checkDetailAdapter.notifyDataSetChanged();
-//            } else {
-//                showStatusDialog("存在已使用雷管" + integer + "个！");
-//            }
-//        }
-//
-//        @Override
-//        protected Integer doInBackground(String... strings) {
-//
-//        }
-//    }
 }
