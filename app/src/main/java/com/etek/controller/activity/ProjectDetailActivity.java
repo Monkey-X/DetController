@@ -43,6 +43,9 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 雷管组网界面
  */
@@ -76,6 +79,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private TextView holeTimeIn;
     private TextView numTypeIn;
     private TextView numTypeOut;
+
+    // 孔位好的正则关系
+    private static  final String HOLE_REGEX = "^[0-9]{1,}-[0-9]{1,}";
 
     // 初始时间的状态
     private boolean isStartTimeChange = false;
@@ -476,6 +482,18 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String holePosition = changeDelayTime.getText().toString().trim();
+                if (TextUtils.isEmpty(holePosition)) {
+                    return;
+                }
+
+                // 校验孔位号
+                Pattern compile = Pattern.compile(HOLE_REGEX);
+                Matcher matcher = compile.matcher(holePosition);
+                if (!matcher.matches()) {
+                    ToastUtils.showShort(ProjectDetailActivity.this,"请输入正确的孔位号！");
+                    return;
+                }
+
                 detonatorEntity.setHolePosition(holePosition);
                 DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 projectDetailAdapter.notifyDataSetChanged();
