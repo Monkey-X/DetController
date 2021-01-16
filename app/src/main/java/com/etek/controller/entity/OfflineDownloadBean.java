@@ -1,5 +1,12 @@
 package com.etek.controller.entity;
 
+import com.elvishew.xlog.XLog;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 离线下载的请求参数
  */
@@ -73,5 +80,32 @@ public class OfflineDownloadBean {
 
     public void setDwdm(String dwdm) {
         this.dwdm = dwdm;
+    }
+
+    public void setDets(List<Detonator> detonators) {
+        if(detonators ==null || detonators.isEmpty()){
+            fbh = "";
+            return;
+        }
+        List<String> dets = new ArrayList<>();
+        for (Detonator detonator : detonators) {
+            XLog.d(detonator);
+            dets.add(detonator.getDetCode());
+
+        }
+        fbh =  StringUtils.join(dets, ",");
+    }
+
+    @Override
+    public String toString() {
+        return "OfflineDownloadBean{" +
+                "xtm='" + xtm + '\'' +
+                ", htm='" + htm + '\'' +
+                ", fbh='" + fbh + '\'' +
+                ", htid='" + htid + '\'' +
+                ", xmbh='" + xmbh + '\'' +
+                ", sbbh='" + sbbh + '\'' +
+                ", dwdm='" + dwdm + '\'' +
+                '}';
     }
 }

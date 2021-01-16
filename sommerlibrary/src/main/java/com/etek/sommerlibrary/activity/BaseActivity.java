@@ -341,7 +341,6 @@ public class BaseActivity extends AppCompatActivity {
 
 
     protected String getStringInfo(String index) {
-
         preferences = getSharedPreferences("detInfo", MODE_PRIVATE);
         return preferences.getString(index, "");
 

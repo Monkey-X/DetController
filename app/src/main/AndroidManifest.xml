@@ -39,11 +39,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:testOnly="false"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:testOnly="false"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.project.MapActivity"></activity>
+        <activity
+            android:name=".activity.project.OfflineEditActivity"
+            android:theme="@style/activity_theme"></activity>
+        <activity android:name=".activity.project.MapActivity" />
         <activity android:name=".activity.ReportListActivity" />
         <activity android:name=".activity.ProjectManagerActivity" />
         <activity android:name=".activity.project.AuthDownLoadDetailActivity" />
@@ -72,13 +75,17 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.ProjectImplementActivity" />
         <activity android:name=".activity.PowerBombActivity" />
-        <activity android:name=".activity.AuthorizedDownloadActivity" />
+        <activity
+            android:name=".activity.AuthorizedDownloadActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.AuthBombActivity2" />
         <activity android:name=".activity.CheckDetailActivity" />
         <activity
             android:name=".activity.ProjectDetailActivity"
             android:theme="@style/activity_theme" />
-        <activity android:name=".activity.LineCheckActivity" />
+        <activity
+            android:name=".activity.LineCheckActivity"
+            android:theme="@style/activity_theme" />
         <activity android:name=".activity.SingleCheckActivity" />
         <activity
             android:name=".activity.DelayDownloadActivity"
@@ -160,6 +167,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.UpdateActivity" /> <!-- <service android:name=".service.BLeSerialPortService" /> -->
         <service android:name=".service.DownLoadAppService" />
+
         <provider
             android:name=".provider.InstallProvider"
             android:authorities="com.etek.controller.fileprovider"

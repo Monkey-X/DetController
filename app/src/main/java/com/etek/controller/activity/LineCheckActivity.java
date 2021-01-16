@@ -26,24 +26,47 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     private Handler handler = new Handler();
     private SoundPoolHelp soundPoolHelp;
 
+    private boolean isCanQuit = false;
+
 
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             StringBuilder strData = new StringBuilder();
-            int i = DetApp.getInstance().CheckBusShortCircuit(strData);
-            showResult(i,strData.toString());
-
-            // TODO: 2021/1/6
+            int i = DetApp.getInstance().MainBoardLineCheckGetValue(strData);
+            showResultNew(i, strData.toString());
             handler.postDelayed(runnable, 1000);
         }
     };
+
+    private void showResultNew(int ret, String data) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (ret == 1) {
+                    Log.d(TAG, "获取电压电流 失败 " + ret);
+                    playSound(false);
+                    ToastUtils.show(LineCheckActivity.this, data);
+                    return;
+                } else if (ret == 0) {
+                    float fv = (float) (Integer.parseInt(data.substring(0, 8), 16) * 0.001);
+                    float fc = (float) (Integer.parseInt(data.substring(8, 16), 16) * 0.001);
+                    dianya.setText(fv + "V");
+                    dianliu.setText(fc + "mA");
+                    Log.d(TAG, String.format("电压：%.2fV\t电流：%,2fmA", fv, fc));
+                    return;
+                } else if (ret == 2) {
+                    // 等于2 才可以退出
+                    isCanQuit = true;
+                }
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_check);
-        initSupportActionBar(R.string.title_act_line_check);
         initView();
         initDate();
         initSound();
@@ -53,13 +76,18 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void checkLineData() {
-        handler.postDelayed(runnable, 500);
+        DetApp.getInstance().MainBoardLineCheckStart();
+        handler.postDelayed(runnable, 1000);
     }
 
     /**
      * 初始化View
      */
     private void initView() {
+        View backImg = findViewById(R.id.back_img);
+        TextView textTitle = findViewById(R.id.text_title);
+        textTitle.setText("线路检测");
+        backImg.setOnClickListener(this);
         TextView cancelCheck = findViewById(R.id.cancel_check);
         dianya = findViewById(R.id.dianya);
         dianliu = findViewById(R.id.dianliu);
@@ -98,6 +126,19 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
                 // 取消检测
                 cancelLineCheck();
                 break;
+            case R.id.back_img:
+                if (isCanQuit) {
+                    finish();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (isCanQuit) {
+            finish();
         }
     }
 

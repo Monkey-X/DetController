@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -17,6 +18,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.AuthDownLoadDetailActivity;
+import com.etek.controller.activity.project.OfflineEditActivity;
 import com.etek.controller.adapter.ContractAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
@@ -60,7 +62,7 @@ import okhttp3.Response;
 /**
  * 授权下载
  */
-public class AuthorizedDownloadActivity extends BaseActivity implements AuthorizedDownloadDialog.AuthorizedDownloadListener, BaseQuickAdapter.OnItemClickListener {
+public class AuthorizedDownloadActivity extends BaseActivity implements AuthorizedDownloadDialog.AuthorizedDownloadListener, BaseQuickAdapter.OnItemClickListener, View.OnClickListener {
 
     private RecyclerView recycleView;
     private LinearLayout noDataView;
@@ -74,10 +76,9 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authorized_download);
-        initSupportActionBar(R.string.contract_list);
         initView();
         initData();
-        initDialog();
+//        initDialog();
     }
 
     /**
@@ -89,10 +90,35 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         dialog.show(getSupportFragmentManager(), "Dialog");
     }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.text_btn:
+                goToOfflineEditActivity();
+                break;
+            case R.id.back_img:
+                finish();
+                break;
+        }
+    }
+
+    private void goToOfflineEditActivity() {
+        Intent intent = new Intent(this, OfflineEditActivity.class);
+        startActivity(intent);
+    }
+
     /**
      * 初始化View
      */
     private void initView() {
+        TextView textTitle = findViewById(R.id.text_title);
+        TextView textBtn = findViewById(R.id.text_btn);
+        View backImg = findViewById(R.id.back_img);
+        textTitle.setText("授权下载");
+        textBtn.setText("添加项目");
+        backImg.setOnClickListener(this);
+        textBtn.setOnClickListener(this);
         recycleView = findViewById(R.id.authorized_download_recycleView);
         noDataView = findViewById(R.id.nodata_view);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -396,4 +422,5 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
             }
         }
     };
+
 }

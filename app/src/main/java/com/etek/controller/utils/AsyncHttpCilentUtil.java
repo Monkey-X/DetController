@@ -1,16 +1,19 @@
 package com.etek.controller.utils;
 
+import android.app.Activity;
 import android.content.Context;
 
 
-
+import com.etek.controller.hardware.test.HttpCallback;
 import com.loopj.android.http.AsyncHttpClient;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -18,6 +21,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 
@@ -99,6 +103,57 @@ public class AsyncHttpCilentUtil {
                     .build();
             //Response response = null;
             okHttpClient.newCall(request).enqueue(callback);
+        }).start();
+    }
+
+    public static void httpPostNew(Activity activity,final String url, final Map<String, String> params, final HttpCallback callback) {
+        new Thread(() -> {
+            HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLogger());
+            logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .addNetworkInterceptor(logInterceptor)
+                    .build();
+            FormBody.Builder formBodyBuilder = new FormBody.Builder();
+            if(params!=null){
+                Set<String> keySet = params.keySet();
+                for (String key : keySet) {
+                    String value = params.get(key);
+                    formBodyBuilder.add(key, value);
+                }
+            }
+
+            FormBody formBody = formBodyBuilder.build();
+            Request request = new Request
+                    .Builder()
+                    .post(formBody)
+                    .url(url)
+                    .build();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback!=null) {
+                                callback.onFaile(e);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback!=null) {
+                                callback.onSuccess(response);
+                            }
+                        }
+                    });
+                }
+            });
         }).start();
     }
     public static final MediaType JSON

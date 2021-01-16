@@ -180,6 +180,12 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
     class MainboardTask extends AsyncTask<String, Integer, MainBoardInfoBean> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProDialog("主板自检中...");
+        }
+
+        @Override
         protected MainBoardInfoBean doInBackground(String... strings) {
 
             MainBoardInfoBean mainBoardInfoBean = new MainBoardInfoBean();
@@ -207,6 +213,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
         @Override
         protected void onPostExecute(MainBoardInfoBean mainBoardInfoBean) {
             super.onPostExecute(mainBoardInfoBean);
+            missProDialog();
             if (mainBoardInfoBean!=null) {
                 hardver.setText("v" + mainBoardInfoBean.getStrHardwareVer());
                 updateHardwareVer.setText("v" + mainBoardInfoBean.getStrUpdateHardwareVer());
