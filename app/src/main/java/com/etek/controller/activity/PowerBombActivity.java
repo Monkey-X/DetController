@@ -24,9 +24,13 @@ import com.etek.controller.hardware.task.SetBLTask;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.gen.PendingProjectDao;
+import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
+
+import java.util.List;
 
 /**
  * 充电起爆
@@ -50,6 +54,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private boolean isBombing = false;
     private View powerBank;
     private long proId;
+    private List<ProjectDetonator> detonatorEntityList;
 
 
     @Override
@@ -67,6 +72,9 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private void getProjectId() {
         Intent intent = getIntent();
         proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
+        if (proId != -1) {
+            detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
+        }
     }
 
     private void initView() {
@@ -195,6 +203,10 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 startDisChangeTask();
                 break;
             case R.id.power_bank:
+                if (detonatorEntityList == null || detonatorEntityList.size() ==0) {
+                    showToast("获取雷管数据失败！");
+                    return;
+                }
                 toastText.setText("");
                 powerAsyncTask = new PowerOnSelfCheckTask(this);
                 powerAsyncTask.execute();
@@ -204,6 +216,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     public void StartChargeTask() {
         detsBusChargeTask = new DetsBusChargeTask(this);
+        detsBusChargeTask.SetDetsCount(detonatorEntityList.size());
         detsBusChargeTask.execute();
     }
 

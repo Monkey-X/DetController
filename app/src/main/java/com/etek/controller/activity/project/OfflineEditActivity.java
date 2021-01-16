@@ -1,6 +1,7 @@
 package com.etek.controller.activity.project;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.activity.UserInfoActivity;
 import com.etek.controller.adapter.OfflineEditAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
@@ -34,6 +36,7 @@ import com.etek.controller.dto.Zbqys;
 import com.etek.controller.entity.Detonator;
 import com.etek.controller.entity.OfflineDownloadBean;
 import com.etek.controller.hardware.test.HttpCallback;
+import com.etek.controller.model.User;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
@@ -117,6 +120,14 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
     private void initData() {
         // 回填单位代码
+        String userStr = getPreInfo("userInfo");
+        if (TextUtils.isEmpty(userStr)) {
+            Intent intent = new Intent(this, UserInfoActivity.class);
+            startActivity(intent);
+            return;
+        }else{
+            Globals.user = JSON.parseObject(userStr, User.class);
+        }
         companyCode.setText(Globals.user.getCompanyCode());
         controllerSn.setText(getStringInfo(getString(R.string.controller_sno)));
     }

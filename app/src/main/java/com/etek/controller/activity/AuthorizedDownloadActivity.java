@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -105,6 +106,12 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
     }
 
     private void goToOfflineEditActivity() {
+        String userStr = getPreInfo("userInfo");
+        if (TextUtils.isEmpty(userStr)) {
+            Intent intent = new Intent(this, UserInfoActivity.class);
+            startActivity(intent);
+            return;
+        }
         Intent intent = new Intent(this, OfflineEditActivity.class);
         startActivityForResult(intent,200);
     }

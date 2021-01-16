@@ -1130,6 +1130,7 @@ public class DetApp {
 			if(null!=cbobj) {
 				cbobj.SetSingleModuleCheckData(nid, dc, ndt,bResult);
 				cbobj.DisplayText("单颗模组检测 完成！");
+				cbobj.SetProgressbarValue(100);
 			}
 
 			break;

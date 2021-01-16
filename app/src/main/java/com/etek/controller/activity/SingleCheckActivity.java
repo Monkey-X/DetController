@@ -190,14 +190,21 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (progressDialog == null) {
+                if (progressDialog == null ) {
                     progressDialog = new ProgressDialog(SingleCheckActivity.this);
                     progressDialog.setMax(100);
+                    progressDialog.setMessage("检测中...");
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    progressDialog.show();
+                }
+
+                if (!progressDialog.isShowing()) {
                     progressDialog.show();
                 }
                 progressDialog.setProgress(npos);
-                if (npos >= 100) {
-                    if (progressDialog != null) {
+
+                if (npos >=100) {
+                    if (progressDialog !=null) {
                         progressDialog.dismiss();
                     }
                 }
