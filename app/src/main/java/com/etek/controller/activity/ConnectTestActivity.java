@@ -461,15 +461,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         ProjectDetonator detonatorEntity = connectData.get(position);
         String detId = detonatorEntity.getDetId();
         Log.d(TAG, "detSingleCheck: detId = " + detId);
-        int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
-        Log.d(TAG, "detSingleCheck: MainBoardHVEnable = " + wakeupStatus);
+//        int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
+//        Log.d(TAG, "detSingleCheck: MainBoardHVEnable = " + wakeupStatus);
         // 进行雷管的链接检测
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
-        StringBuilder stringBuilder = new StringBuilder();
-        testResult = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
+//        StringBuilder stringBuilder = new StringBuilder();
+//        testResult = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
         detonatorEntity.setTestStatus(testResult);
-        detonatorEntity.setUid(stringBuilder.toString());
+//        detonatorEntity.setUid(stringBuilder.toString());
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
         playSound(testResult == 0);
         return testResult == 0;

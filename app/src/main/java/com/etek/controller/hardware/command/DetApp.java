@@ -581,7 +581,6 @@ public class DetApp {
         nFizeSize = (int) file.length();
 
 
-
 		//	将BL引脚拉低
 		Log.d(TAG, String.format("BL电平拉低"));
 		ret = cmd.BoardSetBL(false);
@@ -613,6 +612,8 @@ public class DetApp {
 			e1.printStackTrace();
 		}
 
+		m_commobj.FlushComm();
+
 		//	将BL脚置高（此时核心板进入BL状态）
 		Log.d(TAG, String.format("BL脚置高"));
 		ret = cmd.BoardSetBL(true);
@@ -623,8 +624,6 @@ public class DetApp {
 			Log.d(TAG, String.format("BL脚置高失败!"));
             return -1;
 		}
-
-		m_commobj.FlushComm();
 
 		//	监控UART口,收到6字节同步指令？
 		//	47 61 73 74 6F 6E
@@ -680,6 +679,14 @@ public class DetApp {
 			}
 
 			byte[] data = m_commobj.RecvBlock(1);
+			if(null==data){
+				if(null!=cbobj)
+					cbobj.DisplayText("6字节应答指令 为空");
+
+				Log.d(TAG, String.format("6字节应答指令 为空"));
+				return -1;
+			}
+
 			if(data[0]==0x47){
 				data = m_commobj.RecvBlock(5);
 				try {
@@ -714,7 +721,7 @@ public class DetApp {
 
 		//	收到7字节确认指令？
 		//	53 68 69 HWL HWH BWL BWH	HW：硬件版本，BW:Bootloader（固件）版本
-		Log.d(TAG, String.format("确认指令"));
+		Log.d(TAG, String.format("开始收取确认指令..."));
 		str0 = DataConverter.bytes2HexString(szData);
 		if("536869".equals(str0.subSequence(0, 6))){
         	if(null!=cbobj)
@@ -738,26 +745,26 @@ public class DetApp {
 
 		//	超时等待（此时核心板需要做擦除动作）
     	WAIT_TIME_MS = 5000;
-    	try {
-    		for(k=0;k<WAIT_TIME_MS/100;k++) {
-    			Thread.sleep(100);
-
-    			float f =  WAIT_TIME_MS - k*100;
-
-    	    	if(null!=cbobj)
-    	    		cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
-    		}
-
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//    	try {
+//    		for(k=0;k<WAIT_TIME_MS/100;k++) {
+//    			Thread.sleep(100);
+//
+//    			float f =  WAIT_TIME_MS - k*100;
+//
+//    	    	if(null!=cbobj)
+//    	    		cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
+//    		}
+//
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 
 		//	收到2字节参数包确认应答
 		//	5543
-		Log.d(TAG, String.format("收到2字节参数包确认应答"));
+		Log.d(TAG, String.format("开始收2字节参数包确认应答..."));
+		m_commobj.SetTimeout(WAIT_TIME_MS);
 		szData = m_commobj.RecvBlock(2);
-		/*
 		if(null==szData) {
 	    	if(null!=cbobj)
 	    		cbobj.DisplayText("收到2字节参数包确认应答 失败");
@@ -773,7 +780,8 @@ public class DetApp {
 			Log.d(TAG, String.format("未收到同步指令 5543"));
 	    	return -1;
 		}
-	*/
+
+		/*	*/
 
 		int n,i,nPackNum = 0;
 		szData = new byte[PACKAGE_SIZE];
@@ -860,6 +868,7 @@ public class DetApp {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Log.d(TAG, String.format("下载完成"));
 
 		try {
 			in.close();
@@ -1009,6 +1018,7 @@ public class DetApp {
 		return ret;
 	}
 
+
 	/***
 	 * 关机流程
 	 * @return
@@ -1125,6 +1135,92 @@ public class DetApp {
 	}
 
 	/***
+	 *
+	 * @return
+	 */
+	public int MainBoardLineCheckStart(){
+		int ret;
+
+		DetCmd cmd = new DetCmd(m_commobj);
+
+		Log.d(TAG, "MainBoardLineCheckStart: 总线检测开始");
+		ret = cmd.BoardSendCmd83();
+		return ret;
+	}
+
+	/***
+	 *
+	 * @param strdata, 电压电流值
+	 * @return
+	 * 	0	成功，展示电流电压值
+	 * 	1	出错	展示strdata返回的信息
+	 * 	2	退出	检测完毕
+	 */
+	public int MainBoardLineCheckGetValue(StringBuilder strdata){
+		int ret;
+		final int RESP_LEN = 13;
+		final byte RESP_HEAD = (byte)0xb3;
+
+		strdata.setLength(0);
+		Log.d(TAG, "MainBoardLineCheckGetValue: ");
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		DetResponse resp = new DetResponse();
+		ret = prt.RecvBlock(RESP_LEN, resp);
+		if(0!=ret) {
+			strdata.append("没有获取到数据!");
+			return 1;
+		}
+
+		String str0 = resp.GetRespData();
+		byte[] szdata = DataConverter.hexStringToBytes(str0);
+
+		if(null==szdata) {
+			strdata.append("数据无效!");
+			return 1;
+		}
+		if(szdata.length<RESP_LEN-1) {
+			strdata.append("数据长度不足!");
+			return 1;
+		}
+
+		if(szdata[0]!=(byte)RESP_HEAD) {
+			strdata.append("首字节无效B3!");
+			return 1;
+		}
+		//[11]检测结果，  00:未检测；  01:通过； 0A:总线漏电； 0F:总线短路；
+		ret = DataConverter.getByteValue(szdata[11]) ;
+		if(0x0a==ret){
+			strdata.append("总线漏电");
+			return 1;
+		}
+		if(0x0f==ret){
+			strdata.append("总线短路");
+			return 1;
+		}
+
+		//[2] 正在测试或已结束， 0x00:正在测试中； 0x64:用户正常取消； 0xC8:硬件短路，终止流程
+		ret = DataConverter.getByteValue(szdata[2]) ;
+		if(ret==0x00) {
+			strdata.append(str0.substring(6,22));
+			return 0;
+		}
+
+		if(0x64==ret){
+			strdata.append("用户取消");
+			return 2;
+		}
+
+		if(0xC8==ret){
+			strdata.append("硬件短路");
+			return 2;
+		}
+
+		return 0;
+	}
+
+	/***
 	 * 总线上电与检测流程（也叫：总线充电）
 	 * @param
 	 * @return
@@ -1138,7 +1234,6 @@ public class DetApp {
 		DetCmd cmd = new DetCmd(m_commobj);
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
-
 
 		if(null!=cbobj)
 			cbobj.DisplayText("总线上电与检测流程 开始...");

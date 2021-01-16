@@ -238,6 +238,20 @@ public class DetCmd {
 	}
 
 	/***
+	 * 辅助功能中的线路检测（不需要单独上下电操作，完成后总没有）
+	 * @return
+	 */
+	public int BoardSendCmd83() {
+		byte[] szcmd = new byte[2];
+		szcmd[0]=(byte)0x83;szcmd[1]=0x00;
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		int ret = prt.SendBlock(szcmd);
+		return ret;
+	}
+
+	/***
 	 * 发送 总线上电与检测流程 命令
 	 * @return
 	 */
