@@ -1093,8 +1093,12 @@ public class DetApp {
 			ret = szdata[2];
 			if(ret<0) ret = ret + 0x100;
 
-			if(ret<100)
+			if(ret<100) {
+				if(null!=cbobj)
+					cbobj.SetProgressbarValue(ret);
 				continue;
+			}
+
 
 			if(ret>100)
 				break;

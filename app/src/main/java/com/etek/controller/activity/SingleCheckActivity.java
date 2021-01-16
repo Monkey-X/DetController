@@ -47,6 +47,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     private boolean singleClick = false;
 
     private int m_nLastDetID = -1;
+    private boolean m_bLastDetRemoved = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +120,23 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         return;
                     }
 
+                    if(!m_bLastDetRemoved){
+                        int ret = DetApp.getInstance().ModuleSetIOStatus(m_nLastDetID,(byte)0x02);
+                        Log.d(TAG, String.format("ModuleSetIOStatus返回：%d",ret));
+                        if(0==ret){
+                            m_bLastDetRemoved = false;
+
+                            try {
+                                sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            continue;
+                        }
+                        m_bLastDetRemoved = true;
+                    }
+
+
                     Log.d(TAG, "总线短路和漏电检测");
                     // 总线短路和漏电检测
                     StringBuilder strData = new StringBuilder();
@@ -141,6 +159,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                             }
                             //  缓存上一颗
                             m_nLastDetID = nID;
+                            m_bLastDetRemoved =false;
 
                             SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
                             singleCheckEntity.setRelay(String.valueOf(0xffffffffL&nDT));
@@ -150,6 +169,12 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                             singleCheckEntity.setTestStatus(checkResult);
                             Log.d(TAG, "SetSingleModuleCheckData: checkResult=" + singleCheckEntity.toString());
                             showSingleCheckData(singleCheckEntity);
+                        }
+
+                        @Override
+                        public void SetProgressbarValue(int npos){
+                            // 显示“检测中...”和百分比
+
                         }
                     });
                     try {
