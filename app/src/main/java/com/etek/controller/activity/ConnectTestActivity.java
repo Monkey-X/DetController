@@ -501,6 +501,11 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 faileNum++;
             }
         }
+
+        // 总线下电
+        Log.d(TAG,"总线下电");
+        DetApp.getInstance().MainBoardBusPowerOff();
+
         if (successNum == projectDetonators.size()) {
             //全部检测测功了，更新项目状态和，提示进去延时下载
             updateAndHint();
@@ -525,6 +530,11 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                // 总线下电
+                Log.d(TAG,"总线下电");
+                DetApp.getInstance().MainBoardBusPowerOff();
+
                 dialog.dismiss();
             }
         });
