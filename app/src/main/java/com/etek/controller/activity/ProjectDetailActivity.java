@@ -33,6 +33,7 @@ import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.PowerCheckCallBack;
 import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
+import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.scan.ScannerInterface;
@@ -85,6 +86,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     // 初始时间的状态
     private boolean isStartTimeChange = false;
+    private SoundPoolHelp soundPoolHelp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         initView();
         initRecycleView();
         initIntentData();
+        initSoundPool();
     }
 
     private void initDelaySetting() {
@@ -107,6 +110,24 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
         if (detDelayBean == null) {
             detDelayBean = new DetDelayBean();
+        }
+    }
+
+    private void initSoundPool() {
+        soundPoolHelp = new SoundPoolHelp(this);
+        soundPoolHelp.initSound();
+    }
+
+    private void playSound(boolean b) {
+        if (soundPoolHelp != null && !b) {
+            soundPoolHelp.playSound(b);
+        }
+    }
+
+
+    private void releaseSound() {
+        if (soundPoolHelp != null) {
+            soundPoolHelp.releaseSound();
         }
     }
 
@@ -127,6 +148,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         //注册广播接受者
         scanReceiver = new ScannerResultReceiver();
         registerReceiver(scanReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        releaseSound();
+        super.onDestroy();
     }
 
     @Override
@@ -678,6 +705,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                         strgm = scanResult.substring(0, 13);
                     }
 
+                    playSound(false);
 
                     createDetData(strgm);
                 } else {
@@ -822,6 +850,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             missProDialog();
+            playSound(false);
             VibrateUtil.vibrate(ProjectDetailActivity.this,150);
             if (TextUtils.isEmpty(result)) {
                 showAutoMissDialog("获取雷管码失败！");
