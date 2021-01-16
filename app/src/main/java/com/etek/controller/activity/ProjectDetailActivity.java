@@ -119,7 +119,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void playSound(boolean b) {
-        if (soundPoolHelp != null && !b) {
+        if (soundPoolHelp != null ) {
             soundPoolHelp.playSound(b);
         }
     }
@@ -705,10 +705,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                         strgm = scanResult.substring(0, 13);
                     }
 
-                    playSound(false);
+                    playSound(true);
 
                     createDetData(strgm);
                 } else {
+                    playSound(false);
                     // 扫描失败
                     showAutoMissDialog("扫描失败！");
                     isInsertItem = false;
@@ -850,12 +851,14 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             missProDialog();
-            playSound(false);
+
             VibrateUtil.vibrate(ProjectDetailActivity.this,150);
             if (TextUtils.isEmpty(result)) {
                 showAutoMissDialog("获取雷管码失败！");
+                playSound(false);
             } else {
                 createProjectDetData(result, type);
+                playSound(true);
             }
         }
     }

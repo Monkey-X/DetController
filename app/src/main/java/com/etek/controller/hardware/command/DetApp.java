@@ -972,7 +972,6 @@ public class DetApp {
 
 		//	设置MID
 		m_bMID = DataConverter.bcd2Hex(arrdata[1]);
-		m_bMID =99;
 		DetIDConverter.SetMID(m_bMID);
 
 		//
