@@ -1487,7 +1487,7 @@ public class DetApp {
 	 * @param cbobj
 	 * @return
 	 */
-	public int DetsBusCharge(BusChargeCallback cbobj) {
+	public int DetsBusCharge(int nCount,BusChargeCallback cbobj) {
 		int ret;
 		final int RESP_LEN = 12;
 		final byte RESP_HEAD = (byte)0xbc;
@@ -1497,7 +1497,7 @@ public class DetApp {
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
 
-		ret = cmd.BoardSendCmd8C();
+		ret = cmd.BoardSendCmd8C(nCount);
 		m_detError.Setter((byte)0x8C, ret);
 		if(0!=ret) return ret;
 

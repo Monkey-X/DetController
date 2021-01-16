@@ -16,6 +16,10 @@ public class DetsBusChargeTask extends AsyncTask<String, Integer, Integer> {
     private static final String TAG = "DetsBusChargeTask";
     private final WeakReference<ITaskCallback> iTaskCallbackWeakReference;
 
+    private int m_nCount = 0;
+    public void SetDetsCount(int ncount){
+        m_nCount = ncount;
+    }
     public DetsBusChargeTask(ITaskCallback callback) {
         iTaskCallbackWeakReference = new WeakReference<>(callback);
     }
@@ -52,7 +56,7 @@ public class DetsBusChargeTask extends AsyncTask<String, Integer, Integer> {
     @Override
 
     protected Integer doInBackground(String... strings) {
-        int result = DetApp.getInstance().DetsBusCharge(new BusChargeCallback() {
+        int result = DetApp.getInstance().DetsBusCharge(m_nCount,new BusChargeCallback() {
             @Override
             public void SetProgressbarValue(int nVal) {
                 publishProgress(nVal);

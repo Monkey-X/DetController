@@ -323,10 +323,13 @@ public class DetCmd {
 	 * 雷管网络充电流程
 	 * @return
 	 */
-	public int BoardSendCmd8C() {
-		byte[] szcmd = new byte[2];
+	public int BoardSendCmd8C(int nCount) {
+		int n = (nCount%0x10000);
+		byte[] szcmd = new byte[4];
 
-		szcmd[0]=(byte)0x8C;szcmd[1]=0x00;
+		szcmd[0]=(byte)0x8C;szcmd[1]=0x02;
+		szcmd[2] = (byte)(nCount&0xff);
+		szcmd[3] = (byte)(nCount>>8);
 
 		DetProtocol prt = new DetProtocol(m_commobj);
 
