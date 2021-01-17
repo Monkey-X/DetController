@@ -41,6 +41,8 @@ import com.etek.controller.dto.Sbbhs;
 import com.etek.controller.dto.WhiteBlackController;
 import com.etek.controller.dto.Zbqy;
 import com.etek.controller.dto.Zbqys;
+import com.etek.controller.entity.DetController;
+import com.etek.controller.entity.EntryCopyUtil;
 import com.etek.controller.enums.CheckRuleEnum;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
@@ -98,7 +100,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
     private List<String> whiteList;
     private List<String> blackList;
-    private ProjectInfoEntity projectInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -445,7 +446,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 Log.d(TAG, "serverResult: " + serverResult.toString());
                 if (serverResult.getCwxx().contains("0")) {
                     ProjectFileDto projectFile = new ProjectFileDto();
-
                     projectFile.setCompany(Globals.user.getCompanyName());
                     projectFile.setDwdm(Globals.user.getCompanyCode());
                     projectFile.setXmbh(pendingProject.getProCode());
@@ -468,13 +468,13 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         Log.d(TAG, "unRegDet:" + unRegDet);
                         showStatusDialog("已存在已使用雷管！");
                         long projectId = storeProjectInfo(projectFile, serverResult);
-//                                uploadData(projectId);
+                        uploadData(projectId);
                         return;
                     }
 
                     showStatusDialog("完全匹配,允许爆破！");
                     long projectId = storeProjectInfo(projectFile, serverResult);
-//                            uploadData(projectId);
+                    uploadData(projectId);
                 } else {
                     showStatusDialog(serverResult.getCwxxms());
                 }
@@ -580,52 +580,21 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         return proId;
     }
 
-//    public String getReportDto() {
-//        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
-//        try {
-//            BeanPropertiesUtil.copyProperties(projectInfo, projectInfoDto);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-////        XLog.d("from:", projectInfo);
-//        projectInfoDto.setCreateTime(new Date());
-//        projectInfoDto.addDetControllers(pendingProject);
-//        return JSON.toJSONString(projectInfoDto);
-//    }
+    String getReportDto(ProjectInfoEntity projectInfoEntity) {
+        ProjectInfoDto projectInfoDto = new ProjectInfoDto();
+        try {
+            BeanPropertiesUtil.copyProperties(projectInfoEntity, projectInfoDto);
 
-//    private void uploadData(long projectId) {
-//
-//        if (projectId!=0) {
-//            projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
-//                    queryBuilder()
-//                    .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
-//        }
-//
-//        String rptJson = getReportDto();
-//        if(rptJson==null){
-//            return;
-//        }
-//
-//        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
-//
-//        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
-//
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                Log.d(TAG, "onFailure: "+e.getMessage());
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                String respStr = response.body().string();
-//                if (!StringUtils.isEmpty(respStr)) {
-//                    Log.d(TAG, "onResponse: "+respStr);
-//                }
-//            }
-//        });
-//    }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        projectInfoDto.setCreateTime(new Date());
+        DetController detController = new DetController();
+        detController.setContractId("");
+        DetController detController1 = EntryCopyUtil.copyInfoToDetController(detController, pendingProject);
+        projectInfoDto.addDetControllers(detController1);
+        return JSON.toJSONString(projectInfoDto);
+    }
 
     private void refreshData() {
         DBManager.getInstance().getProjectDetonatorDao().saveInTx(projectDetonatorList);
@@ -736,8 +705,36 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
             goToBomb();
-//            uploadData(detInProjectId);
+            uploadData(projectInfo);
         }
+    }
+
+    private void uploadData(long proId) {
+        ProjectInfoEntity projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
+                queryBuilder()
+                .where(ProjectInfoEntityDao.Properties.Id.eq(proId)).unique();
+        if (projectInfo == null) {
+            return;
+        }
+        uploadData(projectInfo);
+    }
+
+    private void uploadData(ProjectInfoEntity projectInfoEntity) {
+        String rptJson = getReportDto(projectInfoEntity);
+        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
+        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: " + e.toString());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d(TAG, "onResponse: " + response.body().toString());
+
+            }
+        });
     }
 
     /**
@@ -749,7 +746,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
         if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
             for (PermissibleZoneEntity permissibleZoneEntity : permissibleZoneList) {
-                LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), permissibleZoneEntity.getRadius());
+                LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), 30000);
+//                LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), permissibleZoneEntity.getRadius());
                 if (pendingProject.getLatitude() > range.getMinLat()
                         && pendingProject.getLatitude() < range.getMaxLat()
                         && pendingProject.getLongitude() > range.getMinLng()

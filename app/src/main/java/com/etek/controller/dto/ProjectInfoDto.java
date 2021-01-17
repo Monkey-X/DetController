@@ -44,20 +44,20 @@ public class ProjectInfoDto {
 
     List<PermissibleZoneDto> permissibleZoneList;
 
-    List<PendingProject>  detControllers;
+    List<DetController>  detControllers;
 
 
     public ProjectInfoDto() {
     }
 
-    public List<PendingProject> getDetControllers() {
+    public List<DetController> getDetControllers() {
         return detControllers;
     }
 
-    public void setDetControllers(List<PendingProject> detControllers) {
+    public void setDetControllers(List<DetController> detControllers) {
         this.detControllers = detControllers;
     }
-    public void addDetControllers(PendingProject detController) {
+    public void addDetControllers(DetController detController) {
         if(this.detControllers==null){
             this.detControllers = new ArrayList<>();
         }

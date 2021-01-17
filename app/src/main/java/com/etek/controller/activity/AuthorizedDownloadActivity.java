@@ -79,8 +79,14 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authorized_download);
         initView();
-        initData();
+
 //        initDialog();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initData();
     }
 
     /**
@@ -116,13 +122,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         startActivityForResult(intent,200);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 200 && resultCode == RESULT_OK) {
-            refreshData();
-        }
-    }
     /**
      * 初始化View
      */

@@ -148,14 +148,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (proId != 0) {
-            setResult(RESULT_OK);
-        }
-    }
-
     /**
      * 生成离线文件
      */
