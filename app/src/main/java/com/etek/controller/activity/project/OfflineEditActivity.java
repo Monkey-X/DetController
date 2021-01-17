@@ -193,11 +193,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         }
         String url;
         // 测试服务器
-        if (Globals.isTest) {
-            url = AppConstants.DanningTestServer + AppConstants.OfflineDownload;
-        } else {
-            url = AppConstants.DanningServer + AppConstants.OfflineDownload;
-        }
+
+        url = AppConstants.DanningServer + AppConstants.OfflineDownload;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
         String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");

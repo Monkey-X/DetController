@@ -1,10 +1,15 @@
 package com.etek.controller.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,8 +25,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.MapActivity;
@@ -62,6 +65,7 @@ import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
+import com.etek.sommerlibrary.utils.NetUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -100,6 +104,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
     private List<String> whiteList;
     private List<String> blackList;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,51 +112,100 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         setContentView(R.layout.activity_check_detail);
         getProjectId();
         initView();
-        initLocationOption();
         getWhiteBlackList();
+        localLocationInit();
     }
 
     /**
-     * 初始化定位信息
+     * 初始化原生的定位功能
      */
-    private void initLocationOption() {
-        LocationClient locationClient = new LocationClient(getApplicationContext());
-//声明LocationClient类实例并配置定位参数
-        LocationClientOption locationOption = new LocationClientOption();
-        MyLocationListener myLocationListener = new MyLocationListener();
-        //注册监听函数
-        locationClient.registerLocationListener(myLocationListener);
-        locationOption.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-//可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
-        locationOption.setCoorType("gcj02");
-        locationOption.setScanSpan(1000);
-        locationOption.setLocationNotify(true);
-        locationOption.setOpenGps(true);
-        locationClient.setLocOption(locationOption);
-        locationClient.start();
-    }
+    @SuppressLint("MissingPermission")
+    private void localLocationInit() {
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String content = "";
+        List<String> providerList = locationManager.getProviders(true);
+        String locationProvider;
+        if (providerList.contains(LocationManager.NETWORK_PROVIDER) && NetUtil.getNetType(mContext) == 0) {//Google服务被墙不可用
+            //网络定位的精准度稍差，但耗电量比较少。
+            Log.d(TAG, "localLocationInit: =====NETWORK_PROVIDER=====");
+            locationProvider = LocationManager.NETWORK_PROVIDER;
+            content = "网络开始定位！";
+        } else if (providerList.contains(LocationManager.GPS_PROVIDER)) {
+            //GPS 定位的精准度比较高，但是非常耗电。
+            Log.d(TAG, "localLocationInit: =====GPS_PROVIDER=====");
+            locationProvider = LocationManager.GPS_PROVIDER;
+            content = "GPS开始定位！";
+        } else {
+            Log.d(TAG, "localLocationInit: ======NO_PROVIDER=====");
+            // 当没有可用的位置提供器时，弹出Toast提示用户
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            mContext.startActivity(intent);
+            return;
+        }
+        showProDialog(content);
 
-    /**
-     * 实现定位回调
-     */
-    public class MyLocationListener extends BDAbstractLocationListener {
-        @Override
-        public void onReceiveLocation(BDLocation location){
-            //获取纬度信息
-            double latitude = location.getLatitude();
-            //获取经度信息
-            double longitude = location.getLongitude();
+        locationManager.requestLocationUpdates(locationProvider, 5000, 0, new LocationListener() {
 
-            locationLongitude.setText("" + longitude);
-            locationLatitude.setText("" + latitude);
-            if (pendingProject!=null) {
-                pendingProject.setLatitude(latitude);
-                pendingProject.setLongitude(longitude);
+            @Override
+            public void onLocationChanged(Location location) {
+                missProDialog();
+                Log.d(TAG, "onLocationChanged: " + location.getLongitude() + "," + location.getLatitude() + "," + location.getProvider());
+                updateLocation(location);
+
+                //只执行一次就停了自己  否则这个方法会根据参数不断的执行。
+                locationManager.removeUpdates(this);
             }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                missProDialog();
+                Log.d(TAG, "onProviderDisabled" + provider);
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                missProDialog();
+                Log.d(TAG, "onProviderEnabled" + provider);
+                updateLocation(locationManager
+                        .getLastKnownLocation(provider));
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status,
+                                        Bundle extras) {
+                missProDialog();
+                Log.d(TAG, "onStatusChanged" + provider);
+            }
+        });
+    }
+
+    private void updateLocation(Location location) {
+        if (location == null) {
+            return;
+        }
+        DecimalFormat df = new DecimalFormat("#.000000");
+        String strLong = df.format(location.getLongitude());
+        setStringInfo("Longitude", strLong);
+        String strLat = df.format(location.getLatitude());
+        setStringInfo("Latitude", strLat);
+
+        locationLongitude.setText(strLong);
+        locationLatitude.setText(strLat);
+        if (pendingProject != null) {
+            pendingProject.setLatitude(location.getLatitude());
+            pendingProject.setLongitude(location.getLongitude());
+        }
+        if (location.getProvider().contains("network")) {
+            locationLongitude.setTextColor(getMyColor(R.color.color_ac74ff));
+            locationLatitude.setTextColor(getMyColor(R.color.color_ac74ff));
+        } else {
+            locationLongitude.setTextColor(getMyColor(R.color.colorPrimary));
+            locationLatitude.setTextColor(getMyColor(R.color.colorPrimary));
         }
     }
-
 
     // 获取黑白名单
     private void getWhiteBlackList() {
@@ -258,12 +312,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
             controllerTime.setText(pendingProject.getDate());
             //地标
-//            locationLongitude.setText("" + AppIntentString.strGratitude);
-//            locationLatitude.setText("" + AppIntentString.strLatitude);
-//            if (pendingProject.getLongitude() != 0 || pendingProject.getLatitude() != 0) {
-//                DecimalFormat df = new DecimalFormat("0.000000");
-//                String loc = df.format(pendingProject.getLongitude()) + "  ,  " + df.format(pendingProject.getLatitude());
-//            }
         }
     }
 
@@ -273,24 +321,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             // 跳转地图界面
             Intent intent = new Intent(this, MapActivity.class);
             startActivity(intent);
-        }
-    }
-
-    /**
-     * 更新经纬度信息
-     */
-    public void updateGPSInfo(Location location) {
-        if (location != null) {
-            //地标
-            XLog.e("DLocationUtils:  " + location.getLongitude() + "  ,  " + location.getLatitude());
-            DecimalFormat df = new DecimalFormat("0.000000");
-            String longitude = df.format(location.getLongitude());
-            String latitude = df.format(location.getLatitude());
-            locationLongitude.setText(longitude);
-            locationLatitude.setText(latitude);
-            pendingProject.setLongitude(Double.parseDouble(longitude));
-            pendingProject.setLatitude(Double.parseDouble(latitude));
-            XLog.e("DLocationUtils:  " + longitude + "  ,  " + latitude);
         }
     }
 
@@ -472,7 +502,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         return;
                     }
 
-                    showStatusDialog("完全匹配,允许爆破！");
+                    goToBomb();
                     long projectId = storeProjectInfo(projectFile, serverResult);
                     uploadData(projectId);
                 } else {
