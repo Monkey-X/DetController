@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
@@ -26,22 +27,18 @@ import com.etek.controller.enums.ResultErrEnum;
 import com.etek.controller.minaclient.DetMessage;
 import com.etek.controller.minaclient.MessageCodecFactory;
 import com.etek.controller.persistence.DBManager;
-import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
-import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.controller.persistence.gen.DetonatorEntityDao;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
-import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.ListUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.NetUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
@@ -51,14 +48,14 @@ import org.apache.mina.core.session.IoSessionConfig;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -240,19 +237,19 @@ public class ReportDetailActivity2 extends BaseActivity {
             return;
         }
 
-        if (true) {
+        if (Globals.isTest) {
             sendReport2ETEKTest();
-        } else {
-            if (Globals.isServerDanningOn) {
-                XLog.d("丹灵！");
-                sendDanLingReport();
-            }
-
-            if (Globals.isServerZhongbaoOn) {
-                XLog.d("中爆！");
-                UPZBThread(detonatorEntityList);
-            }
         }
+        if (Globals.isServerDanningOn) {
+            XLog.d("丹灵！");
+            sendDanLingReport();
+        }
+
+        if (Globals.isServerZhongbaoOn) {
+            XLog.d("中爆！");
+            UPZBThread(detonatorEntityList);
+        }
+
     }
 
     /**

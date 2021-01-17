@@ -222,23 +222,27 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
 
     public void showProgressDialog(String msg, int type) {
-        progressValueDialog = new ProgressDialog(this);
-        progressValueDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressValueDialog.setTitle(msg);
-        if (type == ITaskCallback.CHARGE_TYPE) {
-            progressValueDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // 进行充电取消操作
-                    chargeCancel();
-                }
-            });
+        if (type == ITaskCallback.BL_FALSE) {
+            showProDialog(msg);
+        }else{
+            progressValueDialog = new ProgressDialog(this);
+            progressValueDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressValueDialog.setTitle(msg);
+            if (type == ITaskCallback.CHARGE_TYPE) {
+                progressValueDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 进行充电取消操作
+                        chargeCancel();
+                    }
+                });
+            }
+            progressValueDialog.setCancelable(false);
+            progressValueDialog.setCanceledOnTouchOutside(false);
+            progressValueDialog.setMax(100);
+            progressValueDialog.setProgressPercentFormat(null);
+            progressValueDialog.show();
         }
-        progressValueDialog.setCancelable(false);
-        progressValueDialog.setCanceledOnTouchOutside(false);
-        progressValueDialog.setMax(100);
-        progressValueDialog.setProgressPercentFormat(null);
-        progressValueDialog.show();
     }
 
     /**
@@ -292,6 +296,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         } else if (type == ITaskCallback.BL_TRUE) {
             startDisChangeTask();
         } else if (type == ITaskCallback.BL_FALSE) {
+            missProDialog();
             StartSetBLTask(true);
         } else if (type == ITaskCallback.DROP_OFF) {
             dropOffResult(result);

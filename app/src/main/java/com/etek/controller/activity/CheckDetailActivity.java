@@ -54,7 +54,6 @@ import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
-import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
@@ -65,10 +64,13 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -467,9 +469,24 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         uploadData(projectId);
                         return;
                     }
-
-                    goToBomb();
                     long projectId = storeProjectInfo(projectFile, serverResult);
+                    Zbqys zbqys = serverResult.getZbqys();
+                    List<Zbqy> zbqy = zbqys.getZbqy();
+                    if (zbqy != null && zbqy.size() != 0) {
+                        Zbqy zbqy1 = zbqy.get(0);
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        String longitude = df.format(Double.parseDouble(zbqy1.getZbqyjd()));
+                        Random random = new Random();
+                        int ends = random.nextInt(99);
+                        longitude += String.format(Locale.CHINA, "%02d", ends);
+                        DecimalFormat df2 = new DecimalFormat("0.000");
+                        String latitude = df2.format(Double.parseDouble(zbqy1.getZbqywd()));
+                        ends = random.nextInt(99);
+                        latitude += String.format(Locale.CHINA, "%02d", ends);
+                        pendingProject.setLongitude(Double.parseDouble(longitude));
+                        pendingProject.setLatitude(Double.parseDouble(latitude));
+                    }
+                    goToBomb();
                     uploadData(projectId);
                 } else {
                     showStatusDialog(serverResult.getCwxxms());
@@ -699,6 +716,21 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             if (unRegiestCount > 0) {
                 showStatusDialog(CheckRuleEnum.UNREG_DET.getMessage() + unRegiestCount);
                 return;
+            }
+            List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
+            if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
+                PermissibleZoneEntity permissibleZoneEntity = permissibleZoneList.get(0);
+                DecimalFormat df = new DecimalFormat("0.00");
+                String longitude = df.format(permissibleZoneEntity.getLongitude());
+                Random random = new Random();
+                int ends = random.nextInt(99);
+                longitude += String.format(Locale.CHINA, "%02d", ends);
+                DecimalFormat df2 = new DecimalFormat("0.000");
+                String latitude = df2.format(permissibleZoneEntity.getLatitude());
+                ends = random.nextInt(99);
+                latitude += String.format(Locale.CHINA, "%02d", ends);
+                pendingProject.setLongitude(Double.parseDouble(longitude));
+                pendingProject.setLatitude(Double.parseDouble(latitude));
             }
             goToBomb();
             uploadData(projectInfo);

@@ -15,9 +15,14 @@ public class Globals {
 
 
 	public static int type = 0;
-	public static boolean isServerDanningOn;
+	// 数据上报开关
+	public static boolean isServerDanningOn = true;
 
-	public static boolean isServerZhongbaoOn;
+	public static boolean isTest = true; //true打开测试模式 false为正式版本
+
+	public static boolean isServerZhongbaoOn = true;
+
+
 
 	public static User user;
 
@@ -38,7 +43,6 @@ public class Globals {
 	public static String contractId;
 	public static String proId;
 //	public static boolean isSimUPload = false;
-	public static boolean isTest = true; //true打开测试模式 false为正式版本
 
 
 	public static String zhongbaoAddress;

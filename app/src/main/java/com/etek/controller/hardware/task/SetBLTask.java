@@ -22,6 +22,15 @@ public class SetBLTask extends AsyncTask<String, Integer, Integer> {
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (!bHigh) {
+            ITaskCallback iTaskCallback = iTaskCallbackWeakReference.get();
+            iTaskCallback.showProgressDialog("请稍等...",ITaskCallback.BL_FALSE);
+        }
+    }
+
+    @Override
     protected Integer doInBackground(String... strings) {
         int result = DetApp.getInstance().MainBoardSetBL(bHigh);
         if (!bHigh) {

@@ -216,7 +216,6 @@ public class ReportDetailActivity extends BaseActivity {
             sendReport2ETEKTest();
         } else {
             if (Globals.isServerDanningOn) {
-//            showToast("丹灵！");
                 XLog.d("丹灵！");
                 sendDanLingReport();
             }
@@ -227,8 +226,6 @@ public class ReportDetailActivity extends BaseActivity {
                 UPZBThread(detController.getDetList());
 
             }
-//            sendCmdMessage(MSG_RPT_ETEK_TEST);
-
         }
 
     }
