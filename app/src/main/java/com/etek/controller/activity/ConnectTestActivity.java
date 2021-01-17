@@ -382,7 +382,24 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private void testItem(int position) {
         // 进行单个雷管的测试 todo
         showProDialog("检测中...");
-        detSingleCheck(position);
+
+        DetApp.getInstance().MainBoardLVEnable();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        boolean b = detSingleCheck(position);
+
+        DetApp.getInstance().MainBoardBusPowerOff();
+
+        if (soundPoolHelp != null) {
+            soundPoolHelp.playSound(b);
+            if(!b)
+                VibrateUtil.vibrate(ConnectTestActivity.this, 150);
+        }
+
         connectTestAdapter.notifyDataSetChanged();
         missProDialog();
     }

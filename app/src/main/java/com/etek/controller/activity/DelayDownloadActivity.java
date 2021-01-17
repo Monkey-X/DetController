@@ -369,7 +369,24 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     //再次下载
     private void downloadItem(int position) {
         showProDialog("下载中...");
-        detSingleDownload(position);
+
+        DetApp.getInstance().MainBoardLVEnable();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        boolean b = detSingleDownload(position);
+
+        DetApp.getInstance().MainBoardBusPowerOff();
+
+        if (soundPoolHelp != null) {
+            soundPoolHelp.playSound(b);
+            if(!b)
+                VibrateUtil.vibrate(DelayDownloadActivity.this, 150);
+        }
+
         mProjectDelayAdapter.notifyDataSetChanged();
         missProDialog();
     }
@@ -453,7 +470,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
      *
      * @param position
      */
-    public void detSingleDownload(int position) {
+    public boolean detSingleDownload(int position) {
         ProjectDetonator detonatorEntity = detonators.get(position);
         String detId = detonatorEntity.getDetId();
         int relayTime = detonatorEntity.getRelay();
@@ -472,6 +489,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         Log.d(TAG, "detSingleDownload: downloadResult = " + downloadResult);
         detonatorEntity.setDownLoadStatus(downloadResult);
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
+
+        return downloadResult == 0;
     }
 
 

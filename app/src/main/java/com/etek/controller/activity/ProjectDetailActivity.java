@@ -259,7 +259,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 // 设置孔内延时
 //                ReadDetNumTask readDetNumTask = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
 //                readDetNumTask.execute();
-                setDelayDialog("孔间延时", HOLE_IN_TYPE, holeTimeIn);
+                setDelayDialog("孔内延时", HOLE_IN_TYPE, holeTimeIn);
                 break;
             case R.id.hole_out:
                 // 设置孔间延时
