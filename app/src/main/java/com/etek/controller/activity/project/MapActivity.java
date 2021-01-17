@@ -90,6 +90,10 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         // 刷新地图
+        if (mLocationClient!=null) {
+            mLocationClient.start();
+        }
+
     }
 
     @Override

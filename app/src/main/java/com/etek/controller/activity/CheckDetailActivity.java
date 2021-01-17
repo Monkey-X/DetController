@@ -1,15 +1,11 @@
 package com.etek.controller.activity;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,6 +21,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.MapActivity;
@@ -65,7 +63,6 @@ import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.NetUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -113,99 +110,44 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         getProjectId();
         initView();
         getWhiteBlackList();
-        localLocationInit();
+        initBaiduLocation();
     }
 
-    /**
-     * 初始化原生的定位功能
-     */
-    @SuppressLint("MissingPermission")
-    private void localLocationInit() {
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        String content = "";
-        List<String> providerList = locationManager.getProviders(true);
-        String locationProvider;
-        if (providerList.contains(LocationManager.NETWORK_PROVIDER) && NetUtil.getNetType(mContext) == 0) {//Google服务被墙不可用
-            //网络定位的精准度稍差，但耗电量比较少。
-            Log.d(TAG, "localLocationInit: =====NETWORK_PROVIDER=====");
-            locationProvider = LocationManager.NETWORK_PROVIDER;
-            content = "网络开始定位！";
-        } else if (providerList.contains(LocationManager.GPS_PROVIDER)) {
-            //GPS 定位的精准度比较高，但是非常耗电。
-            Log.d(TAG, "localLocationInit: =====GPS_PROVIDER=====");
-            locationProvider = LocationManager.GPS_PROVIDER;
-            content = "GPS开始定位！";
-        } else {
-            Log.d(TAG, "localLocationInit: ======NO_PROVIDER=====");
-            // 当没有可用的位置提供器时，弹出Toast提示用户
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            mContext.startActivity(intent);
-            return;
-        }
-        showProDialog(content);
-
-        locationManager.requestLocationUpdates(locationProvider, 5000, 0, new LocationListener() {
-
-            @Override
-            public void onLocationChanged(Location location) {
-                missProDialog();
-                Log.d(TAG, "onLocationChanged: " + location.getLongitude() + "," + location.getLatitude() + "," + location.getProvider());
-                updateLocation(location);
-
-                //只执行一次就停了自己  否则这个方法会根据参数不断的执行。
-                locationManager.removeUpdates(this);
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                missProDialog();
-                Log.d(TAG, "onProviderDisabled" + provider);
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                missProDialog();
-                Log.d(TAG, "onProviderEnabled" + provider);
-                updateLocation(locationManager
-                        .getLastKnownLocation(provider));
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status,
-                                        Bundle extras) {
-                missProDialog();
-                Log.d(TAG, "onStatusChanged" + provider);
-            }
-        });
+    private void initBaiduLocation() {
+        LocationClient locationClient = new LocationClient(getApplicationContext());
+        LocationClientOption option = new LocationClientOption();
+        MyLocationListener myLocationListener = new MyLocationListener();
+        locationClient.registerLocationListener(myLocationListener);
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        option.setCoorType("bd09ll");
+        option.setScanSpan(1000);
+        option.setOpenGps(true);
+        option.setLocationNotify(true);
+        option.setWifiCacheTimeOut(2*60*1000);
+        option.setNeedNewVersionRgc(true);
+        locationClient.setLocOption(option);
+        locationClient.start();
     }
 
-    private void updateLocation(Location location) {
-        if (location == null) {
-            return;
-        }
-        DecimalFormat df = new DecimalFormat("#.000000");
-        String strLong = df.format(location.getLongitude());
-        setStringInfo("Longitude", strLong);
-        String strLat = df.format(location.getLatitude());
-        setStringInfo("Latitude", strLat);
+    public class MyLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location){
+            //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
+            //以下只列举部分获取经纬度相关（常用）的结果信息
+            //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
 
-        locationLongitude.setText(strLong);
-        locationLatitude.setText(strLat);
-        if (pendingProject != null) {
-            pendingProject.setLatitude(location.getLatitude());
-            pendingProject.setLongitude(location.getLongitude());
-        }
-        if (location.getProvider().contains("network")) {
-            locationLongitude.setTextColor(getMyColor(R.color.color_ac74ff));
-            locationLatitude.setTextColor(getMyColor(R.color.color_ac74ff));
-        } else {
-            locationLongitude.setTextColor(getMyColor(R.color.colorPrimary));
-            locationLatitude.setTextColor(getMyColor(R.color.colorPrimary));
+            double latitude = location.getLatitude();    //获取纬度信息
+            double longitude = location.getLongitude();    //获取经度信息
+            float radius = location.getRadius();    //获取定位精度，默认值为0.0f
+            locationLongitude.setText("" + longitude);
+            locationLatitude.setText("" + latitude);
+            if (pendingProject!=null) {
+                pendingProject.setLatitude(latitude);
+                pendingProject.setLongitude(longitude);
+            }
         }
     }
+
 
     // 获取黑白名单
     private void getWhiteBlackList() {
@@ -373,10 +315,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void goToBomb() {
-        PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
-        if (projectInfoEntity != null) {
-            projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1);
-            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+        if (pendingProject != null) {
+            pendingProject.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1);
+            DBManager.getInstance().getPendingProjectDao().save(pendingProject);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
