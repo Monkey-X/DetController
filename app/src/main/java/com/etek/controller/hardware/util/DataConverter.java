@@ -31,9 +31,11 @@ public class DataConverter {
 	}
 
 	public static byte bcd2Hex(byte b) {
+		int n = (b&0xff);
+
 		byte ch1, ch2;
-		ch2 = (byte) (b % 0x10);
-		ch1 = (byte) ((b - ch2) / 0x10);
+		ch2 = (byte) (n % 0x10);
+		ch1 = (byte) ((n - ch2) / 0x10);
 		return (byte) (ch1 * 10 + ch2);
 	}
 

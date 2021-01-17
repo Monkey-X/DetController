@@ -78,9 +78,9 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     protected void onDestroy() {
         cancelSingleCheck = true;
         releaseSound();
+
+
         super.onDestroy();
-        // 必须总线下电
-        DetApp.getInstance().MainBoardBusPowerOff();
     }
 
     /**
@@ -114,6 +114,8 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
             public void run() {
                 while (true){
                     if (cancelSingleCheck) {
+                        // 必须总线下电
+                        DetApp.getInstance().MainBoardBusPowerOff();
                         return;
                     }
 

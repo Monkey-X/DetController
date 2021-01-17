@@ -15,7 +15,7 @@ public class DetIDConverter {
     private static Map<Integer, String> m_mapDeskCode = new HashMap<Integer, String>();
 
     //  起爆器的厂商代码
-    public static byte m_bMID = 99;
+    public static int m_bMID = 99;
 
     static {
         m_mapDeskCode.put(99, "ZYX123456");
@@ -292,7 +292,8 @@ public class DetIDConverter {
         return true;
     }
 
-    public static void SetMID(byte bMID){
+    public static void SetMID(int bMID){
+        Log.d(TAG, String.format("起爆器厂商编码：%d",bMID));
         m_bMID = bMID;
     }
 

@@ -39,7 +39,7 @@ public class DetApp {
 	private String TAG = "DetApp";
 
 	//	起爆器厂商编码
-	private static byte m_bMID = 99;
+	private static int m_bMID = 99;
 
 	private DetApp(){}
 
