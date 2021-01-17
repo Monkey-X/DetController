@@ -3,6 +3,7 @@ package com.etek.controller.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
@@ -258,17 +259,36 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     }
 
     private void initMainBoard() {
-        new Thread() {
-            @Override
-            public void run() {
-                DetApp.getInstance().MainBoardPowerOn();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                }
-                mainBoardInit();
+        MainboardTask mainboardTask = new MainboardTask();
+        mainboardTask.execute();
+    }
+
+    class MainboardTask extends AsyncTask<String, Integer, Integer>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProDialog("主板自检中...");
+        }
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+            DetApp.getInstance().MainBoardPowerOn();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
             }
-        }.start();
+            int result = mainBoardInit();
+            return result;
+        }
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            missProDialog();
+            if (result !=0) {
+                showStatusDialog("主板初始化失败！");
+            }
+        }
     }
 
     /**
@@ -279,7 +299,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         scannerInterface.unlockScanKey();
     }
 
-    private void mainBoardInit() {
+    private int mainBoardInit() {
         int result = DetApp.getInstance().MainBoardInitialize(new InitialCheckCallBack() {
             @Override
             public void SetInitialCheckData(String strHardwareVer, String strUpdateHardwareVer, String strSoftwareVer, String strSNO, String strConfig, byte bCheckResult) {
@@ -302,6 +322,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
             }
         });
         Log.d(TAG, "SetInitialCheckData: result = " + result);
+        return result;
     }
 
     private void showMainBoardDialog(MainBoardInfoBean mainBoardInfoBean) {
