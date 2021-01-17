@@ -179,7 +179,7 @@ public class PendingProject {
 
     String date;//创建日期
 
-    String projectCode;// 项目编号
+    String projectCode;// 工程编号
 
     int projectStatus;// 项目状态
 

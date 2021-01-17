@@ -17,6 +17,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectListAdapter;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.common.Globals;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
@@ -103,6 +104,11 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         if (alertDialog != null && alertDialog.isShowing()) {
             return;
         }
+        if (Globals.user == null) {
+            Intent intent = new Intent(this, UserInfoActivity.class);
+            startActivity(intent);
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         EditText projectCode = view.findViewById(R.id.changeDelayTime);
@@ -138,6 +144,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
                 PendingProject pendingProject = new PendingProject();
                 pendingProject.setProjectCode(projectCodeStr);
                 pendingProject.setDate(DateStringUtils.getCurrentTime());
+                pendingProject.setCompanyCode(Globals.user.getCompanyCode());
                 pendingProject.setControllerId(getStringInfo(getString(R.string.controller_sno)));
                 DBManager.getInstance().getPendingProjectDao().insert(pendingProject);
                 initData();

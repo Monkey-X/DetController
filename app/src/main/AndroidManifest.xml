@@ -79,7 +79,7 @@
             android:name=".activity.AuthorizedDownloadActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.AuthBombActivity2" />
-        <activity android:name=".activity.CheckDetailActivity" />
+        <activity android:name=".activity.CheckDetailActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ProjectDetailActivity"
             android:theme="@style/activity_theme" />

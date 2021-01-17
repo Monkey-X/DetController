@@ -737,7 +737,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             detonatorEntity1.setProjectInfoId(projectId);
             String detId = getDetIdByGm(strgm);
             detonatorEntity1.setDetId(detId);
-            detonatorEntity1.setUid(getDetUid(detId));
+            detonatorEntity1.setUid(getDetUid(detId, strgm));
             DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity1);
             detonators.add(insertPosition, detonatorEntity1);
             projectDetailAdapter.notifyDataSetChanged();
@@ -874,14 +874,20 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         projectDetonator.setCode(detCode);
         String detId = getDetIdByGm(detCode);
         projectDetonator.setDetId(detId);
-        projectDetonator.setUid(getDetUid(detId));
+        projectDetonator.setUid(getDetUid(detId, detCode));
         if (detonators.size() == 0) {
             projectDetonator.setHolePosition("1-1");
             String startTime = delayStartTime.getText().toString().trim();
             projectDetonator.setRelay(Integer.valueOf(startTime));
         } else {
+
+
             ProjectDetonator projectDetonatorLast = detonators.get(detonators.size() - 1);
             int nextDelayTime = getNextDelayTime(projectDetonatorLast, type);
+            if (nextDelayTime < 0 || nextDelayTime > 15000) {
+                ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                return;
+            }
             String nextHolePosition = getNextHolePosition(projectDetonatorLast, type);
             projectDetonator.setHolePosition(nextHolePosition);
             projectDetonator.setRelay(nextDelayTime);
@@ -969,6 +975,23 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         int i = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
         Log.d(TAG, "getDetUid: " + stringBuilder.toString());
         return stringBuilder.toString();
+    }
+
+    // 雷管ID 获取uid
+    private String getDetUid(String detId, String detdc) {
+        int nid = Integer.parseInt(detId);
+
+        String struid = detdc.substring(0, 2);
+
+        String stry = detdc.substring(2, 3);
+        int nyear = Integer.parseInt(stry);
+        if (nyear == 0x09) {
+            stry = "19";
+        } else {
+            stry = String.valueOf(20 + nyear);
+        }
+        struid = struid + stry + "A8" + String.format("%08X", nid);
+        return struid;
     }
 
 

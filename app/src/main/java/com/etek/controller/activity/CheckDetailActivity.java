@@ -3,15 +3,12 @@ package com.etek.controller.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,7 +65,6 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -90,7 +86,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private EditText locationLongitude;
     private EditText locationLatitude;
     private Button getLocation;
-    private TextView controllerTime;
+    private EditText proCode;
     private RecyclerView detonatorList;
     private CheckDetailAdapter checkDetailAdapter;
     private List<ProjectDetonator> projectDetonatorList;
@@ -108,9 +104,43 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_detail);
         getProjectId();
+        initTitle();
         initView();
+        getLocationLocal();
         getWhiteBlackList();
         initBaiduLocation();
+    }
+
+    private void initTitle() {
+        View backImg = findViewById(R.id.back_img);
+        backImg.setOnClickListener(this);
+        TextView textTitle = findViewById(R.id.text_title);
+        TextView textbtn = findViewById(R.id.text_btn);
+        textbtn.setText("检查");
+        textbtn.setOnClickListener(this);
+        if ("online".equals(type)) {
+            textTitle.setText("在线详情");
+        } else if ("offline".equals(type)) {
+            textTitle.setText("离线详情");
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.get_location:
+                // 跳转地图界面
+                Intent intent = new Intent(this, MapActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.back_img:
+                finish();
+                break;
+            case R.id.text_btn:
+                projectCheckData();
+                break;
+
+        }
     }
 
     private void initBaiduLocation() {
@@ -120,28 +150,48 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         locationClient.registerLocationListener(myLocationListener);
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         option.setCoorType("bd09ll");
-        option.setScanSpan(1000);
+        option.setScanSpan(0);
         option.setOpenGps(true);
         option.setLocationNotify(true);
-        option.setWifiCacheTimeOut(2*60*1000);
+        option.setWifiCacheTimeOut(2 * 60 * 1000);
         option.setNeedNewVersionRgc(true);
         locationClient.setLocOption(option);
         locationClient.start();
     }
 
+
+    /**
+     * 得到本地缓存中的地址
+     */
+    void getLocationLocal() {
+        String longitudeStr = getStringInfo("Longitude");
+        String latitudeStr = getStringInfo("Latitude");
+        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))) {
+            double longitude = Double.valueOf(longitudeStr);
+            double latitude = Double.valueOf(latitudeStr);
+            locationLongitude.setText("" + longitude);
+            locationLatitude.setText("" + latitude);
+            if (pendingProject != null) {
+                pendingProject.setLatitude(latitude);
+                pendingProject.setLongitude(longitude);
+            }
+        }
+    }
+
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override
-        public void onReceiveLocation(BDLocation location){
+        public void onReceiveLocation(BDLocation location) {
             //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
             //以下只列举部分获取经纬度相关（常用）的结果信息
             //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
 
             double latitude = location.getLatitude();    //获取纬度信息
             double longitude = location.getLongitude();    //获取经度信息
-            float radius = location.getRadius();    //获取定位精度，默认值为0.0f
             locationLongitude.setText("" + longitude);
             locationLatitude.setText("" + latitude);
-            if (pendingProject!=null) {
+            setStringInfo("Longitude", longitude + "");
+            setStringInfo("Latitude", latitude + "");
+            if (pendingProject != null) {
                 pendingProject.setLatitude(latitude);
                 pendingProject.setLongitude(longitude);
             }
@@ -217,11 +267,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private void getProjectId() {
         Intent intent = getIntent();
         type = intent.getStringExtra("type");
-        if ("online".equals(type)) {
-            initSupportActionBar(R.string.online_detail);
-        } else if ("offline".equals(type)) {
-            initSupportActionBar(R.string.offline_detail);
-        }
         proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
         XLog.d("proId: " + proId);
         if (proId >= 0) {
@@ -234,12 +279,13 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 初始化View
      */
     private void initView() {
+
         contractCode = findViewById(R.id.contract_code);
         controllerId = findViewById(R.id.ctrl_id);
         locationLongitude = findViewById(R.id.ctrl_location_longitude);
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
         getLocation = findViewById(R.id.get_location);
-        controllerTime = findViewById(R.id.ctrl_time);
+        proCode = findViewById(R.id.pro_code);
         detonatorList = findViewById(R.id.check_detonator_list);
         getLocation.setOnClickListener(this);
         detonatorList.setLayoutManager(new LinearLayoutManager(this));
@@ -251,18 +297,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             contractCode.setText(pendingProject.getContractCode());
             //起爆器编号
             controllerId.setText(getStringInfo(getString(R.string.controller_sno)));
-
-            controllerTime.setText(pendingProject.getDate());
+            //项目编号
+            proCode.setText(pendingProject.getProCode());
             //地标
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.get_location) {
-            // 跳转地图界面
-            Intent intent = new Intent(this, MapActivity.class);
-            startActivity(intent);
         }
     }
 
@@ -272,29 +309,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    /**
-     * 右上角检查按钮
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_check_detail, menu);
-        return true;
-    }
-
-    /**
-     * 检查按钮选中事件
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();//返回按钮
-        } else if (item.getItemId() == R.id.action_check) {//检查
-            // 点击进行检查操作
-            projectCheckData();
-        }
-        return true;
     }
 
     /**
@@ -346,6 +360,17 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 获取验证结果
      */
     private void getVerifyResult(PendingProject projectInfoEntity) {
+
+        String longitude = locationLongitude.getText().toString().trim();
+        String latitue = locationLatitude.getText().toString().trim();
+        pendingProject.setLongitude(Double.parseDouble(longitude));
+        pendingProject.setLatitude(Double.parseDouble(latitue));
+
+        String strContractCode = contractCode.getText().toString().trim();
+        String strProCode = proCode.getText().toString().trim();
+
+        projectInfoEntity.setContractCode(strContractCode);
+        projectInfoEntity.setProCode(strProCode);
 
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
         onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
@@ -654,8 +679,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 for (DetonatorEntity detonatorEntity : detonatorList) {
                     if (projectDetonator.getCode().equalsIgnoreCase(detonatorEntity.getCode())
                             && projectDetonator.getUid().equalsIgnoreCase(detonatorEntity.getUid())) {
-                        if (!DetUtil.getAcCodeFromDet(detonatorEntity).equalsIgnoreCase(detonatorEntity.getWorkCode()))
-                            break;
+//                        if (!DetUtil.getAcCodeFromDet(detonatorEntity).equalsIgnoreCase(detonatorEntity.getWorkCode()))
+//                            break;
                         unUserCount--;
                         if (unUserCount < 0) {
                             unUserCount = 0;
@@ -714,6 +739,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * @param projectInfo
      */
     private boolean checkPermissibleZone(ProjectInfoEntity projectInfo) {
+        String longitude = locationLongitude.getText().toString().trim();
+        String latitue = locationLatitude.getText().toString().trim();
+        pendingProject.setLongitude(Double.parseDouble(longitude));
+        pendingProject.setLatitude(Double.parseDouble(latitue));
+
         List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
         if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
             for (PermissibleZoneEntity permissibleZoneEntity : permissibleZoneList) {
@@ -743,8 +773,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     return true;
                 }
             }
+            return false;
+        } else {
+            return true;
         }
-        return false;
     }
 
     /**
@@ -765,10 +797,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     return true;
                 }
             }
-
         }
         return false;
-
     }
 
     // 检查雷管是否在下载的离线文件中

@@ -140,8 +140,6 @@ public class ReportDto2 {
 
     public void setDetControllerWithoutDet2(String userInfo, PendingProject projectInfoEntity) {
         sbbh = projectInfoEntity.getControllerId();
-//        htid = detController.getProjectId();
-//        xmbh = detController.getContractId();
         htid = projectInfoEntity.getContractCode();
         xmbh = projectInfoEntity.getProCode();
 
@@ -152,7 +150,6 @@ public class ReportDto2 {
         if (projectInfoEntity.getDate() != null) {
             bpsj = projectInfoEntity.getDate();
         }
-//        bprysfz = projectInfoEntity.getUserIDCode();
         User user = JSON.parseObject(userInfo, User.class);
         bprysfz = user.getIdCode();
         XLog.e("IdCode: " + userInfo);
