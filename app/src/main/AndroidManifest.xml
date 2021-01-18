@@ -101,8 +101,8 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="Gtq6BIbB27g6drxAABY7lOSjgQVH49R1" /> <!-- android:value="3FzxApmMfecp6LxKsy0CGakG4dUVmwHe"  sommer 小机器 -->
-        <!-- GjtgaRTTLbe08cF9iOZC6Vo30QE4NjVW ETEK 现有机器 -->
+            android:value="Gtq6BIbB27g6drxAABY7lOSjgQVH49R1" />
+
         <activity
             android:name=".activity.UserInfoActivity"
             android:label="@string/title_activity_personal_info" />

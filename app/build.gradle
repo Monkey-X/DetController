@@ -8,6 +8,19 @@ static def releaseTime() {
 
 android {
     signingConfigs {
+        debug {
+            storeFile file('/Users/xulincheng/etekAndroid.jks')
+            storePassword 'etekAndroid'
+            keyAlias 'key0'
+            keyPassword 'etekAndroid'
+        }
+
+        release {
+            storeFile file('/Users/xulincheng/etekAndroid.jks')
+            storePassword 'etekAndroid'
+            keyAlias 'key0'
+            keyPassword 'etekAndroid'
+        }
     }
     compileSdkVersion 28
     defaultConfig {
@@ -94,10 +107,6 @@ dependencies {
             "com.android.support:design:$supportVersion",
             "com.android.support:preference-v7:$supportVersion",
             "com.android.support:customtabs:$supportVersion",
-//            "com.squareup.dagger:dagger:$daggerVersion",
-//            "com.squareup.retrofit2:retrofit:$retrofitVersion",
-//            "com.squareup.retrofit2:converter-gson:$retrofitVersion",
-//            "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion",
             "com.squareup.okhttp3:okhttp:$okHttpVersion",
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
             "android.arch.persistence.room:runtime:$roomVersion",
