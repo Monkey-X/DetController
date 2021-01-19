@@ -9,6 +9,7 @@
 
 
     <LinearLayout
+        android:id="@+id/layout_pro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="3dp"
@@ -32,6 +33,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_contract"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

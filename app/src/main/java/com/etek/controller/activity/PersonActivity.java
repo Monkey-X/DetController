@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.SettingsActivity2;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 
@@ -62,7 +63,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 startActivity(mainIntent);
                 break;
             case R.id.data_setting:
-                startActivity(SettingsActivity.class);
+                startActivity(SettingsActivity2.class);
                 break;
             case R.id.about:
                 startActivity(AboutActivity.class);

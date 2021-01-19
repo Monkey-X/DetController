@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -283,6 +284,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      */
     private void initView() {
 
+        LinearLayout layoutPro = findViewById(R.id.layout_pro);
+        LinearLayout layoutContract = findViewById(R.id.layout_contract);
+        if ("offline".equals(type)) {
+            layoutContract.setVisibility(View.GONE);
+            layoutPro.setVisibility(View.GONE);
+        }
         contractCode = findViewById(R.id.contract_code);
         controllerId = findViewById(R.id.ctrl_id);
         locationLongitude = findViewById(R.id.ctrl_location_longitude);

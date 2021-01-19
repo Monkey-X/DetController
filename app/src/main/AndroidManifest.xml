@@ -43,9 +43,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.project.SettingsActivity2"></activity>
         <activity
             android:name=".activity.project.OfflineEditActivity"
-            android:theme="@style/activity_theme"></activity>
+            android:theme="@style/activity_theme" />
         <activity android:name=".activity.project.MapActivity" />
         <activity android:name=".activity.ReportListActivity" />
         <activity android:name=".activity.ProjectManagerActivity" />
@@ -79,7 +80,9 @@
             android:name=".activity.AuthorizedDownloadActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.AuthBombActivity2" />
-        <activity android:name=".activity.CheckDetailActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.CheckDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ProjectDetailActivity"
             android:theme="@style/activity_theme" />

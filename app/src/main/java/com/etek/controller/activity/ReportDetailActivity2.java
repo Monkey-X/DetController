@@ -92,6 +92,9 @@ public class ReportDetailActivity2 extends BaseActivity {
 
     public static final int MSG_RPT_ETEK_BCK_OK = 13;
     public static final int MAX_GROUP = 50;
+    private Boolean isServerDanningOn;
+    private Boolean isServerZhongbaoOn;
+    private Boolean isServerEtekOn;
 
 
     @Override
@@ -101,6 +104,14 @@ public class ReportDetailActivity2 extends BaseActivity {
         setContentView(R.layout.activity_detrpt_detail2);
         getProjectId();
         initView();
+
+        initReportSwitch();
+    }
+
+    private void initReportSwitch() {
+        isServerDanningOn = getBooleanInfo("isServerDanningOn");
+        isServerZhongbaoOn = getBooleanInfo("isServerZhongbaoOn");
+        isServerEtekOn = getBooleanInfo("isServerEtekOn");
     }
 
     /**
@@ -237,15 +248,15 @@ public class ReportDetailActivity2 extends BaseActivity {
             return;
         }
 
-        if (Globals.isTest) {
+        if (isServerEtekOn) {
             sendReport2ETEKTest();
         }
-        if (Globals.isServerDanningOn) {
+        if (isServerDanningOn) {
             XLog.d("丹灵！");
             sendDanLingReport();
         }
 
-        if (Globals.isServerZhongbaoOn) {
+        if (isServerZhongbaoOn) {
             XLog.d("中爆！");
             UPZBThread(detonatorEntityList);
         }
