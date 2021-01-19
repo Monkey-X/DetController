@@ -54,6 +54,7 @@ import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
+import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
@@ -402,6 +403,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     @Override
                     public void run() {
                         missProDialog();
+                        showStatusDialog("请求服务器失败，" + e.toString());
                     }
                 });
             }
@@ -430,6 +432,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         }
         if (StringUtils.isEmpty(respStr)) {
             Log.d(TAG, "respStr is null");
+            showToast("服务器返回数据失败！");
             return;
         }
         Log.d(TAG, "respStr: " + respStr);
@@ -696,8 +699,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 for (DetonatorEntity detonatorEntity : detonatorList) {
                     if (projectDetonator.getCode().equalsIgnoreCase(detonatorEntity.getCode())
                             && projectDetonator.getUid().equalsIgnoreCase(detonatorEntity.getUid())) {
-//                        if (!DetUtil.getAcCodeFromDet(detonatorEntity).equalsIgnoreCase(detonatorEntity.getWorkCode()))
-//                            break;
+                        if (!DetUtil.getAcCodeFromDet(detonatorEntity).equalsIgnoreCase(detonatorEntity.getWorkCode()))
+                            break;
                         unUserCount--;
                         if (unUserCount < 0) {
                             unUserCount = 0;
