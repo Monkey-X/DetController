@@ -27,7 +27,7 @@ android {
         applicationId "com.etek.controller"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 9
+        versionCode 10
         versionName "1.0.${defaultConfig.versionCode}"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {

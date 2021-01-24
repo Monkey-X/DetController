@@ -64,7 +64,6 @@ import okhttp3.Response;
  * 上报详情页
  */
 public class ReportDetailActivity2 extends BaseActivity {
-
     private long proId;
     private TextView snId;
     private TextView rptStatus;
@@ -91,11 +90,10 @@ public class ReportDetailActivity2 extends BaseActivity {
     public static final int MSG_RPT_ETEK_BCK_ERR = 12;
 
     public static final int MSG_RPT_ETEK_BCK_OK = 13;
-    public static final int MAX_GROUP = 50;
+    public static final int MAX_GROUP = 1000;
     private Boolean isServerDanningOn;
     private Boolean isServerZhongbaoOn;
     private Boolean isServerEtekOn;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,9 +302,9 @@ public class ReportDetailActivity2 extends BaseActivity {
         String url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
-        String newUrl = SommerUtils.attachHttpGetParams(url, params);
-        XLog.d("len:" + newUrl.length());
-        AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
+        //String newUrl = SommerUtils.attachHttpGetParams(url, params);
+        //XLog.d("len:" + newUrl.length());
+        AsyncHttpCilentUtil.httpPost(url, params, new Callback() {
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -437,7 +435,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         sendRptToEtekServerBck(reportDtos.get(step - allSize));
     }
 
-
     private void sendRptToEtekServerBck(ReportDto2 reportDto) {
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         XLog.d(rptJson);
@@ -491,7 +488,6 @@ public class ReportDetailActivity2 extends BaseActivity {
             }
         });
     }
-
 
     private List<String> createMessageList(List<ProjectDetonator> detonators) {
         List<String> msgs = new ArrayList<String>();
@@ -553,7 +549,6 @@ public class ReportDetailActivity2 extends BaseActivity {
 
         return msgs;
     }
-
 
     private void sendCmdMessage(int msg) {
         Message message = new Message();
@@ -634,7 +629,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         }
         return false;
     });
-
 
     public class MinaHandler extends IoHandlerAdapter {
         public void messageReceived(IoSession session, Object message) {

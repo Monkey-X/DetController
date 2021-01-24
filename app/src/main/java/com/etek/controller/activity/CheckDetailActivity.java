@@ -401,9 +401,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         String url = AppConstants.DanningServer + AppConstants.OnlineDownload;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());
-        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-        Log.d(TAG, "newUrl: " + newUrl);
-        AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
+        //String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
+        //Log.d(TAG, "newUrl: " + newUrl);
+        AsyncHttpCilentUtil.httpPost(url, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -770,7 +770,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d(TAG, "onResponse: " + response.body().toString());
-
             }
         });
     }
