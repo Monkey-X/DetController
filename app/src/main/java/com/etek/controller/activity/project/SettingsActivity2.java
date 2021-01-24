@@ -34,7 +34,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         zhongbaoSwitch.setOn(isServerZhongbaoOn);
 
         Boolean isServerEtekOn = getBooleanInfo("isServerEtekOn");
-        zhongbaoSwitch.setOn(isServerEtekOn);
+        etekSwitch.setOn(isServerEtekOn);
     }
 
     private void initView() {
