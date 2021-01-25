@@ -98,7 +98,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
 
         File targetFile = new File( FileUtils.ExternalStorageDirectory + File.separator + "test"+ File.separator + "MainBoard.bin");
         if (!targetFile.exists()) {
-            ToastUtils.showShort(this,"升级文件不存在！");
+            ToastUtils.showShort(this,"已是最新版本！");
             return;
         }
         showProDialog("升级中...");
