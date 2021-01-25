@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.etek.controller.R;
 import com.etek.controller.activity.project.SettingsActivity2;
+import com.etek.controller.activity.project.UserInfoActivity2;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 
@@ -52,7 +53,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.user_manager:
-                Intent intent = new Intent(this, UserInfoActivity.class);
+                Intent intent = new Intent(this, UserInfoActivity2.class);
                 startActivity(intent);
                 break;
             case R.id.clean_data:

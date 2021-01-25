@@ -183,6 +183,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
         mDetonatorEntities = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(projectId);
         if (mDetonatorEntities != null && mDetonatorEntities.size() != 0) {
+            detonators.clear();
             Collections.sort(mDetonatorEntities);
             detonators.addAll(mDetonatorEntities);
             projectDetailAdapter.notifyDataSetChanged();
@@ -288,14 +289,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 startActivity(intent);
                 break;
         }
-    }
-
-    private void showDelaySettingDialog() {
-//        DelaySettingDialog delaySettingDialog = new DelaySettingDialog();
-//        delaySettingDialog.setOnDelaySettingListener(this);
-//        delaySettingDialog.show(getSupportFragmentManager(), "delaySettingDialog");
-        // TODO: 2020/12/27  设置起始延时
-
     }
 
     /**

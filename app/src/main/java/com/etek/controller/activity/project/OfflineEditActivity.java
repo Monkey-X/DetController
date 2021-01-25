@@ -122,7 +122,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         // 回填单位代码
         String userStr = getPreInfo("userInfo");
         if (TextUtils.isEmpty(userStr)) {
-            Intent intent = new Intent(this, UserInfoActivity.class);
+            Intent intent = new Intent(this, UserInfoActivity2.class);
             startActivity(intent);
             return;
         }else{

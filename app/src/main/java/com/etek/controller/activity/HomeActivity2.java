@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.UserInfoActivity2;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
@@ -252,7 +253,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     private void getUserInfo() {
         String userStr = getPreInfo("userInfo");
         if (TextUtils.isEmpty(userStr)) {
-            startActivity(UserInfoActivity.class);
+            startActivity(UserInfoActivity2.class);
         } else {
             Globals.user = JSON.parseObject(userStr, User.class);
         }
