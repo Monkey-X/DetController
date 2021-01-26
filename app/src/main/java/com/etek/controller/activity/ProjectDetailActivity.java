@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -286,9 +287,20 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 Intent intent = new Intent(this, ProjectImplementActivity.class);
                 intent.putExtra(AppIntentString.PROJECT_ID, projectId);
-                startActivity(intent);
+                startActivityForResult(intent,100);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+            Log.d(TAG, "onActivityResult: refresh data");
+            initIntentData();
+        }
+
     }
 
     /**

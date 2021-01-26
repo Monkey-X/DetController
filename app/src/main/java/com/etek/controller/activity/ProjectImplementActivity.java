@@ -15,6 +15,7 @@ import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.List;
@@ -68,21 +69,17 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     /**
      * 获取项目id
      */
     private void getProjectId() {
         Intent intent = getIntent();
         proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
-
-//        List<ProjectInfoEntity> projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
-//        if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
-//            // 没有项目，创建项目
-//            createProject();
-//        } else {
-//            ProjectInfoEntity projectInfoEntity = projectInfoEntities.get(0);
-//            proId = projectInfoEntity.getId();
-//        }
     }
 
     @Override
@@ -113,17 +110,13 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
      */
     private void initView() {
         connectTest = findViewById(R.id.project_connect_test);
-//        createNet = findViewById(R.id.project_net);
         delayDownload = findViewById(R.id.project_delay_download);
         checkAuthorization = findViewById(R.id.project_check_authorization);
         powerBomb = findViewById(R.id.project_power_bomb);
-//        dataReport = findViewById(R.id.project_data_report);
         connectTest.setOnClickListener(this);
         delayDownload.setOnClickListener(this);
         checkAuthorization.setOnClickListener(this);
         powerBomb.setOnClickListener(this);
-//        dataReport.setOnClickListener(this);
-//        createNet.setOnClickListener(this);
     }
 
     /**
