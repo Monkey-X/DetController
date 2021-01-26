@@ -75,6 +75,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private View startTest;
     private ProgressBar progress;
     private View cancelTest;
+    private TextView allEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +124,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         textBtn.setText("项目列表");
         textBtn.setVisibility(View.GONE);
 
-        TextView allEdit = findViewById(R.id.all_edit);
+        allEdit = findViewById(R.id.all_edit);
 
         allEdit.setOnClickListener(this);
 
@@ -741,11 +742,19 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (isVisible) {
             startTest.setVisibility(View.VISIBLE);
             progressView.setVisibility(View.GONE);
+
+            allDet.setVisibility(View.VISIBLE);
+            allEdit.setVisibility(View.VISIBLE);
+            downLoadFail.setVisibility(View.VISIBLE);
         }else{
             startTest.setVisibility(View.GONE);
             progressView.setVisibility(View.VISIBLE);
             progress.setProgress(0);
             progress.setMax(detonators.size());
+
+            allDet.setVisibility(View.GONE);
+            allEdit.setVisibility(View.GONE);
+            downLoadFail.setVisibility(View.GONE);
         }
     }
 }

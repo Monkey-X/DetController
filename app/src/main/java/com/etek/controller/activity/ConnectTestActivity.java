@@ -274,6 +274,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 // 放弃检测
                 isCancelTest = true;
                 changeProgressView(true);
+                setSelectBtnVisible(true);
                 break;
             case R.id.startTest:
                 // 开始检测
@@ -413,6 +414,22 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             return true;
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    /**
+     * 显示和隐藏底部的筛选按钮
+     * @param visible
+     */
+    private void setSelectBtnVisible(boolean visible){
+        if (visible) {
+            missEvent.setVisibility(View.VISIBLE);
+            falseConnect.setVisibility(View.VISIBLE);
+            allDet.setVisibility(View.VISIBLE);
+        }else{
+            missEvent.setVisibility(View.GONE);
+            falseConnect.setVisibility(View.GONE);
+            allDet.setVisibility(View.GONE);
+        }
     }
 
 
@@ -618,6 +635,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             connectTestAdapter.notifyDataSetChanged();
 //            dissTestProgressDialog();
             changeProgressView(true);
+            setSelectBtnVisible(true);
             updateProjectStatus();
         }
     }
@@ -634,6 +652,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         busChargeProgressDialog.show();
 
         changeProgressView(false);
+        setSelectBtnVisible(false);
     }
 
     @Override
@@ -671,6 +690,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             showStatusDialog("系统准备失败！");
 
             changeProgressView(true);
+            setSelectBtnVisible(true);
         }
     }
 
