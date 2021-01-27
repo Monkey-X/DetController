@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.etek.controller.R;
@@ -102,16 +101,17 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         soundPoolHelp = new SoundPoolHelp(this);
         soundPoolHelp.initSound();
     }
+
     private void releaseSound() {
-        if (soundPoolHelp!=null) {
+        if (soundPoolHelp != null) {
             soundPoolHelp.releaseSound();
         }
     }
 
 
-    int mBackKeyAction;
-    long mActionTime;
-    int mOkKeyAction;
+    int mBackKeyAction = -1;
+    long mActionTime = 0;
+    int mOkKeyAction = -1;
 
     boolean isCanBomb = false;
 
@@ -150,12 +150,16 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             //长按，左右侧键  todo
             if (isLongPress() && mBackKeyAction == KeyEvent.ACTION_DOWN && mOkKeyAction == KeyEvent.ACTION_DOWN) {
                 //  长按左右键之后进行起爆操作 todo  进行起爆操作
+                Log.d(TAG, "dispatchKeyEvent: DetonateAllDet");
+                mBackKeyAction = -1;
+                mOkKeyAction = -1;
+                mActionTime = 0;
                 DetonateAllDet();
             }
         }
 
 
-        return super.dispatchKeyEvent(event);
+        return true;
 
     }
 
