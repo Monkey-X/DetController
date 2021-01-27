@@ -440,15 +440,16 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void makeSure(FastEditBean bean) {
-        // Todo
         // 对第一个先设置延时
         int holePosition = bean.getStartNum() + bean.getHoleNum();
         int delayTime = bean.getStartTime();
         int lastHoleOutTime = delayTime;
-        ProjectDetonator detonatorEntity = detonators.get(bean.getStartNum() - 1);
+        List<ProjectDetonator> editDetonators = new ArrayList<>();
+        editDetonators.addAll(detonators);
+        ProjectDetonator detonatorEntity = editDetonators.get(bean.getStartNum() - 1);
         detonatorEntity.setRelay(delayTime);
         for (int i = bean.getStartNum() + 1; i <= bean.getEndNum(); i++) {
-            ProjectDetonator detonatorEntity1 = detonators.get(i - 1);
+            ProjectDetonator detonatorEntity1 = editDetonators.get(i - 1);
             Log.d(TAG, "makeSure: holePosition = " + holePosition);
             Log.d(TAG, "makeSure: delayTime = " + delayTime);
             if (i < holePosition) {
@@ -460,8 +461,15 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 detonatorEntity1.setRelay(delayTime);
                 holePosition = holePosition + bean.getHoleNum();
             }
+            if (delayTime >15000) {
+                ToastUtils.show(this, "雷管延时需设置在0ms---15000ms范围内！");
+                playSound(false);
+                return;
+            }
         }
         // 修改保存到数据库
+        detonators.clear();
+        detonators.addAll(editDetonators);
         DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
         mProjectDelayAdapter.notifyDataSetChanged();
     }

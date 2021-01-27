@@ -125,6 +125,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
             if (keyCode == 19 && action == KeyEvent.ACTION_DOWN) {
                 mBackKeyAction = KeyEvent.ACTION_DOWN;  //记录按下状态
+                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_DOWN");
                 if (mActionTime == 0) {
                     mActionTime = System.currentTimeMillis();
                 }
@@ -132,24 +133,27 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
             if (keyCode == 19 && action == KeyEvent.ACTION_UP) {
                 mBackKeyAction = KeyEvent.ACTION_UP;  //记录松下状态
+                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_UP");
                 mActionTime = 0;
             }
 
             if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_DOWN) {
                 mOkKeyAction = KeyEvent.ACTION_DOWN;   //记录按下状态
+                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_DOWN");
                 if (mActionTime == 0) {
                     mActionTime = System.currentTimeMillis();
                 }
             }
 
             if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_UP) {
+                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_UP");
                 mOkKeyAction = KeyEvent.ACTION_UP;    //记录松下状态
                 mActionTime = 0;
             }
 
-            //长按，左右侧键  todo
+            //长按，左右侧键
             if (isLongPress() && mBackKeyAction == KeyEvent.ACTION_DOWN && mOkKeyAction == KeyEvent.ACTION_DOWN) {
-                //  长按左右键之后进行起爆操作 todo  进行起爆操作
+                //  长按左右键之后进行起爆操作
                 Log.d(TAG, "dispatchKeyEvent: DetonateAllDet");
                 mBackKeyAction = -1;
                 mOkKeyAction = -1;
@@ -157,8 +161,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 DetonateAllDet();
             }
         }
-
-
         return true;
 
     }

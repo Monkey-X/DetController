@@ -104,6 +104,13 @@ public class FastEditDialog extends DialogFragment implements View.OnClickListen
             ToastUtils.show(getContext(), "请输入起始时间！");
             return;
         }
+
+        int startTime = Integer.parseInt(startTimeString);
+        if (startTime >= 15000) {
+            ToastUtils.show(getContext(), "延时请设置在0ms---15000ms范围内！");
+            return;
+        }
+
         String holeNumString = getNumString(holeNum);
         if (TextUtils.isEmpty(holeNumString)) {
             ToastUtils.show(getContext(), "请输入每孔雷管数！");
