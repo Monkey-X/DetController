@@ -536,6 +536,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void shouPopuWindow(View view, int position) {
+        int[] location = new int[2];
+        view.getLocationInWindow(location);
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
         PopupWindow popupWindow = new PopupWindow(popuView, 150, 120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
@@ -559,7 +561,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             }
         });
         popupWindow.setOutsideTouchable(true);
-        popupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
+        popupWindow.showAtLocation(view, Gravity.RIGHT|Gravity.TOP, 0, location[1]+25);
     }
 
     // 插入数据  怎么扫码插入 todo

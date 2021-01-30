@@ -329,6 +329,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     private void shouPopuWindow(View view, int position) {
+        int[] location = new int[2];
+        view.getLocationInWindow(location);
         View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
         PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
         popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
@@ -354,7 +356,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             }
         });
         mPopupWindow.setOutsideTouchable(true);
-        mPopupWindow.showAsDropDown(view, 200, -10, Gravity.RIGHT);
+        mPopupWindow.showAtLocation(view, Gravity.RIGHT|Gravity.TOP, 0, location[1]+25);
     }
 
 
