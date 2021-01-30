@@ -42,8 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="合同编号：" />
-
+            android:text="合同备案序号：" />
 
         <EditText
             android:background="@null"

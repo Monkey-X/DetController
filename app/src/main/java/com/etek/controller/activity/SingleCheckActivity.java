@@ -100,6 +100,8 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+        switchButtonText();
+
         //  进入单颗检测 点击检测后才开始进行轮训操作
         if (singleClick) {
             return;
@@ -108,14 +110,17 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         Log.d(TAG, "开始检测...");
 
         singleClick = true;
+        m_nLastDetID=-1;m_bLastDetRemoved = true;
         // 调用接口进行检测
         new Thread() {
             @Override
             public void run() {
                 while (true){
                     if (cancelSingleCheck) {
+                        singleClick=false;
                         // 必须总线下电
                         DetApp.getInstance().MainBoardBusPowerOff();
+                        Log.d(TAG, "下电退出，停止检测");
                         return;
                     }
 
@@ -134,8 +139,6 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         }
                         m_bLastDetRemoved = true;
                     }
-
-
                     Log.d(TAG, "总线短路和漏电检测");
                     // 总线短路和漏电检测
                     StringBuilder strData = new StringBuilder();
@@ -277,6 +280,30 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                 }
             }
         });
+    }
+
+
+    private boolean m_bChecking =false;
+    private void switchButtonText(){
+        TextView tv = findViewById(R.id.clickTest);
+        if(!m_bChecking){
+            m_bChecking=true;
+            cancelSingleCheck=false;
+            tv.setText("检测中,点击停止...");
+            return;
+        }
+
+        m_bChecking=false;
+        cancelSingleCheck =true;
+        singleClick =true;
+        Log.d(TAG, "准备停止检测");
+
+        try {
+            Thread.sleep(1000);
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        tv.setText("点 击 检 测");
     }
 
 }

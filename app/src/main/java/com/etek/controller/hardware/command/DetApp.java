@@ -526,14 +526,22 @@ public class DetApp {
 	 * @return
 	 */
 	public int ModuleGetUID(int nID,StringBuilder strUID) {
+
+        Log.d(TAG, "ModuleGetUID: ");
+
 		StringBuilder struidh = new StringBuilder();
 		int ret = m_cmdObj.ModCmd64(nID, struidh);
-		if(0!=ret) return ret;
+		if(0!=ret) {
+            Log.d(TAG, String.format("ModuleGetUID:fail with %d ",ret));
+		    return ret;
+        }
 
 		String struid = struidh.substring(0, 6)+String.format("%08X", nID);
 
 		strUID.setLength(0);
 		strUID.append(struid);
+
+        Log.d(TAG, String.format("ModuleGetUID:UID %s",strUID.toString()));
 		return 0;
 	}
 

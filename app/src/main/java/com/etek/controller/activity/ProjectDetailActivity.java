@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -210,7 +211,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         View projectHandle = findViewById(R.id.project_handle);
         layoutStartTime.setOnClickListener(this);
         projectHandle.setOnClickListener(this);
-
+        //projectHandle.setBackgroundColor(Color.BLUE);
 
         rootView = findViewById(R.id.rootview);
 
@@ -343,6 +344,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 int intTime = Integer.parseInt(time);
                 if (Math.abs(intTime) > 15000) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                    playSound(false);
                     return;
                 }
                 if (type == HOLE_IN_TYPE) {
@@ -799,6 +801,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     projectDetailAdapter.setSelectedPosition(i);
                     projectDetailAdapter.notifyDataSetChanged();
                     recycleView.scrollToPosition(i);
+                    playSound(false);
                     return true;
                 }
             }

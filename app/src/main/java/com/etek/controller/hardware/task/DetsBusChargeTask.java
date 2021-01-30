@@ -2,6 +2,7 @@ package com.etek.controller.hardware.task;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.BusChargeCallback;
@@ -54,7 +55,6 @@ public class DetsBusChargeTask extends AsyncTask<String, Integer, Integer> {
     }
 
     @Override
-
     protected Integer doInBackground(String... strings) {
         int result = DetApp.getInstance().DetsBusCharge(m_nCount,new BusChargeCallback() {
             @Override
