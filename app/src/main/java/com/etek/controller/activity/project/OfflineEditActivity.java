@@ -18,7 +18,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.activity.UserInfoActivity;
 import com.etek.controller.adapter.OfflineEditAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
@@ -49,9 +48,9 @@ import com.etek.controller.utils.BeanPropertiesUtil;
 import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.JsonUtil;
 import com.etek.controller.utils.RptUtil;
-import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
+import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -61,6 +60,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -78,6 +79,9 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
     private ArrayList<Detonator> detList;
     private OfflineEditAdapter offlineEditAdapter;
 
+    private static final String SN_REGEX = "^[A-Z0-9]{15}";
+    private static final String DATE_REGEX = "^(0?[1-9]|1[012])(0?[1-9]|[12][0-9]|3[01])";
+
     private String TAG = "OfflineEditActivity";
     private long proId;
 
@@ -87,6 +91,20 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         setContentView(R.layout.activity_offline_edit);
         initView();
         initData();
+
+        getSPData();
+    }
+
+    // 获取sp中缓存的数据
+    private void getSPData() {
+        String offlineEditInfo = getStringInfo("offlineEditInfo");
+        if (!TextUtils.isEmpty(offlineEditInfo)) {
+            OfflineDownloadBean offlineDownloadBean = JSON.parseObject(offlineEditInfo, OfflineDownloadBean.class);
+            if (offlineDownloadBean!=null) {
+                proCode.setText(offlineDownloadBean.getXmbh());
+                contractCode.setText(offlineDownloadBean.getHtid());
+            }
+        }
     }
 
     private void initView() {
@@ -94,7 +112,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         TextView textBtn = findViewById(R.id.text_btn);
         View backImg = findViewById(R.id.back_img);
         textTitle.setText("离线项目编辑");
-        textBtn.setText("离线校验");
+        textBtn.setText("校验");
         backImg.setOnClickListener(this);
         textBtn.setOnClickListener(this);
         proCode = findViewById(R.id.pro_code);
@@ -148,16 +166,104 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    private boolean strIsLength(String str) {
+        if (str.length() > 0 && str.length() < 15) {
+           return false;
+        }
+        return true;
+    }
+
+    private boolean strMageRegex(String  str){
+        if (str.length() > 0) {
+            Pattern compile = Pattern.compile(SN_REGEX);
+            Matcher matcher = compile.matcher(str);
+            if (!matcher.matches()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
+     * 判断是否含有空格
+     * @param input
+     * @return
+     */
+    public static boolean containSpace(CharSequence input){
+        return Pattern.compile("\\s+").matcher(input).find();
+    }
+
+    /**
+     * 判断字符串是否都是数字
+     * @param str
+     * @return
+     */
+    public boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
+    }
+
+    private  boolean isDateString(String dateString){
+        Pattern pattern = Pattern.compile(DATE_REGEX);
+        Matcher isNum = pattern.matcher(dateString);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
+    }
+
+
     /**
      * 生成离线文件
      */
     private void createOfflineData() {
         OfflineDownloadBean offlineDownloadBean = new OfflineDownloadBean();
-        if (!TextUtils.isEmpty(contractCode.getText().toString()) || !TextUtils.isEmpty(proCode.getText().toString())) {
-            offlineDownloadBean.setHtid(contractCode.getText().toString());
-            offlineDownloadBean.setXmbh(proCode.getText().toString());
+        String strContractCode = contractCode.getText().toString();
+        String strProCode = proCode.getText().toString();
+        if (!TextUtils.isEmpty(strContractCode) || !TextUtils.isEmpty(strProCode)) {
+
+            if (!TextUtils.isEmpty(strProCode)) {
+                if (containSpace(strProCode)) {
+                    ToastUtils.show(OfflineEditActivity.this,"项目编号不能包含空格！");
+                    return;
+                }
+            }
+
+            if (!TextUtils.isEmpty(strContractCode)) {
+                if (containSpace(strContractCode)) {
+                    ToastUtils.show(OfflineEditActivity.this,"合同备案序列号不能包含空格！");
+                    return;
+                }
+            }
+
+            if (!strIsLength(strContractCode)) {
+                ToastUtils.show(OfflineEditActivity.this,"请输入15位的合同备案序列号！");
+                return;
+            }
+            if (!strIsLength(strProCode)) {
+                ToastUtils.show(OfflineEditActivity.this,"请输入15位的项目编号！");
+                return;
+            }
+
+            if (!strMageRegex(strContractCode)) {
+                ToastUtils.show(OfflineEditActivity.this,"请输入有效的合同备案序列号！");
+                return;
+            }
+
+            if (!strMageRegex(strProCode)) {
+                ToastUtils.show(OfflineEditActivity.this,"请输入有效的项目编号！");
+                return;
+            }
+            offlineDownloadBean.setHtid(strContractCode);
+            offlineDownloadBean.setXmbh(strProCode);
         } else {
-            showToast("请输入项目编号或者合同编码！");
+            showToast("请输入项目编号或者合同备案序号！");
             return;
         }
         if (!StringUtils.isEmpty(companyCode.getText().toString())) {
@@ -175,6 +281,9 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         } else {
             offlineDownloadBean.setSbbh(controller.toUpperCase());
         }
+        // sp缓存编辑的信息
+        setStringInfo("offlineEditInfo",JSON.toJSONString(offlineDownloadBean));
+
         if (detList == null || detList.isEmpty()) {
             showToast("请输入雷管数");
             return;
@@ -449,10 +558,37 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
      * @param selectedItemPosition
      */
     private void createDetInfo(String detCodeStr, String detNumStr, int selectedItemPosition) {
-        if (TextUtils.isEmpty(detCodeStr) || !DetUtil.isValidFbh(detCodeStr)) {
+        if (TextUtils.isEmpty(detCodeStr)) {
             showToast("请输入有效的雷管发编号！");
             return;
         }
+        if (detCodeStr.length() != 13) {
+            showToast("请输入有效的13位雷管发编号！");
+            return;
+        }
+
+        if (containSpace(detCodeStr)) {
+            showToast("雷管发编号不能包含空格！");
+            return;
+        }
+
+        String substring = detCodeStr.substring(0, 7);
+        if (!isNumeric(substring)) {
+            showToast("请输入正确的雷管发编号！");
+            return;
+        }
+
+        String subDatestring = detCodeStr.substring(3, 7);
+        if (!isDateString(subDatestring)) {
+            showToast("请输入正确的有效期内雷管发编号！");
+            return;
+        }
+
+        if (!DetUtil.isValidFbh(detCodeStr)) {
+            showToast("请输入有效的雷管发编号！");
+            return;
+        }
+
         if (TextUtils.isEmpty(detNumStr)) {
             showToast("请输入有效的雷管数！");
             return;
