@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -210,7 +211,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         View projectHandle = findViewById(R.id.project_handle);
         layoutStartTime.setOnClickListener(this);
         projectHandle.setOnClickListener(this);
-
+        //projectHandle.setBackgroundColor(Color.BLUE);
 
         rootView = findViewById(R.id.rootview);
 
@@ -343,6 +344,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 int intTime = Integer.parseInt(time);
                 if (Math.abs(intTime) > 15000) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                    playSound(false);
                     return;
                 }
                 if (type == HOLE_IN_TYPE) {
@@ -657,8 +659,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return true;
         }
 
-        // 按钮7
-        if (keyCode == 14 && event.getAction() == KeyEvent.ACTION_DOWN) {
+        // 按钮7: 正常、CAPSLOC和Fn按下
+        if ((keyCode == 14||keyCode==44||keyCode==137)
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
             ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
             readDetNumTask1.execute();
             return true;
@@ -669,8 +672,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 //            readDetNumTask1.execute();
 //            return true;
 //        }
-        // 按钮9
-        if (keyCode == 16 && event.getAction() == KeyEvent.ACTION_DOWN) {
+        // 按钮9: 正常、CAPSLOC和Fn按下
+        if ((keyCode == 16||keyCode==51||keyCode==139)
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
             ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
             readDetNumTask1.execute();
             return true;
@@ -799,6 +803,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     projectDetailAdapter.setSelectedPosition(i);
                     projectDetailAdapter.notifyDataSetChanged();
                     recycleView.scrollToPosition(i);
+                    playSound(false);
                     return true;
                 }
             }
@@ -977,7 +982,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
 
     // 雷管ID 获取uid
-    private String getDetUid(String detId) {
+    private String getDetUid(String detId ) {
         StringBuilder stringBuilder = new StringBuilder();
         int i = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
         Log.d(TAG, "getDetUid: " + stringBuilder.toString());

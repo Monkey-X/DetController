@@ -653,7 +653,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             delayDownloadTask = new DelayDownloadTask();
             delayDownloadTask.execute();
         }else{
-            showStatusDialog("系统准备失败！");
+            showStatusDialog("未检测到雷管！");
 
             changeProgressView(true);
         }

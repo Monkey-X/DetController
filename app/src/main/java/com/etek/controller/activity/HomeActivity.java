@@ -65,6 +65,13 @@ public class HomeActivity extends BaseActivity implements ActivityCompat.OnReque
         Log.d(TAG, "onCreate: initialize= " + initialize);
 
         DetApp.getInstance().MainBoardPowerOn();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //  1.0.0.12版本的OS，启动后是拉低
+        DetApp.getInstance().MainBoardSetBL(true);
 
         initView();
 

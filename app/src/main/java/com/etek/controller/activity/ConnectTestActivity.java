@@ -223,19 +223,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 获取筛选的数据并展示
      */
     private void showFiltrateData(int position) {
-//        if (projectPosition == position) {
-//            return;
-//        }
-//        this.projectPosition = position;
-//        mProjectInfoEntity = projectInfoEntities.get(position);
-//        mDetonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
-//        connectData.clear();
-//        if (mDetonatorEntities != null && mDetonatorEntities.size() > 0) {
-//            connectData.addAll(mDetonatorEntities);
-//        } else {
-//            ToastUtils.show(ConnectTestActivity.this, "项目未录入数据");
-//        }
-//        connectTestAdapter.notifyDataSetChanged();
+
     }
 
     /**
@@ -266,6 +254,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.all_det:
                 // 展示全部
+                changeProgressView(true);
                 showAllDet();
                 checkShow(3);
                 break;
@@ -689,7 +678,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             testAsyncTask = new TestAsyncTask();
             testAsyncTask.execute();
         } else {
-            showStatusDialog("系统准备失败！");
+            showStatusDialog("未检测到雷管！");
 
             changeProgressView(true);
             setSelectBtnVisible(true);
