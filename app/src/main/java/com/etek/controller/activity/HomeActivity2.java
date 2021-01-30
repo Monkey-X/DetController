@@ -48,8 +48,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     private long lastBackKeyDownTick = 0;
     public static final long MAX_DOUBLE_BACK_DURATION = 1500;
     private RelativeLayout update;
-    private ProgressBar updateProgress;
     private TextView speed;
+    private ProgressBar updateProgress;
     private RelativeLayout projectManage;
     private RelativeLayout projectImplement;
     private RelativeLayout assistFunction;
