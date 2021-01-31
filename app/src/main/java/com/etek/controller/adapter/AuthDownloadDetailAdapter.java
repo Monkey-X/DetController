@@ -21,6 +21,8 @@ public class AuthDownloadDetailAdapter extends BaseQuickAdapter<DetonatorEntity,
         helper.setText(R.id.det_code, item.getCode());
         String strStauts = getStrStauts(item.getStatus());
         helper.setText(R.id.det_status, strStauts);
+        int strStautsColor = getStrStautsColor(item.getStatus());
+        helper.setTextColor(R.id.det_status,mContext.getColor(strStautsColor));
     }
 
     private String getStrStauts(int status) {
@@ -37,6 +39,22 @@ public class AuthDownloadDetailAdapter extends BaseQuickAdapter<DetonatorEntity,
             strStatus= "未知";
         }
         return strStatus;
+    }
+
+    private int getStrStautsColor(int status) {
+        int strStatusColor = 0;
+        if (status == 0) {
+            strStatusColor = R.color.mediumseagreen;
+        } else if (status == 1) {
+            strStatusColor =R.color.crimson;
+        }else if (status == 2){
+            strStatusColor =R.color.chat_item5_normal;
+        }else if (status == 3){
+            strStatusColor =R.color.gray_pressed;
+        }else {
+            strStatusColor= R.color.setting_text_on;
+        }
+        return strStatusColor;
     }
 }
 

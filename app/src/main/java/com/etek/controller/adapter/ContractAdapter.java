@@ -29,7 +29,7 @@ public class ContractAdapter extends BaseQuickAdapter<ProjectInfoEntity, BaseVie
     protected void convert(BaseViewHolder helper, ProjectInfoEntity item) {
         String proCode = item.getProCode();
         String contractCode = item.getContractCode();// 合同编号
-        Date createTime = item.getCreateTime();
+        Date createTime = item.getApplyDate();
 
         if (!TextUtils.isEmpty(contractCode)) {
             ((TextView) helper.getView(R.id.contract_code)).setText("合同备案序号："+contractCode);
