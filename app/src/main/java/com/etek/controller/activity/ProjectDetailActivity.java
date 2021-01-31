@@ -90,6 +90,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     // 初始时间的状态
     private boolean isStartTimeChange = false;
     private SoundPoolHelp soundPoolHelp;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -509,7 +510,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void showInsertDialog(String msg) {
-        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(msg);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(false);
@@ -644,7 +645,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             //*******重要，注意Extral为"value"
             final String scanResult = intent.getStringExtra("value");
             if (isInsertItem) {
-                missProDialog();
+                if (progressDialog!=null) {
+                    progressDialog.dismiss();
+                }
             }
 
             Log.d(TAG, "onReceive: scanResult = " + scanResult);
