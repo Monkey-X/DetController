@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.etek.controller.R;
-import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class ReportDetailAdapter extends BaseQuickAdapter<ProjectDetonator, Base
 
     @Override
     protected void convert(BaseViewHolder helper, ProjectDetonator item) {
-        helper.setText(R.id.number, helper.getAdapterPosition() + "");
+        helper.setText(R.id.number, helper.getAdapterPosition() + 1 + "");
         helper.setText(R.id.uid_num, item.getCode());
         if (item.getStatus() == 0) {
             helper.setText(R.id.status, "正常");
@@ -32,7 +31,7 @@ public class ReportDetailAdapter extends BaseQuickAdapter<ProjectDetonator, Base
             helper.setText(R.id.status, "不存在");
             helper.setTextColor(R.id.status,mContext.getColor(R.color.gray));
         }else{
-            helper.setText(R.id.status, "");
+            helper.setText(R.id.status, "--");
         }
     }
 }

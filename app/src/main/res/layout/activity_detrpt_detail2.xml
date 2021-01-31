@@ -11,12 +11,12 @@
         android:background="@drawable/message_item_auto">
 
         <TextView
+            android:id="@+id/proHint"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:scaleType="centerCrop"
-            android:text="工程编号: " />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/sn_id"

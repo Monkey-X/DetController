@@ -94,6 +94,7 @@ public class ReportDetailActivity2 extends BaseActivity {
     private Boolean isServerDanningOn;
     private Boolean isServerZhongbaoOn;
     private Boolean isServerEtekOn;
+    private TextView proHint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +128,7 @@ public class ReportDetailActivity2 extends BaseActivity {
      */
     private void initView() {
         snId = findViewById(R.id.sn_id);
+        proHint = findViewById(R.id.proHint);
         rptStatus = findViewById(R.id.rpt_status);
         controllerId = findViewById(R.id.ctrl_id);
         controllerLocation = findViewById(R.id.ctrl_location);
@@ -139,9 +141,11 @@ public class ReportDetailActivity2 extends BaseActivity {
         if (projectInfoEntity != null) {
             //序号
             if (!StringUtils.isEmpty(projectInfoEntity.getCompanyCode())) {
+                proHint.setText("项目编号：");
                 snId.setText(projectInfoEntity.getProCode());
             }
             if (!StringUtils.isEmpty(projectInfoEntity.getContractCode())) {
+                proHint.setText("合同备案序号：");
                 snId.setText(projectInfoEntity.getContractCode());
             }
             //状态
