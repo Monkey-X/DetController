@@ -263,9 +263,13 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                 if (singleCheckEntity != null) {
                     // 去除重复扫描的
                     if (singleCheckEntityList != null && singleCheckEntityList.size()!=0) {
-                        for (SingleCheckEntity checkEntity : singleCheckEntityList) {
-                            if (checkEntity.getDetId() == singleCheckEntity.getDetId()) {
+                        for (int i = 0; i < singleCheckEntityList.size(); i++) {
+                            SingleCheckEntity singleCheckEntity1 = singleCheckEntityList.get(i);
+                            if (singleCheckEntity1.getDetId() == singleCheckEntity.getDetId()) {
                                 playSound(false);
+                                singleCheckAdapter.setSelectedPostion(i);
+                                singleCheckAdapter.notifyDataSetChanged();
+                                testRecycleView.scrollToPosition(i);
                                 ToastUtils.showShort(SingleCheckActivity.this,"检测成功  该发雷管已检测！");
                                 return;
                             }
@@ -273,7 +277,9 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     }
                     playSound(true);
                     singleCheckEntityList.add(singleCheckEntity);
+                    singleCheckAdapter.setSelectedPostion(singleCheckEntityList.size()-1);
                     singleCheckAdapter.notifyDataSetChanged();
+                    testRecycleView.scrollToPosition(singleCheckEntityList.size()-1);
                     checkNum.setText(singleCheckEntityList.size() + "");
 //                SingleCheckEntityDao.
 //                DBManager.getInstance().getSingleCheckEntityDao().insert(singleCheckEntity);
