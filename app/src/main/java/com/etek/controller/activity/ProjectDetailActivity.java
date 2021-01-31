@@ -1,5 +1,6 @@
 package com.etek.controller.activity;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -376,72 +377,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         delayAlertDialog.show();
     }
 
-    /**
-     * 设置孔间延时
-     */
-    private void setHoleOutTime() {
-//        if (detonators != null && detonators.size() == 0) {
-//            return;
-//        }
-//
-//        int lastPosition = detonators.size() - 1;
-//        ProjectDetonator detonatorEntity = detonators.get(lastPosition);
-//        if (!TextUtils.isEmpty(detonatorEntity.getRelay())) {
-//            return;
-//        }
-//        if (detonators.size() >= 2) {
-//            ProjectDetonator detonatorEntity1 = detonators.get(lastPosition - 1);
-//            String lastDelayTime = detonatorEntity1.getRelay();
-//            String holePosition = detonatorEntity1.getHolePosition();
-//            String[] split = holePosition.split("-");
-//            int intFormString = getIntFormString(split[0]);
-//            int delayholeoutTime = getIntFormString(delayholeout.getText().toString().trim());
-//            int newDelayTime = getIntFormString(lastDelayTime) + delayholeoutTime;
-//            detonatorEntity.setRelay(String.valueOf(newDelayTime));
-//            detonatorEntity.setHolePosition(String.valueOf(intFormString + 1) + "-" + 1);
-//            DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
-//            projectDetailAdapter.notifyDataSetChanged();
-//        }
-    }
-
-    /**
-     * 设置孔内延时时间
-     */
-    private void setHoleInTime() {
-//        if (detonators != null && detonators.size() == 0) {
-//            return;
-//        }
-//
-//        int lastPosition = detonators.size() - 1;
-//        ProjectDetonator detonatorEntity = detonators.get(lastPosition);
-//        if (!TextUtils.isEmpty(detonatorEntity.getRelay())) {
-//            return;
-//        }
-//
-//        if (detonators.size() == 1) {
-//            int startDelayTime = getIntFormString(delayTimeNew.getText().toString().trim());
-//            detonatorEntity.setRelay(String.valueOf(startDelayTime));
-//            detonatorEntity.setHolePosition(1 + "-" + 1);
-//            projectDetailAdapter.notifyDataSetChanged();
-//            return;
-//        }
-//
-//        ProjectDetonator detonatorEntity1 = detonators.get(lastPosition - 1);
-//        String lastDelayTime = detonatorEntity1.getRelay();
-//
-//        String holePosition = detonatorEntity1.getHolePosition();
-//        String[] split = holePosition.split("-");
-//        int intFormString = getIntFormString(split[1]);
-//        int first = getIntFormString(split[0]);
-//
-//        int delayholeinTime = getIntFormString(delayholein.getText().toString().trim());
-//        int newDelayTime = getIntFormString(lastDelayTime) + delayholeinTime;
-//        detonatorEntity.setRelay(String.valueOf(newDelayTime));
-//        detonatorEntity.setHolePosition(first + "-" + String.valueOf(intFormString + 1));
-//        DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
-//        projectDetailAdapter.notifyDataSetChanged();
-    }
-
 
     private void initRecycleView() {
         detonators = new ArrayList<>();
@@ -570,7 +505,21 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private void insertItemView(int position) {
         isInsertItem = true;
         insertPosition = position;
-        showProDialog("请扫描雷管信息");
+        showInsertDialog("请扫描雷管信息");
+    }
+
+    private void showInsertDialog(String msg) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(msg);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                isInsertItem = false;
+            }
+        });
+        progressDialog.show();
     }
 
     // 删除条目
@@ -755,13 +704,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
         createProjectDetData(strgm, scanType);
-//        ProjectDetonator detonatorEntity = new ProjectDetonator();
-//        detonatorEntity.setProjectInfoId(projectId);
-//        detonatorEntity.setCode(strgm);
-//        detonatorEntity.setDetId(getDetIdByGm(strgm));
-//        DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
-//        detonators.add(detonatorEntity);
-//        projectDetailAdapter.notifyDataSetChanged();
     }
 
 
