@@ -262,9 +262,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             }
             offlineDownloadBean.setHtid(strContractCode);
             offlineDownloadBean.setXmbh(strProCode);
-        } else {
-            showToast("请输入项目编号或者合同备案序号！");
-            return;
         }
         if (!StringUtils.isEmpty(companyCode.getText().toString())) {
             offlineDownloadBean.setDwdm(companyCode.getText().toString());

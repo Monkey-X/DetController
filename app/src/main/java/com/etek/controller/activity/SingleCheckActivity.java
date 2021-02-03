@@ -55,6 +55,11 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         initSound();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     /**
      * 初始化音效
      */
