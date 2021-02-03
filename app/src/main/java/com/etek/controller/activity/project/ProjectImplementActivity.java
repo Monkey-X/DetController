@@ -3,6 +3,7 @@ package com.etek.controller.activity.project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * 工程实施页
  */
-public class ProjectImplementActivity extends BaseActivity implements View.OnClickListener, ProjectDialog.OnMakeProjectListener {
+public class ProjectImplementActivity extends BaseActivity implements View.OnClickListener {
 
     private PendingProject projectInfoEntity;
     private long proId = -1;
@@ -36,6 +37,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     private RelativeLayout delayDownload;
     private RelativeLayout checkAuthorization;
     private RelativeLayout powerBomb;
+    private String controllerSno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,28 +88,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
         proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
     }
 
-    @Override
-    public void makeProjectCancel() {
-        this.finish();
-    }
 
-    private void createProject() {
-        ProjectDialog projectDialog = new ProjectDialog();
-        projectDialog.setOnMakeProjectListener(this);
-        projectDialog.show(getSupportFragmentManager(),"projectDialog");
-    }
-
-    @Override
-    public void makeProject(ProjectInfoEntity bean) {
-        if (bean != null) {
-            bean.setControllerId(getStringInfo(getString(R.string.controller_sno)));
-            proId = DBManager.getInstance().getProjectInfoEntityDao().insert(bean);
-            refreshData();
-        }else{
-            ToastUtils.showShort(this,"创建项目失败！");
-            this.finish();
-        }
-    }
 
     /**
      * 初始化View
@@ -121,6 +102,8 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
         delayDownload.setOnClickListener(this);
         checkAuthorization.setOnClickListener(this);
         powerBomb.setOnClickListener(this);
+        // 设备序列号
+        controllerSno = getStringInfo(getString(R.string.controller_sno));
     }
 
     /**
@@ -139,16 +122,22 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
             projectStatus = AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1;
         }
 
+        if (!TextUtils.isEmpty(controllerSno)) {
+            if (controllerSno.contains("F99")) {
+                return;
+            }
+        }
+
         switch (projectStatus) {
             case AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1://连接检测有颜色，其余四个置灰(不可点击)
                 connectTest.setBackgroundResource(R.drawable.project_connect_test);
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                delayDownload.setClickable(false);
-//                checkAuthorization.setClickable(false);
-//                powerBomb.setClickable(false);
-//                connectTest.setClickable(true);
+                delayDownload.setClickable(false);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
+                connectTest.setClickable(true);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1://延时下载有颜色，其余四个置灰(不可点击)
@@ -156,10 +145,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(true);
-//                checkAuthorization.setClickable(false);
-//                powerBomb.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(true);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1://检查授权有颜色，其余四个置灰(不可点击)
@@ -167,10 +156,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(false);
-//                checkAuthorization.setClickable(true);
-//                powerBomb.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(false);
+                checkAuthorization.setClickable(true);
+                powerBomb.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1://充电起爆有颜色，其余四个置灰(不可点击)
@@ -178,10 +167,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(false);
-//                powerBomb.setClickable(true);
-//                checkAuthorization.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(false);
+                powerBomb.setClickable(true);
+                checkAuthorization.setClickable(false);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1://数据上传有颜色，其余四个置灰(不可点击)
@@ -189,10 +178,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-//                connectTest.setClickable(false);
-//                delayDownload.setClickable(false);
-//                checkAuthorization.setClickable(false);
-//                powerBomb.setClickable(false);
+                connectTest.setClickable(false);
+                delayDownload.setClickable(false);
+                checkAuthorization.setClickable(false);
+                powerBomb.setClickable(false);
                 break;
         }
     }

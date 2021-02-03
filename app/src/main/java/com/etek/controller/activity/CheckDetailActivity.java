@@ -679,7 +679,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
     }
 
-    // todo 刷新雷管状态，演示
     private void changeDetStatus() {
         for (int i = 0; i < projectDetonatorList.size(); i++) {
             ProjectDetonator projectDetonator = projectDetonatorList.get(i);

@@ -175,12 +175,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.text_btn:
-                // 展示项目列表 todo
-                if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
-                    ToastUtils.show(this, this.getString(R.string.no_filtrate_project));
-                } else {
-                    showProjectPopuWindow();
-                }
+
                 break;
             case R.id.all_edit:
                 // 批量编辑
@@ -255,60 +250,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         fastEditDialog.show(getSupportFragmentManager(), "fastEditDialog");
     }
 
-    // 展示项目列表
-    private void showProjectPopuWindow() {
-        View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
-        popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
-        popWindow.setContentView(contentView);
-        WindowManager.LayoutParams parms = this.getWindow().getAttributes();
-        parms.alpha = 0.5f;
-        this.getWindow().setAttributes(parms);
-        popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                bgAlpha();
-            }
-        });
-        initFiltrate(contentView);
-        popWindow.showAsDropDown(textBtn, 0, 25);
-    }
 
-    private void initFiltrate(View contentView) {
-        rvFiltrate = contentView.findViewById(R.id.rv_filtrate);
-        rvFiltrate.setLayoutManager(new LinearLayoutManager(this));
-        //动态设置rvFiltrate的高度
-        if (projectInfoEntities.size() > 5) {
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 600);
-            rvFiltrate.setLayoutParams(lp);
-        }
 
-        filtrateAdapter = new FiltrateAdapter(R.layout.filtrate_item, projectInfoEntities);
-        rvFiltrate.setAdapter(filtrateAdapter);
-
-        filtrateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showFiltrateData(position);
-                popWindow.dismiss();
-            }
-        });
-    }
-
-    private void showFiltrateData(int position) {
-//        if (this.projectPosition == position) {
-//            return;
-//        }
-//        projectPosition = position;
-//        mProjectInfoEntity = projectInfoEntities.get(position);
-//        List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
-//        detonators.clear();
-//        if (detonatorEntities != null && detonatorEntities.size() > 0) {
-//            detonators.addAll(detonatorEntities);
-//        } else {
-//            ToastUtils.show(DelayDownloadActivity.this, "项目未录入数据");
-//        }
-//        mProjectDelayAdapter.notifyDataSetChanged();
-    }
 
 
     /**
@@ -401,12 +344,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             DBManager.getInstance().getProjectDetonatorDao().delete(detonatorEntity);
             detonators.remove(position);
             mProjectDelayAdapter.notifyDataSetChanged();
-//            List<DetonatorEntity> detonatorEntities = DBManager.getInstance().getDetonatorEntityDao()._queryProjectInfoEntity_DetonatorList(mProjectInfoEntity.getId());
-//            if (detonatorEntities != null) {
-//                detonators.clear();
-//                detonators.addAll(detonatorEntities);
-//                mProjectDelayAdapter.notifyDataSetChanged();
-//            }
         }
     }
 
@@ -485,9 +422,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         ProjectDetonator detonatorEntity = detonators.get(position);
         String detId = detonatorEntity.getDetId();
         int relayTime = detonatorEntity.getRelay();
-        //int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
         Log.d(TAG, "detSingleDownload: detId = " + detId);
-        //Log.d(TAG, "detSingleDownload: MainBoardHVEnable = " + wakeupStatus);
         // 进行雷管的链接检测
         int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId),relayTime);
         playSound(downloadResult == 0);

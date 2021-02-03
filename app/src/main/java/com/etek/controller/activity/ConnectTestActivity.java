@@ -486,15 +486,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         ProjectDetonator detonatorEntity = connectData.get(position);
         String detId = detonatorEntity.getDetId();
         Log.d(TAG, "detSingleCheck: detId = " + detId);
-//        int wakeupStatus = DetApp.getInstance().MainBoardHVEnable();
-//        Log.d(TAG, "detSingleCheck: MainBoardHVEnable = " + wakeupStatus);
         // 进行雷管的链接检测
         int testResult = DetApp.getInstance().ModuleSingleCheck(Integer.parseInt(detId));
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
-//        StringBuilder stringBuilder = new StringBuilder();
-//        testResult = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
         detonatorEntity.setTestStatus(testResult);
-//        detonatorEntity.setUid(stringBuilder.toString());
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
         playSound(testResult == 0);
         return testResult == 0;
@@ -512,7 +507,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 更新展示检测的结果
      */
     private void updateProjectStatus() {
-        // TODO: 2020/12/27  连接检测结速了，要展示结果或者提示进入延时下载操作
         List<ProjectDetonator> projectDetonators = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(proId);
         if (projectDetonators == null || projectDetonators.size() == 0) {
             return;
@@ -611,7 +605,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPreExecute() {
             super.onPreExecute();
             isCancelTest = false;
-//            showTextProgressDialog();
         }
 
         @Override
@@ -624,7 +617,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
             connectTestAdapter.notifyDataSetChanged();
-//            dissTestProgressDialog();
             changeProgressView(true);
             setSelectBtnVisible(true);
             updateProjectStatus();
