@@ -141,6 +141,8 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
             return;
         }
 
+        personalIdCode.setText(userId.toUpperCase());
+
         if(!IdCardUtil.isValidatedAllIdcard(userId)){
             showToast( "请输入有效的身份证号码");
             return;
