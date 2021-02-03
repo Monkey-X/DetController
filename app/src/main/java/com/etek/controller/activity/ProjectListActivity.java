@@ -179,8 +179,8 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
      */
     private String getProjectNum() {
         String projectNum = getStringInfo(AppIntentString.PROJECT_ID);
-        if (TextUtils.isEmpty(projectNum)) {
-            String dateString = DateStringUtils.getDateString();
+        String dateString = DateStringUtils.getDateString();
+        if (TextUtils.isEmpty(projectNum) || !projectNum.contains(dateString)) {
             projectNum = dateString + "-1";
         }
         return projectNum;
