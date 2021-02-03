@@ -19,7 +19,7 @@ public class ProjectReportAdapter extends BaseQuickAdapter<PendingProject, BaseV
 
     @Override
     protected void convert(BaseViewHolder helper, PendingProject item) {
-        helper.setText(R.id.contrl_sn, item.getControllerId());
+        helper.setText(R.id.contrl_sn, item.getProjectCode());
         helper.setText(R.id.det_size, item.getDetonatorList().size() + "");
         helper.setText(R.id.rpt_time, item.getDate());
         String reportStatus = item.getReportStatus();
