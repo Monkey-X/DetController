@@ -119,7 +119,7 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
                 for (PermissibleZoneEntity permissibleZoneEntity : permissibleZoneList) {
                     double latitude = permissibleZoneEntity.getLatitude();
                     double longitude = permissibleZoneEntity.getLongitude();
-                    permissString.append(latitude+","+longitude).append("\n");
+                    permissString.append(longitude+","+latitude).append("\n");
                 }
                 allowArea.setText(permissString.toString());
             }

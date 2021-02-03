@@ -53,6 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -150,6 +151,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         projectInfos.clear();
         if (projectDownLoadEntities != null && projectDownLoadEntities.size() > 0) {
             noDataView.setVisibility(View.GONE);
+            Collections.reverse(projectDownLoadEntities);
             projectInfos.addAll(projectDownLoadEntities);
         } else {
             noDataView.setVisibility(View.VISIBLE);
