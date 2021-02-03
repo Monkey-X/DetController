@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/grey"
     android:orientation="vertical"
-    tools:context=".activity.SingleCheckActivity">
+    tools:context=".activity.project.SingleCheckActivity">
 
     <include android:id="@+id/custom_view"
         layout="@layout/actionbar_custom_view"/>

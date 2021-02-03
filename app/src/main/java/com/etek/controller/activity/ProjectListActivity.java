@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.ProjectDetailActivity;
 import com.etek.controller.adapter.ProjectListAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;

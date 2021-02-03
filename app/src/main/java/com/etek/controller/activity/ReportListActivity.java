@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.ReportDetailActivity2;
 import com.etek.controller.adapter.ProjectReportAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;
@@ -68,7 +69,7 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
         // TODO: 2020/12/19
         PendingProject pendingProject = projects.get(position);
         Long id = pendingProject.getId();
-        Intent intent = new Intent(this,ReportDetailActivity2.class);
+        Intent intent = new Intent(this, ReportDetailActivity2.class);
         intent.putExtra(AppIntentString.PROJECT_ID,id);
         startActivity(intent);
     }

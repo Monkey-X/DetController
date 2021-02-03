@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.app.Activity;
 import android.os.Bundle;

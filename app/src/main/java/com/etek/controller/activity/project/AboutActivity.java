@@ -1,9 +1,8 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;

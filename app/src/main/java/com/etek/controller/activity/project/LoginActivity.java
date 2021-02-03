@@ -1,8 +1,7 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.content.Intent;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.HomeActivity2;
 import com.etek.controller.common.AppIntentString;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;

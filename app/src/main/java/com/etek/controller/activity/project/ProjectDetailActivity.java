@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;

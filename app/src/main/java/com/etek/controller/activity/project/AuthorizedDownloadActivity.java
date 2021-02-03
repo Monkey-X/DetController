@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.activity.UserInfoActivity;
 import com.etek.controller.activity.project.AuthDownLoadDetailActivity;
 import com.etek.controller.activity.project.OfflineEditActivity;
 import com.etek.controller.adapter.ContractAdapter;

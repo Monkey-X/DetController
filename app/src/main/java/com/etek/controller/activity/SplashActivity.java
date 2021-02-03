@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.etek.controller.BuildConfig;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.HomeActivity2;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
 import com.etek.controller.dto.AppResp;

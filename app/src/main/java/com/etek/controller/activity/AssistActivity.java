@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.LineCheckActivity;
+import com.etek.controller.activity.project.SingleCheckActivity;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.sommerlibrary.activity.BaseActivity;
 

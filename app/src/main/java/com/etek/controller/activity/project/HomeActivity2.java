@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,7 +17,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.activity.project.UserInfoActivity2;
+import com.etek.controller.activity.AssistActivity;
+import com.etek.controller.activity.PersonActivity;
+import com.etek.controller.activity.ProjectManagerActivity;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;

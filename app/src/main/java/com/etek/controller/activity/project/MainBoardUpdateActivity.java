@@ -1,13 +1,7 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -16,12 +10,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.common.Globals;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
-import com.etek.controller.model.User;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;

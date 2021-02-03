@@ -1,24 +1,18 @@
 package com.etek.controller.activity;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Adapter;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.ProjectDetailActivity;
 import com.etek.controller.adapter.ProjectAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.fragment.ProjectDialog;
@@ -27,7 +21,6 @@ import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

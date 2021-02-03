@@ -1,13 +1,13 @@
 package com.etek.controller.activity;
 
 import android.content.Intent;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.AboutActivity;
+import com.etek.controller.activity.project.MainBoardUpdateActivity;
 import com.etek.controller.activity.project.SettingsActivity2;
 import com.etek.controller.activity.project.UserInfoActivity2;
 import com.etek.sommerlibrary.activity.BaseActivity;

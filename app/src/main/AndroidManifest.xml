@@ -53,9 +53,9 @@
         <activity android:name=".activity.ReportListActivity" />
         <activity android:name=".activity.ProjectManagerActivity" />
         <activity android:name=".activity.project.AuthDownLoadDetailActivity" />
-        <activity android:name=".activity.AboutActivity" />
+        <activity android:name=".activity.project.AboutActivity" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.project.LoginActivity"
             android:theme="@style/activity_theme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,33 +65,33 @@
         </activity>
         <activity android:name=".activity.FunctionTestActivity" />
         <activity android:name=".activity.PersonActivity" />
-        <activity android:name=".activity.MainBoardUpdateActivity" />
+        <activity android:name=".activity.project.MainBoardUpdateActivity" />
         <activity android:name=".activity.ReportActivity2" />
         <activity android:name=".activity.CheckoutActivity2" />
         <activity android:name=".activity.OnlineCheckoutActivity2" />
         <activity android:name=".activity.OnlineAuthorizeActivity2" />
         <activity android:name=".activity.CheckoutDetailActivity2" />
-        <activity android:name=".activity.ReportDetailActivity2" />
-        <activity android:name=".activity.HomeActivity2" />
+        <activity android:name=".activity.project.ReportDetailActivity2" />
+        <activity android:name=".activity.project.HomeActivity2" />
         <activity
             android:name=".activity.ProjectListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.ProjectImplementActivity" />
+        <activity android:name=".activity.project.ProjectImplementActivity" />
         <activity android:name=".activity.PowerBombActivity" />
         <activity
-            android:name=".activity.AuthorizedDownloadActivity"
+            android:name=".activity.project.AuthorizedDownloadActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.AuthBombActivity2" />
         <activity
             android:name=".activity.CheckDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.ProjectDetailActivity"
+            android:name=".activity.project.ProjectDetailActivity"
             android:theme="@style/activity_theme" />
         <activity
-            android:name=".activity.LineCheckActivity"
+            android:name=".activity.project.LineCheckActivity"
             android:theme="@style/activity_theme" />
-        <activity android:name=".activity.SingleCheckActivity" />
+        <activity android:name=".activity.project.SingleCheckActivity" />
         <activity
             android:name=".activity.DelayDownloadActivity"
             android:theme="@style/activity_theme" />

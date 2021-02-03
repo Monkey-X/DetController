@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 
 import android.content.Intent;
@@ -7,6 +7,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.AuthBombActivity2;
+import com.etek.controller.activity.ConnectTestActivity;
+import com.etek.controller.activity.DelayDownloadActivity;
+import com.etek.controller.activity.PowerBombActivity;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.fragment.ProjectDialog;
 import com.etek.controller.persistence.DBManager;

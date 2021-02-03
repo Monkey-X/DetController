@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/rootview"
     android:orientation="vertical"
-    tools:context=".activity.ProjectDetailActivity">
+    tools:context=".activity.project.ProjectDetailActivity">
 
     <include layout="@layout/actionbar_custom_view" />
 
