@@ -612,7 +612,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         // 按钮7: 正常、CAPSLOC和Fn按下
         if ((keyCode == 14||keyCode==44||keyCode==137)
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
+            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
             readDetNumTask1.execute();
             return true;
         }
@@ -625,7 +625,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         // 按钮9: 正常、CAPSLOC和Fn按下
         if ((keyCode == 16||keyCode==51||keyCode==139)
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
+            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
             readDetNumTask1.execute();
             return true;
         }
