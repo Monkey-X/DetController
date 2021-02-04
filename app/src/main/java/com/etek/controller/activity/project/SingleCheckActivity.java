@@ -82,8 +82,18 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         cancelSingleCheck = true;
+
         releaseSound();
 
+        if(null!=m_sthd){
+            try {
+                m_sthd.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG,"单颗检测线程退出");
+        }
+        m_sthd = null;
 
         super.onDestroy();
     }
@@ -103,6 +113,90 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         testRecycleView.setAdapter(singleCheckAdapter);
     }
 
+    class SingleCheckThread extends Thread{
+        @Override
+        public void run() {
+            while (true){
+                if (cancelSingleCheck) {
+                    singleClick=false;
+                    // 必须总线下电
+                    DetApp.getInstance().MainBoardBusPowerOff();
+                    Log.d(TAG, "下电退出，停止检测");
+                    return;
+                }
+
+                if(!m_bLastDetRemoved){
+                    int ret = DetApp.getInstance().ModuleSetIOStatus(m_nLastDetID,(byte)0x02);
+                    Log.d(TAG, String.format("ModuleSetIOStatus返回：%d",ret));
+                    if(0==ret){
+                        m_bLastDetRemoved = false;
+
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        continue;
+                    }
+                    m_bLastDetRemoved = true;
+                }
+                Log.d(TAG, "总线短路和漏电检测");
+                // 总线短路和漏电检测
+                StringBuilder strData = new StringBuilder();
+                int i = DetApp.getInstance().CheckBusShortCircuit(strData);
+                showBusShortResult(i,strData.toString());
+
+                Log.d(TAG, "获取雷管信息...");
+
+                int result = DetApp.getInstance().CheckSingleModule(new SingleCheckCallBack() {
+                    @Override
+                    public void DisplayText(String strText) {
+                        Log.d(TAG, "DisplayText: "+strText);
+                    }
+                    @Override
+                    public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
+                        if (cancelSingleCheck) {
+                            singleClick=false;
+                            return;
+                        }
+
+                        Log.d(TAG,String.format("上一个棵雷管ID:%08X",m_nLastDetID));
+                        if(m_nLastDetID==nID){
+                            Log.d(TAG, "showSingleCheckData: 同一颗雷管");
+                            return;
+                        }
+                        //  缓存上一颗
+                        m_nLastDetID = nID;
+                        m_bLastDetRemoved =false;
+
+                        SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
+                        singleCheckEntity.setRelay(String.valueOf(0xffffffffL&nDT));
+                        singleCheckEntity.setDetId(nID);
+                        singleCheckEntity.setDC(DetIDConverter.GetDisplayDC(szDC));
+                        int checkResult = DataConverter.getByteValue(bCheckResult);
+                        singleCheckEntity.setTestStatus(checkResult);
+                        Log.d(TAG, "SetSingleModuleCheckData: checkResult=" + singleCheckEntity.toString());
+                        showSingleCheckData(singleCheckEntity);
+                    }
+
+                    @Override
+                    public void SetProgressbarValue(int npos){
+                        // 显示“检测中...”和百分比
+                        showCheckSingleProgress(npos);
+
+                    }
+                });
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private SingleCheckThread m_sthd=null;
+
     @Override
     public void onClick(View v) {
         switchButtonText();
@@ -116,83 +210,18 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
 
         singleClick = true;
         m_nLastDetID=-1;m_bLastDetRemoved = true;
-        // 调用接口进行检测
-        new Thread() {
-            @Override
-            public void run() {
-                while (true){
-                    if (cancelSingleCheck) {
-                        singleClick=false;
-                        // 必须总线下电
-                        DetApp.getInstance().MainBoardBusPowerOff();
-                        Log.d(TAG, "下电退出，停止检测");
-                        return;
-                    }
 
-                    if(!m_bLastDetRemoved){
-                        int ret = DetApp.getInstance().ModuleSetIOStatus(m_nLastDetID,(byte)0x02);
-                        Log.d(TAG, String.format("ModuleSetIOStatus返回：%d",ret));
-                        if(0==ret){
-                            m_bLastDetRemoved = false;
-
-                            try {
-                                sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            continue;
-                        }
-                        m_bLastDetRemoved = true;
-                    }
-                    Log.d(TAG, "总线短路和漏电检测");
-                    // 总线短路和漏电检测
-                    StringBuilder strData = new StringBuilder();
-                    int i = DetApp.getInstance().CheckBusShortCircuit(strData);
-                    showBusShortResult(i,strData.toString());
-
-                    Log.d(TAG, "获取雷管信息...");
-
-                    int result = DetApp.getInstance().CheckSingleModule(new SingleCheckCallBack() {
-                        @Override
-                        public void DisplayText(String strText) {
-                            Log.d(TAG, "DisplayText: "+strText);
-                        }
-                        @Override
-                        public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
-                            Log.d(TAG,String.format("上一个棵雷管ID:%08X",m_nLastDetID));
-                            if(m_nLastDetID==nID){
-                                Log.d(TAG, "showSingleCheckData: 同一颗雷管");
-                                return;
-                            }
-                            //  缓存上一颗
-                            m_nLastDetID = nID;
-                            m_bLastDetRemoved =false;
-
-                            SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
-                            singleCheckEntity.setRelay(String.valueOf(0xffffffffL&nDT));
-                            singleCheckEntity.setDetId(nID);
-                            singleCheckEntity.setDC(DetIDConverter.GetDisplayDC(szDC));
-                            int checkResult = DataConverter.getByteValue(bCheckResult);
-                            singleCheckEntity.setTestStatus(checkResult);
-                            Log.d(TAG, "SetSingleModuleCheckData: checkResult=" + singleCheckEntity.toString());
-                            showSingleCheckData(singleCheckEntity);
-                        }
-
-                        @Override
-                        public void SetProgressbarValue(int npos){
-                            // 显示“检测中...”和百分比
-                            showCheckSingleProgress(npos);
-
-                        }
-                    });
-                    try {
-                        sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+        if(null!=m_sthd){
+            try {
+                m_sthd.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }.start();
+            m_sthd = null;
+        }
+
+        m_sthd = new SingleCheckThread();
+        m_sthd.start();
     }
 
     // 展示进度
@@ -200,6 +229,11 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if (cancelSingleCheck) {
+                    return;
+                }
+
                 if (progressDialog == null ) {
                     progressDialog = new ProgressDialog(SingleCheckActivity.this);
                     progressDialog.setMax(100);
@@ -309,12 +343,15 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         singleClick =true;
         Log.d(TAG, "准备停止检测");
 
-        try {
-            Thread.sleep(1000);
-        }catch (InterruptedException e) {
-            e.printStackTrace();
+        if(null!=m_sthd){
+            try {
+                m_sthd.join();
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
+        m_sthd = null;
         tv.setText("点 击 检 测");
     }
-
 }
