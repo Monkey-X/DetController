@@ -10,8 +10,8 @@ public  class AppConstants {
 
 
 
-    public final static String DET_DETAIL="http://222.191.229.234:12018/api/DetMsg/GetDetMsgInfo";
-    public final static String DET_APP= "http://222.191.229.234:12018/api/DET/GET?id=";
+    public final static String DET_DETAIL="http://222.191.229.234:1018/api/DetMsg/GetDetMsgInfo";
+    public final static String DET_APP= "http://222.191.229.234:1018/api/DET/GET?id=";
 
 
     public final static String ZHONGBAO_HTTP= "113.140.1.135";
@@ -57,10 +57,9 @@ public  class AppConstants {
     public final static String DanningTestServer = "http://test.mbdzlg.com";
 
 
-    public final static String ETEKTestServer = "http://222.191.229.234:12018";
+    public final static String ETEKTestServer = "http://222.191.229.234:1018";
 
     public final static String APPNAME = "detonator";
-
 
     /** Empty String for comparisons **/
     public   static final String empty = "";
