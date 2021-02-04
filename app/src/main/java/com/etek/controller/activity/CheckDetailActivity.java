@@ -373,8 +373,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
         String longitude = locationLongitude.getText().toString().trim();
         String latitue = locationLatitude.getText().toString().trim();
-        pendingProject.setLongitude(Double.parseDouble(longitude));
-        pendingProject.setLatitude(Double.parseDouble(latitue));
+        projectInfoEntity.setLongitude(Double.parseDouble(longitude));
+        projectInfoEntity.setLatitude(Double.parseDouble(latitue));
 
         String strContractCode = contractCode.getText().toString().trim();
         String strProCode = proCode.getText().toString().trim();

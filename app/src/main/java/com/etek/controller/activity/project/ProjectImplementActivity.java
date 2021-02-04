@@ -134,7 +134,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                delayDownload.setClickable(false);
+                delayDownload.setClickable(true);
                 checkAuthorization.setClickable(false);
                 powerBomb.setClickable(false);
                 connectTest.setClickable(true);
@@ -145,7 +145,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                connectTest.setClickable(false);
+                connectTest.setClickable(true);
                 delayDownload.setClickable(true);
                 checkAuthorization.setClickable(false);
                 powerBomb.setClickable(false);
