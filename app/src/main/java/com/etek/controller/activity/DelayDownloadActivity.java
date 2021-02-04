@@ -45,6 +45,7 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * 延时下载
@@ -172,7 +173,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_img:
-                finish();
+                if(isCancelDownLoad)
+                    finish();
                 break;
             case R.id.text_btn:
 
@@ -200,6 +202,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 break;
         }
     }
+
     private void checkShow(int type) {
         if (type == 1) {
             downLoadFail.setSelected(false);
@@ -236,7 +239,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             mProjectDelayAdapter.notifyDataSetChanged();
         }
     }
-
 
     private void changeAllEdit() {
         // 进行批量修改，弹出快捷编辑对话框
@@ -600,7 +602,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     // ----雷管总线上电回调-----
-
 
     /**
      * 异步进行 雷管的延时下载

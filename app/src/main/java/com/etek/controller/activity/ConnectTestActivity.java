@@ -233,7 +233,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_img://返回
-                finish();
+                if(isCancelTest)
+                    finish();
                 break;
             case R.id.text_btn://筛选
                 if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
