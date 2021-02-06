@@ -1,6 +1,7 @@
 package com.etek.controller.activity.project;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,7 +41,9 @@ import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
+import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AppUtils;
@@ -66,7 +69,7 @@ import okhttp3.Response;
 /**
  * 授权下载
  */
-public class AuthorizedDownloadActivity extends BaseActivity implements AuthorizedDownloadDialog.AuthorizedDownloadListener, BaseQuickAdapter.OnItemClickListener, View.OnClickListener {
+public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener, View.OnClickListener, BaseQuickAdapter.OnItemLongClickListener {
 
     private RecyclerView recycleView;
     private LinearLayout noDataView;
@@ -81,8 +84,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authorized_download);
         initView();
-
-//        initDialog();
     }
 
     @Override
@@ -90,16 +91,6 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         super.onResume();
         initData();
     }
-
-    /**
-     * 弹框输入合同编号以及授权码
-     */
-    private void initDialog() {
-        AuthorizedDownloadDialog dialog = new AuthorizedDownloadDialog();
-        dialog.setOnMakeProjectListener(this);
-        dialog.show(getSupportFragmentManager(), "Dialog");
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -141,6 +132,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
         contractAdapter = new ContractAdapter(R.layout.contract_item_view, projectInfos);
         recycleView.setAdapter(contractAdapter);
         contractAdapter.setOnItemClickListener(this);
+        contractAdapter.setOnItemLongClickListener(this);
     }
 
     /**
@@ -172,272 +164,30 @@ public class AuthorizedDownloadActivity extends BaseActivity implements Authoriz
     }
 
     @Override
-    public void getProjectFileContent(String contractCode, String authorizedCode) {
-        getProjectFile(contractCode, authorizedCode);
-    }
+    public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
 
-    /**
-     * 请求后台验证并获取数据
-     */
-    private void getProjectFile(String contractCode, String authorizedCode) {
-        if (NetUtil.getNetType(mContext) < 0) {
-            showStatusDialog("请去设置网络！");
-            return;
-        }
-        showProDialog("下载中...");
-        LinkedHashMap params = new LinkedHashMap();
-        params.put("dwdm", contractCode);    // 输入合同编号
-        params.put("xlh", authorizedCode);   // 输入授权码
-        String newUrl = SommerUtils.attachHttpGetParams(AppConstants.DanningServer + AppConstants.ProjectFileDownload, params);
-        // 测试服务器
-        XLog.v("newUrl:" + newUrl);
-        AsyncHttpCilentUtil.getOkHttpClient(newUrl, new Callback() {
+        ProjectInfoEntity projectInfoEntity = projectInfos.get(position);
 
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("确定删除吗？");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                showLongToast(authorizedCode + "onFailure！" + e.getLocalizedMessage());
-                Log.d(TAG, "onFailure: " + e.getLocalizedMessage());
-                missProDialog();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.d(TAG, "onSuccess: " + response.toString());
-                setStringInfo("filesn", authorizedCode);
-                respStr = response.body().string();
-                Log.d(TAG, "onSuccess: respStr =" + respStr);
-                missProDialog();
-                if (respStr == null || respStr.length() < 10) {
-                    showToast("下载数据错误！");
-                    return;
-                }
-                ProjectFileDto projectFileDto = null;
-                try {
-                    projectFileDto = JSON.parseObject(respStr, ProjectFileDto.class);
-                } catch (Exception e) {
-                    XLog.e(e);
-                    showToast("错误信息：" + e.getMessage());
-                    return;
-                }
-
-                // TODO: 2020/12/10 这里需要检查文件是否已经下载
-
-                Result detInfoResult = projectFileDto.parseContentAndSave(authorizedCode);
-
-                if (detInfoResult.isSuccess()) {
-                    Log.d(TAG, "onResponse: " + detInfoResult.toString());
-
-                    ProjectFileDto projectFile = (ProjectFileDto) detInfoResult.getData();
-                    projectFile.setFileSn(authorizedCode);
-                    if (Globals.user != null) {
-                        projectFile.setCompany(Globals.user.getCompanyCode());
-                    }
-                    projectFile.setMingma("");
-                    String strInfo = JSON.toJSONString(projectFile, AppUtils.filter);
-                    XLog.i(strInfo);
-
-                    sendCmdMessage(UPDATE, strInfo);
-
-//                    String msg = valifyProjectFile(projectFile);
-//                    if (msg != null && !StringUtils.isEmpty(msg)) {
-//                        showStatusDialog(msg);
-//                        return;
-//                    }
-                    long projectId = storeProjectInfo(projectFile, authorizedCode);
-                    if (projectId == 0) {
-                        showStatusDialog("项目已下载！");
-                        Log.d(TAG, "onResponse: projectId = " + projectId);
-                        return;
-                    }
-                    refreshData();
-//                     saveProjectInfo(projectFile, authorizedCode);
-                } else {
-                    showStatusDialog(detInfoResult.getMessage());
-                }
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
         });
-    }
-
-
-    private void refreshData() {
-        runOnUiThread(new Runnable() {
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
-            public void run() {
-                initData();
+            public void onClick(DialogInterface dialog, int which) {
+                //删除数据
+                DBManager.getInstance().getProjectInfoEntityDao().delete(projectInfoEntity);
+                projectInfos.remove(position);
+                contractAdapter.notifyDataSetChanged();
+                dialog.dismiss();
             }
         });
+        builder.create().show();
+
+        return true;
     }
-
-    /**
-     * 验证
-     */
-    private String valifyProjectFile(ProjectFileDto projectFile) {
-        ProInfoDto mDetInfoDto = projectFile.getProInfo();
-        if (mDetInfoDto == null) {
-            return "信息为空！";
-        }
-        if (mDetInfoDto.getLgs() == null || mDetInfoDto.getLgs().getLg().isEmpty()) {
-            return "缺少雷管信息，请检查报备是否正常";
-        }
-        if (mDetInfoDto.getZbqys() == null || mDetInfoDto.getZbqys().getZbqy().isEmpty()) {
-            return "缺少经纬度信息，请检查报备是否正常！";
-        }
-        for (Zbqy zbqy : mDetInfoDto.getZbqys().getZbqy()) {
-            if (StringUtils.isEmpty(zbqy.getZbqyjd()) || StringUtils.isEmpty(zbqy.getZbqywd())) {
-                return "缺少经纬度信息，请检查报备是否正常！";
-            }
-        }
-        if (mDetInfoDto.getSbbhs() == null || mDetInfoDto.getSbbhs().isEmpty()) {
-            return "缺少起爆器信息，请检查报备是否正常";
-        }
-        return null;
-    }
-
-
-    /**
-     * 存储项目数据
-     */
-    private long storeProjectInfo(final ProjectFileDto projectFile, String fileSn) {
-
-        ProInfoDto mDetInfoDto = projectFile.getProInfo();
-        XLog.v("proinfo:", mDetInfoDto);
-        ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
-        projectInfoEntity.setApplyDate(mDetInfoDto.getSqrq());
-        projectInfoEntity.setProCode(projectFile.getXmbh());
-        projectInfoEntity.setProName(projectFile.getXmmc());
-        projectInfoEntity.setCompanyCode(projectFile.getDwdm());
-        projectInfoEntity.setCompanyName(projectFile.getDwmc());
-        projectInfoEntity.setContractCode(projectFile.getHtbh());
-        projectInfoEntity.setContractName(projectFile.getHtmc());
-        projectInfoEntity.setFileSn(fileSn);
-        projectInfoEntity.setStatus(0);
-        projectInfoEntity.setIsOnline(false);
-        projectInfoEntity.setCreateTime(new Date());
-        ProjectInfoEntity existProjectInfo = DBManager.getInstance().getProjectInfoEntityDao().queryBuilder()
-                .where(ProjectInfoEntityDao.Properties.FileSn.eq(fileSn)).unique();
-        if (existProjectInfo != null) {
-            return 0;
-        }
-        long proId = DBManager.getInstance().getProjectInfoEntityDao().insert(projectInfoEntity);
-        if (proId == 0) {
-            return 0;
-        }
-        Lgs lgs = mDetInfoDto.getLgs();
-        if (!lgs.getLg().isEmpty()) {
-            List<DetonatorEntity> detonatorEntityList = new ArrayList<>();
-            for (Lg lg : lgs.getLg()) {
-
-                DetonatorEntity detonatorBean = new DetonatorEntity();
-                detonatorBean.setCode(lg.getFbh());
-                detonatorBean.setWorkCode(lg.getGzm());
-                detonatorBean.setUid(lg.getUid());
-                detonatorBean.setValidTime(lg.getYxq());
-                detonatorBean.setProjectInfoId(proId);
-                detonatorBean.setStatus(lg.getGzmcwxx());
-                detonatorEntityList.add(detonatorBean);
-            }
-           // todo 进行的测试
-            ArrayList<DetonatorEntity> detonatorEntities = JSON.parseObject(AppIntentString.textString, new TypeReference<ArrayList<DetonatorEntity>>() {
-            });
-            detonatorEntityList.addAll(detonatorEntities);
-            // todo
-
-            DBManager.getInstance().getDetonatorEntityDao().insertInTx(detonatorEntityList);
-        }
-
-        Zbqys zbqys = mDetInfoDto.getZbqys();
-        if (!zbqys.getZbqy().isEmpty()) {
-            List<PermissibleZoneEntity> permissibleZoneEntityList = new ArrayList<>();
-            for (Zbqy zbqy : zbqys.getZbqy()) {
-                PermissibleZoneEntity permissibleZone = new PermissibleZoneEntity();
-                permissibleZone.setName(zbqy.getZbqymc());
-                permissibleZone.setLatitude(Double.parseDouble(zbqy.getZbqywd()));
-                permissibleZone.setLongitude(Double.parseDouble(zbqy.getZbqyjd()));
-                permissibleZone.setRadius(Integer.parseInt(zbqy.getZbqybj()));
-                permissibleZone.setStartTime(zbqy.getZbqssj());
-                permissibleZone.setStopTime(zbqy.getZbjzsj());
-                permissibleZone.setProjectInfoId(proId);
-                permissibleZoneEntityList.add(permissibleZone);
-            }
-            DBManager.getInstance().getPermissibleZoneEntityDao().insertInTx(permissibleZoneEntityList);
-        }
-        Jbqys jbqys = mDetInfoDto.getJbqys();
-        if (!jbqys.getJbqy().isEmpty()) {
-            List<ForbiddenZoneEntity> forbiddenZoneEntityList = new ArrayList<>();
-            for (Jbqy jbqy : jbqys.getJbqy()) {
-                ForbiddenZoneEntity forbiddenZoneEntity = new ForbiddenZoneEntity();
-                forbiddenZoneEntity.setLatitude(Double.parseDouble(jbqy.getJbqywd()));
-                forbiddenZoneEntity.setLongitude(Double.parseDouble(jbqy.getJbqyjd()));
-                forbiddenZoneEntity.setRadius(Integer.parseInt(jbqy.getJbqybj()));
-                forbiddenZoneEntity.setStartTime(jbqy.getJbqssj());
-                forbiddenZoneEntity.setStopTime(jbqy.getJbjzsj());
-                forbiddenZoneEntity.setProjectInfoId(proId);
-                forbiddenZoneEntityList.add(forbiddenZoneEntity);
-            }
-            DBManager.getInstance().getForbiddenZoneEntityDao().insertInTx(forbiddenZoneEntityList);
-        }
-        List<Sbbhs> sbbhs = mDetInfoDto.getSbbhs();
-
-        if (!sbbhs.isEmpty()) {
-            List<ControllerEntity> controllerEntityList = new ArrayList<>();
-            for (Sbbhs sbbh : sbbhs) {
-                ControllerEntity controller = new ControllerEntity();
-                controller.setName(sbbh.getSbbh());
-                controller.setProjectInfoId(proId);
-                controllerEntityList.add(controller);
-            }
-            DBManager.getInstance().getControllerEntityDao().insertInTx(controllerEntityList);
-        }
-        return proId;
-    }
-
-    /**
-     * 发送handler消息
-     */
-    private void sendCmdMessage(int msg, String info) {
-        Message message = new Message();
-        message.what = msg;
-        Bundle b = new Bundle();
-        b.putString("info", info);
-        message.setData(b);
-        if (handler != null) {
-            handler.sendMessage(message);
-        }
-    }
-
-    //消息处理者,创建一个Handler的子类对象,目的是重写Handler的处理消息的方法(handleMessage())
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UPDATE:
-                    Bundle b = msg.getData();
-                    String info = b.getString("info");
-                    if (StringUtils.isEmpty(info)) {
-                        return;
-                    }
-                    String url = AppConstants.ETEKTestServer + AppConstants.DETUnCheck;
-                    AsyncHttpCilentUtil.httpPostJson(url, info, new okhttp3.Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            XLog.e("IOException:" + e.getMessage());
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            String respStr = response.body().string();
-                            if (!StringUtils.isEmpty(respStr)) {
-                                XLog.w("respStr is  " + respStr);
-
-                            }
-                        }
-                    });
-                    break;
-            }
-        }
-    };
-
 }

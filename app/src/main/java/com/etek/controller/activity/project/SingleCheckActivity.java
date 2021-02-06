@@ -28,9 +28,6 @@ import java.util.List;
  */
 public class SingleCheckActivity extends BaseActivity implements View.OnClickListener {
 
-    private TextView mPipeCode;
-    private TextView mUid;
-    private TextView mDelayed;
     private RecyclerView testRecycleView;
     private List<SingleCheckEntity> singleCheckEntityList;
     private TextView checkNum;
