@@ -68,7 +68,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private DelayDownloadTask delayDownloadTask;
     private ProgressDialog progressValueDialog;
     private SoundPoolHelp soundPoolHelp;
-    private boolean isCancelDownLoad = false;
+    private boolean isCancelDownLoad = true;
     private TextView allDet;
     private TextView downLoadFail;
     private ProgressDialog busChargeProgressDialog;

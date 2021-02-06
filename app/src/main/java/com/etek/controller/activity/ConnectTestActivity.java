@@ -74,7 +74,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private SoundPoolHelp soundPoolHelp;
 
     // 是否取消连接检测
-    private boolean isCancelTest = false;
+    private boolean isCancelTest = true;
     private TextView missEvent;
     private TextView falseConnect;
     private TextView allDet;
