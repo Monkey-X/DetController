@@ -1,52 +1,28 @@
 package com.etek.controller.activity;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
-import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.alibaba.fastjson.JSON;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.common.Globals;
-import com.etek.controller.entity.HomeItem;
+import com.etek.controller.activity.project.DelayDownloadActivity;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.fragment.MainBoardDialog;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
-import com.etek.controller.widget.ClearableEditText;
 import com.etek.controller.widget.HeaderView;
-import com.etek.controller.adapter.HomeAdapter;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.utils.ToastUtils;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.helper.StringUtil;
-
-import java.util.ArrayList;
 
 public class HomeActivity extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
 

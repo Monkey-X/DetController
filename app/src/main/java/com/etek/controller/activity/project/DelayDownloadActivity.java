@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -11,18 +11,16 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.activity.AuthBombActivity2;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDelayAdapter;
 import com.etek.controller.common.AppIntentString;
@@ -45,7 +43,6 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 /**
  * 延时下载
@@ -56,12 +53,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private RecyclerView mDelayList;
     private List<ProjectDetonator> detonators;
     private ProjectDelayAdapter mProjectDelayAdapter;
-    private List<ProjectInfoEntity> projectInfoEntities;
     private PopupWindow popWindow;
     private TextView textBtn;
-    private RecyclerView rvFiltrate;
-    private FiltrateAdapter filtrateAdapter;
-    private ProjectInfoEntity mProjectInfoEntity;
     private int projectPosition = -1;
     private long proId;
     private List<ProjectDetonator> detonatorEntityList;
@@ -250,20 +243,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         fastEditDialog.setSerialNumber(detonators.size());
         fastEditDialog.setOnMakeSureListener(this);
         fastEditDialog.show(getSupportFragmentManager(), "fastEditDialog");
-    }
-
-
-
-
-
-    /**
-     * showPopWindow消失后取消背景色
-     */
-    private void bgAlpha() {
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.alpha = (float) 1.0; //0.0-1.0
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().setAttributes(lp);
     }
 
 

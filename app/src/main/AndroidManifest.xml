@@ -93,7 +93,7 @@
             android:theme="@style/activity_theme" />
         <activity android:name=".activity.project.SingleCheckActivity" />
         <activity
-            android:name=".activity.DelayDownloadActivity"
+            android:name=".activity.project.DelayDownloadActivity"
             android:theme="@style/activity_theme" />
         <activity android:name=".activity.AssistActivity" />
         <activity

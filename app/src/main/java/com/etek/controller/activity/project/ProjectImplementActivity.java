@@ -10,20 +10,12 @@ import android.widget.RelativeLayout;
 import com.etek.controller.R;
 import com.etek.controller.activity.AuthBombActivity2;
 import com.etek.controller.activity.ConnectTestActivity;
-import com.etek.controller.activity.DelayDownloadActivity;
 import com.etek.controller.activity.PowerBombActivity;
 import com.etek.controller.common.AppIntentString;
-import com.etek.controller.fragment.ProjectDialog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
-import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
-import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.ToastUtils;
-
-import java.util.List;
 
 
 /**
