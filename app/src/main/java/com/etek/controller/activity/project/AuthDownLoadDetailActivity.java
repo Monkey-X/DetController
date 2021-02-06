@@ -106,9 +106,13 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
             List<ControllerEntity> controllerList = projectInfoEntity.getControllerList();
             if (controllerList != null && controllerList.size() != 0) {
                 StringBuilder stringBuilder = new StringBuilder();
-                for (ControllerEntity controllerEntity : controllerList) {
+                for (int i = 0; i < controllerList.size(); i++) {
+                    ControllerEntity controllerEntity = controllerList.get(i);
                     String name = controllerEntity.getName();
-                    stringBuilder.append(name).append("\n");
+                    stringBuilder.append(name);
+                    if (i != controllerList.size()-1) {
+                        stringBuilder.append("\n");
+                    }
                 }
                 devicesCode.setText(stringBuilder.toString());
             }
@@ -116,10 +120,14 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
             List<PermissibleZoneEntity> permissibleZoneList = projectInfoEntity.getPermissibleZoneList();
             if (permissibleZoneList!=null && permissibleZoneList.size()!=0) {
                 StringBuilder permissString = new StringBuilder();
-                for (PermissibleZoneEntity permissibleZoneEntity : permissibleZoneList) {
+                for (int i = 0; i < permissibleZoneList.size(); i++) {
+                    PermissibleZoneEntity permissibleZoneEntity = permissibleZoneList.get(i);
                     double latitude = permissibleZoneEntity.getLatitude();
                     double longitude = permissibleZoneEntity.getLongitude();
-                    permissString.append(longitude+","+latitude).append("\n");
+                    permissString.append(longitude+","+latitude);
+                    if (i != permissibleZoneList.size()-1) {
+                        permissString.append("\n");
+                    }
                 }
                 allowArea.setText(permissString.toString());
             }
