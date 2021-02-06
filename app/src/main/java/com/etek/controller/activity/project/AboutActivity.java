@@ -24,6 +24,7 @@ import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.utils.UpdateAppUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
+import com.etek.sommerlibrary.utils.NetUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.jsoup.helper.StringUtil;
@@ -83,6 +84,11 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
+
+        if (NetUtil.getNetType(mContext) < 0) {
+            showStatusDialog("请去设置网络！");
+            return;
+        }
         checkAppUpdate();
     }
 
