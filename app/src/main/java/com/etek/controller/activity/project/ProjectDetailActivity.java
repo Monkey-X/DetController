@@ -413,6 +413,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
+                if (TextUtils.isEmpty(nowDelayTime)) {
+                    ToastUtils.showShort(ProjectDetailActivity.this, "请输入有效的延时！");
+                    return;
+                }
                 int intDelayTime = Integer.parseInt(nowDelayTime);
                 if (Math.abs(intDelayTime) > 15000) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
