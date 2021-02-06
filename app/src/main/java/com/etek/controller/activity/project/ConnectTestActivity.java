@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 
 import android.app.AlertDialog;
@@ -24,7 +24,6 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.activity.project.DelayDownloadActivity;
 import com.etek.controller.adapter.ConnectTestAdapter;
 import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
@@ -34,7 +33,6 @@ import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
-import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
@@ -64,8 +62,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private PopupWindow popWindow;
     private RecyclerView rvFiltrate;
     private FiltrateAdapter filtrateAdapter;
-    private List<DetonatorEntity> mDetonatorEntities;
-    private ProjectInfoEntity mProjectInfoEntity;
     private int projectPosition = -1;
     private TestAsyncTask testAsyncTask;
     private long proId;

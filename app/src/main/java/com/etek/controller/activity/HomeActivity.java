@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.ConnectTestActivity;
 import com.etek.controller.activity.project.DelayDownloadActivity;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.fragment.MainBoardDialog;

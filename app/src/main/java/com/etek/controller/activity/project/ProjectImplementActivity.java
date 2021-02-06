@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 
 import com.etek.controller.R;
 import com.etek.controller.activity.AuthBombActivity2;
-import com.etek.controller.activity.ConnectTestActivity;
 import com.etek.controller.activity.PowerBombActivity;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;

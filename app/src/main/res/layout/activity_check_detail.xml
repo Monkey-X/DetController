@@ -18,6 +18,7 @@
 
         <TextView
             android:layout_width="100dp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="项目编号：" />
@@ -27,8 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:textColor="@color/black"
             android:singleLine="true"
-            android:textColor="@color/eighty_per_trans_black"
             android:textSize="15sp" />
     </LinearLayout>
 
@@ -42,6 +43,7 @@
 
         <TextView
             android:layout_width="100dp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
@@ -53,6 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:textColor="@color/black"
             android:singleLine="true"
             android:textSize="15sp" />
     </LinearLayout>
@@ -66,6 +69,7 @@
 
         <TextView
             android:layout_width="100dp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="@string/device_id" />
@@ -76,7 +80,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/eighty_per_trans_black"
+            android:textColor="@color/black"
             android:textSize="15sp" />
 
     </LinearLayout>
@@ -98,6 +102,7 @@
 
             <TextView
                 android:layout_width="60dp"
+                android:textColor="@color/black"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
@@ -110,8 +115,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="105dp"
+                android:textColor="@color/black"
                 android:inputType="numberDecimal"
-                android:textColor="@color/eighty_per_trans_black"
                 android:textSize="15sp" />
         </RelativeLayout>
 
@@ -125,6 +130,7 @@
 
             <TextView
                 android:layout_width="60dp"
+                android:textColor="@color/black"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
@@ -137,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="105dp"
-                android:textColor="@color/eighty_per_trans_black"
+                android:textColor="@color/black"
                 android:textSize="15sp" />
         </RelativeLayout>
 
@@ -145,8 +151,8 @@
             android:id="@+id/get_location"
             android:text="地图"
             android:padding="8dp"
-            android:textColor="@color/white"
             android:textSize="18sp"
+            android:textColor="@color/black"
             android:background="@color/actionBarColor"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
@@ -169,6 +175,7 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="@string/serial_number"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <View
@@ -182,6 +189,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:padding="5dp"
+            android:textColor="@color/black"
             android:text="雷管编码"
             android:textSize="16sp" />
 
@@ -196,6 +204,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="5dp"
+            android:textColor="@color/black"
             android:text="@string/status"
             android:textSize="16sp" />
 

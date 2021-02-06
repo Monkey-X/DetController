@@ -840,12 +840,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             String startTime = delayStartTime.getText().toString().trim();
             projectDetonator.setRelay(Integer.valueOf(startTime));
         } else {
-
-
             ProjectDetonator projectDetonatorLast = detonators.get(detonators.size() - 1);
             int nextDelayTime = getNextDelayTime(projectDetonatorLast, type);
             if (nextDelayTime < 0 || nextDelayTime > 15000) {
-                ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                Log.d(TAG, "createProjectDetData: toast");
+                ToastNewUtils.getInstance(this).showLongToast("延时请设置在0ms---15000ms范围内");
                 return;
             }
             String nextHolePosition = getNextHolePosition(projectDetonatorLast, type);

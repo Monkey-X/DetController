@@ -46,6 +46,7 @@
                 android:background="@drawable/seleted_status"
                 android:paddingLeft="10dp"
                 android:paddingTop="5dp"
+                android:textColor="@color/black"
                 android:paddingRight="10dp"
                 android:paddingBottom="5dp"
                 android:text="取消" />
@@ -58,6 +59,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/seleted_status"
             android:gravity="center"
+            android:textColor="@color/black"
             android:text="开 始 下 载" />
 
     </RelativeLayout>
@@ -76,6 +78,7 @@
             android:background="@drawable/seleted_status"
             android:layout_width="0dp"
             android:text="全部"
+            android:textColor="@color/black"
             android:gravity="center"
             android:textSize="18sp" />
 
@@ -89,6 +92,7 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="下载失败"
+            android:textColor="@color/black"
             android:textSize="18sp" />
 
         <TextView
@@ -99,6 +103,7 @@
             android:layout_marginLeft="2dp"
             android:background="@drawable/seleted_status"
             android:layout_width="0dp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1" />

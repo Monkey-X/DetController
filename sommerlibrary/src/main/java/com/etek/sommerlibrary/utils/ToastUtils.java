@@ -5,7 +5,6 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.widget.Toast;
 
-
 import com.etek.sommerlibrary.R;
 import com.maning.mndialoglibrary.MToast;
 import com.maning.mndialoglibrary.config.MToastConfig;

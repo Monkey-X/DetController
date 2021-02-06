@@ -101,7 +101,7 @@
             android:theme="@style/activity_theme" />
         <activity android:name=".activity.AuthBombActivity" />
         <activity
-            android:name=".activity.ConnectTestActivity"
+            android:name=".activity.project.ConnectTestActivity"
             android:theme="@style/activity_theme" />
 
         <meta-data
