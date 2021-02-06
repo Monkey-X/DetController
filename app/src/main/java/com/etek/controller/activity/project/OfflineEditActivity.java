@@ -70,7 +70,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
     private EditText proCode;
     private EditText contractCode;
-    private EditText companyCode;
+    private TextView companyCode;
     private EditText controllerSn;
     private TextView numPostion;
     private TextView detCode;
@@ -262,12 +262,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             }
             offlineDownloadBean.setHtid(strContractCode);
             offlineDownloadBean.setXmbh(strProCode);
-        }
-        if (!StringUtils.isEmpty(companyCode.getText().toString())) {
-            offlineDownloadBean.setDwdm(companyCode.getText().toString());
-        } else {
-            showToast("请输入有效的单位编码");
-            return;
         }
         offlineDownloadBean.setXtm("");
         offlineDownloadBean.setHtm("");
