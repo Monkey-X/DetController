@@ -415,11 +415,13 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
                 if (TextUtils.isEmpty(nowDelayTime)) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "请输入有效的延时！");
+                    playSound(false);
                     return;
                 }
                 int intDelayTime = Integer.parseInt(nowDelayTime);
                 if (Math.abs(intDelayTime) > 15000) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                    playSound(false);
                     return;
                 }
                 detonatorEntity.setRelay(Integer.parseInt(nowDelayTime));
@@ -595,7 +597,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d(TAG, "onKeyUp: keyCode = " + keyCode);
+        Log.d(TAG, "onKeyDown: keyCode = " + keyCode);
         // 左边189 右边190  中间188
         if (keyCode == 189 && event.getAction() == KeyEvent.ACTION_DOWN) {
             scanType = AppIntentString.TYPE_HOLE_IN;
@@ -631,6 +633,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
             readDetNumTask1.execute();
             return true;
+        }
+
+        //  右下角返回键
+        if(4==keyCode){
+            finish();
         }
         Log.d(TAG, "onKeyDown: scanType = " + scanType);
         return super.onKeyUp(keyCode, event);
@@ -691,7 +698,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
 
-
         // 扫描插入
         if (isInsertItem) {
             isInsertItem = false;
@@ -707,6 +713,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity1);
             detonators.add(insertPosition, detonatorEntity1);
             projectDetailAdapter.notifyDataSetChanged();
+
+            playSound(true);
             return;
         }
         createProjectDetData(strgm, scanType);
@@ -818,7 +826,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 playSound(false);
             } else {
                 createProjectDetData(result, type);
-                playSound(true);
+                //playSound(true);
             }
         }
     }
@@ -845,6 +853,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             if (nextDelayTime < 0 || nextDelayTime > 15000) {
                 Log.d(TAG, "createProjectDetData: toast");
                 ToastNewUtils.getInstance(this).showLongToast("延时请设置在0ms---15000ms范围内");
+                playSound(false);
                 return;
             }
             String nextHolePosition = getNextHolePosition(projectDetonatorLast, type);
@@ -856,6 +865,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         projectDetailAdapter.setSelectedPosition(detonators.size() - 1);
         projectDetailAdapter.notifyDataSetChanged();
         recycleView.scrollToPosition(detonators.size() - 1);
+        playSound(true);
     }
 
     // 根据上个的空位号获取下一个的空位号

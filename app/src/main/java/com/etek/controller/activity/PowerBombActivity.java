@@ -28,6 +28,7 @@ import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.List;
 
@@ -218,6 +219,18 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 powerAsyncTask.execute();
                 break;
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        //  右下角的退出键
+        if(4==keyCode){
+            if(!isBombing){
+                finish();
+            }
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
     public void StartChargeTask() {

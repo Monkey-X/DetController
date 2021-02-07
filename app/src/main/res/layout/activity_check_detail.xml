@@ -30,6 +30,7 @@
             android:ellipsize="end"
             android:textColor="@color/black"
             android:singleLine="true"
+            android:digits="1234567890"
             android:textSize="15sp" />
     </LinearLayout>
 
@@ -57,6 +58,7 @@
             android:ellipsize="end"
             android:textColor="@color/black"
             android:singleLine="true"
+            android:digits="1234567890"
             android:textSize="15sp" />
     </LinearLayout>
 

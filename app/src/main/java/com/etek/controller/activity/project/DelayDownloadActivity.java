@@ -166,8 +166,12 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_img:
-                if(isCancelDownLoad)
+                if(isCancelDownLoad) {
                     finish();
+                }
+                else{
+                    ToastUtils.show(this, "按取消暂停或下载完成后才能退出");
+                }
                 break;
             case R.id.text_btn:
 
@@ -289,6 +293,16 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
             allDetDownload();
             return true;
+        }
+
+        //  右下角的退出键
+        if(4==keyCode){
+            if(isCancelDownLoad) {
+                finish();
+            }
+            else{
+                ToastUtils.show(this, "按取消暂停或下载完成后才能退出");
+            }
         }
         return super.onKeyUp(keyCode, event);
     }

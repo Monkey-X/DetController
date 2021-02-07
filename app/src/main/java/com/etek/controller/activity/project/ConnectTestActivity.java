@@ -229,8 +229,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_img://返回
-                if(isCancelTest)
+                if(isCancelTest){
                     finish();
+                }
+                else{
+                    ToastUtils.show(this, "按取消暂停或检测完成后才能退出");
+                }
                 break;
             case R.id.text_btn://筛选
                 if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
@@ -400,6 +404,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
             allDetConnectTest();
             return true;
+        }
+
+        //  右下角返回键
+        if(4==keyCode){
+            if(isCancelTest){
+                finish();
+            }
+            else{
+                ToastUtils.show(this, "按取消暂停或检测完成后才能退出");
+            }
         }
         return super.onKeyUp(keyCode, event);
     }
