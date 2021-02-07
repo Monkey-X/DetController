@@ -37,6 +37,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="105dp"
                 android:textColor="@color/eighty_per_trans_black"
+                android:digits="1234567890"
                 android:textSize="15sp" />
 <!--            <Button-->
 <!--                android:layout_width="wrap_content"-->

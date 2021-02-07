@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -291,11 +292,13 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             layoutPro.setVisibility(View.GONE);
         }
         contractCode = findViewById(R.id.contract_code);
+        contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         controllerId = findViewById(R.id.ctrl_id);
         locationLongitude = findViewById(R.id.ctrl_location_longitude);
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
         getLocation = findViewById(R.id.get_location);
         proCode = findViewById(R.id.pro_code);
+        proCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         detonatorList = findViewById(R.id.check_detonator_list);
         getLocation.setOnClickListener(this);
         detonatorList.setLayoutManager(new LinearLayoutManager(this));

@@ -24,6 +24,7 @@
             android:id="@+id/pro_code"
             android:background="@null"
             android:layout_width="match_parent"
+            android:digits="1234567890"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
@@ -47,6 +48,7 @@
         <EditText
             android:background="@null"
             android:id="@+id/contract_code"
+            android:digits="1234567890"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

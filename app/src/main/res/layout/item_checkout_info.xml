@@ -39,6 +39,7 @@
                     android:id="@+id/contract_code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:digits="1234567890"
                     android:text="合同编号！" />
             </RelativeLayout>
 

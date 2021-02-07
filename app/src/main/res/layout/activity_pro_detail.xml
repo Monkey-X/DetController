@@ -34,6 +34,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/margin_info"
                 android:textColor="@color/eighty_per_trans_black"
+                android:digits="1234567890"
                 android:textSize="15sp" />
 
         </RelativeLayout>
@@ -142,6 +143,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/margin_info"
                 android:textColor="@color/eighty_per_trans_black"
+                android:digits="1234567890"
                 android:textSize="15sp" />
         </RelativeLayout>
 

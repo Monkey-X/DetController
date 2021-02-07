@@ -11,6 +11,7 @@
         android:maxLines="1"
         android:inputType="number"
         android:layout_margin="8dp"
+        android:digits="1234567890"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
