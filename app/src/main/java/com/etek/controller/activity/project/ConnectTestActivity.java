@@ -543,6 +543,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             // 未全部检测成功，展示检测结果
             if (!isCancelTest) {
                 showTestResult(projectDetonators.size(), successNum, faileNum);
+                isCancelTest = true;
             }
         }
     }

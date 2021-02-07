@@ -489,6 +489,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             // 未全部检测成功，展示检测结果
             if (!isCancelDownLoad) {
                 showTestResult(projectDetonators.size(), successNum, faileNum);
+                isCancelDownLoad = true;
             }
         }
     }

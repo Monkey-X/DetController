@@ -342,7 +342,20 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     ToastUtils.showShort(ProjectDetailActivity.this, "请设置延时！");
                     return;
                 }
-                int intTime = Integer.parseInt(time);
+                if(time.length()>4){
+                    ToastUtils.showShort(ProjectDetailActivity.this, "延时设置在4位数内！");
+                    playSound(false);
+                }
+
+                int intTime = 0;
+                try{
+                    intTime = Integer.parseInt(time);
+                }catch (NumberFormatException e){
+                    ToastUtils.showShort(ProjectDetailActivity.this, "无效的延时设置！");
+                    playSound(false);
+                }
+
+
                 if (Math.abs(intTime) > 15000) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
                     playSound(false);
