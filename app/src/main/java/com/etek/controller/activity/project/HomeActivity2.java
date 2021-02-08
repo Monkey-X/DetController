@@ -403,16 +403,16 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
     @Override
     public void onBackPressed() {
-        long currentTick = System.currentTimeMillis();
-        if (currentTick - startTime < 5000) {
-            return;
-        }
-        if (currentTick - lastBackKeyDownTick > MAX_DOUBLE_BACK_DURATION) {
-            showToast("再按一次退出");
-            lastBackKeyDownTick = currentTick;
-        } else {
-            finish();
-        }
+//        long currentTick = System.currentTimeMillis();
+//        if (currentTick - startTime < 5000) {
+//            return;
+//        }
+//        if (currentTick - lastBackKeyDownTick > MAX_DOUBLE_BACK_DURATION) {
+//            showToast("再按一次退出");
+//            lastBackKeyDownTick = currentTick;
+//        } else {
+//            finish();
+//        }
     }
 
     @Override
