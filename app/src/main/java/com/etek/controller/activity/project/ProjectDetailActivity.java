@@ -91,6 +91,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private SoundPoolHelp soundPoolHelp;
     private ProgressDialog progressDialog;
 
+    private final int MAX_DELAY_TIME_LENGTH = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -342,9 +344,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     ToastUtils.showShort(ProjectDetailActivity.this, "请设置延时！");
                     return;
                 }
-                if(time.length()>4){
-                    ToastUtils.showShort(ProjectDetailActivity.this, "延时设置在4位数内！");
+                if(time.length()>MAX_DELAY_TIME_LENGTH){
+                    ToastUtils.showShort(ProjectDetailActivity.this, String.format("延时设置在%d位数内！",MAX_DELAY_TIME_LENGTH));
                     playSound(false);
+                    return;
                 }
 
                 int intTime = 0;
@@ -353,14 +356,15 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 }catch (NumberFormatException e){
                     ToastUtils.showShort(ProjectDetailActivity.this, "无效的延时设置！");
                     playSound(false);
+                    return;
                 }
-
 
                 if (Math.abs(intTime) > 15000) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
                     playSound(false);
                     return;
                 }
+
                 if (type == HOLE_IN_TYPE) {
                     if (intTime >= 0) {
                         numTypeIn.setVisibility(View.VISIBLE);
@@ -431,7 +435,15 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     playSound(false);
                     return;
                 }
-                int intDelayTime = Integer.parseInt(nowDelayTime);
+                int intDelayTime = 0;
+                try{
+                    intDelayTime = Integer.parseInt(nowDelayTime);
+                }catch (NumberFormatException e){
+                    ToastUtils.showShort(ProjectDetailActivity.this, "无效的延时设置！");
+                    playSound(false);
+                    return;
+                }
+
                 if (Math.abs(intDelayTime) > 15000) {
                     ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
                     playSound(false);

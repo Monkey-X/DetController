@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
@@ -253,7 +254,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onItemClick(View view, int position) {
         // 点击条目
-        shouPopuWindow(view, position);
+        if(isCancelDownLoad) {
+            shouPopuWindow(view, position);
+        }
     }
 
     private void shouPopuWindow(View view, int position) {
@@ -349,6 +352,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         EditText changeDelayTime = view.findViewById(R.id.changeDelayTime);
+        changeDelayTime.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         changeDelayTime.setText(detonatorEntity.getRelay()+"");
         builder.setView(view);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -363,7 +367,22 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
-                detonatorEntity.setRelay(Integer.parseInt(nowDelayTime));
+                int nDelayTime = 0;
+
+                try{
+                    nDelayTime = Integer.parseInt(nowDelayTime);
+                }catch (NumberFormatException e){
+                    ToastUtils.showShort(DelayDownloadActivity.this, "无效的延时设置！");
+                    playSound(false);
+                    return;
+                }
+                if (nDelayTime >15000) {
+                    ToastUtils.show(DelayDownloadActivity.this, "雷管延时需设置在0ms---15000ms范围内！");
+                    playSound(false);
+                    return;
+                }
+
+                detonatorEntity.setRelay(nDelayTime);
                 DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 mProjectDelayAdapter.notifyDataSetChanged();
                 dialog.dismiss();

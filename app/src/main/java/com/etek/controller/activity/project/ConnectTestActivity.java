@@ -332,7 +332,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onItemClick(View view, int position) {
         // 点击条目弹出 popuWindow 提示删除或者测试
-        shouPopuWindow(view, position);
+        if(isCancelTest) {
+            shouPopuWindow(view, position);
+        }
     }
 
     private void shouPopuWindow(View view, int position) {
