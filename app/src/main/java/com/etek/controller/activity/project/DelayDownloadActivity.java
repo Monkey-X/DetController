@@ -37,6 +37,7 @@ import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
+import com.etek.controller.utils.DetDelayTimeValidation;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -367,17 +368,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
-                int nDelayTime = 0;
 
-                try{
-                    nDelayTime = Integer.parseInt(nowDelayTime);
-                }catch (NumberFormatException e){
-                    ToastUtils.showShort(DelayDownloadActivity.this, "无效的延时设置！");
-                    playSound(false);
-                    return;
-                }
-                if (nDelayTime >15000) {
-                    ToastUtils.show(DelayDownloadActivity.this, "延时请设置在0-15000ms范围内");
+                int nDelayTime = DetDelayTimeValidation.validateDelayTime(DelayDownloadActivity.this,nowDelayTime);
+                if(-1==nDelayTime){
                     playSound(false);
                     return;
                 }
@@ -414,8 +407,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 detonatorEntity1.setRelay(delayTime);
                 holePosition = holePosition + bean.getHoleNum();
             }
-            if (delayTime >15000) {
-                ToastUtils.show(this, "延时请设置在0-15000ms范围内");
+            if (delayTime >DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND) {
+                ToastUtils.show(this, String.format("延时请设置在0-%dms范围内",DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND));
                 playSound(false);
                 return;
             }

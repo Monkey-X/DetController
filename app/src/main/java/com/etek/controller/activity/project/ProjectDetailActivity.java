@@ -39,6 +39,7 @@ import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.scan.ScannerInterface;
+import com.etek.controller.utils.DetDelayTimeValidation;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -90,8 +91,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private boolean isStartTimeChange = false;
     private SoundPoolHelp soundPoolHelp;
     private ProgressDialog progressDialog;
-
-    private final int MAX_DELAY_TIME_LENGTH = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -340,27 +339,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String time = changeDelayTime.getText().toString().trim();
-                if (TextUtils.isEmpty(time)) {
-                    ToastUtils.showShort(ProjectDetailActivity.this, "请设置延时！");
-                    return;
-                }
-                if(time.length()>MAX_DELAY_TIME_LENGTH){
-                    ToastUtils.showShort(ProjectDetailActivity.this, String.format("延时设置在%d位数内！",MAX_DELAY_TIME_LENGTH));
-                    playSound(false);
-                    return;
-                }
-
-                int intTime = 0;
-                try{
-                    intTime = Integer.parseInt(time);
-                }catch (NumberFormatException e){
-                    ToastUtils.showShort(ProjectDetailActivity.this, "无效的延时设置！");
-                    playSound(false);
-                    return;
-                }
-
-                if (Math.abs(intTime) > 15000) {
-                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0-15000ms范围内");
+                int intTime = DetDelayTimeValidation.validateDelayTime(ProjectDetailActivity.this,time);
+                if(-1==intTime){
                     playSound(false);
                     return;
                 }
@@ -430,25 +410,13 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String nowDelayTime = changeDelayTime.getText().toString().trim();
-                if (TextUtils.isEmpty(nowDelayTime)) {
-                    ToastUtils.showShort(ProjectDetailActivity.this, "请输入有效的延时！");
-                    playSound(false);
-                    return;
-                }
-                int intDelayTime = 0;
-                try{
-                    intDelayTime = Integer.parseInt(nowDelayTime);
-                }catch (NumberFormatException e){
-                    ToastUtils.showShort(ProjectDetailActivity.this, "无效的延时设置！");
+
+                int intTime = DetDelayTimeValidation.validateDelayTime(ProjectDetailActivity.this,nowDelayTime);
+                if(-1==intTime){
                     playSound(false);
                     return;
                 }
 
-                if (Math.abs(intDelayTime) > 15000) {
-                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0-15000ms范围内");
-                    playSound(false);
-                    return;
-                }
                 detonatorEntity.setRelay(Integer.parseInt(nowDelayTime));
                 DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 projectDetailAdapter.notifyDataSetChanged();
@@ -875,9 +843,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         } else {
             ProjectDetonator projectDetonatorLast = detonators.get(detonators.size() - 1);
             int nextDelayTime = getNextDelayTime(projectDetonatorLast, type);
-            if (nextDelayTime < 0 || nextDelayTime > 15000) {
+            if (nextDelayTime < 0 || nextDelayTime > DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND) {
                 Log.d(TAG, "createProjectDetData: toast");
-                ToastNewUtils.getInstance(this).showLongToast("延时请设置在0-15000ms范围内");
+                ToastNewUtils.getInstance(this).showLongToast(String.format("延时请设置在0-%dms范围内",DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND));
                 playSound(false);
                 return;
             }
