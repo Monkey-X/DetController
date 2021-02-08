@@ -222,6 +222,21 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
     }
 
 
+    @Override
+    protected void onDestroy() {
+        saveData();
+        super.onDestroy();
+    }
+
+    private void saveData() {
+        OfflineDownloadBean offlineDownloadBean = new OfflineDownloadBean();
+        String strContractCode = contractCode.getText().toString();
+        String strProCode = proCode.getText().toString();
+        offlineDownloadBean.setHtid(strContractCode);
+        offlineDownloadBean.setXmbh(strProCode);
+        setStringInfo("offlineEditInfo",JSON.toJSONString(offlineDownloadBean));
+    }
+
     /**
      * 生成离线文件
      */
