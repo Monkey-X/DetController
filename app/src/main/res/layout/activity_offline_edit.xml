@@ -16,6 +16,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="项目编号：" />
@@ -23,6 +24,7 @@
         <EditText
             android:id="@+id/pro_code"
             android:background="@null"
+            android:textColor="@color/black"
             android:layout_width="match_parent"
             android:digits="1234567890"
             android:layout_height="wrap_content" />
@@ -41,6 +43,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="合同备案序号：" />
@@ -49,6 +52,7 @@
             android:background="@null"
             android:id="@+id/contract_code"
             android:digits="1234567890"
+            android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -67,12 +71,14 @@
 
         <TextView
             android:layout_width="wrap_content"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:text="单位代码：" />
 
 
         <TextView
             android:background="@null"
+            android:textColor="@color/black"
             android:id="@+id/company_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -92,12 +98,14 @@
 
         <TextView
             android:layout_width="wrap_content"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:text="起爆器：" />
 
 
         <EditText
             android:background="@null"
+            android:textColor="@color/black"
             android:id="@+id/controller_sn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -114,6 +122,7 @@
         android:gravity="center"
         android:padding="5dp"
         android:id="@+id/add_det"
+        android:textColor="@color/black"
         android:layout_marginBottom="1dp"
         android:layout_marginTop="1dp"
         android:textStyle="bold"
