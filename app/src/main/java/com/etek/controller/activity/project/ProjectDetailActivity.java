@@ -360,7 +360,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 }
 
                 if (Math.abs(intTime) > 15000) {
-                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0-15000ms范围内");
                     playSound(false);
                     return;
                 }
@@ -445,7 +445,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 }
 
                 if (Math.abs(intDelayTime) > 15000) {
-                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0ms---15000ms范围内");
+                    ToastUtils.showShort(ProjectDetailActivity.this, "延时请设置在0-15000ms范围内");
                     playSound(false);
                     return;
                 }
@@ -877,7 +877,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             int nextDelayTime = getNextDelayTime(projectDetonatorLast, type);
             if (nextDelayTime < 0 || nextDelayTime > 15000) {
                 Log.d(TAG, "createProjectDetData: toast");
-                ToastNewUtils.getInstance(this).showLongToast("延时请设置在0ms---15000ms范围内");
+                ToastNewUtils.getInstance(this).showLongToast("延时请设置在0-15000ms范围内");
                 playSound(false);
                 return;
             }

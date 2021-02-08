@@ -377,7 +377,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
                 if (nDelayTime >15000) {
-                    ToastUtils.show(DelayDownloadActivity.this, "雷管延时需设置在0ms---15000ms范围内！");
+                    ToastUtils.show(DelayDownloadActivity.this, "延时请设置在0-15000ms范围内");
                     playSound(false);
                     return;
                 }
@@ -415,7 +415,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 holePosition = holePosition + bean.getHoleNum();
             }
             if (delayTime >15000) {
-                ToastUtils.show(this, "雷管延时需设置在0ms---15000ms范围内！");
+                ToastUtils.show(this, "延时请设置在0-15000ms范围内");
                 playSound(false);
                 return;
             }
