@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -145,6 +147,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         scanner = new ScannerInterface(this);
         scanner.setOutputMode(1);
         scanner.lockScanKey();
+        //  扫描失败是否发送广播
+        scanner.SetErrorBroadCast(false);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(RES_ACTION);
@@ -642,7 +646,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
      */
     //*********重要
     private class ScannerResultReceiver extends BroadcastReceiver {
-        public void onReceive(Context context, Intent intent) {
+        public synchronized void onReceive(Context context, Intent intent) {
             Log.d("111", "intent.getAction()-->" + intent.getAction());//
 
             //*******重要，注意Extral为"value"
@@ -658,29 +662,36 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             VibrateUtil.vibrate(ProjectDetailActivity.this,150);
 
             //*******重要
-            if (intent.getAction().equals(RES_ACTION)) {
-                //获取扫描结果
-                if (scanResult.length() > 0 && DetIDConverter.VerifyQRCheckValue(scanResult)) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
-                    // 扫描成功
-                    String strgm="";
-                    //  12位条码
-                    if(scanResult.length()==12){
-                        byte[] dc = DetIDConverter.GetDCByOldQRString(scanResult);
-                        strgm = DetIDConverter.GetDisplayDC(dc);
-                    } else{
-                        strgm = scanResult.substring(0, 13);
-                    }
-
-                    playSound(true);
-
-                    createDetData(strgm);
-                } else {
-                    playSound(false);
-                    // 扫描失败
-                    showAutoMissDialog("扫描失败！");
-                    isInsertItem = false;
-                }
+            if (!intent.getAction().equals(RES_ACTION)) {
+                return;
             }
+
+            //获取扫描结果
+            if (scanResult.length() > 0 && DetIDConverter.VerifyQRCheckValue(scanResult)) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
+                // 扫描成功
+                String strgm="";
+                //  12位条码
+                if(scanResult.length()==12){
+                    byte[] dc = DetIDConverter.GetDCByOldQRString(scanResult);
+                    strgm = DetIDConverter.GetDisplayDC(dc);
+                } else{
+                    strgm = scanResult.substring(0, 13);
+                }
+
+                playSound(true);
+                createDetData(strgm);
+                return;
+            }
+
+            Log.d(TAG,String.format("扫描结果:%s",scanResult));
+            if (scanResult.length() > 0){
+                playSound(false);
+                // 扫描失败
+                showAutoMissDialog("扫描失败！");
+            }
+
+            isInsertItem = false;
+            return;
         }
     }
 
