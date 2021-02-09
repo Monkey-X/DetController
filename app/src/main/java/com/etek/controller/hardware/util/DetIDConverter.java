@@ -227,7 +227,16 @@ public class DetIDConverter {
         int[] nval = new int[15];
         for (i = 0; i < 15; i++) nval[i] = DataConverter.getByteValue((byte) charr[i]);
 
-        int ret = Integer.parseInt(strQRCode.substring(0,2));
+
+        int ret = 0;
+        try{
+            ret = Integer.parseInt(strQRCode.substring(0,2));
+        }catch (NumberFormatException e){
+            String strmsg = String.format("VerifyQRCheckValue: 无效的起爆器编号！%s",strQRCode);
+            Log.d(TAG, strmsg);
+            return false;
+        }
+
         if(99!=m_bMID){
             if(ret!=m_bMID){
                 String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",ret,m_bMID);
