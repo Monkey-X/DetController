@@ -1,5 +1,7 @@
 package com.etek.controller.activity.project;
 
+import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +13,7 @@ import com.github.angads25.toggle.interfaces.OnToggledListener;
 import com.github.angads25.toggle.model.ToggleableView;
 import com.github.angads25.toggle.widget.LabeledSwitch;
 
-public class SettingsActivity2 extends BaseActivity implements OnToggledListener {
+public class SettingsActivity2 extends BaseActivity implements OnToggledListener, View.OnClickListener {
 
     private LabeledSwitch danningSwitch;
     private LabeledSwitch zhongbaoSwitch;
@@ -44,6 +46,11 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         danningSwitch.setOnToggledListener(this);
         zhongbaoSwitch.setOnToggledListener(this);
         etekSwitch.setOnToggledListener(this);
+
+        View wifiSetting = findViewById(R.id.wifi_setting);
+        View modleNet = findViewById(R.id.modle_net);
+        wifiSetting.setOnClickListener(this);
+        modleNet.setOnClickListener(this);
     }
 
     @Override
@@ -62,6 +69,18 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
                 setBooleanInfo("isServerEtekOn", isOn);
                 break;
             default:
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.wifi_setting:
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                break;
+            case R.id.modle_net:
+                startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
                 break;
         }
     }
