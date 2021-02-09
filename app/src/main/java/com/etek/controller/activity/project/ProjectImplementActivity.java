@@ -147,8 +147,8 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
+                connectTest.setClickable(true);
+                delayDownload.setClickable(true);
                 checkAuthorization.setClickable(true);
                 powerBomb.setClickable(false);
                 break;
@@ -158,10 +158,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.project_power_bomb);
-                connectTest.setClickable(false);
-                delayDownload.setClickable(false);
+                connectTest.setClickable(true);
+                delayDownload.setClickable(true);
                 powerBomb.setClickable(true);
-                checkAuthorization.setClickable(false);
+                checkAuthorization.setClickable(true);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1://数据上传有颜色，其余四个置灰(不可点击)
