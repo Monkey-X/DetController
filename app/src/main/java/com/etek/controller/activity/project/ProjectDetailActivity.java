@@ -659,8 +659,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
             Log.d(TAG, "onReceive: scanResult = " + scanResult);
 
-            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
-
             //*******重要
             if (!intent.getAction().equals(RES_ACTION)) {
                 return;
@@ -688,6 +686,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 playSound(false);
                 // 扫描失败
                 showAutoMissDialog("扫描失败！");
+                VibrateUtil.vibrate(ProjectDetailActivity.this,150);
             }
 
             isInsertItem = false;
@@ -854,12 +853,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         } else {
             ProjectDetonator projectDetonatorLast = detonators.get(detonators.size() - 1);
             int nextDelayTime = getNextDelayTime(projectDetonatorLast, type);
-            if (nextDelayTime < 0 || nextDelayTime > DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND) {
-                Log.d(TAG, "createProjectDetData: toast");
-                ToastNewUtils.getInstance(this).showLongToast(String.format("延时请设置在0-%dms范围内",DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND));
+            if(!DetDelayTimeValidation.validateDelayTime(this,nextDelayTime)){
                 playSound(false);
                 return;
             }
+
             String nextHolePosition = getNextHolePosition(projectDetonatorLast, type);
             projectDetonator.setHolePosition(nextHolePosition);
             projectDetonator.setRelay(nextDelayTime);

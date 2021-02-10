@@ -407,8 +407,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 detonatorEntity1.setRelay(delayTime);
                 holePosition = holePosition + bean.getHoleNum();
             }
-            if (delayTime >DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND) {
-                ToastUtils.show(this, String.format("延时请设置在0-%dms范围内",DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND));
+            if(!DetDelayTimeValidation.validateDelayTime(this,delayTime)){
                 playSound(false);
                 return;
             }
@@ -418,6 +417,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         detonators.addAll(editDetonators);
         DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
         mProjectDelayAdapter.notifyDataSetChanged();
+
+        playSound(true);
     }
 
     /**
@@ -520,6 +521,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                isCancelDownLoad = true;
             }
         });
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {

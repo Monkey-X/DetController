@@ -569,6 +569,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 DetApp.getInstance().MainBoardBusPowerOff();
 
                 dialog.dismiss();
+                isCancelTest = true;
             }
         });
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {

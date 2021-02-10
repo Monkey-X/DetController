@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.HomeActivity2;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -64,14 +65,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
+        int ntype = GeneralDisplayUI.NETWORK_WIFI;
         switch (checkedId) {
             case R.id.wifi:
-                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                ntype = GeneralDisplayUI.NETWORK_WIFI;
                 break;
             case R.id.mobileData:
-                startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                ntype = GeneralDisplayUI.NETWORK_4G;
                 break;
         }
+        GeneralDisplayUI.showSettingNetworkSelect(this,ntype);
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.etek.controller.R;
 import com.etek.controller.common.Globals;
+import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.github.angads25.toggle.interfaces.OnToggledListener;
 import com.github.angads25.toggle.model.ToggleableView;
@@ -75,13 +76,18 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
 
     @Override
     public void onClick(View v) {
+        int ntype = GeneralDisplayUI.NETWORK_WIFI;
+
         switch (v.getId()) {
             case R.id.wifi_setting:
-                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                ntype = GeneralDisplayUI.NETWORK_WIFI;
+
                 break;
             case R.id.modle_net:
-                startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                ntype = GeneralDisplayUI.NETWORK_4G;
                 break;
         }
+        GeneralDisplayUI.showSettingNetworkSelect(this,ntype);
+
     }
 }
