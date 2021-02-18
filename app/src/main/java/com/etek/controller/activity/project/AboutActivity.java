@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -41,6 +42,9 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
     private RelativeLayout update;
     private TextView speed;
     private ProgressBar updateProgress;
+
+    private boolean m_bUpgrading = false;
+    private TextView m_btnUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +84,36 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
 
 
         appVersion.setText(SommerUtils.getVersionName(this));
+
+        m_btnUpdate = findViewById(R.id.check_update);
     }
 
     @Override
     public void onClick(View v) {
-
         if (NetUtil.getNetType(mContext) < 0) {
             showStatusDialog("请去设置网络！");
             return;
         }
+
+        m_bUpgrading = true;
+        m_btnUpdate.setVisibility(View.GONE);
+
         checkAppUpdate();
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //  右下角返回键
+        if(4==keyCode){
+            if(!m_bUpgrading){
+                finish();
+            }else{
+                return false;
+            }
+
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
     private void checkAppUpdate() {
@@ -123,6 +147,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
 
     private void checkAppData(AppUpdateBean.ResultBean.AppBean app, AppUpdateBean.ResultBean.MainBoardBean mainBoard) {
         //app更新
+        Log.d(TAG,String.format("后台版本:%d，APP版本:%d",app.getVersionCode(),AppUtils.getAppVersion(AboutActivity.this)));
         if (AppUtils.getAppVersion(AboutActivity.this) < app.getVersionCode()) {
             showUpdateDialog(appUpdate, app, mainBoard);
             return;
@@ -131,12 +156,16 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
         //主控制板更新
         if (mainBoardInfoBean != null) {
             String strSoftwareVer = mainBoardInfoBean.getStrSoftwareVer();
+            Log.d(TAG,String.format("主控板版本：%s 后台版本：%s",mainBoard.getVersionName(),strSoftwareVer));
             if (mainBoard.getVersionName().compareToIgnoreCase(strSoftwareVer) > 0) {
                 showUpdateDialog(mainBoardupdate, app, mainBoard);
                 return;
             }
         }
+
         ToastUtils.showShort(AboutActivity.this,"已是最新版本！");
+        m_bUpgrading = false;
+        m_btnUpdate.setVisibility(View.VISIBLE);
     }
 
 
@@ -155,11 +184,15 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 if (flag == appUpdate) {
+
                     String downloadUrl = app.getDownloadUrl();
                     if (!TextUtils.isEmpty(downloadUrl) && downloadUrl.startsWith("http")) {
                         downLoadFile(0, downloadUrl, FileUtils.ExternalStorageDirectory + File.separator + "test", "雷管E联.apk");
                     } else {
                         ToastUtils.show(AboutActivity.this, "下载链接错误，请检查");
+
+                        m_bUpgrading = false;
+                        m_btnUpdate.setVisibility(View.VISIBLE);
                     }
                 } else if (flag == mainBoardupdate) {
                     String downloadUrl = mainBoard.getDownloadUrl();
@@ -167,6 +200,9 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                         downLoadFile(1, downloadUrl, FileUtils.ExternalStorageDirectory + File.separator + "test", "MainBoard.bin");
                     } else {
                         ToastUtils.show(AboutActivity.this, "下载链接错误，请检查");
+
+                        m_bUpgrading = false;
+                        m_btnUpdate.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -177,6 +213,9 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     updateDialog.dismiss();
+
+                    m_bUpgrading = false;
+                    m_btnUpdate.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -186,6 +225,8 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     updateDialog.dismiss();
+                    m_bUpgrading = false;
+                    m_btnUpdate.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -224,6 +265,8 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                                 } else if (flag == mainBoardupdate) {
                                     AboutActivity.this.startActivity(new Intent(AboutActivity.this, MainBoardUpdateActivity.class));
                                 }
+                                m_bUpgrading = false;
+                                m_btnUpdate.setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -246,9 +289,13 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                             @Override
                             public void run() {
                                 update.setVisibility(View.GONE);
+
+                                m_bUpgrading = false;
+                                m_btnUpdate.setVisibility(View.VISIBLE);
                             }
                         });
                         Log.e(TAG, "Exception: " + e.getMessage());
+                        ToastUtils.show(AboutActivity.this, "下载失败，请检查网络");
                     }
                 });
             }

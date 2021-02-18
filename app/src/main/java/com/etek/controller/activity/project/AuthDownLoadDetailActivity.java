@@ -98,7 +98,6 @@ public class AuthDownLoadDetailActivity extends BaseActivity {
                 layoutContract.setVisibility(View.GONE);
             }
 
-
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String format = simpleDateFormat.format(projectInfoEntity.getApplyDate());
             applyDate.setText(format);

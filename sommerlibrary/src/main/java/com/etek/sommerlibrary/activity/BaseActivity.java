@@ -121,7 +121,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void showProgressDialog(String content) {
         MDialogConfig mDialogConfig = new MDialogConfig.Builder()
                 //点击外部是否可以取消
-                .isCanceledOnTouchOutside(true)
+                .isCanceledOnTouchOutside(false)
                 //全屏背景窗体的颜色
                 .setBackgroundWindowColor(getMyColor(R.color.transperant))
                 //View背景的颜色
