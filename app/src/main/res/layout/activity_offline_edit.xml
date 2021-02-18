@@ -26,7 +26,6 @@
             android:background="@null"
             android:textColor="@color/black"
             android:layout_width="match_parent"
-            android:digits="1234567890"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
@@ -77,11 +76,12 @@
 
 
         <TextView
-            android:background="@null"
-            android:textColor="@color/black"
             android:id="@+id/company_code"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
     </LinearLayout>
 
