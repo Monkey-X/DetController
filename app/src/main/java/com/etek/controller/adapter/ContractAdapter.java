@@ -34,23 +34,28 @@ public class ContractAdapter extends BaseQuickAdapter<ProjectInfoEntity, BaseVie
         if (!TextUtils.isEmpty(contractCode)) {
             ((TextView) helper.getView(R.id.contract_code)).setText("合同备案序号："+contractCode);
         }else{
-            ((TextView) helper.getView(R.id.contract_code)).setVisibility(View.GONE);
+            ((TextView) helper.getView(R.id.contract_code)).setText("合同备案序号：");
+            //((TextView) helper.getView(R.id.contract_code)).setVisibility(View.GONE);
         }
 
-
+        //  修改为：雷管数量
+        int num = item.getDetonatorList().size();
+        ((TextView) helper.getView(R.id.contract_name)).setText("雷管数量："+ num);
+        /*
         if (!TextUtils.isEmpty(proCode)) {
             ((TextView) helper.getView(R.id.contract_name)).setText("项目编号："+proCode);
         }else{
             ((TextView) helper.getView(R.id.contract_name)).setVisibility(View.GONE);
         }
+        */
 
         // 创建时间
         if (createTime !=null) {
             String dateStr = DateUtil.getDateStr(createTime);
-            ((TextView) helper.getView(R.id.create_time)).setText(dateStr);//创建时间
+            ((TextView) helper.getView(R.id.create_time)).setText(String.format("申请日期时间：%s",dateStr));//创建时间
         }else{
             ((TextView) helper.getView(R.id.create_time)).setVisibility(View.GONE);
         }
-
     }
+
 }

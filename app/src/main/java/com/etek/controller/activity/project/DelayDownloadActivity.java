@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elvishew.xlog.XLog;
@@ -72,6 +73,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private ProgressBar progress;
     private View cancelTest;
     private TextView allEdit;
+    private RelativeLayout layoutDownloadBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +143,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         startTest.setOnClickListener(this);
         cancelTest.setOnClickListener(this);
 
+        layoutDownloadBtn= findViewById(R.id.layout_download_btn);
+
     }
 
     private void initRecycleView() {
@@ -181,14 +185,17 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             case R.id.all_edit:
                 // 批量编辑
                 changeAllEdit();
+                layoutDownloadBtn.setVisibility(View.GONE);
                 break;
             case R.id.all_det:
                 showAllDet();
                 checkShow(1);
+                layoutDownloadBtn.setVisibility(View.VISIBLE);
                 break;
             case R.id.download_fail:
                 showDownloadFail();
                 checkShow(2);
+                layoutDownloadBtn.setVisibility(View.GONE);
                 break;
             case R.id.cancel_test:
                 // 放弃检测
