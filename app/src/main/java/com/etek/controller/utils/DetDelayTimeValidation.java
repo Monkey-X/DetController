@@ -32,7 +32,7 @@ public class DetDelayTimeValidation {
             return -1;
         }
         if(strDelayTime.length()>MAX_DELAY_TIME_LENGTH){
-            ToastUtils.showShort(context, String.format("延时设置在%d位数内！",MAX_DELAY_TIME_MSECOND));
+            ToastUtils.showShort(context, String.format("延时请设置在0-%dms范围内",MAX_DELAY_TIME_MSECOND));
             return -1;
         }
 
