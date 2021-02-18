@@ -234,6 +234,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     }
 
     public void StartChargeTask() {
+        toastText.setText("雷管充电中...");
+
         detsBusChargeTask = new DetsBusChargeTask(this);
         detsBusChargeTask.SetDetsCount(detonatorEntityList.size());
         detsBusChargeTask.execute();
@@ -256,7 +258,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                     }
                 });
             }
-            progressValueDialog.setCancelable(false);
+            progressValueDialog.setCancelable(true);
             progressValueDialog.setCanceledOnTouchOutside(false);
             progressValueDialog.setMax(100);
             progressValueDialog.setProgressPercentFormat(null);
@@ -268,6 +270,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      * 进行充电取消步骤
      */
     private void chargeCancel() {
+        toastText.setText("总线放电中...");
+
         // 充电取消,先进行拉低操作
         if (detsBusChargeTask != null) {
             detsBusChargeTask.cancel(true);
@@ -475,6 +479,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     // 网络起爆失败,进行总线放电
     private void startDisChangeTask() {
+        toastText.setText("总线放电中...");
         BusDisChargeTask busDisChargeTask = new BusDisChargeTask(this);
         busDisChargeTask.execute();
     }

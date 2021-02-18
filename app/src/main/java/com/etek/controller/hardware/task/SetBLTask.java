@@ -35,7 +35,7 @@ public class SetBLTask extends AsyncTask<String, Integer, Integer> {
         int result = DetApp.getInstance().MainBoardSetBL(bHigh);
         if (!bHigh) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

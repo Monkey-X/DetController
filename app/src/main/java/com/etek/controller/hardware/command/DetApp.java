@@ -245,6 +245,11 @@ public class DetApp {
 	 * @return
 	 */
 	public int MainBoardSetBL(boolean bHigh) {
+		if(bHigh)
+			Log.d("DetProtocol","电平拉高");
+		else
+			Log.d("DetProtocol","电平拉低");
+
 		int ret = m_cmdObj.BoardSetBL(bHigh);
 		return ret;
 	}
