@@ -96,8 +96,6 @@ public class ProDetailActivity extends BaseActivity {
         ButterKnife.bind(this);
         initSupportActionBar(R.string.title_activity_pro_detail);
         getProjectInfo();
-
-
     }
 
     private void getProjectInfo() {
@@ -349,6 +347,7 @@ public class ProDetailActivity extends BaseActivity {
         int i;
         for (i = 0; i < size; i++) {
             detData[i][0] = "" + (i + 1);
+
             detColor[i][0] = R.color.black;
             detData[i][1] = detonatorList.get(i).getDetCode();
             detColor[i][1] = R.color.black;

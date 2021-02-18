@@ -128,6 +128,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (soundPoolHelp != null ) {
             soundPoolHelp.playSound(b);
         }
+
+        if(!b){
+            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
+        }
+        return;
     }
 
 
@@ -686,7 +691,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 playSound(false);
                 // 扫描失败
                 showAutoMissDialog("扫描失败！");
-                VibrateUtil.vibrate(ProjectDetailActivity.this,150);
             }
 
             isInsertItem = false;

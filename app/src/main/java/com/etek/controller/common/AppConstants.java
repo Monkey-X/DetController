@@ -3,12 +3,7 @@ package com.etek.controller.common;
 
 
 public  class AppConstants {
-
-
-
     public static final   String BaiduAddress = "http://api.map.baidu.com/geocoder/v2/";
-
-
 
     public final static String DET_DETAIL="http://222.191.229.234:1018/api/DetMsg/GetDetMsgInfo";
     public final static String DET_APP= "http://222.191.229.234:1018/api/DET/GET?id=";
@@ -45,13 +40,10 @@ public  class AppConstants {
 
     public final static String OnlineDownload = "/mbdzlgtxzx/servlet/DzlgMmxzJsonServlert";
 
-
     public final static String ProjectReportTest = "/api/DET/Post";
     public final static String CheckoutReport = "/api/DET/PostFromBody";
     public final static String WhiteBlackList = "/api/DET";
     public final static String DETUnCheck = "/api/DETUnCheck/PostFromBody";
-
-
 
     public final static String DanningServer = "http://qq.mbdzlg.com";
     public final static String DanningTestServer = "http://test.mbdzlg.com";

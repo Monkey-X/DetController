@@ -514,6 +514,13 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1);
             DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
         }
+
+        //  蜂鸣+震动提示
+        if (soundPoolHelp != null) {
+            soundPoolHelp.playSound(true);
+            VibrateUtil.vibrate(DelayDownloadActivity.this, 150);
+        }
+
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage("下载成功，请进行规则检查！");

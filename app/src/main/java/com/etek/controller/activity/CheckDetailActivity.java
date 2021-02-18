@@ -192,10 +192,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
             double latitude = location.getLatitude();    //获取纬度信息
             double longitude = location.getLongitude();    //获取经度信息
-            locationLongitude.setText("" + longitude);
-            locationLatitude.setText("" + latitude);
-            setStringInfo("Longitude", longitude + "");
-            setStringInfo("Latitude", latitude + "");
+            locationLongitude.setText(String.format("%.4f" ,longitude));
+            locationLatitude.setText(String.format("%.4f",latitude));
+            setStringInfo("Longitude", String.format("%.4f" ,longitude));
+            setStringInfo("Latitude", String.format("%.4f",latitude));
             if (pendingProject != null) {
                 pendingProject.setLatitude(latitude);
                 pendingProject.setLongitude(longitude);
@@ -278,6 +278,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             pendingProject = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
             projectDetonatorList = pendingProject.getDetonatorList();
         }
+
+        //  起爆器编号使用全局设置信息
+        pendingProject.setControllerId(getStringInfo(getString(R.string.controller_sno)));
     }
 
     /**
@@ -308,19 +311,36 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if (pendingProject != null) {
             //合同编号
             contractCode.setText(pendingProject.getContractCode());
-            //起爆器编号
-            controllerId.setText(getStringInfo(getString(R.string.controller_sno)));
             //项目编号
             proCode.setText(pendingProject.getProCode());
             //地标
         }
+        //起爆器编号
+        controllerId.setText(getStringInfo(getString(R.string.controller_sno)));
     }
 
+    /***
+     * 缓存界面输入
+     */
+    private void saveData(){
+        if (pendingProject == null)
+            return;
+
+        //合同编号
+        pendingProject.setContractCode(contractCode.getText().toString());
+        //起爆器编号
+        pendingProject.setControllerId(controllerId.getText().toString());
+        //项目编号
+        pendingProject.setProCode(proCode.getText().toString());
+
+        DBManager.getInstance().getPendingProjectDao().save(pendingProject);
+    }
     /**
      * 注销
      */
     @Override
     protected void onDestroy() {
+        saveData();
         super.onDestroy();
     }
 
@@ -391,7 +411,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         onlineCheckDto.setJd(projectInfoEntity.getLongitude() + "");
         onlineCheckDto.setWd(projectInfoEntity.getLatitude() + "");
         onlineCheckDto.setXmbh(projectInfoEntity.getProCode());
-        onlineCheckDto.setSbbh(projectInfoEntity.getControllerId());
+        onlineCheckDto.setSbbh(controllerId.getText().toString());
         onlineCheckDto.setProjectDets(projectDetonatorList);
         String rptJson = JSON.toJSONString(onlineCheckDto, SerializerFeature.WriteMapNullValue);
         XLog.e("rptJson: " + rptJson);
@@ -631,14 +651,15 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 离线检查
      */
     private void offlineCheck() {
-        String controllerId = pendingProject.getControllerId();
-        if (isInBlackList(controllerId)) {
-            showStatusDialog("起爆器未注册，不允许起爆");
+        String strControllerId = controllerId.getText().toString().trim();
+
+        if (isInBlackList(strControllerId)) {
+            showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆1",strControllerId));
             return;
         }
 
         // 如果起爆器在白名单中直接允许起爆
-        if (isInWhiteList(controllerId)) {
+        if (isInWhiteList(strControllerId)) {
             changeDetStatus();
             goToBomb();
             return;
@@ -665,7 +686,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         }
 
         if (!checkControllerData(projectInfo)) {
-            showStatusDialog("起爆器未注册，不允许起爆");
+            showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆2",strControllerId));
             return;
         }
         if (checkForbiddenZone(projectInfo)) {
@@ -812,7 +833,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         List<ControllerEntity> controllerList = projectInfo.getControllerList();
         if (controllerList != null && controllerList.size() != 0) {
             for (ControllerEntity controllerEntity : controllerList) {
-                if (controllerEntity.getName().equalsIgnoreCase(pendingProject.getControllerId())) {
+                if (controllerEntity.getName().equalsIgnoreCase(controllerId.getText().toString().trim())) {
                     return true;
                 }
             }

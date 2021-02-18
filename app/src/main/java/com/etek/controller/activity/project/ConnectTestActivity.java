@@ -557,6 +557,13 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1);
             DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
         }
+
+        //  蜂鸣+震动提示
+        if (soundPoolHelp != null) {
+            soundPoolHelp.playSound(true);
+            VibrateUtil.vibrate(ConnectTestActivity.this, 150);
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage("检测成功，请进行延时下载！");

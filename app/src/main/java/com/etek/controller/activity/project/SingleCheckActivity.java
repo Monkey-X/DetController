@@ -40,7 +40,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     private boolean singleClick = false;
 
     private int m_nLastDetID = -1;
-    private boolean m_bLastDetRemoved = true;
+    private boolean m_bFirstTime = true;
     private ProgressDialog progressDialog;
 
     @Override
@@ -122,12 +122,11 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     return;
                 }
 
-                if(!m_bLastDetRemoved){
+                //  第一次不执行
+                if(!m_bFirstTime){
                     int ret = DetApp.getInstance().ModuleSetIOStatus(m_nLastDetID,(byte)0x02);
                     Log.d(TAG, String.format("ModuleSetIOStatus返回：%d",ret));
                     if(0==ret){
-                        m_bLastDetRemoved = false;
-
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -135,13 +134,16 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         }
                         continue;
                     }
-                    m_bLastDetRemoved = true;
+
+                    m_nLastDetID = -1;
                 }
-                Log.d(TAG, "总线短路和漏电检测");
-                // 总线短路和漏电检测
-                StringBuilder strData = new StringBuilder();
-                int i = DetApp.getInstance().CheckBusShortCircuit(strData);
-                showBusShortResult(i,strData.toString());
+
+
+//                Log.d(TAG, "总线短路和漏电检测");
+//                // 总线短路和漏电检测
+//                StringBuilder strData = new StringBuilder();
+//                int i = DetApp.getInstance().CheckBusShortCircuit(strData);
+//                showBusShortResult(i,strData.toString());
 
                 Log.d(TAG, "获取雷管信息...");
 
@@ -152,6 +154,8 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     }
                     @Override
                     public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
+                        m_bFirstTime = false;
+
                         if (cancelSingleCheck) {
                             singleClick=false;
                             return;
@@ -164,7 +168,6 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         }
                         //  缓存上一颗
                         m_nLastDetID = nID;
-                        m_bLastDetRemoved =false;
 
                         SingleCheckEntity singleCheckEntity = new SingleCheckEntity();
                         singleCheckEntity.setRelay(String.valueOf(0xffffffffL&nDT));
@@ -206,7 +209,8 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         Log.d(TAG, "开始检测...");
 
         singleClick = true;
-        m_nLastDetID=-1;m_bLastDetRemoved = true;
+        m_nLastDetID=-1;
+
 
         if(null!=m_sthd){
             try {

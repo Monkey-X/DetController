@@ -197,19 +197,16 @@ public class HomeActivity extends BaseActivity implements ActivityCompat.OnReque
 
     @Override
     public void onBackPressed() {
-
         long currentTick = System.currentTimeMillis();
         if (currentTick - lastBackKeyDownTick > MAX_DOUBLE_BACK_DURATION) {
             showToast("再按一次退出");
-//            SnackBarUtils.makeShort(mDrawerLayout, "再按一次退出").success();
+            // SnackBarUtils.makeShort(mDrawerLayout, "再按一次退出").success();
             lastBackKeyDownTick = currentTick;
         } else {
             finish();
-//            System.exit(0);
+            // System.exit(0);
         }
     }
-
-
 
 
 }
