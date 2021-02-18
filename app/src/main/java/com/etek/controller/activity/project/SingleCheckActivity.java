@@ -232,6 +232,9 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
             public void run() {
 
                 if (cancelSingleCheck) {
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
                     return;
                 }
 
@@ -239,6 +242,8 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     progressDialog = new ProgressDialog(SingleCheckActivity.this);
                     progressDialog.setMax(100);
                     progressDialog.setMessage("检测中...");
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.setCancelable(false);
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                     progressDialog.show();
                 }
