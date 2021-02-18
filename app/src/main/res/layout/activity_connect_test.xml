@@ -82,6 +82,7 @@
         android:layout_weight="1" />
 
     <RelativeLayout
+        android:id="@+id/layout_test_btn"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="2dp"

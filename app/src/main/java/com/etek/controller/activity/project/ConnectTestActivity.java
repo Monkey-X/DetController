@@ -79,6 +79,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private TextView startTest;
     private ProgressBar progress;
     private TextView cancelTest;
+    private RelativeLayout layoutTestBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +137,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         missEvent = findViewById(R.id.miss_event);
         falseConnect = findViewById(R.id.false_connect);
         allDet = findViewById(R.id.all_det);
+
+        layoutTestBtn = findViewById(R.id.layout_test_btn);
 
         missEvent.setOnClickListener(this);
         falseConnect.setOnClickListener(this);
@@ -247,17 +250,20 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                  //筛选失联
                 changeMissEvent();
                 checkShow(1);
+                layoutTestBtn.setVisibility(View.GONE);
                 break;
             case R.id.false_connect:
                 // 筛选误接
                 changeFalseConnect();
                 checkShow(2);
+                layoutTestBtn.setVisibility(View.GONE);
                 break;
             case R.id.all_det:
                 // 展示全部
                 changeProgressView(true);
                 showAllDet();
                 checkShow(3);
+                layoutTestBtn.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.cancel_test:
