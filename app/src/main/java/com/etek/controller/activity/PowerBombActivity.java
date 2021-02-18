@@ -270,7 +270,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      * 进行充电取消步骤
      */
     private void chargeCancel() {
-        toastText.setText("总线放电中...");
+        //toastText.setText("总线放电中...");
 
         // 充电取消,先进行拉低操作
         if (detsBusChargeTask != null) {

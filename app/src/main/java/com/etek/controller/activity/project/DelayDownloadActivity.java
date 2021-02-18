@@ -355,6 +355,11 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onDelayTimeClick(int position) {
+        // 下载过程不能修改
+        if(!isCancelDownLoad) {
+            return;
+        }
+
         // 点击修改 延时
         ProjectDetonator detonatorEntity = detonators.get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

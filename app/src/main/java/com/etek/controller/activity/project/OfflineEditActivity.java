@@ -117,7 +117,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         backImg.setOnClickListener(this);
         textBtn.setOnClickListener(this);
         proCode = findViewById(R.id.pro_code);
-        proCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        // 项目编号可以输入英文字母
+        //proCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         contractCode = findViewById(R.id.contract_code);
         contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         companyCode = findViewById(R.id.company_code);
@@ -231,7 +232,9 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
     private void saveData() {
         OfflineDownloadBean offlineDownloadBean = new OfflineDownloadBean();
         String strContractCode = contractCode.getText().toString();
-        String strProCode = proCode.getText().toString();
+        String strProCode = proCode.getText().toString().toUpperCase();
+        proCode.setText(strProCode);
+
         offlineDownloadBean.setHtid(strContractCode);
         offlineDownloadBean.setXmbh(strProCode);
         setStringInfo("offlineEditInfo",JSON.toJSONString(offlineDownloadBean));
