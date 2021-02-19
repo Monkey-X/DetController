@@ -168,7 +168,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             //起爆器编号
             controllerId.setText(projectInfoEntity.getControllerId());
             //地标
-            DecimalFormat df = new DecimalFormat("0.000000");
+            DecimalFormat df = new DecimalFormat("0.0000");
             String loc = df.format(projectInfoEntity.getLongitude()) + "  ,  " + df.format(projectInfoEntity.getLatitude());
             controllerLocation.setText(loc);
             //起爆器时间
@@ -468,7 +468,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         XLog.d(rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
         XLog.d(result);
-        String url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+        String url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
 
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
