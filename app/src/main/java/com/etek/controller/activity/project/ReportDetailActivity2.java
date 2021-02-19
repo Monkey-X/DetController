@@ -313,9 +313,9 @@ public class ReportDetailActivity2 extends BaseActivity {
         String url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
-        //String newUrl = SommerUtils.attachHttpGetParams(url, params);
+        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
         //XLog.d("len:" + newUrl.length());
-        AsyncHttpCilentUtil.httpPost(url, params, new Callback() {
+        AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -371,9 +371,9 @@ public class ReportDetailActivity2 extends BaseActivity {
         String url = AppConstants.DanningServer + AppConstants.ProjectReport;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
-        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-        XLog.e("newUrl:  " + newUrl);
-        AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
+//        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
+//        XLog.e("newUrl:  " + newUrl);
+        AsyncHttpCilentUtil.httpPost(url, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 XLog.e("IOException:", e.getMessage());
