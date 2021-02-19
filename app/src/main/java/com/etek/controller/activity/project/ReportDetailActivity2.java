@@ -55,6 +55,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -298,7 +300,12 @@ public class ReportDetailActivity2 extends BaseActivity {
         }).start();
     }
 
+    //  上传到力芯后台
     private void sendRptToEtekServer(ReportDto2 reportDto) {
+        //  修改小数点第4，5位
+        reportDto.setJd(getEmuLongLatitude(reportDto.getJd()));
+        reportDto.setWd(getEmuLongLatitude(reportDto.getWd()));
+
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         XLog.d(rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
@@ -347,8 +354,12 @@ public class ReportDetailActivity2 extends BaseActivity {
         });
     }
 
-
+    //  上传到丹灵后台
     private void sendRptToDanling(ReportDto2 reportDto) {
+        //  修改小数点第4，5位
+        reportDto.setJd(getEmuLongLatitude(reportDto.getJd()));
+        reportDto.setWd(getEmuLongLatitude(reportDto.getWd()));
+
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         XLog.v(rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
@@ -398,7 +409,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         });
     }
 
-
+    //  上传到中报后台
     private void sendRptToZhongBao(List<String> detMsgs) {
         try {
             NioSocketConnector connector = new NioSocketConnector();
@@ -431,6 +442,19 @@ public class ReportDetailActivity2 extends BaseActivity {
         } finally {
             XLog.d("detMsgs finished");
         }
+    }
+
+    //  获取模拟的经纬度
+    private String getEmuLongLatitude(String strjwd){
+        Double d = Double.parseDouble(strjwd);
+
+        DecimalFormat df = new DecimalFormat("0.000");
+        String strd = df.format(d);
+        Random random = new Random();
+        int ends = random.nextInt(99);
+        strd += String.format(Locale.CHINA, "%02d", ends);
+
+        return strd;
     }
 
 

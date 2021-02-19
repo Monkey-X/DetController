@@ -242,7 +242,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 检查起爆是否在黑名单中
      *
      * @param sn 起爆器编号
-     * @return
+     * @return true表示在黑名单中，false表示不在
      */
     private boolean isInBlackList(String sn) {
         if (blackList != null && !blackList.isEmpty()) {
@@ -402,10 +402,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      */
     private void getVerifyResult(PendingProject projectInfoEntity) {
 
-        String longitude = locationLongitude.getText().toString().trim();
-        String latitue = locationLatitude.getText().toString().trim();
-        projectInfoEntity.setLongitude(Double.parseDouble(longitude));
-        projectInfoEntity.setLatitude(Double.parseDouble(latitue));
+//        String longitude = locationLongitude.getText().toString().trim();
+//        String latitue = locationLatitude.getText().toString().trim();
+//        projectInfoEntity.setLongitude(Double.parseDouble(longitude));
+//        projectInfoEntity.setLatitude(Double.parseDouble(latitue));
 
         String strContractCode = contractCode.getText().toString().trim();
         String strProCode = proCode.getText().toString().trim();
@@ -511,22 +511,24 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         return;
                     }
                     long projectId = storeProjectInfo(projectFile, serverResult);
-                    Zbqys zbqys = serverResult.getZbqys();
-                    List<Zbqy> zbqy = zbqys.getZbqy();
-                    if (zbqy != null && zbqy.size() != 0) {
-                        Zbqy zbqy1 = zbqy.get(0);
-                        DecimalFormat df = new DecimalFormat("0.00");
-                        String longitude = df.format(Double.parseDouble(zbqy1.getZbqyjd()));
-                        Random random = new Random();
-                        int ends = random.nextInt(99);
-                        longitude += String.format(Locale.CHINA, "%02d", ends);
-                        DecimalFormat df2 = new DecimalFormat("0.000");
-                        String latitude = df2.format(Double.parseDouble(zbqy1.getZbqywd()));
-                        ends = random.nextInt(99);
-                        latitude += String.format(Locale.CHINA, "%02d", ends);
-                        pendingProject.setLongitude(Double.parseDouble(longitude));
-                        pendingProject.setLatitude(Double.parseDouble(latitude));
-                    }
+
+                    //  在线检查数据上报时，使用当前经纬度
+//                    Zbqys zbqys = serverResult.getZbqys();
+//                    List<Zbqy> zbqy = zbqys.getZbqy();
+//                    if (zbqy != null && zbqy.size() != 0) {
+//                        Zbqy zbqy1 = zbqy.get(0);
+//                        DecimalFormat df = new DecimalFormat("0.00");
+//                        String longitude = df.format(Double.parseDouble(zbqy1.getZbqyjd()));
+//                        Random random = new Random();
+//                        int ends = random.nextInt(99);
+//                        longitude += String.format(Locale.CHINA, "%02d", ends);
+//                        DecimalFormat df2 = new DecimalFormat("0.000");
+//                        String latitude = df2.format(Double.parseDouble(zbqy1.getZbqywd()));
+//                        ends = random.nextInt(99);
+//                        latitude += String.format(Locale.CHINA, "%02d", ends);
+//                        pendingProject.setLongitude(Double.parseDouble(longitude));
+//                        pendingProject.setLatitude(Double.parseDouble(latitude));
+//                    }
                     goToBomb();
                     uploadData(projectId);
                 } else {
@@ -758,21 +760,23 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 showStatusDialog(CheckRuleEnum.UNREG_DET.getMessage() + unRegiestCount);
                 return;
             }
-            List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
-            if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
-                PermissibleZoneEntity permissibleZoneEntity = permissibleZoneList.get(0);
-                DecimalFormat df = new DecimalFormat("0.00");
-                String longitude = df.format(permissibleZoneEntity.getLongitude());
-                Random random = new Random();
-                int ends = random.nextInt(99);
-                longitude += String.format(Locale.CHINA, "%02d", ends);
-                DecimalFormat df2 = new DecimalFormat("0.000");
-                String latitude = df2.format(permissibleZoneEntity.getLatitude());
-                ends = random.nextInt(99);
-                latitude += String.format(Locale.CHINA, "%02d", ends);
-                pendingProject.setLongitude(Double.parseDouble(longitude));
-                pendingProject.setLatitude(Double.parseDouble(latitude));
-            }
+
+            //  离线检查数据上报时，获取当前经纬度
+//            List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
+//            if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
+//                PermissibleZoneEntity permissibleZoneEntity = permissibleZoneList.get(0);
+//                DecimalFormat df = new DecimalFormat("0.00");
+//                String longitude = df.format(permissibleZoneEntity.getLongitude());
+//                Random random = new Random();
+//                int ends = random.nextInt(99);
+//                longitude += String.format(Locale.CHINA, "%02d", ends);
+//                DecimalFormat df2 = new DecimalFormat("0.000");
+//                String latitude = df2.format(permissibleZoneEntity.getLatitude());
+//                ends = random.nextInt(99);
+//                latitude += String.format(Locale.CHINA, "%02d", ends);
+//                pendingProject.setLongitude(Double.parseDouble(longitude));
+//                pendingProject.setLatitude(Double.parseDouble(latitude));
+//            }
             goToBomb();
             uploadData(projectInfo);
         }
@@ -789,6 +793,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void uploadData(ProjectInfoEntity projectInfoEntity) {
+        //  2021-02-19  用当前界面上的经纬度来在线/离线检查上报
+        projectInfoEntity.setLongitude(pendingProject.getLongitude());
+        projectInfoEntity.setLatitude(pendingProject.getLatitude());
+
         String rptJson = getReportDto(projectInfoEntity);
         String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
         AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
