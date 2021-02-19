@@ -353,6 +353,14 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         } else if (TextUtils.isEmpty(locationLatitude.getText().toString().trim())) {
             ToastUtils.show(mContext, "当前纬度为空");
         } else {
+            //  规则检查时pendingProject的经纬度根据界面上的调整
+            double longitude = Double.valueOf(locationLongitude.getText().toString().trim());
+            double latitude = Double.valueOf(locationLatitude.getText().toString().trim());
+            if (pendingProject != null) {
+                pendingProject.setLatitude(latitude);
+                pendingProject.setLongitude(longitude);
+            }
+
             if ("online".equals(type)) {//在线检查
                 getVerifyResult(pendingProject);
             } else if ("offline".equals(type)) {//离线检查

@@ -382,6 +382,9 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                             projectFile.setHtbh(offlineDownloadBean.getHtid());
                             ProInfoDto proInfoDto = new ProInfoDto();
                             BeanPropertiesUtil.copyProperties(serverResult, proInfoDto);
+
+                            // 设置申请日期为当前日期
+                            //proInfoDto.setSqrq(new Date());
                             projectFile.setProInfo(proInfoDto);
 
                             String strInfo = JSON.toJSONString(projectFile, AppUtils.filter);

@@ -1214,7 +1214,7 @@ public class CheckoutActivity extends BaseActivity {
         String fdName = "report_info" + DateUtil.getDateDoc(new Date()) + ".json";
         FileUtils.saveFileToSDcard("detonator/json", fdName, rptJson);
 //        showToast("保存完成！");
-        String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
+        String url = AppConstants.ETEKTestServer + AppConstants.DETUnCheck;
 //        showDialog(getMyString(R.string.report));
         AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
 

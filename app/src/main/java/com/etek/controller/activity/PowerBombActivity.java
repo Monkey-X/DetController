@@ -223,7 +223,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
         //  右下角的退出键
         if(4==keyCode){
             if(!isBombing){
@@ -241,7 +240,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         detsBusChargeTask.execute();
     }
 
-
     public void showProgressDialog(String msg, int type) {
         if (type == ITaskCallback.BL_FALSE) {
             showProDialog(msg);
@@ -258,7 +256,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                     }
                 });
             }
-            progressValueDialog.setCancelable(true);
+            progressValueDialog.setCancelable(false);
             progressValueDialog.setCanceledOnTouchOutside(false);
             progressValueDialog.setMax(100);
             progressValueDialog.setProgressPercentFormat(null);
@@ -271,7 +269,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      */
     private void chargeCancel() {
         //toastText.setText("总线放电中...");
-
         // 充电取消,先进行拉低操作
         if (detsBusChargeTask != null) {
             detsBusChargeTask.cancel(true);
@@ -285,7 +282,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             progressValueDialog.setProgress(value);
         }
     }
-
 
     public void dissProgressDialog() {
         if (progressValueDialog != null) {
@@ -463,9 +459,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         checkDropOffTask.execute();
     }
 
-
-
-
     /**
      * 进行BL拉高操作
      *
@@ -474,7 +467,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private void StartSetBLTask(boolean hight) {
         SetBLTask setBLTask = new SetBLTask(this, hight);
         setBLTask.execute();
-
     }
 
     // 网络起爆失败,进行总线放电

@@ -144,7 +144,6 @@ public class ReportDetailActivity extends BaseActivity {
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -157,7 +156,6 @@ public class ReportDetailActivity extends BaseActivity {
 
         return true;
     }
-
 
     void initView() {
 
@@ -345,8 +343,6 @@ public class ReportDetailActivity extends BaseActivity {
         return false;
     });
 
-
-
     private void initTableView(List<Detonator> detonatorList) {
 
         if (detonatorList == null){
@@ -398,10 +394,7 @@ public class ReportDetailActivity extends BaseActivity {
         table.notifyAttributesChanged();
     }
 
-
     private List<String> createMessageList(List<Detonator> detonators) {
-
-
         List<String> msgs = new ArrayList<String>();
         if (detonators == null)
             return null;
@@ -464,11 +457,7 @@ public class ReportDetailActivity extends BaseActivity {
             }
 
             msgs.add(new String(message.toByte()));
-
-
         }
-
-
         return msgs;
 
     }
@@ -518,14 +507,9 @@ public class ReportDetailActivity extends BaseActivity {
         } finally {
             XLog.d("detMsgs finished");
         }
-
-
     }
 
-
-
     public class MinaHandler extends IoHandlerAdapter {
-
 
         public void messageReceived(IoSession session, Object message) {
             if (message == null) {
@@ -569,11 +553,7 @@ public class ReportDetailActivity extends BaseActivity {
                     DBManager.getInstance().getReportEntityDao().insertOrReplace(reportEntity);
                     sendCmdMessage(MSG_RPT_ZHONGBAO_ERR);
                     XLog.v("cmd :" + cmds[0]);
-
-
                 }
-
-
             }
 
         }
@@ -617,7 +597,6 @@ public class ReportDetailActivity extends BaseActivity {
         }
     }
 
-
     void UPZBThread(List<Detonator> detonators) {
 //            showToast("是否模拟：" +Globals.isSimUPload);
         Globals.zhongbaoAddress = getStringInfo("zhongbaoAddress");
@@ -629,7 +608,6 @@ public class ReportDetailActivity extends BaseActivity {
             sendRptToZhongBao(msgs);
         }).start();
     }
-
 
     void showSendDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -650,14 +628,11 @@ public class ReportDetailActivity extends BaseActivity {
         dialog.show();
     }
 
-
     private void sendDanLingReport() {
         allSize = reportDtos.size();
         showProgressBar("上传数据！",allSize*2);
         step = 0;
         sendRptToDanling(reportDtos.get(step));
-
-
     }
 
     private void sendRptToDanling(ReportDto reportDto) {
@@ -721,20 +696,15 @@ public class ReportDetailActivity extends BaseActivity {
                     sendCmdMessage(MSG_RPT_DANLING_ERR);
 
                 }
-
-
             }
         });
     }
 
     private void sendReport2ETEKTest() {
-
         showProgressBar("上传数据！", reportDtos.size());
         step = 0;
         allSize = reportDtos.size();
         sendRptToEtekServer(reportDtos.get(step));
-
-
     }
 
     private void sendRptToEtekServer(ReportDto reportDto) {
@@ -800,17 +770,18 @@ public class ReportDetailActivity extends BaseActivity {
                     sendCmdMessage(MSG_RPT_ETEK_TEST_ERR);
 
                 }
-
-
             }
         });
     }
+
     private void sendRptToEtekServerBck(ReportDto reportDto) {
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         XLog.d(rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
         XLog.d(result);
-        String url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+
+        //  上传至正式服务器会传输一份数据到该接口： /api/DetBackUp/Post
+        String url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
 
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
@@ -874,10 +845,7 @@ public class ReportDetailActivity extends BaseActivity {
     private void sendReportToETEKBck() {
 //        step = 0;
         sendRptToEtekServerBck(reportDtos.get(step-allSize));
-
-
     }
-
 
     List<ReportDto> getReportDto(DetController detController) {
         List<ReportDto> reportDtos = new ArrayList<>();
