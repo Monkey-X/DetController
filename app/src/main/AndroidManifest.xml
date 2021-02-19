@@ -42,9 +42,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.project.BombPassWordSettingActivity"></activity>
         <activity
             android:name=".activity.project.UserInfoActivity2"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.project.SettingsActivity2" />
         <activity
             android:name=".activity.project.OfflineEditActivity"

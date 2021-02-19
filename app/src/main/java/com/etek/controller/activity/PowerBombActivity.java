@@ -6,13 +6,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.BombPassWordSettingActivity;
+import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.fragment.SudokuDialog;
 import com.etek.controller.hardware.task.BusDisChargeTask;
 import com.etek.controller.hardware.task.CheckDropOffTask;
 import com.etek.controller.hardware.task.DetnoateTask;
@@ -55,6 +60,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private View powerBank;
     private long proId;
     private List<ProjectDetonator> detonatorEntityList;
+    private String bombPassWord;
 
 
     @Override
@@ -92,6 +98,18 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      */
     private void init() {
         this.mContext = this;
+        bombPassWord = getPreInfo("BombPassWord");
+        if (TextUtils.isEmpty(bombPassWord)) {
+            startActivityForResult(new Intent(this, BombPassWordSettingActivity.class),200);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 200) {
+           init();
+        }
     }
 
     private SoundPoolHelp soundPoolHelp;
@@ -116,54 +134,70 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     boolean isCanBomb = false;
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
+//    @Override
+//    public boolean dispatchKeyEvent(KeyEvent event) {
+//
+//        int keyCode = event.getKeyCode();
+//        int action = event.getAction();
+//
+//        if (isCanBomb) {
+//
+//            if (keyCode == 19 && action == KeyEvent.ACTION_DOWN) {
+//                mBackKeyAction = KeyEvent.ACTION_DOWN;  //记录按下状态
+//                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_DOWN");
+//                if (mActionTime == 0) {
+//                    mActionTime = System.currentTimeMillis();
+//                }
+//            }
+//
+//            if (keyCode == 19 && action == KeyEvent.ACTION_UP) {
+//                mBackKeyAction = KeyEvent.ACTION_UP;  //记录松下状态
+//                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_UP");
+//                mActionTime = 0;
+//            }
+//
+//            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_DOWN) {
+//                mOkKeyAction = KeyEvent.ACTION_DOWN;   //记录按下状态
+//                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_DOWN");
+//                if (mActionTime == 0) {
+//                    mActionTime = System.currentTimeMillis();
+//                }
+//            }
+//
+//            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_UP) {
+//                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_UP");
+//                mOkKeyAction = KeyEvent.ACTION_UP;    //记录松下状态
+//                mActionTime = 0;
+//            }
+//
+//            //长按，左右侧键
+//            if (isLongPress() && mBackKeyAction == KeyEvent.ACTION_DOWN && mOkKeyAction == KeyEvent.ACTION_DOWN) {
+//                //  长按左右键之后进行起爆操作
+//                Log.d(TAG, "dispatchKeyEvent: DetonateAllDet");
+//                mBackKeyAction = -1;
+//                mOkKeyAction = -1;
+//                mActionTime = 0;
+//                DetonateAllDet();
+//            }
+//        }
+//        return true;
+//
+//    }
 
-        int keyCode = event.getKeyCode();
-        int action = event.getAction();
-
-        if (isCanBomb) {
-
-            if (keyCode == 19 && action == KeyEvent.ACTION_DOWN) {
-                mBackKeyAction = KeyEvent.ACTION_DOWN;  //记录按下状态
-                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_DOWN");
-                if (mActionTime == 0) {
-                    mActionTime = System.currentTimeMillis();
+    private void showVerifyDialog(){
+        SudokuDialog sudokuDialog = new SudokuDialog();
+        sudokuDialog.setSudokuListener(new SudokuView.SudokuListener() {
+            @Override
+            public void onSbSelected(String result) {
+                if (result.equals(bombPassWord)) {
+                    sudokuDialog.dismiss();
+                    DetonateAllDet();
+                }else{
+                    ToastUtils.show(PowerBombActivity.this,"手势密码不正确！");
                 }
             }
-
-            if (keyCode == 19 && action == KeyEvent.ACTION_UP) {
-                mBackKeyAction = KeyEvent.ACTION_UP;  //记录松下状态
-                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_UP");
-                mActionTime = 0;
-            }
-
-            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_DOWN) {
-                mOkKeyAction = KeyEvent.ACTION_DOWN;   //记录按下状态
-                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_DOWN");
-                if (mActionTime == 0) {
-                    mActionTime = System.currentTimeMillis();
-                }
-            }
-
-            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_UP) {
-                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_UP");
-                mOkKeyAction = KeyEvent.ACTION_UP;    //记录松下状态
-                mActionTime = 0;
-            }
-
-            //长按，左右侧键
-            if (isLongPress() && mBackKeyAction == KeyEvent.ACTION_DOWN && mOkKeyAction == KeyEvent.ACTION_DOWN) {
-                //  长按左右键之后进行起爆操作
-                Log.d(TAG, "dispatchKeyEvent: DetonateAllDet");
-                mBackKeyAction = -1;
-                mOkKeyAction = -1;
-                mActionTime = 0;
-                DetonateAllDet();
-            }
-        }
-        return true;
-
+        });
+        sudokuDialog.show(getSupportFragmentManager(),"");
     }
 
     private void DetonateAllDet() {
@@ -433,9 +467,9 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                toastText.setText("请同时长按上下按钮1秒进行起爆操作！");
-                isCanBomb = true;
+                toastText.setText("请验证手势密码进行起爆操作！");
                 powerBank.setVisibility(View.GONE);
+                showVerifyDialog();
                 if (checkDropOffTask != null) {
                     checkDropOffTask.cancel(true);
                 }

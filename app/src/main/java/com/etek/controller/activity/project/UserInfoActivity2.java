@@ -1,5 +1,6 @@
 package com.etek.controller.activity.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -55,6 +56,9 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         companyCode = findViewById(R.id.company_code);
         companyCode.setInputType(EditorInfo.TYPE_CLASS_TEXT);
 
+        TextView bombPassword = findViewById(R.id.set_bomb_password);
+        bombPassword.setOnClickListener(this);
+
         Button personalInfoModify = findViewById(R.id.personal_info_modify);
         personalInfoModify.setOnClickListener(this);
     }
@@ -90,6 +94,9 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
                     return;
                 }
                 finish();
+                break;
+            case R.id.set_bomb_password:
+              startActivity(new Intent(this,BombPassWordSettingActivity.class));
                 break;
         }
     }

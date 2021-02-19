@@ -205,8 +205,19 @@
             android:inputType="number"
             android:textColor="@color/eighty_per_trans_black" />
 
-
     </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/set_bomb_password"
+        android:layout_marginTop="10dp"
+        android:text="设置起爆密码"
+        android:paddingLeft="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/message_item_auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
     <LinearLayout

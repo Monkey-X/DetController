@@ -1,9 +1,9 @@
 package com.etek.controller.activity.project;
 
 import android.content.Intent;
-import android.provider.Settings;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -11,8 +11,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.etek.controller.R;
-import com.etek.controller.activity.project.HomeActivity2;
+import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.fragment.SudokuDialog;
 import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -21,6 +22,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private EditText userName;
     private EditText password;
+    private static String TAG = "LoginActivity";
 
 
     @Override
