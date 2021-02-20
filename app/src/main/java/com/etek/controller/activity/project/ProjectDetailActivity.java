@@ -698,7 +698,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    private void createDetData(String strgm) {
+    private synchronized void createDetData(String strgm) {
         // 检查重复的雷管
         if (checkTheSameDet(strgm)) {
             isInsertItem = false;

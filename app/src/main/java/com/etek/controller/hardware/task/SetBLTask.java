@@ -1,6 +1,7 @@
 package com.etek.controller.hardware.task;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.etek.controller.hardware.command.DetApp;
 
@@ -35,10 +36,11 @@ public class SetBLTask extends AsyncTask<String, Integer, Integer> {
         int result = DetApp.getInstance().MainBoardSetBL(bHigh);
         if (!bHigh) {
             try {
-                Thread.sleep(10000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
         return result;
     }

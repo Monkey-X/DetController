@@ -295,13 +295,13 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             layoutPro.setVisibility(View.GONE);
         }
         contractCode = findViewById(R.id.contract_code);
-        contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        //contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         controllerId = findViewById(R.id.ctrl_id);
         locationLongitude = findViewById(R.id.ctrl_location_longitude);
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
         getLocation = findViewById(R.id.get_location);
         proCode = findViewById(R.id.pro_code);
-        proCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        //proCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         detonatorList = findViewById(R.id.check_detonator_list);
         getLocation.setOnClickListener(this);
         detonatorList.setLayoutManager(new LinearLayoutManager(this));
@@ -402,10 +402,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      */
     private void getVerifyResult(PendingProject projectInfoEntity) {
 
-//        String longitude = locationLongitude.getText().toString().trim();
-//        String latitue = locationLatitude.getText().toString().trim();
-//        projectInfoEntity.setLongitude(Double.parseDouble(longitude));
-//        projectInfoEntity.setLatitude(Double.parseDouble(latitue));
+        String longitude = locationLongitude.getText().toString().trim();
+        String latitue = locationLatitude.getText().toString().trim();
+        projectInfoEntity.setLongitude(Double.parseDouble(longitude));
+        projectInfoEntity.setLatitude(Double.parseDouble(latitue));
 
         String strContractCode = contractCode.getText().toString().trim();
         String strProCode = proCode.getText().toString().trim();

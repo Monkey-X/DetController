@@ -18,6 +18,7 @@ import com.etek.controller.activity.project.BombPassWordSettingActivity;
 import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.fragment.SudokuDialog;
+import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.task.BusDisChargeTask;
 import com.etek.controller.hardware.task.CheckDropOffTask;
 import com.etek.controller.hardware.task.DetnoateTask;
@@ -31,6 +32,7 @@ import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
+import com.etek.controller.utils.DateStringUtils;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -100,7 +102,10 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         this.mContext = this;
         bombPassWord = getPreInfo("BombPassWord");
         if (TextUtils.isEmpty(bombPassWord)) {
-            startActivityForResult(new Intent(this, BombPassWordSettingActivity.class),200);
+            //  Z字形输入
+            bombPassWord ="1235789";
+            setStringInfo("BombPassWord",bombPassWord);
+            //startActivityForResult(new Intent(this, BombPassWordSettingActivity.class),200);
         }
     }
 
@@ -201,6 +206,29 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void DetonateAllDet() {
+        //  检查是否脱落
+        StringBuilder strData = new StringBuilder();
+        int ret  = DetApp.getInstance().DetsCheckDropOff(strData);
+        Log.d(TAG, String.format("DetsCheckDropOff: %d",ret));
+
+        // 通信不通
+        if(0!=ret){
+            showAlterDialog("检测到雷管脱落或短路！");
+            StartSetBLTask(true);
+            return;
+        }
+
+        //  返回数据不对
+        Log.d(TAG, String.format("DetsCheckDropOff返回: %s",strData.toString()));
+        String checkString = strData.substring(8);
+        Log.d(TAG, String.format("DetsCheckDropOff checkString: %s",checkString.toString()));
+        int checkInt = Integer.parseInt(checkString, 16);
+        if (checkInt != 1) {
+            showAlterDialog("检测到雷管脱落或短路！");
+            StartSetBLTask(true);
+            return;
+        }
+
         // 进行网络起爆
         isCanBomb = false;
         if (!isBombing) {
@@ -224,6 +252,17 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    private void showAlterDialog(String strmsg){
+        soundPoolHelp.playSound(false);
+        VibrateUtil.vibrate(this, 1000);
+
+        new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage(strmsg)
+                .setPositiveButton("确定", null)
+                .show();
+        return;
+    }
     /**
      * 注销
      */
@@ -259,9 +298,9 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //  右下角的退出键
         if(4==keyCode){
-            if(!isBombing){
-                finish();
-            }
+//            if(!isBombing){
+//                finish();
+//            }
         }
         return super.onKeyUp(keyCode, event);
     }
@@ -396,6 +435,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         if (projectInfoEntity != null) {
             projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1);
+            projectInfoEntity.setDate(DateStringUtils.getCurrentTime());        //  起爆时间
             DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
         }
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
