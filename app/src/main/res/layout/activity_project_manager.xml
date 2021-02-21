@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.ProjectManagerActivity">
+    tools:context=".activity.project.ProjectManagerActivity">
 
     <RelativeLayout
         android:id="@+id/project_create"

@@ -53,6 +53,7 @@ import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
+import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
@@ -276,7 +277,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         XLog.d("proId: " + proId);
         if (proId >= 0) {
             pendingProject = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
-            projectDetonatorList = pendingProject.getDetonatorList();
+            pendingProject.refresh();
+            projectDetonatorList= DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
         }
 
         //  起爆器编号使用全局设置信息
@@ -572,7 +574,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
                 DetonatorEntity detonatorBean = new DetonatorEntity();
                 if (StringUtils.isEmpty(lg.getFbh())) {
-                    for (ProjectDetonator detonator : pendingProject.getDetonatorList()) {
+                    for (ProjectDetonator detonator : projectDetonatorList) {
                         if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {
                             lg.setFbh(detonator.getCode());
                             detonator.setStatus(lg.getGzmcwxx());

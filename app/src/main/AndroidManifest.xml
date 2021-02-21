@@ -52,7 +52,7 @@
             android:theme="@style/activity_theme" />
         <activity android:name=".activity.project.MapActivity" />
         <activity android:name=".activity.ReportListActivity" />
-        <activity android:name=".activity.ProjectManagerActivity" />
+        <activity android:name=".activity.project.ProjectManagerActivity" />
         <activity android:name=".activity.project.AuthDownLoadDetailActivity" />
         <activity android:name=".activity.project.AboutActivity" />
         <activity

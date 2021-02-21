@@ -19,7 +19,6 @@ import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.AssistActivity;
 import com.etek.controller.activity.PersonActivity;
-import com.etek.controller.activity.ProjectManagerActivity;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
