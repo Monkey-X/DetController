@@ -34,8 +34,12 @@ public class ContractAdapter extends BaseQuickAdapter<ProjectInfoEntity, BaseVie
         if (!TextUtils.isEmpty(contractCode)) {
             ((TextView) helper.getView(R.id.contract_code)).setText("合同备案序号："+contractCode);
         }else{
-            ((TextView) helper.getView(R.id.contract_code)).setText("合同备案序号：");
-            //((TextView) helper.getView(R.id.contract_code)).setVisibility(View.GONE);
+            String strProID = item.getProCode();
+            if(!TextUtils.isEmpty(strProID)){
+                ((TextView) helper.getView(R.id.contract_code)).setText("项目编号："+strProID);
+            }else{
+                ((TextView) helper.getView(R.id.contract_code)).setVisibility(View.GONE);
+            }
         }
 
         //  修改为：雷管数量

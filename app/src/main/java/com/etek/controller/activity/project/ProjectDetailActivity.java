@@ -129,9 +129,12 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             soundPoolHelp.playSound(b);
         }
 
-        if(!b){
-            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
-        }
+        //  成功也要震动
+        VibrateUtil.vibrate(ProjectDetailActivity.this,150);
+
+//        if(!b){
+//            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
+//        }
         return;
     }
 
