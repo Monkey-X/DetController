@@ -855,6 +855,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         projectDetonator.setUid(getDetUid(detId, detCode));
         if (detonators.size() == 0) {
             projectDetonator.setHolePosition("1-1");
+            isStartTimeChange = false;
             String startTime = delayStartTime.getText().toString().trim();
             projectDetonator.setRelay(Integer.valueOf(startTime));
         } else {
