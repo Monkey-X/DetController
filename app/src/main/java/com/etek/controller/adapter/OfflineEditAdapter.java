@@ -18,6 +18,8 @@ public class OfflineEditAdapter extends RecyclerView.Adapter<OfflineEditAdapter.
 
     private final Context context;
     private final List<Detonator> datas;
+    private int selectedPosition = -1; // 表示选中的效果
+    private OnItemClickListener onItemClickListener;
 
     public OfflineEditAdapter(Context context, List<Detonator> datas) {
         this.context = context;
@@ -27,17 +29,38 @@ public class OfflineEditAdapter extends RecyclerView.Adapter<OfflineEditAdapter.
     @NonNull
     @Override
     public OfflineEditViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View inflate = LayoutInflater.from(context).inflate(R.layout.item_offline_edit, viewGroup, false);
-        OfflineEditAdapter.OfflineEditViewHolder projectViewHolder = new OfflineEditAdapter.OfflineEditViewHolder(inflate);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_offline_edit, viewGroup, false);
+        OfflineEditAdapter.OfflineEditViewHolder projectViewHolder = new OfflineEditAdapter.OfflineEditViewHolder(view);
         return projectViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull OfflineEditViewHolder offlineEditViewHolder, int i) {
+
+        offlineEditViewHolder.itemView.setSelected(selectedPosition == i);
         offlineEditViewHolder.numPostion.setText(String.valueOf(i+1));
         Detonator detonator = datas.get(i);
         offlineEditViewHolder.detCode.setText(detonator.getDetCode());
         offlineEditViewHolder.detStatus.setText(getStatusName(detonator.getStatus()));
+
+        offlineEditViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    selectedPosition = i;
+                    notifyDataSetChanged();
+                    onItemClickListener.onItemClick(v, i);
+                }
+            }
+        });
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
     }
 
 

@@ -8,10 +8,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -68,7 +70,7 @@ import java.util.regex.Pattern;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class OfflineEditActivity extends BaseActivity implements View.OnClickListener {
+public class OfflineEditActivity extends BaseActivity implements View.OnClickListener, OfflineEditAdapter.OnItemClickListener {
 
     private EditText proCode;
     private EditText contractCode;
@@ -137,8 +139,34 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         // 设置界面的数据
         detList = new ArrayList<>();
         offlineEditAdapter = new OfflineEditAdapter(this, detList);
+        offlineEditAdapter.setOnItemClickListener(this);
         offlineRecycleView.setLayoutManager(new LinearLayoutManager(OfflineEditActivity.this));
         offlineRecycleView.setAdapter(offlineEditAdapter);
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        showPopuWindow(view, position);
+    }
+
+    private void showPopuWindow(View view, int position) {
+        int[] location = new int[2];
+        view.getLocationInWindow(location);
+        View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 60);
+        popuView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                detList.remove(position);
+                offlineEditAdapter.notifyDataSetChanged();
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                }
+            }
+        });
+        popuView.findViewById(R.id.insert_item).setVisibility(View.GONE);
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.showAtLocation(view, Gravity.RIGHT | Gravity.TOP, 0, location[1] + 25);
     }
 
     private void initData() {
@@ -148,7 +176,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             Intent intent = new Intent(this, UserInfoActivity2.class);
             startActivity(intent);
             return;
-        }else{
+        } else {
             Globals.user = JSON.parseObject(userStr, User.class);
         }
         companyCode.setText(Globals.user.getCompanyCode());

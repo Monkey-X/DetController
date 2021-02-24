@@ -59,23 +59,6 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
             view.setText("X");
             view.setTextColor(view.getContext().getColor(R.color.red_normal));
         }
-//        switch (teststatus) {
-//            case 0:
-//            case 160:
-//                // 连接成功
-//            case 169:
-//                view.setText(R.string.str_success);
-//                view.setTextColor(view.getContext().getColor(R.color.palegreen));
-//                break;
-//            case 170:
-//                // 失联
-//                view.setText(R.string.str_miss);
-//                view.setTextColor(view.getContext().getColor(R.color.lightgrey));
-//                break;
-//            default:
-//                view.setText(R.string.str_faile);
-//                view.setTextColor(view.getContext().getColor(R.color.red_normal));
-//        }
     }
 
 }
