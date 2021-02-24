@@ -50,8 +50,10 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
 
         View wifiSetting = findViewById(R.id.wifi_setting);
         View modleNet = findViewById(R.id.modle_net);
+        View setPassWord = findViewById(R.id.set_bomb_password);
         wifiSetting.setOnClickListener(this);
         modleNet.setOnClickListener(this);
+        setPassWord.setOnClickListener(this);
     }
 
     @Override
@@ -81,13 +83,20 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         switch (v.getId()) {
             case R.id.wifi_setting:
                 ntype = GeneralDisplayUI.NETWORK_WIFI;
-
+                showNetSetting(ntype);
                 break;
             case R.id.modle_net:
                 ntype = GeneralDisplayUI.NETWORK_4G;
+                showNetSetting(ntype);
+                break;
+            case R.id.set_bomb_password:
+                startActivity(new Intent(this,BombPassWordSettingActivity.class));
                 break;
         }
-        GeneralDisplayUI.showSettingNetworkSelect(this,ntype);
-
     }
+
+    private void showNetSetting(int ntype) {
+        GeneralDisplayUI.showSettingNetworkSelect(this,ntype);
+    }
+
 }

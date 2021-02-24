@@ -150,5 +150,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/set_bomb_password"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/message_item_auto"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_height="45dp">
+        <TextView
+            android:text="起爆手势密码设置"
+            android:textColor="#111111"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </TextView>
+
+    </LinearLayout>
+
 
 </LinearLayout>

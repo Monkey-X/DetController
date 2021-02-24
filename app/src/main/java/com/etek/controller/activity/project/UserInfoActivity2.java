@@ -25,8 +25,6 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
 
     private static final String COMPANYCODE_REGEX = "^[0-9]{13}";
     private EditText personalInfoName;
-    private EditText personalInfoSex;
-    private EditText personalInfoAge;
     private EditText personalIdCode;
     private EditText companyName;
     private EditText companyCode;
@@ -49,15 +47,10 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         backImg.setOnClickListener(this);
 
         personalInfoName = findViewById(R.id.personal_info_name);
-        personalInfoSex = findViewById(R.id.personal_info_sex);
-        personalInfoAge = findViewById(R.id.personal_info_age);
         personalIdCode = findViewById(R.id.personal_id_code);
         companyName = findViewById(R.id.company_name);
         companyCode = findViewById(R.id.company_code);
         companyCode.setInputType(EditorInfo.TYPE_CLASS_TEXT);
-
-        TextView bombPassword = findViewById(R.id.set_bomb_password);
-        bombPassword.setOnClickListener(this);
 
         Button personalInfoModify = findViewById(R.id.personal_info_modify);
         personalInfoModify.setOnClickListener(this);
@@ -70,8 +63,6 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
             User user = JSON.parseObject(userinfo, User.class);
             if (user != null && !StringUtil.isBlank(user.getName())) {
                 personalInfoName.setText(user.getName());
-                personalInfoSex.setText(user.getSex());
-                personalInfoAge.setText("" + user.getAge());
                 personalIdCode.setText(user.getIdCode());
                 companyName.setText(user.getCompanyName());
                 companyCode.setText(user.getCompanyCode());
@@ -94,9 +85,6 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
                     return;
                 }
                 finish();
-                break;
-            case R.id.set_bomb_password:
-              startActivity(new Intent(this,BombPassWordSettingActivity.class));
                 break;
         }
     }
@@ -125,18 +113,6 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         String userName = personalInfoName.getText().toString().trim();
         if (TextUtils.isEmpty(userName)) {
             showToast( "用户名不能为空");
-            return;
-        }
-
-        String userSex = personalInfoSex.getText().toString().trim();
-        if (TextUtils.isEmpty(userSex)) {
-            showToast( "性别不能为空，必须为男女");
-            return;
-        }
-
-        String userAge = personalInfoAge.getText().toString().trim();
-        if (TextUtils.isEmpty(userAge)) {
-            showToast( "年龄不能为空，必须为数字！");
             return;
         }
 
@@ -172,10 +148,8 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
             return;
         }
         User user = new User();
-        user.setAge(Integer.parseInt(userAge));
         user.setCompanyCode(comCode);
         user.setIdCode(userId);
-        user.setSex(userSex);
         user.setCompanyName(comName);
         user.setName(userName);
         setStringInfo("userInfo", JSON.toJSONString(user));
