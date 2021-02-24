@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.AuthBombActivity2;
-import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDelayAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.FastEditBean;
@@ -35,7 +33,6 @@ import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
-import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.utils.DetDelayTimeValidation;
@@ -56,9 +53,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private RecyclerView mDelayList;
     private List<ProjectDetonator> detonators;
     private ProjectDelayAdapter mProjectDelayAdapter;
-    private PopupWindow popWindow;
     private TextView textBtn;
-    private int projectPosition = -1;
     private long proId;
     private List<ProjectDetonator> detonatorEntityList;
     private DelayDownloadTask delayDownloadTask;
@@ -320,27 +315,43 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     //再次下载
     private void downloadItem(int position) {
+
+        changSingleDetStatus(position);
+
         showProDialog("下载中...");
 
-        DetApp.getInstance().MainBoardLVEnable();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DetApp.getInstance().MainBoardLVEnable();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        boolean b = detSingleDownload(position);
+                boolean b = detSingleDownload(position);
 
-        DetApp.getInstance().MainBoardBusPowerOff();
+                DetApp.getInstance().MainBoardBusPowerOff();
+                if(!b){
+                    VibrateUtil.vibrate(DelayDownloadActivity.this, 150);
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        missProDialog();
+                        mProjectDelayAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
+    }
 
-        if (soundPoolHelp != null) {
-            soundPoolHelp.playSound(b);
-            if(!b)
-                VibrateUtil.vibrate(DelayDownloadActivity.this, 150);
-        }
-
+    // 单颗进行检测时，要先改变状态然后在进行检测
+    private void changSingleDetStatus(int position) {
+        ProjectDetonator detonatorEntity = detonators.get(position);
+        detonatorEntity.setDownLoadStatus(-1);
         mProjectDelayAdapter.notifyDataSetChanged();
-        missProDialog();
     }
 
     // 删除条目
@@ -455,7 +466,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         Log.d(TAG, "detSingleDownload: downloadResult = " + downloadResult);
         detonatorEntity.setDownLoadStatus(downloadResult);
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
-
+        playSound(downloadResult == 0);
         return downloadResult == 0;
     }
 

@@ -381,28 +381,45 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * @param position
      */
     private void testItem(int position) {
-        // 进行单个雷管的测试 todo
+        // 进行单个雷管的测试
+        changSingleDetStatus(position);
+
         showProDialog("检测中...");
 
-        DetApp.getInstance().MainBoardLVEnable();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DetApp.getInstance().MainBoardLVEnable();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        boolean b = detSingleCheck(position);
+                boolean b = detSingleCheck(position);
 
-        DetApp.getInstance().MainBoardBusPowerOff();
+                DetApp.getInstance().MainBoardBusPowerOff();
 
-        if (soundPoolHelp != null) {
-            soundPoolHelp.playSound(b);
-            if(!b)
-                VibrateUtil.vibrate(ConnectTestActivity.this, 150);
-        }
+                if(!b){
+                    VibrateUtil.vibrate(ConnectTestActivity.this, 150);
+                }
 
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        missProDialog();
+                        connectTestAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
+    }
+
+    // 单颗进行检测时，要先改变状态然后在进行检测
+    private void changSingleDetStatus(int position) {
+        ProjectDetonator detonatorEntity = connectData.get(position);
+        detonatorEntity.setTestStatus(-1);
         connectTestAdapter.notifyDataSetChanged();
-        missProDialog();
     }
 
 
