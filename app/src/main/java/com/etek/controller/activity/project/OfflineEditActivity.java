@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.adapter.OfflineEditAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
@@ -546,8 +547,11 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         EditText etDetCode = view.findViewById(R.id.et_det_code);
         EditText etDetNum = view.findViewById(R.id.et_det_num);
         Spinner spDetSpinner = view.findViewById(R.id.sp_det_type);
+        String spDetCodeStr = getPreInfo(AppSpSaveConstant.OFFLINE_EDIT_DET_CODE);
+        etDetCode.setText(spDetCodeStr);
         dialog.setCancelable(false);
         dialog.setView(view);
+
         //设置对话框标题
         dialog.setPositiveButton("确认", (dialog1, which) -> {
             String detCodeStr = etDetCode.getText().toString().trim();
@@ -559,6 +563,13 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+            }
+        });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                String detCodeStr = etDetCode.getText().toString().trim();
+                setStringInfo(AppSpSaveConstant.OFFLINE_EDIT_DET_CODE,detCodeStr);
             }
         });
 
