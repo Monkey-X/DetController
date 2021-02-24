@@ -58,6 +58,8 @@ public class ProjectDelayAdapter extends RecyclerView.Adapter<ProjectDelayAdapte
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
+                    selectedPosition = i;
+                    notifyDataSetChanged();
                     onItemClickListener.onDelayTimeClick(i);
                 }
             }
