@@ -309,11 +309,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
         Log.d(TAG,"zhognbao: reportServerEnum " + Globals.zhongbaoAddress + reportServerEnum);
 
-//        List<String> msgs = createMessageList(detonatorEntities);
-//        for (int i=0;i<msgs.size();i++) {
-//            Log.d(TAG,String.format("NO %d:%s",i+1,msgs.get(i)));
-//        }
-
         new Thread(() -> {
             List<String> msgs = createMessageList(detonatorEntities);
             sendRptToZhongBao(msgs);
@@ -555,7 +550,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         message.setLng(projectInfoEntity.getLongitude());
         message.setLat(projectInfoEntity.getLatitude());
         message.setSn(projectInfoEntity.getShortSn());
-        //String timestamp = projectInfoEntity.getDate();
 
         String timestamp;
         Log.d(TAG,String.format("PROJECT TIME:%s",projectInfoEntity.getDate()));
@@ -566,13 +560,6 @@ public class ReportDetailActivity2 extends BaseActivity {
             Log.d(TAG,String.format("DateParse(%s):%s",projectInfoEntity.getDate(),e.getMessage()));
             timestamp = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
         }
-
-//        if (projectInfoEntity.getDate() != null) {
-//            Date dt0 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(projectInfoEntity.getDate());
-//            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(dt0);
-//        } else {
-//            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
-//        }
 
         message.setQbDate(timestamp);
         message.setPackCount(packs + 1);

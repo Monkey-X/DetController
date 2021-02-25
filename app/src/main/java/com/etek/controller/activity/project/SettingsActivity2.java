@@ -108,7 +108,6 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         GeneralDisplayUI.showSettingNetworkSelect(this,ntype);
     }
 
-
     private void shouPopuWindow(View view) {
         String straddr = getStringInfo("zhongbaoAddress");
         Log.d(TAG,"原设置为："+straddr);

@@ -42,7 +42,7 @@ public class AppIntentString {
     public static final int TYPE_HOLE_NO_CHANGE = 3;
 
     // APP更新的地址
-    public static final String APP_DOWNLOAD_URL = "http://116.239.33.45:6066/apps/getUpdateVersion";
+    public static final String APP_DOWNLOAD_URL = "http://47.117.132.63:6066/apps/getUpdateVersion";
 
 
    // 本地数据校验测试
