@@ -229,7 +229,15 @@ public class PendingProject {
     public String getControllerId() {
         return controllerId;
     }
+    public String getShortSn(){
+        if (controllerId.length() > 8) {
+            String sSn = controllerId.substring(3, controllerId.length());
+            return sSn;
+        } else {
+            return controllerId;
+        }
 
+    }
     public void setControllerId(String controllerId) {
         this.controllerId = controllerId;
     }

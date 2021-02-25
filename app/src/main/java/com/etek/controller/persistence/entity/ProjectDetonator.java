@@ -147,4 +147,9 @@ public class ProjectDetonator implements Comparable<ProjectDetonator> {
             return (int) (o.getId() - this.getId());
         }
     }
+
+    //  中爆传的是code
+    public String getZBDetCodeStr() {
+        return code;
+    }
 }

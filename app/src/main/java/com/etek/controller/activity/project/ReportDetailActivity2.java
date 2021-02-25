@@ -53,6 +53,7 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,6 +63,8 @@ import java.util.Random;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 上报详情页
@@ -259,6 +262,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             Log.d(TAG,"力芯！");
             sendReport2ETEKTest();
         }
+
         if (isServerDanningOn) {
             Log.d(TAG,"丹灵！");
             sendDanLingReport();
@@ -304,6 +308,12 @@ public class ReportDetailActivity2 extends BaseActivity {
 
         ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
         Log.d(TAG,"zhognbao: reportServerEnum " + Globals.zhongbaoAddress + reportServerEnum);
+
+//        List<String> msgs = createMessageList(detonatorEntities);
+//        for (int i=0;i<msgs.size();i++) {
+//            Log.d(TAG,String.format("NO %d:%s",i+1,msgs.get(i)));
+//        }
+
         new Thread(() -> {
             List<String> msgs = createMessageList(detonatorEntities);
             sendRptToZhongBao(msgs);
@@ -438,6 +448,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                 XLog.w("detMsgs:" + new String(bs));
                 cf.getSession().write(bs);
                 Thread.sleep(100);
+                Log.d(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
             }
 
             cf.getSession().getCloseFuture().awaitUninterruptibly();
@@ -445,10 +456,9 @@ public class ReportDetailActivity2 extends BaseActivity {
             connector.dispose();
 
         } catch (Exception e) {
-            XLog.e(e.getMessage());
-
+            Log.d(TAG,String.format("中爆 发送失败:%s",e.getMessage()));
         } finally {
-            XLog.d("detMsgs finished");
+            Log.d(TAG,String.format("中爆 发送结束!"));
         }
     }
 
@@ -544,10 +554,22 @@ public class ReportDetailActivity2 extends BaseActivity {
         DetMessage message = new DetMessage();
         message.setLng(projectInfoEntity.getLongitude());
         message.setLat(projectInfoEntity.getLatitude());
-        message.setSn(projectInfoEntity.getControllerId());
-        String timestamp = projectInfoEntity.getDate();
-//        if (projectInfoEntity.getBlastTime() != null) {
-//            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(projectInfoEntity.getBlastTime());
+        message.setSn(projectInfoEntity.getShortSn());
+        //String timestamp = projectInfoEntity.getDate();
+
+        String timestamp;
+        Log.d(TAG,String.format("PROJECT TIME:%s",projectInfoEntity.getDate()));
+        try{
+            Date dt0 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(projectInfoEntity.getDate());
+            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(dt0);
+        }catch (ParseException e){
+            Log.d(TAG,String.format("DateParse(%s):%s",projectInfoEntity.getDate(),e.getMessage()));
+            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
+        }
+
+//        if (projectInfoEntity.getDate() != null) {
+//            Date dt0 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(projectInfoEntity.getDate());
+//            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(dt0);
 //        } else {
 //            timestamp = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
 //        }
@@ -558,12 +580,12 @@ public class ReportDetailActivity2 extends BaseActivity {
         message.setSendCount(1);
         message.setTotalDet(total);
         msgs.add(new String(message.toByte()));
-        int len = 0;
 
+        int len = 0;
         for (int j = 0; j < packs; j++) {
             message = new DetMessage();
             message.setPackCount(packs + 1);
-            message.setSn(projectInfoEntity.getControllerId());
+            message.setSn(projectInfoEntity.getShortSn());
             message.setType(1);
             message.setSendCount(j + 2);
 
@@ -577,9 +599,11 @@ public class ReportDetailActivity2 extends BaseActivity {
                 len = 10;
             }
             for (int k = 0; k < len; k++) {
-//                String value = detonators.get((j * 10) + k).getZBDetCodeStr() + "O";
-//                message.addDetonator(value);
+                //                debug("zhongbao:"+detonators.get((j * 10) + k).getZBDetCodeStr());
+                String value = detonators.get((j * 10) + k).getZBDetCodeStr() + "O";
+                message.addDetonator(value);
             }
+
             msgs.add(new String(message.toByte()));
         }
 
