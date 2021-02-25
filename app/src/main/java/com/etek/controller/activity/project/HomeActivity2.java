@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,7 +47,7 @@ import java.io.File;
 public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
 
 
-    private String TAG = "HomeActivity";
+    private String TAG = "HomeActivity2";
     private long lastBackKeyDownTick = 0;
     public static final long MAX_DOUBLE_BACK_DURATION = 1500;
     private RelativeLayout update;
@@ -61,10 +63,10 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     private AlertDialog updateDialog;
     private MainBoardInfoBean mainBoardInfoBean;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_new_home2);
 
         int initialize = DetApp.getInstance().Initialize();
@@ -82,7 +84,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         // 进行app升级的检查
         checkAppUpdate();
     }
-
     /**
      * 获取主控板信息
      */
@@ -258,6 +259,23 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         } else {
             Globals.user = JSON.parseObject(userStr, User.class);
         }
+    }
+
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG,String.format("KeyCode=%d",keyCode));
+
+        //  右下角的退出键
+        if(KeyEvent.KEYCODE_BACK==keyCode){
+            return true;
+        }
+        if (keyCode == event. KEYCODE_HOME) {
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     private void initMainBoard() {

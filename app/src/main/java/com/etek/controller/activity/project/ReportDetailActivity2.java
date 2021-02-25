@@ -551,6 +551,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         message.setLat(projectInfoEntity.getLatitude());
         message.setSn(projectInfoEntity.getShortSn());
 
+        //String timestamp = projectInfoEntity.getDate();
         String timestamp;
         Log.d(TAG,String.format("PROJECT TIME:%s",projectInfoEntity.getDate()));
         try{

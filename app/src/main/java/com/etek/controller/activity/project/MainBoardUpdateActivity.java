@@ -60,7 +60,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
             mainboardTask.cancel(true);
         }
 
-        //setStringInfo(getString(R.string.controller_sno), "F99A8010203");
+        //setStringInfo(getString(R.string.controller_sno), "F99A8200041");
     }
 
     private void initData() {
