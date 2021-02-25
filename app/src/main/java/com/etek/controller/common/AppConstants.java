@@ -20,15 +20,19 @@ public  class AppConstants {
     public final static String ETEK_HTTP= "222.191.229.234";
     public final static int ETEK_PORT= 1089;
 
+    //  中爆黔南
     public final static String QIONGNAN_HTTP= "113.140.1.135";
     public final static int QIONGNAN_PORT= 9903;
 
+    //  中爆黔东南
     public final static String QIONGDONGNAN_HTTP= "113.140.1.137";
     public final static int QIONGDONGNAN_PORT= 8608;
 
+    //  中爆广西
     public final static String GUANGXI_HTTP= "119.29.111.172";
     public final static int GUANGXI_PORT= 6088;
 
+    //  中爆贵阳
     public final static String GUIYANG_HTTP= "119.29.111.172";
     public final static int GUIYANG_PORT= 6089;
 

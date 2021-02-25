@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/activated"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/zhongbao_qiannan"
+        android:text="中爆黔南"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal" />
+
+    <TextView
+        android:id="@+id/zhongbao_qiandongnan"
+        android:text="中爆黔东南"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal" />
+
+    <TextView
+        android:id="@+id/zhongbao_guangxi"
+        android:text="中爆广西"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/btn_gray_normal" />
+
+    <TextView
+        android:id="@+id/zhongbao_guiyang"
+        android:text="中爆贵阳"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
+</LinearLayout>

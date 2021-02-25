@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -98,6 +99,8 @@ public class ReportDetailActivity2 extends BaseActivity {
     private Boolean isServerEtekOn;
     private TextView proHint;
 
+    private final String TAG ="ReportDetailActivity2";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,7 +123,7 @@ public class ReportDetailActivity2 extends BaseActivity {
      */
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
-        XLog.d("proIds: " + proId);
+        XLog.d(TAG,"proIds: " + proId);
         projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
     }
@@ -253,15 +256,16 @@ public class ReportDetailActivity2 extends BaseActivity {
         }
 
         if (isServerEtekOn) {
+            Log.d(TAG,"力芯！");
             sendReport2ETEKTest();
         }
         if (isServerDanningOn) {
-            XLog.d("丹灵！");
+            Log.d(TAG,"丹灵！");
             sendDanLingReport();
         }
 
         if (isServerZhongbaoOn) {
-            XLog.d("中爆！");
+            Log.d(TAG,"中爆！");
             UPZBThread(detonatorEntityList);
         }
 
@@ -291,9 +295,15 @@ public class ReportDetailActivity2 extends BaseActivity {
      * 上传中爆
      */
     private void UPZBThread(List<ProjectDetonator> detonatorEntities) {
+        //  中爆设置了缺省地址：中爆黔南
         Globals.zhongbaoAddress = getStringInfo("zhongbaoAddress");
+        if (!TextUtils.isEmpty(Globals.zhongbaoAddress)) {
+            Globals.zhongbaoAddress = "中爆黔南";
+            setStringInfo("zhongbaoAddress",Globals.zhongbaoAddress);
+        }
+
         ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
-        XLog.d("zhognbao: reportServerEnum " + Globals.zhongbaoAddress + reportServerEnum);
+        Log.d(TAG,"zhognbao: reportServerEnum " + Globals.zhongbaoAddress + reportServerEnum);
         new Thread(() -> {
             List<String> msgs = createMessageList(detonatorEntities);
             sendRptToZhongBao(msgs);
@@ -422,10 +432,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             ConnectFuture cf;
             ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
             cf = connector.connect(new InetSocketAddress(reportServerEnum.getAddress(), reportServerEnum.getPort()));
-
             cf.awaitUninterruptibly();
             for (int j = 0; j < detMsgs.size(); j++) {
-
                 byte[] bs = detMsgs.get(j).getBytes();
                 XLog.w("detMsgs:" + new String(bs));
                 cf.getSession().write(bs);
