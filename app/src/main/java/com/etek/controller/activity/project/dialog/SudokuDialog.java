@@ -1,4 +1,4 @@
-package com.etek.controller.fragment;
+package com.etek.controller.activity.project.dialog;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -17,9 +17,10 @@ import android.view.WindowManager;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.view.SudokuView;
 
-public class SudokuDialog extends DialogFragment {
+public class SudokuDialog extends DialogFragment implements View.OnClickListener {
 
     private SudokuView.SudokuListener listener;
+    private SudoCancelListenr sudoCancelListener;
 
     @Override
     public void onStart() {
@@ -49,13 +50,38 @@ public class SudokuDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_sudoku, container, false);
 
         SudokuView sudokuView = view.findViewById(R.id.sudokuView);
+
+        View cancelBomb = view.findViewById(R.id.cancel_bomb);
         if (listener != null) {
             sudokuView.setSudokuListener(listener);
         }
+
+        cancelBomb.setOnClickListener(this);
         return view;
     }
 
     public void setSudokuListener(SudokuView.SudokuListener listener) {
         this.listener = listener;
+    }
+
+    public interface SudoCancelListenr {
+        void onSudoCancel();
+    }
+
+    public void setSudoCancelListener(SudoCancelListenr listener) {
+        this.sudoCancelListener = listener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.cancel_bomb:
+                this.dismiss();
+                if (sudoCancelListener != null) {
+                    sudoCancelListener.onSudoCancel();
+                }
+                break;
+        }
+
     }
 }

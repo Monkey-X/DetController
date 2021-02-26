@@ -1,6 +1,5 @@
 package com.etek.controller.activity.project;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,7 +7,7 @@ import android.widget.TextView;
 
 import com.etek.controller.R;
 import com.etek.controller.activity.project.view.SudokuView;
-import com.etek.controller.fragment.SudokuDialog;
+import com.etek.controller.activity.project.dialog.SudokuDialog;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 

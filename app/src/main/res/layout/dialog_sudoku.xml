@@ -12,15 +12,13 @@
 
     <TextView
         android:text="取 消"
+        android:id="@+id/cancel_bomb"
         android:textSize="18sp"
         android:gravity="center"
         android:layout_margin="20dp"
         android:padding="8dp"
-        android:visibility="gone"
         android:background="@drawable/seleted_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
-
 
 </LinearLayout>

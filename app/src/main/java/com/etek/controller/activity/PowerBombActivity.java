@@ -14,10 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
-import com.etek.controller.activity.project.BombPassWordSettingActivity;
 import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.common.AppIntentString;
-import com.etek.controller.fragment.SudokuDialog;
+import com.etek.controller.activity.project.dialog.SudokuDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.task.BusDisChargeTask;
 import com.etek.controller.hardware.task.CheckDropOffTask;
@@ -44,8 +43,6 @@ import java.util.List;
  */
 public class PowerBombActivity extends BaseActivity implements View.OnClickListener, ITaskCallback {
 
-    private Context mContext;
-    private int GO_TO_GPS = 150;
     private TextView toastText;
     private TextView showstring;
 
@@ -99,7 +96,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      * 初始化
      */
     private void init() {
-        this.mContext = this;
         bombPassWord = getPreInfo("BombPassWord");
         if (TextUtils.isEmpty(bombPassWord)) {
             //  Z字形输入
@@ -132,62 +128,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-
-    int mBackKeyAction = -1;
-    long mActionTime = 0;
-    int mOkKeyAction = -1;
-
     boolean isCanBomb = false;
-
-//    @Override
-//    public boolean dispatchKeyEvent(KeyEvent event) {
-//
-//        int keyCode = event.getKeyCode();
-//        int action = event.getAction();
-//
-//        if (isCanBomb) {
-//
-//            if (keyCode == 19 && action == KeyEvent.ACTION_DOWN) {
-//                mBackKeyAction = KeyEvent.ACTION_DOWN;  //记录按下状态
-//                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_DOWN");
-//                if (mActionTime == 0) {
-//                    mActionTime = System.currentTimeMillis();
-//                }
-//            }
-//
-//            if (keyCode == 19 && action == KeyEvent.ACTION_UP) {
-//                mBackKeyAction = KeyEvent.ACTION_UP;  //记录松下状态
-//                Log.d(TAG, "dispatchKeyEvent: mBackKeyAction = KeyEvent.ACTION_UP");
-//                mActionTime = 0;
-//            }
-//
-//            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_DOWN) {
-//                mOkKeyAction = KeyEvent.ACTION_DOWN;   //记录按下状态
-//                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_DOWN");
-//                if (mActionTime == 0) {
-//                    mActionTime = System.currentTimeMillis();
-//                }
-//            }
-//
-//            if (keyCode == 20 && event.getAction() == KeyEvent.ACTION_UP) {
-//                Log.d(TAG, "dispatchKeyEvent: mOkKeyAction = KeyEvent.ACTION_UP");
-//                mOkKeyAction = KeyEvent.ACTION_UP;    //记录松下状态
-//                mActionTime = 0;
-//            }
-//
-//            //长按，左右侧键
-//            if (isLongPress() && mBackKeyAction == KeyEvent.ACTION_DOWN && mOkKeyAction == KeyEvent.ACTION_DOWN) {
-//                //  长按左右键之后进行起爆操作
-//                Log.d(TAG, "dispatchKeyEvent: DetonateAllDet");
-//                mBackKeyAction = -1;
-//                mOkKeyAction = -1;
-//                mActionTime = 0;
-//                DetonateAllDet();
-//            }
-//        }
-//        return true;
-//
-//    }
 
     private void showVerifyDialog(){
         SudokuDialog sudokuDialog = new SudokuDialog();
@@ -200,6 +141,12 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 }else{
                     ToastUtils.show(PowerBombActivity.this,"手势密码不正确！");
                 }
+            }
+        });
+        sudokuDialog.setSudoCancelListener(new SudokuDialog.SudoCancelListenr() {
+            @Override
+            public void onSudoCancel() {
+                StartSetBLTask(true);
             }
         });
         sudokuDialog.show(getSupportFragmentManager(),"");
@@ -241,14 +188,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             Log.d(TAG, "DetonateAllDet: ");
             DetnoateTask detnoateTask = new DetnoateTask(this);
             detnoateTask.execute();
-        }
-    }
-
-    private boolean isLongPress() {
-        if (System.currentTimeMillis() - mActionTime > 1000) {
-            return true;
-        } else {
-            return false;
         }
     }
 
