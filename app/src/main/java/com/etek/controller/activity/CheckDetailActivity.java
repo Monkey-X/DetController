@@ -105,6 +105,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private List<String> blackList;
     private LocationManager locationManager;
 
+    private boolean m_bChecking =false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,27 +166,29 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         locationClient.start();
     }
 
-
     /**
      * 得到本地缓存中的地址
      */
     void getLocationLocal() {
-        String longitudeStr = getStringInfo("Longitude");
-        String latitudeStr = getStringInfo("Latitude");
-        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))) {
-            double longitude = Double.valueOf(longitudeStr);
-            double latitude = Double.valueOf(latitudeStr);
-            setCacheLongitude(longitude);
-            setCacheLatitude(latitude);
+        locationLongitude.setText("");
+        locationLatitude.setText("");
 
-            locationLongitude.setText("" + longitude);
-            locationLatitude.setText("" + latitude);
+//        String longitudeStr = getStringInfo("Longitude");
+//        String latitudeStr = getStringInfo("Latitude");
+//        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))) {
+//            double longitude = Double.valueOf(longitudeStr);
+//            double latitude = Double.valueOf(latitudeStr);
+//            setCacheLongitude(longitude);
+//            setCacheLatitude(latitude);
+//
+//            locationLongitude.setText("" + longitude);
+//            locationLatitude.setText("" + latitude);
 
-            if (pendingProject != null) {
-                pendingProject.setLongitude(longitude);
-                pendingProject.setLatitude(latitude);
-            }
-        }
+//            if (pendingProject != null) {
+//                pendingProject.setLongitude(longitude);
+//                pendingProject.setLatitude(latitude);
+//            }
+//        }
     }
 
     public class MyLocationListener extends BDAbstractLocationListener {
@@ -195,25 +198,27 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             //以下只列举部分获取经纬度相关（常用）的结果信息
             //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
 
+            //  如果正在检查中，不更新经纬度
+            if(m_bChecking) return;
+
             double latitude = location.getLatitude();    //获取纬度信息
             double longitude = location.getLongitude();    //获取经度信息
 
             setCacheLongitude(longitude);
             setCacheLatitude(latitude);
 
+            //  百度获取到的经纬度，只是显示在TextView里，不缓存
             locationLongitude.setText(String.format("%.4f" ,longitude));
             locationLatitude.setText(String.format("%.4f",latitude));
 
-            setStringInfo("Longitude", String.format("%.4f" ,longitude));
-            setStringInfo("Latitude", String.format("%.4f",latitude));
-
-            if (pendingProject != null) {
-                pendingProject.setLongitude(longitude);
-                pendingProject.setLatitude(latitude);
-            }
+//            setStringInfo("Longitude", String.format("%.4f" ,longitude));
+//            setStringInfo("Latitude", String.format("%.4f",latitude));
+//            if (pendingProject != null) {
+//                pendingProject.setLongitude(longitude);
+//                pendingProject.setLatitude(latitude);
+//            }
         }
     }
-
 
     // 获取黑白名单
     private void getWhiteBlackList() {
@@ -299,7 +304,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 初始化View
      */
     private void initView() {
-
         LinearLayout layoutPro = findViewById(R.id.layout_pro);
         LinearLayout layoutContract = findViewById(R.id.layout_contract);
         if ("offline".equals(type)) {
@@ -368,6 +372,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             //  规则检查时pendingProject的经纬度根据界面上的调整
             double longitude = Double.valueOf(locationLongitude.getText().toString().trim());
             double latitude = Double.valueOf(locationLatitude.getText().toString().trim());
+
             setCacheLongitude(longitude);
             setCacheLatitude(latitude);
 
@@ -375,13 +380,18 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             if (pendingProject != null) {
                 pendingProject.setLongitude(longitude);
                 pendingProject.setLatitude(latitude);
+
+                Log.d(TAG,String.format("工程经纬度:%s,%s",longitude,latitude));
             }
 
+            m_bChecking = true;
             if ("online".equals(type)) {//在线检查
                 getVerifyResult(pendingProject);
             } else if ("offline".equals(type)) {//离线检查
                 offlineCheck();
             }
+            m_bChecking = false;
+
         }
     }
 
@@ -432,13 +442,18 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
         onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
         onlineCheckDto.setHtid(projectInfoEntity.getContractCode());
+
 //        onlineCheckDto.setJd(projectInfoEntity.getLongitude() + "");
 //        onlineCheckDto.setWd(projectInfoEntity.getLatitude() + "");
+
+        // 使用界面获取到的经纬度
         onlineCheckDto.setJd(getCacheLongitude() + "");
         onlineCheckDto.setWd(getCacheLatitude() + "");
+
         onlineCheckDto.setXmbh(projectInfoEntity.getProCode());
         onlineCheckDto.setSbbh(controllerId.getText().toString());
         onlineCheckDto.setProjectDets(projectDetonatorList);
+
         String rptJson = JSON.toJSONString(onlineCheckDto, SerializerFeature.WriteMapNullValue);
         XLog.e("rptJson: " + rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
@@ -521,20 +536,31 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         }
                     }
                     refreshData();
-                    if (isUnreg) {
-                        Log.d(TAG, "unRegDet:" + unRegDet);
-                        showStatusDialog("已存在已使用雷管！");
-                        long projectId = storeProjectInfo(projectFile, serverResult);
-                        uploadData(projectId);
-                        return;
-                    }
+
                     long projectId = storeProjectInfo(projectFile, serverResult);
 
-                    //  在线检查数据上报时，使用当前经纬度
                     Zbqys zbqys = serverResult.getZbqys();
                     List<Zbqy> zbqy = zbqys.getZbqy();
                     if (zbqy != null && zbqy.size() != 0) {
                         Zbqy zbqy1 = zbqy.get(0);
+                        pendingProject.setLongitude(Double.parseDouble(zbqy1.getZbqyjd()));
+                        pendingProject.setLatitude(Double.parseDouble(zbqy1.getZbqywd()));
+
+                        Log.d(TAG,String.format("工程经纬度:%s,%s",zbqy1.getZbqyjd(),zbqy1.getZbqywd()));
+                    }
+
+                    if (isUnreg) {
+                        Log.d(TAG, "unRegDet:" + unRegDet);
+                        showStatusDialog("已存在已使用雷管！");
+                        uploadData(projectId);
+                        return;
+                    }
+
+                    //  在线检查数据上报时，使用当前经纬度
+//                    Zbqys zbqys = serverResult.getZbqys();
+//                    List<Zbqy> zbqy = zbqys.getZbqy();
+//                    if (zbqy != null && zbqy.size() != 0) {
+//                        Zbqy zbqy1 = zbqy.get(0);
 //                        DecimalFormat df = new DecimalFormat("0.00");
 //                        String longitude = df.format(Double.parseDouble(zbqy1.getZbqyjd()));
 //                        Random random = new Random();
@@ -547,9 +573,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 //                        pendingProject.setLongitude(Double.parseDouble(longitude));
 //                        pendingProject.setLatitude(Double.parseDouble(latitude));
 
-                        pendingProject.setLongitude(Double.parseDouble(zbqy1.getZbqyjd()));
-                        pendingProject.setLatitude(Double.parseDouble(zbqy1.getZbqywd()));
-                    }
+//                        pendingProject.setLongitude(Double.parseDouble(zbqy1.getZbqyjd()));
+//                        pendingProject.setLatitude(Double.parseDouble(zbqy1.getZbqywd()));
+//
+//                        Log.d(TAG,String.format("工程经纬度:%s,%s",zbqy1.getZbqyjd(),zbqy1.getZbqywd()));
+//                    }
                     goToBomb();
                     uploadData(projectId);
                 } else {
@@ -567,7 +595,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * @param onlineCheckResp
      */
     private long storeProjectInfo(ProjectFileDto projectFile, OnlineCheckResp onlineCheckResp) {
-
         XLog.v("onlineCheckResp:"+ onlineCheckResp);
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setApplyDate(onlineCheckResp.getSqrq());
@@ -669,6 +696,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         DetController detController = new DetController();
         detController.setContractId("");
         DetController detController1 = EntryCopyUtil.copyInfoToDetController(detController, pendingProject);
+        // 经纬度不能用pendingProject的，使用参数projectInfoEntity的经纬度
+        detController1.setLongitude(projectInfoEntity.getLongitude());
+        detController1.setLatitude(projectInfoEntity.getLatitude());
+
         projectInfoDto.addDetControllers(detController1);
         return JSON.toJSONString(projectInfoDto);
     }
@@ -705,21 +736,26 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         }
         Long detInProjectId = isDetInProject(projectInfoEntityList);
         if (detInProjectId == -1) {
-            showStatusDialog("没有找到雷管规则所对应的项目");
+            showStatusDialog("没有找到雷管规则所对应的项目1");
             return;
         }
         ProjectInfoEntity projectInfo = DBManager.getInstance().getProjectInfoEntityDao().
                 queryBuilder()
                 .where(ProjectInfoEntityDao.Properties.Id.eq(detInProjectId)).unique();
         if (projectInfo == null) {
-            showStatusDialog("没有找到雷管规则所对应的项目");
+            showStatusDialog("没有找到雷管规则所对应的项目2");
             return;
         }
 
-        if (!checkControllerData(projectInfo)) {
-            showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆2",strControllerId));
-            return;
+        //  离线不检查F99起爆器
+        Log.d(TAG,"起爆器厂商："+strControllerId.substring(0,3));
+        if(!strControllerId.substring(0,3).equals("F99")){
+            if (!checkControllerData(projectInfo)) {
+                showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆2",strControllerId));
+                return;
+            }
         }
+
         if (checkForbiddenZone(projectInfo)) {
             showStatusDialog("在禁爆区域");
             return;
@@ -814,12 +850,20 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void uploadData(ProjectInfoEntity projectInfoEntity) {
+        Log.d(TAG,String.format("缓存[%.4f,%.4f]",getCacheLongitude(),getCacheLatitude()));
+
         //  2021-02-19  用当前界面上的经纬度来在线/离线检查上报
         projectInfoEntity.setLongitude(getCacheLongitude());
         projectInfoEntity.setLatitude(getCacheLatitude());
 
+
+        Log.d(TAG,String.format("上报ETEK 经纬度:%.5f,%.5f",projectInfoEntity.getLongitude(),projectInfoEntity.getLatitude()));
+
         String rptJson = getReportDto(projectInfoEntity);
         String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
+
+        Log.d(TAG,String.format("上报ETEK JSON:%s",rptJson));
+
         AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
 
             @Override
@@ -850,6 +894,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             for (PermissibleZoneEntity permissibleZoneEntity : permissibleZoneList) {
                 LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), 30000);
 //                LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), permissibleZoneEntity.getRadius());
+                Log.d(TAG,String.format("缓存[%.4f,%.4f], 范围[%.4f,%.4f]",
+                        getCacheLongitude(),getCacheLatitude(),
+                        permissibleZoneEntity.getLongitude(),permissibleZoneEntity.getLatitude()));
+
                 if (getCacheLatitude() > range.getMinLat()
                         && getCacheLatitude() < range.getMaxLat()
                         && getCacheLongitude() > range.getMinLng()
@@ -857,6 +905,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     //  离线：缓存准爆区域
                     pendingProject.setLongitude(permissibleZoneEntity.getLongitude());
                     pendingProject.setLatitude(permissibleZoneEntity.getLatitude());
+
+                    Log.d(TAG,String.format("工程经纬度:%s,%s",permissibleZoneEntity.getLongitude(),permissibleZoneEntity.getLatitude()));
 
                     return true;
                 }
@@ -926,12 +976,14 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
     private void setCacheLongitude(Double longitude){
         m_cacheLongitude = longitude;
+        Log.d(TAG,String.format("缓存经度:%.4f",m_cacheLongitude));
     }
     private Double getCacheLongitude(){
         return m_cacheLongitude;
     }
     private void setCacheLatitude(Double latitude){
         m_cacheLatitude = latitude;
+        Log.d(TAG,String.format("缓存维度:%.4f",m_cacheLatitude));
     }
     private Double getCacheLatitude(){
         return m_cacheLatitude;

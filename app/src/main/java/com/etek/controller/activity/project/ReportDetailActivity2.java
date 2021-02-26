@@ -336,6 +336,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             public void onFailure(Call call, IOException e) {
                 XLog.e("IOException:", e.getMessage());
                 sendCmdMessage(MSG_RPT_ETEK_TEST_ERR);
+
+                showSendRptMessage("上报ETEK失败","2");
             }
 
             @Override
@@ -355,11 +357,14 @@ public class ReportDetailActivity2 extends BaseActivity {
                         ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
                         XLog.e("错误代码：", errEnum.getMessage());
 //                        showToast("上传ETEK服务器失败!");
-                        showToast("上传ETEK服务器成功!");
+//                        showToast("上传ETEK服务器成功!");
+
                         sendCmdMessage(MSG_RPT_ETEK_TEST_ERR);
+                        showSendRptMessage("上报ETEK成功","1");
                     } else {
                         step++;
                         sendCmdMessage(MSG_RPT_ETEK_TEST_OK);
+                        showSendRptMessage("上报ETEK成功","1");
                     }
                 } catch (Exception e) {
                     XLog.e("解析错误：", e.getMessage());
@@ -393,6 +398,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             public void onFailure(Call call, IOException e) {
                 XLog.e("IOException:", e.getMessage());
                 sendCmdMessage(MSG_RPT_DANLING_ERR);
+
+                showSendRptMessage("上报丹灵成功","1");
             }
 
             @Override
@@ -413,18 +420,24 @@ public class ReportDetailActivity2 extends BaseActivity {
                     if (serverResult.getSuccess().contains("fail")) {
                         XLog.e("错误代码：", serverResult.getCwxxms());
                         sendCmdMessage(MSG_RPT_DANLING_ERR);
+
+                        showSendRptMessage("上报丹灵失败","2");
                     } else {
                         sendCmdMessage(MSG_RPT_DANLING_OK);
+
+                        showSendRptMessage("上报丹灵成功","1");
                     }
                 } catch (Exception e) {
                     XLog.e("解析错误：" + e.getMessage());
                     sendCmdMessage(MSG_RPT_DANLING_ERR);
+
+                    showSendRptMessage("上报丹灵失败","2");
                 }
             }
         });
     }
 
-    //  上传到中报后台
+    //  上传到中爆后台
     private void sendRptToZhongBao(List<String> detMsgs) {
         try {
             NioSocketConnector connector = new NioSocketConnector();
@@ -450,8 +463,10 @@ public class ReportDetailActivity2 extends BaseActivity {
 
             connector.dispose();
 
+            showSendRptMessage("上报中爆成功","1");
         } catch (Exception e) {
             Log.d(TAG,String.format("中爆 发送失败:%s",e.getMessage()));
+            showSendRptMessage("上报中爆失败","2");
         } finally {
             Log.d(TAG,String.format("中爆 发送结束!"));
         }
@@ -460,16 +475,25 @@ public class ReportDetailActivity2 extends BaseActivity {
     //  获取模拟的经纬度
     private String getEmuLongLatitude(String strjwd){
         Double d = Double.parseDouble(strjwd);
+        int n0 = (int)(d*1000);
+        n0= n0*100;
 
-        DecimalFormat df = new DecimalFormat("0.000");
-        String strd = df.format(d);
         Random random = new Random();
         int ends = random.nextInt(99);
-        strd += String.format(Locale.CHINA, "%02d", ends);
+        n0 = n0+ends;
+
+        d = (n0*1.00)/(1000*100);
+        String strd = String.format("%.5f",d);
+
+        Log.d(TAG,String.format("输入：%s，仿真为:%s",strjwd,strd));
 
         return strd;
     }
 
+    private void showSendRptMessage(String strmsg,String strStatus){
+        projectInfoEntity.setReportStatus(strStatus);
+        showLongToast(strmsg);
+    }
 
     private void sendReportToETEKBck() {
 //        step = 0;
@@ -547,8 +571,12 @@ public class ReportDetailActivity2 extends BaseActivity {
         }
 
         DetMessage message = new DetMessage();
-        message.setLng(projectInfoEntity.getLongitude());
-        message.setLat(projectInfoEntity.getLatitude());
+        // message.setLng(projectInfoEntity.getLongitude());
+        // message.setLat(projectInfoEntity.getLatitude());
+        //  修改小数点第4，5位
+        message.setLng(Double.parseDouble(getEmuLongLatitude(String.format("%.4f",projectInfoEntity.getLongitude()))));
+        message.setLat(Double.parseDouble(getEmuLongLatitude(String.format("%.4f",projectInfoEntity.getLatitude()))));
+        //  起爆器编号只使用后8位
         message.setSn(projectInfoEntity.getShortSn());
 
         //String timestamp = projectInfoEntity.getDate();
