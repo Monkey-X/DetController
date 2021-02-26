@@ -426,6 +426,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
+        if (keyCode == 19 || keyCode == 20) {
+            return true;
+        }
+
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
             allDetConnectTest();
             return true;
@@ -736,9 +740,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
 
     public void updateTestProgress(int values) {
-//        if (progressValueDialog != null) {
-//            progressValueDialog.setProgress(values);
-//        }
         if (progress !=null) {
             progress.setProgress(values + 1 );
         }

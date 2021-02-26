@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -48,7 +47,6 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -225,7 +223,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         View projectHandle = findViewById(R.id.project_handle);
         layoutStartTime.setOnClickListener(this);
         projectHandle.setOnClickListener(this);
-        //projectHandle.setBackgroundColor(Color.BLUE);
 
         rootView = findViewById(R.id.rootview);
 
@@ -239,8 +236,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         // 孔间
         View layoutHoleOut = findViewById(R.id.hole_out);
 
-//        View layoutHoleNoChange = findViewById(R.id.hole_nochange);
-//        layoutHoleNoChange.setOnClickListener(this);
         layoutHoleIn.setOnClickListener(this);
         layoutHoleOut.setOnClickListener(this);
 
@@ -274,24 +269,14 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.hole_in:
                 // 设置孔内延时
-//                ReadDetNumTask readDetNumTask = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
-//                readDetNumTask.execute();
                 setDelayDialog("孔内延时", HOLE_IN_TYPE, holeTimeIn);
                 break;
             case R.id.hole_out:
                 // 设置孔间延时
-//                ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
-//                readDetNumTask1.execute();
                 setDelayDialog("孔间延时", HOLE_OUT_TYPE, holeTimeOut);
                 break;
-//            case R.id.hole_nochange:
-//                // 延时不变
-//                ReadDetNumTask readDetNumTask2 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
-//                readDetNumTask2.execute();
-//                break;
             case R.id.delay_edit:
                 // 弹出修改延时的对话框
-//                showDelaySettingDialog();
                 setDelayDialog("起始延时", START_TIME_TYPE, delayStartTime);
                 break;
             case R.id.project_handle:
@@ -317,6 +302,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
 
     }
+
 
     /**
      * 设置起始时间，孔间延时，孔内延时
@@ -593,16 +579,14 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void makeCancel() {
-//        if (this.detDelayBean == null) {
-//            // 没有设置延时，提示设置延时
-//            showDelaySettingDialog();
-//            showStatusDialog("请配置延时！");
-//        }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d(TAG, "onKeyDown: keyCode = " + keyCode);
+        if (keyCode == 19 || keyCode == 20) {
+            return true;
+        }
         // 左边189 右边190  中间188
         if (keyCode == 189 && event.getAction() == KeyEvent.ACTION_DOWN) {
             scanType = AppIntentString.TYPE_HOLE_IN;
