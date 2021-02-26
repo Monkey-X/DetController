@@ -807,7 +807,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     }
                 }
                 if (isUnUsed) {
-                    projectDetonator.setStatus(1);
+                    projectDetonator.setStatus(2);
                     unRegiestCount++;
                 }
             }
