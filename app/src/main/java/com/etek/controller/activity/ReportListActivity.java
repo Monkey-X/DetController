@@ -17,6 +17,7 @@ import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ReportListActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener {
@@ -31,7 +32,6 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
         setContentView(R.layout.activity_report_list);
         initSupportActionBar(R.string.title_activity_report);
         initView();
-//        getProjectData();
         initData();
     }
 
@@ -39,6 +39,7 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
         List<PendingProject> list = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.ProjectStatus.eq(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT)).list();
         if (list != null && list.size() != 0) {
             projects.clear();
+            Collections.reverse(list);
             projects.addAll(list);
             projectReportAdapter.notifyDataSetChanged();
         } else {
@@ -66,7 +67,6 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        // TODO: 2020/12/19
         PendingProject pendingProject = projects.get(position);
         Long id = pendingProject.getId();
         Intent intent = new Intent(this, ReportDetailActivity2.class);
