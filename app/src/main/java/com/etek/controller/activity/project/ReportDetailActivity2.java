@@ -656,6 +656,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         } else if (msg.what == MSG_RPT_DANLING_ERR) {
             dismissProgressBar();
             projectInfoEntity.setReportStatus("2");
+            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
             XLog.e("解析异常");
         } else if (msg.what == MSG_RPT_ETEK_TEST_ERR) {
 //            result = Activity.RESULT_CANCELED;
@@ -665,11 +666,11 @@ public class ReportDetailActivity2 extends BaseActivity {
 //            projectInfoEntity.setReportStatus("2");
 
             //todo 2020-12-20 演示修改
-            dismissProgressBar();
-            rptStatus.setText("模拟服务器成功");
-            rptStatus.setTextColor(getMyColor(R.color.green));
-            projectInfoEntity.setReportStatus("1");
-            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+//            dismissProgressBar();
+//            rptStatus.setText("模拟服务器成功");
+//            rptStatus.setTextColor(getMyColor(R.color.green));
+//            projectInfoEntity.setReportStatus("1");
+//            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
             // todo
 
         } else if (msg.what == MSG_RPT_ETEK_BCK) {
@@ -683,6 +684,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                 rptStatus.setText(R.string.reported);
                 rptStatus.setTextColor(getMyColor(R.color.green));
                 projectInfoEntity.setReportStatus("1");
+                DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
             } else {
                 setProgressBar(step);
                 sendRptToEtekServer(reportDtos.get(step));
@@ -695,6 +697,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                 rptStatus.setText(R.string.reported);
                 rptStatus.setTextColor(getMyColor(R.color.green));
                 projectInfoEntity.setReportStatus("1");
+                DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
             } else {
                 setProgressBar(step);
                 sendRptToEtekServerBck(reportDtos.get(step - allSize));
@@ -722,10 +725,12 @@ public class ReportDetailActivity2 extends BaseActivity {
                     XLog.e("ETEK TEST OK!");
                     showStatusDialog("上传中爆服务器成功!");
                     projectInfoEntity.setReportStatus("1");
+                    DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
                     sendCmdMessage(MSG_RPT_OK);
                 } else {
                     showStatusDialog("上传服务器错误!");
                     projectInfoEntity.setReportStatus("2");
+                    DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
                     sendCmdMessage(MSG_RPT_ZHONGBAO_ERR);
                     XLog.e("cmd :" + cmds[0]);
                 }
