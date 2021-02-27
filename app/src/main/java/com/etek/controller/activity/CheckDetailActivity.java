@@ -315,6 +315,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         controllerId = findViewById(R.id.ctrl_id);
         locationLongitude = findViewById(R.id.ctrl_location_longitude);
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
+        //  经纬度禁止输入
+//        locationLongitude.setKeyListener(null);
+//        locationLatitude.setKeyListener(null);
+
         getLocation = findViewById(R.id.get_location);
         proCode = findViewById(R.id.pro_code);
         //proCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
@@ -378,8 +382,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
             //  缓存当前地址（就算所有检查不合格，项目还有经纬度）
             if (pendingProject != null) {
-                pendingProject.setLongitude(longitude);
-                pendingProject.setLatitude(latitude);
+                pendingProject.setLongitude(getEmuLongLatitude(longitude));
+                pendingProject.setLatitude(getEmuLongLatitude(latitude));
 
                 Log.d(TAG,String.format("工程经纬度:%s,%s",longitude,latitude));
             }
@@ -543,8 +547,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     List<Zbqy> zbqy = zbqys.getZbqy();
                     if (zbqy != null && zbqy.size() != 0) {
                         Zbqy zbqy1 = zbqy.get(0);
-                        pendingProject.setLongitude(Double.parseDouble(zbqy1.getZbqyjd()));
-                        pendingProject.setLatitude(Double.parseDouble(zbqy1.getZbqywd()));
+                        pendingProject.setLongitude(getEmuLongLatitude(Double.parseDouble(zbqy1.getZbqyjd())));
+                        pendingProject.setLatitude(getEmuLongLatitude(Double.parseDouble(zbqy1.getZbqywd())));
 
                         Log.d(TAG,String.format("工程经纬度:%s,%s",zbqy1.getZbqyjd(),zbqy1.getZbqywd()));
                     }
@@ -903,8 +907,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         && getCacheLongitude() > range.getMinLng()
                         && getCacheLongitude() < range.getMaxLng()) {
                     //  离线：缓存准爆区域
-                    pendingProject.setLongitude(permissibleZoneEntity.getLongitude());
-                    pendingProject.setLatitude(permissibleZoneEntity.getLatitude());
+                    pendingProject.setLongitude(getEmuLongLatitude(permissibleZoneEntity.getLongitude()));
+                    pendingProject.setLatitude(getEmuLongLatitude(permissibleZoneEntity.getLatitude()));
 
                     Log.d(TAG,String.format("工程经纬度:%s,%s",permissibleZoneEntity.getLongitude(),permissibleZoneEntity.getLatitude()));
 
@@ -987,5 +991,18 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     }
     private Double getCacheLatitude(){
         return m_cacheLatitude;
+    }
+
+    //  修改经纬度后4,5位
+    private Double getEmuLongLatitude(Double dval) {
+        int n0 = (int)(dval*1000);
+        n0= n0*100;
+
+        Random random = new Random();
+        int ends = random.nextInt(99);
+        n0 = n0+ends;
+
+        Double d = (n0*1.00)/(1000*100);
+        return d;
     }
 }
