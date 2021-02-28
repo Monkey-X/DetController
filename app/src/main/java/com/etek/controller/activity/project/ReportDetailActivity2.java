@@ -317,9 +317,8 @@ public class ReportDetailActivity2 extends BaseActivity {
 
     //  上传到力芯后台
     private void sendRptToEtekServer(ReportDto2 reportDto) {
-        //  修改小数点第4，5位
-        reportDto.setJd(getEmuLongLatitude(reportDto.getJd()));
-        reportDto.setWd(getEmuLongLatitude(reportDto.getWd()));
+        reportDto.setJd(reportDto.getJd());
+        reportDto.setWd(reportDto.getWd());
 
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         XLog.d(rptJson);
@@ -376,9 +375,8 @@ public class ReportDetailActivity2 extends BaseActivity {
 
     //  上传到丹灵后台
     private void sendRptToDanling(ReportDto2 reportDto) {
-        //  修改小数点第4，5位
-        reportDto.setJd(getEmuLongLatitude(reportDto.getJd()));
-        reportDto.setWd(getEmuLongLatitude(reportDto.getWd()));
+        reportDto.setJd(reportDto.getJd());
+        reportDto.setWd(reportDto.getWd());
 
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         XLog.v(rptJson);
@@ -473,22 +471,23 @@ public class ReportDetailActivity2 extends BaseActivity {
     }
 
     //  获取模拟的经纬度
-    private String getEmuLongLatitude(String strjwd){
-        Double d = Double.parseDouble(strjwd);
-        int n0 = (int)(d*1000);
-        n0= n0*100;
-
-        Random random = new Random();
-        int ends = random.nextInt(99);
-        n0 = n0+ends;
-
-        d = (n0*1.00)/(1000*100);
-        String strd = String.format("%.5f",d);
-
-        Log.d(TAG,String.format("输入：%s，仿真为:%s",strjwd,strd));
-
-        return strd;
-    }
+    //  因为每次上报位置不一样，所以不能在这里修改，在离线/在线检测成功后修改
+//    private String getEmuLongLatitude(String strjwd){
+//        Double d = Double.parseDouble(strjwd);
+//        int n0 = (int)(d*1000);
+//        n0= n0*100;
+//
+//        Random random = new Random();
+//        int ends = random.nextInt(99);
+//        n0 = n0+ends;
+//
+//        d = (n0*1.00)/(1000*100);
+//        String strd = String.format("%.5f",d);
+//
+//        Log.d(TAG,String.format("输入：%s，仿真为:%s",strjwd,strd));
+//
+//        return strd;
+//    }
 
     private void showSendRptMessage(String strmsg,String strStatus){
         projectInfoEntity.setReportStatus(strStatus);
@@ -571,11 +570,8 @@ public class ReportDetailActivity2 extends BaseActivity {
         }
 
         DetMessage message = new DetMessage();
-        // message.setLng(projectInfoEntity.getLongitude());
-        // message.setLat(projectInfoEntity.getLatitude());
-        //  修改小数点第4，5位
-        message.setLng(Double.parseDouble(getEmuLongLatitude(String.format("%.4f",projectInfoEntity.getLongitude()))));
-        message.setLat(Double.parseDouble(getEmuLongLatitude(String.format("%.4f",projectInfoEntity.getLatitude()))));
+         message.setLng(projectInfoEntity.getLongitude());
+         message.setLat(projectInfoEntity.getLatitude());
         //  起爆器编号只使用后8位
         message.setSn(projectInfoEntity.getShortSn());
 

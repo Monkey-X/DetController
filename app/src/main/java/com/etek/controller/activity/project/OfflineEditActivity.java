@@ -69,6 +69,7 @@ import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Response;
+import com.etek.controller.utils.SommerUtils;
 
 public class OfflineEditActivity extends BaseActivity implements View.OnClickListener, OfflineEditAdapter.OnItemClickListener {
 
@@ -274,6 +275,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
      */
     private void createOfflineData() {
         OfflineDownloadBean offlineDownloadBean = new OfflineDownloadBean();
+        offlineDownloadBean.setDwdm(companyCode.getText().toString());
         String strContractCode = contractCode.getText().toString();
         String strProCode = proCode.getText().toString();
         if (!TextUtils.isEmpty(strContractCode) || !TextUtils.isEmpty(strProCode)) {
@@ -333,7 +335,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         }
         showProDialog("正在得到检验数据中。。。");
         String rptJson = JSON.toJSONString(offlineDownloadBean, SerializerFeature.WriteMapNullValue);
-        XLog.v(rptJson);
+        Log.d(TAG,rptJson);
 //        rptJson = " {\"dwdm\":\"5227224300086\",\"fbh\":\"\",\"htid\":\"522722320120002\",\"htm\":\"\",\"sbbh\":\"F61A8190423\",\"xmbh\":\"\",\"xtm\":\"I610c01K201014\"}";
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
@@ -347,8 +349,9 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         url = AppConstants.DanningServer + AppConstants.OfflineDownload;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
-        //String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-        AsyncHttpCilentUtil.httpPostNew(this, url, params, new HttpCallback() {
+        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
+        Log.d(TAG,String.format("newUrl:%s",newUrl));
+        AsyncHttpCilentUtil.httpPostNew(this, newUrl, null, new HttpCallback() {
 
             @Override
             public void onFaile(IOException e) {
@@ -370,6 +373,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                 }
 
                 if (JsonUtil.isHtml(respStr)) {
+                    Log.d(TAG,respStr);
                     showStatusDialog("返回数据HTML！" + respStr);
                     return;
                 }
