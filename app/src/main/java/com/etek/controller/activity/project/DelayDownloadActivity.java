@@ -27,8 +27,8 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.ITaskCallback;
+import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -69,6 +69,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private View cancelTest;
     private TextView allEdit;
     private RelativeLayout layoutDownloadBtn;
+    private PendingProject projectInfoEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,13 +154,25 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
 
     private void initProject() {
-        // 获取工程项目列表（暂时隐藏）
-//        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
         //根据项目id获取雷管并展示页面
-        if (proId >= 0){
+        if (proId >= 0) {
+            projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
             detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             Collections.sort(detonatorEntityList);
             detonators.addAll(detonatorEntityList);
+        }
+    }
+
+    /**
+     * 进行相应编辑后改变项目状态
+     */
+    private void changeProjectStatus() {
+        if (projectInfoEntity != null) {
+            int projectStatus = projectInfoEntity.getProjectStatus();
+            if (projectStatus != AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1) {
+                projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1);
+                DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+            }
         }
     }
 
@@ -167,10 +180,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_img:
-                if(isCancelDownLoad) {
+                if (isCancelDownLoad) {
                     finish();
-                }
-                else{
+                } else {
                     ToastUtils.show(this, "按取消暂停或下载完成后才能退出");
                 }
                 break;
@@ -275,6 +287,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 if (mPopupWindow != null && mPopupWindow.isShowing()) {
                     mPopupWindow.dismiss();
                 }
+                changeProjectStatus();
             }
         });
         TextView downloadAgain = popuView.findViewById(R.id.insert_item);
@@ -406,6 +419,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 mProjectDelayAdapter.notifyDataSetChanged();
                 dialog.dismiss();
+                changeProjectStatus();
             }
         });
         builder.create().show();
@@ -444,7 +458,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         detonators.addAll(editDetonators);
         DBManager.getInstance().getProjectDetonatorDao().saveInTx(detonators);
         mProjectDelayAdapter.notifyDataSetChanged();
-
+        changeProjectStatus();
         playSound(true);
     }
 
@@ -536,7 +550,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     // 更新项目状态
     private void updateAndHint() {
-        PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         if (projectInfoEntity != null) {
             projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1);
             DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
