@@ -103,6 +103,10 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             setStringInfo("BombPassWord",bombPassWord);
             //startActivityForResult(new Intent(this, BombPassWordSettingActivity.class),200);
         }
+
+        //  延时设置为5秒
+        DetApp.getInstance().SetCommTimeout(5000);
+
     }
 
     @Override
@@ -236,10 +240,11 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //  右下角的退出键
-        if(4==keyCode){
+        if(KeyEvent.KEYCODE_BACK==keyCode){
 //            if(!isBombing){
 //                finish();
 //            }
+            return true;
         }
         return super.onKeyUp(keyCode, event);
     }

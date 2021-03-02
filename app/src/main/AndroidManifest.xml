@@ -42,7 +42,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.project.BombPassWordSettingActivity"></activity>
+        <activity android:name=".activity.project.LoginInInfoResetActivity" />
+        <activity android:name=".activity.project.BombPassWordSettingActivity" />
         <activity
             android:name=".activity.project.UserInfoActivity2"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -73,7 +74,9 @@
         <activity android:name=".activity.OnlineAuthorizeActivity2" />
         <activity android:name=".activity.CheckoutDetailActivity2" />
         <activity android:name=".activity.project.ReportDetailActivity2" />
-        <activity android:name=".activity.project.HomeActivity2" />
+        <activity
+            android:name=".activity.project.HomeActivity2"
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.ProjectListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -135,9 +138,6 @@
             android:name=".activity.ReportActivity"
             android:label="数据上报"
             android:screenOrientation="unspecified" />
-        <activity
-            android:name=".activity.SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.DetInfoDetailActivity"
             android:label="@string/title_activity_det_detail"

@@ -38,7 +38,7 @@ public class HandSetSerialComm extends SerialCommBase {
 			m_comobj.close("mFd");
 			m_comobj = null;
 		}
-		
+
 		m_comobj = new UHFInfo();
 
 		m_fd = m_comobj.getmFd(b);

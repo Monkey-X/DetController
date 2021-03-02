@@ -57,9 +57,11 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         View wifiSetting = findViewById(R.id.wifi_setting);
         View modleNet = findViewById(R.id.modle_net);
         View setPassWord = findViewById(R.id.set_bomb_password);
+        View loginReset = findViewById(R.id.set_login_in_info);
         wifiSetting.setOnClickListener(this);
         modleNet.setOnClickListener(this);
         setPassWord.setOnClickListener(this);
+        loginReset.setOnClickListener(this);
     }
 
     @Override
@@ -100,6 +102,9 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
                 break;
             case R.id.set_bomb_password:
                 startActivity(new Intent(this,BombPassWordSettingActivity.class));
+                break;
+            case R.id.set_login_in_info:
+                startActivity(new Intent(this,LoginInInfoResetActivity.class));
                 break;
         }
     }

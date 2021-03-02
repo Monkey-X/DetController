@@ -280,6 +280,7 @@
     <string name="delay_start_time">起始延时：%1s ms</string>
     <string name="delay_hole_in_time">T2：%1s ms</string>
     <string name="delay_hole_out_time">T1：%1s ms</string>
+    <string name="title_activity_login_in_info_reset">重置密码</string>
 
 
 </resources>

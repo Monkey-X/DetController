@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.project.LoginInInfoResetActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/message_item_auto"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="登录名："
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/login_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_name"
+
+            android:textColor="@color/eighty_per_trans_black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/personal_sex_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/message_item_auto"
+
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_sex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="旧密码："
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_sex"
+            android:inputType="textPassword"
+            android:textColor="@color/eighty_per_trans_black" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/personal_age_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/message_item_auto"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="新密码："
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/new_passowrd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_age"
+            android:inputType="textPassword"
+            android:textColor="@color/eighty_per_trans_black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/personal_id_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/message_item_auto"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_id_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="确  认："
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/new_passowrd_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_marginLeft="@dimen/dp_40"
+            android:layout_toRightOf="@id/tv_id_code"
+            android:inputType="textPassword"
+            android:textColor="@color/eighty_per_trans_black" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/modify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_ok"
+            style="@style/style_button_normal_big"
+            android:focusable="true"
+            android:text="@string/modify" />
+    </LinearLayout>
+</LinearLayout>
