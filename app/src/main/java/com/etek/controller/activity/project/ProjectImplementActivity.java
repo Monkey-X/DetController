@@ -125,10 +125,10 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 delayDownload.setBackgroundResource(R.drawable.un_project_delay_download);
                 checkAuthorization.setBackgroundResource(R.drawable.un_project_check_authorization);
                 powerBomb.setBackgroundResource(R.drawable.un_project_power_bomb);
+                connectTest.setClickable(true);
                 delayDownload.setClickable(true);
                 checkAuthorization.setClickable(false);
                 powerBomb.setClickable(false);
-                connectTest.setClickable(true);
                 break;
 
             case AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1://延时下载有颜色，其余四个置灰(不可点击)

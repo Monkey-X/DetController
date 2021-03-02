@@ -58,10 +58,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private RecyclerView recycleView;
     private ConnectTestAdapter connectTestAdapter;
     private List<ProjectDetonator> connectData = new ArrayList<>();
-    private List<ProjectInfoEntity> projectInfoEntities;
-    private PopupWindow popWindow;
-    private RecyclerView rvFiltrate;
-    private FiltrateAdapter filtrateAdapter;
     private int projectPosition = -1;
     private TestAsyncTask testAsyncTask;
     private long proId;
@@ -80,6 +76,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private ProgressBar progress;
     private TextView cancelTest;
     private RelativeLayout layoutTestBtn;
+    private PendingProject projectInfoEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,10 +108,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 页面展示的数据
      */
     private void initDate() {
-        // 获取到项目列表（暂时隐藏）
-//        projectInfoEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
         //根据项目id获取雷管并展示
         if (proId >= 0) {
+            projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
             detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             Collections.sort(detonatorEntityList);
             connectData.addAll(detonatorEntityList);
@@ -163,62 +159,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
-     * 筛选框
-     */
-    private void showPopWindow() {
-        View contentView = LayoutInflater.from(this).inflate(R.layout.filtrate_popup_window, null);
-        popWindow = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
-        popWindow.setContentView(contentView);
-        WindowManager.LayoutParams parms = this.getWindow().getAttributes();
-        parms.alpha = 0.5f;
-        this.getWindow().setAttributes(parms);
-        popWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                bgAlpha();
-            }
-        });
-        initFiltrate(contentView);
-        popWindow.showAsDropDown(textBtn, 0, 25);
-    }
-
-
-    /**
-     * showPopWindow消失后取消背景色
-     */
-    private void bgAlpha() {
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.alpha = (float) 1.0; //0.0-1.0
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().setAttributes(lp);
-    }
-
-    /**
-     * 初始化列表,根据项目名称来进行筛选
-     */
-    private void initFiltrate(View contentView) {
-        rvFiltrate = contentView.findViewById(R.id.rv_filtrate);
-        rvFiltrate.setLayoutManager(new LinearLayoutManager(this));
-        //动态设置rvFiltrate的高度
-        if (projectInfoEntities.size() > 5) {
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 600);
-            rvFiltrate.setLayoutParams(lp);
-        }
-
-        filtrateAdapter = new FiltrateAdapter(R.layout.filtrate_item, projectInfoEntities);
-        rvFiltrate.setAdapter(filtrateAdapter);
-
-        filtrateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showFiltrateData(position);
-                popWindow.dismiss();
-            }
-        });
-    }
-
-
-    /**
      * 获取筛选的数据并展示
      */
     private void showFiltrateData(int position) {
@@ -240,11 +180,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 }
                 break;
             case R.id.text_btn://筛选
-                if (projectInfoEntities == null || projectInfoEntities.size() == 0) {
-                    ToastUtils.show(this, this.getString(R.string.no_filtrate_project));
-                } else {
-                    showPopWindow();
-                }
                 break;
             case R.id.miss_event:
                  //筛选失联
@@ -357,6 +292,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     mPopupWindow.dismiss();
                 }
 
+                changeProjectStatus();
+
             }
         });
         TextView downloadAgain = popuView.findViewById(R.id.insert_item);
@@ -373,6 +310,19 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         });
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.showAtLocation(view, Gravity.RIGHT|Gravity.TOP, 0, location[1]+25);
+    }
+
+    /**
+     * 删除操作后即编辑之后改变项目的状态
+     */
+    private void changeProjectStatus() {
+        if (projectInfoEntity !=null) {
+            int projectStatus = projectInfoEntity.getProjectStatus();
+            if (projectStatus != AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1) {
+                projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1);
+                DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
+            }
+        }
     }
 
     /**
@@ -579,7 +529,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     // 更新项目状态
     private void updateAndHint() {
-        PendingProject projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         if (projectInfoEntity != null) {
             projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1);
             DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
