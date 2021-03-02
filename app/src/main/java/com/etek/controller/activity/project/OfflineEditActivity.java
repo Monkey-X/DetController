@@ -124,7 +124,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         // 项目编号可以输入英文字母
         //proCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         contractCode = findViewById(R.id.contract_code);
-        contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        //contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         companyCode = findViewById(R.id.company_code);
         controllerSn = findViewById(R.id.controller_sn);
         View addDet = findViewById(R.id.add_det);

@@ -79,6 +79,7 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         cancelSingleCheck = true;
+        m_bFirstTime = true;
 
         releaseSound();
 
@@ -134,7 +135,6 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                         }
                         continue;
                     }
-
                     m_nLastDetID = -1;
                 }
 
@@ -148,9 +148,11 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                 Log.d(TAG, "获取雷管信息...");
 
                 int result = DetApp.getInstance().CheckSingleModule(new SingleCheckCallBack() {
+                    private String m_strmsg;
                     @Override
                     public void DisplayText(String strText) {
                         Log.d(TAG, "DisplayText: "+strText);
+                        m_strmsg =  strText;
                     }
                     @Override
                     public void SetSingleModuleCheckData(int nID, byte[] szDC, int nDT, byte bCheckResult) {
@@ -181,9 +183,15 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
 
                     @Override
                     public void SetProgressbarValue(int npos){
-                        // 显示“检测中...”和百分比
+                        Log.d(TAG,String.format("进度：%d",npos));
                         showCheckSingleProgress(npos);
-
+                        if(npos<=110) {
+                            // 显示“检测中...”和百分比
+                            return;
+                        }
+                        showCheckErrorMessage(npos,m_strmsg);
+                        // 失败
+                        playSound(false);
                     }
                 });
                 try {
@@ -298,6 +306,18 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                 }
 
             }
+        });
+    }
+
+
+    private void showCheckErrorMessage(int ret, String strmsg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playSound(false);
+                ToastUtils.show(SingleCheckActivity.this, strmsg);
+                return;
+                }
         });
     }
 

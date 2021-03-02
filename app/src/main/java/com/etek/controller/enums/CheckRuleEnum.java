@@ -29,6 +29,7 @@ public enum CheckRuleEnum {
     UNUSED_DET((byte)6,"有未使用的雷管"),
     ERR_DET((byte)7,"有未使用的雷管/有未注册的雷管"),
     OUT_CONTROLLER((byte)0X0A,"起爆器未注册，不允许起爆 "),
+    USED_DET((byte)0X0B,"存在已使用雷管"),
     ;
     byte code;
     String message;

@@ -294,6 +294,9 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
         @Override
         protected Integer doInBackground(String... strings) {
+
+            DetApp.getInstance().SetCommTimeout(1000);
+
             Log.d(TAG,String.format("电平拉高"));
             DetApp.getInstance().MainBoardSetBL(true);
 

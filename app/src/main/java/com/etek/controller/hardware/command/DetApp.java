@@ -62,7 +62,6 @@ public class DetApp {
 
 		m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
 		m_cmdObj = new DetCmd(m_commobj);
-		m_commobj.SetTimeout(1000);
 
 		int ret = m_commobj.OpenPort();
 
@@ -1124,9 +1123,13 @@ public class DetApp {
 				continue;
 			}
 
-
-			if(ret>100)
+			if(ret>100) {
+				Log.d(TAG,String.format("雷管检测失败:%d",ret));
+				cbobj.DisplayText(String.format("雷管检测失败:%d",ret));
+				cbobj.SetProgressbarValue(ret);
 				break;
+			}
+
 
 			//			B2 LEN 完成百分比[1] ID[4] DC[8] DT[4] 参数1[2] 参数2[2]  药头检测结果[1] CRC8[1]
 			byte[] id = new byte[4];
@@ -1146,7 +1149,9 @@ public class DetApp {
 			//	比较起爆器厂商编码
 			if(99!=m_bMID){
 				if(dc[0]!=m_bMID){
-					cbobj.DisplayText("单颗模组检测 和起爆器编码不一致！");
+					Log.d(TAG,String.format("雷管厂商代码：%d，起爆器厂商代码:%d",dc[0],m_bMID));
+					cbobj.DisplayText("雷管和起爆器厂家编码不一致！");
+					cbobj.SetProgressbarValue(300);
 					return -1;
 				}
 			}
@@ -1157,7 +1162,6 @@ public class DetApp {
 				cbobj.DisplayText("单颗模组检测 完成！");
 				cbobj.SetProgressbarValue(100);
 			}
-
 			break;
 		}
 
@@ -1909,5 +1913,18 @@ public class DetApp {
 //
 //		detapp.DownloadProc(strfile, cbobj);
 		return;
+	}
+
+	public void SetCommTimeout(int ntimeout){
+		if(null!=m_commobj)
+			m_commobj.SetTimeout(ntimeout);
+		return;
+	}
+
+	public int GetCommTimeout(){
+		if(null!=m_commobj)
+			return m_commobj.GetTimeout();
+		return -1;
+
 	}
 }

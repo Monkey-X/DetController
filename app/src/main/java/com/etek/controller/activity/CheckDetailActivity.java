@@ -818,7 +818,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
             refreshData();
             if (unRegiestCount > 0) {
-                showStatusDialog(CheckRuleEnum.UNREG_DET.getMessage() + unRegiestCount);
+                showStatusDialog(CheckRuleEnum.USED_DET.getMessage() + unRegiestCount);
                 return;
             }
 

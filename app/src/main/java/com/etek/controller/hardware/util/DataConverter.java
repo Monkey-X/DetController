@@ -5,6 +5,9 @@ package com.etek.controller.hardware.util;/*
  * */
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class DataConverter {
 
 	/***
@@ -130,5 +133,14 @@ public class DataConverter {
 	public static long getIntValue(int n) {
 		if(n>=0) return n;
 		return (long)(0x100000000L+n);
+	}
+
+	public boolean verifyRegex(String str0,String strReg){
+		Pattern compile = Pattern.compile(strReg);
+		Matcher matcher = compile.matcher(str0);
+		if (!matcher.matches()) {
+			return false;
+		}
+		return true;
 	}
 }
