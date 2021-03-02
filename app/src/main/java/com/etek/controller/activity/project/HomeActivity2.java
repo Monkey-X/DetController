@@ -269,7 +269,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
         //  右下角的退出键
         if(KeyEvent.KEYCODE_BACK==keyCode){
-            return true;
+            finish();
+//            return true;
         }
         if (keyCode == event. KEYCODE_HOME) {
             return true;
@@ -293,11 +294,28 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
         @Override
         protected Integer doInBackground(String... strings) {
+            Log.d(TAG,String.format("电平拉高"));
+            DetApp.getInstance().MainBoardSetBL(true);
+
+            Log.d(TAG,String.format("上电"));
             DetApp.getInstance().MainBoardPowerOn();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-            }
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//            }
+//
+//            //  1.0.0.12版本的OS，启动后是拉低
+//            Log.d(TAG,String.format("电平拉高"));
+//            DetApp.getInstance().MainBoardSetBL(true);
+
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
+            Log.d(TAG,String.format("初始化"));
+
             int result = mainBoardInit();
             return result;
         }
@@ -306,7 +324,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
             super.onPostExecute(result);
             missProDialog();
             if (result !=0) {
-                showStatusDialog("主板初始化失败！");
+                showStatusDialog(String.format("主板初始化失败！ %d",result));
             }
         }
     }
@@ -413,6 +431,10 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Log.d(TAG,String.format("电平拉高"));
+        DetApp.getInstance().MainBoardSetBL(true);
+
         DetApp.getInstance().ShutdownProc();
         DetApp.getInstance().Finalize();
         Log.d(TAG, "onDestroy: ");

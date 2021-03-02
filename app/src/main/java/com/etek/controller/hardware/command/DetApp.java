@@ -62,6 +62,7 @@ public class DetApp {
 
 		m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
 		m_cmdObj = new DetCmd(m_commobj);
+		m_commobj.SetTimeout(1000);
 
 		int ret = m_commobj.OpenPort();
 
@@ -917,6 +918,7 @@ public class DetApp {
 			cbobj.DisplayText("升级完成！");
 		}
 
+		MainBoardSetBL(true);
 		cmd.BoardPowerOn();
 
 		return 0;
@@ -928,7 +930,7 @@ public class DetApp {
 	 */
 	public int MainBoardInitialize(InitialCheckCallBack cbobj) {
 		Log.d(TAG, "MainBoardInitialize: ");
-		int ret;
+		int ret=0;
 
 		//	超时等待（此时核心板需要做擦除动作）
 		long WAIT_TIME_MS = 2000;
@@ -947,10 +949,21 @@ public class DetApp {
 			}
 		DetCmd cmd = new DetCmd(m_commobj);
 		StringBuilder strData = new StringBuilder();
-		ret = cmd.BoardCmd80(strData);
-		m_detError.Setter((byte)0x80, ret);
-		Log.d(TAG, "MainBoardInitialize: ret = "+ret);
-		if(0!=ret) return ret;
+
+		//  重试多次
+		for(int i=0;i<MAX_TRY;i++){
+            ret = cmd.BoardCmd80(strData);
+            m_detError.Setter((byte)0x80, ret);
+            Log.d(TAG, "MainBoardInitialize: ret = "+ret);
+            if(0==ret) break;
+
+            try {
+                Thread.sleep(500);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if(0!=ret) return ret;
 
 		//[0] //B0
 		//[1] //固定值21，有效数据包DAT长度
