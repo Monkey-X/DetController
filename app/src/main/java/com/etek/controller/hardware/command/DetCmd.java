@@ -20,7 +20,7 @@ public class DetCmd {
 	private String TAG = "DetCmd";
 	public DetCmd(SerialCommBase commobj) {
 		m_commobj = commobj;
-		DetLog.writeLog(TAG, "DetCmd: ");
+		Log.d(TAG, "DetCmd: ");
 	}
 
 	/*
@@ -260,7 +260,7 @@ public class DetCmd {
 		byte[] szcmd = new byte[2];
 		szcmd[0]=(byte)0x85;szcmd[1]=0x00;
 
-		DetLog.writeLog(TAG, "BoardSendCmd85: ");
+		Log.d(TAG, "BoardSendCmd85: ");
 
 		DetProtocol prt = new DetProtocol(m_commobj);
 
