@@ -7,10 +7,9 @@ package com.etek.controller.hardware.command;/*
  * */
 
 
-import android.util.Log;
-
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.util.DataConverter;
+import com.etek.controller.hardware.util.DetLog;
 
 import java.util.Arrays;
 
@@ -64,7 +63,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			Log.d(TAG, "SendBlock: " + String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
+			DetLog.writeLog(TAG,"SendBlock: " + String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
 		}
 		int ret = m_commobj.SendBlock(szcmd);
 		return ret;
@@ -79,7 +78,7 @@ public class DetProtocol {
 	public int RecvBlock(int nLen,DetResponse resp) {
 		byte[] data =  m_commobj.RecvBlock(nLen);
 		if(null==data) return m_commobj.GetErrorCode();
-		Log.d(TAG, "RecvBlock: "+String.format("\t应答：%s", DataConverter.bytes2HexString(data)));
+		DetLog.writeLog(TAG,"RecvBlock: "+String.format("\t应答：%s", DataConverter.bytes2HexString(data)));
 
 		//check crc8;
 		int n = data.length;
@@ -127,7 +126,7 @@ public class DetProtocol {
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
 		if(DEBUG_PRINT) {
-			Log.d(TAG, "SendRecv: " + String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
+			DetLog.writeLog(TAG, "SendRecv: " + String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
 		}
 
 		long t0 = System.currentTimeMillis();
@@ -138,12 +137,12 @@ public class DetProtocol {
 		long t1 = System.currentTimeMillis();
 
 		if(DEBUG_PRINT) {
-			Log.d(TAG, "SendRecv: " + String.format("命令：%02X\t耗时:%d ms", bCmd, t1 - t0));
+			DetLog.writeLog(TAG,"SendRecv: " + String.format("命令：%02X\t耗时:%d ms", bCmd, t1 - t0));
 			if (null == data)
-				Log.d(TAG, "SendRecv: 应答: 无");
+				DetLog.writeLog(TAG, "SendRecv: 应答: 无");
 			else {
 				String strout = DataConverter.bytes2HexString(data);
-				Log.d(TAG, "SendRecv: " + String.format("\t应答：%s", strout));
+				DetLog.writeLog(TAG,"SendRecv: " + String.format("\t应答：%s", strout));
 			}
 		}
 

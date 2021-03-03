@@ -12,6 +12,7 @@ import android.util.Log;
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.util.DataConverter;
+import com.etek.controller.hardware.util.DetLog;
 
 public class DetCmd {
 	private SerialCommBase m_commobj;
@@ -19,7 +20,7 @@ public class DetCmd {
 	private String TAG = "DetCmd";
 	public DetCmd(SerialCommBase commobj) {
 		m_commobj = commobj;
-		Log.d(TAG, "DetCmd: ");
+		DetLog.writeLog(TAG, "DetCmd: ");
 	}
 
 	/*
@@ -259,7 +260,7 @@ public class DetCmd {
 		byte[] szcmd = new byte[2];
 		szcmd[0]=(byte)0x85;szcmd[1]=0x00;
 
-		Log.d(TAG, "BoardSendCmd85: ");
+		DetLog.writeLog(TAG, "BoardSendCmd85: ");
 
 		DetProtocol prt = new DetProtocol(m_commobj);
 

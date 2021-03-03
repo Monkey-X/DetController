@@ -936,11 +936,11 @@ public class DetApp {
 
 			for(int k=0;k<WAIT_TIME_MS/100;k++) {
 
-				try {
-					Thread.sleep(100);
-				}catch (Exception e){
-					e.printStackTrace();
-				}
+                try {
+                    Thread.sleep(100);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 				float f =  WAIT_TIME_MS - k*100;
 
 //				if(null!=cbobj)

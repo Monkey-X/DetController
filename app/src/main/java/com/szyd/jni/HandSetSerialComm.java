@@ -7,6 +7,7 @@ import android.util.Log;
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.command.DetErrorCode;
 import com.etek.controller.hardware.util.DataConverter;
+import com.etek.controller.hardware.util.DetLog;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -222,7 +223,7 @@ public class HandSetSerialComm extends SerialCommBase {
 			while (bufflenth != 0) {
 				bytes = new byte[bufflenth];//初始化byte数组
 				is.read(bytes);
-				Log.d(TAG,"function FlushComm,bytes:"+ Arrays.toString(bytes));
+				DetLog.writeLog(TAG,"FlushComm:"+ Arrays.toString(bytes));
 
 				bufflenth = is.available();
 			}
