@@ -328,6 +328,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
             missProDialog();
             if (result !=0) {
                 showStatusDialog(String.format("主板初始化失败！ %d",result));
+                DetApp.getInstance().SetCommTimeout(5000);
             }
         }
     }
@@ -360,6 +361,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 setStringInfo(getString(R.string.controller_sno), strSNO);
                 setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
 //                showMainBoardDialog(mainBoardInfoBean);
+                DetApp.getInstance().SetCommTimeout(5000);
             }
         });
         Log.d(TAG, "SetInitialCheckData: result = " + result);

@@ -44,6 +44,7 @@ import com.etek.controller.dto.Zbqys;
 import com.etek.controller.entity.DetController;
 import com.etek.controller.entity.EntryCopyUtil;
 import com.etek.controller.enums.CheckRuleEnum;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
@@ -385,7 +386,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 pendingProject.setLongitude(getEmuLongLatitude(longitude));
                 pendingProject.setLatitude(getEmuLongLatitude(latitude));
 
-                Log.d(TAG,String.format("工程经纬度:%s,%s",longitude,latitude));
+                DetLog.writeLog(TAG,String.format("工程经纬度:%s,%s",longitude,latitude));
             }
 
             m_bChecking = true;
@@ -459,7 +460,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         onlineCheckDto.setProjectDets(projectDetonatorList);
 
         String rptJson = JSON.toJSONString(onlineCheckDto, SerializerFeature.WriteMapNullValue);
-        XLog.e("rptJson: " + rptJson);
+        DetLog.writeLog("在线检查","rptJson: " + rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
             showToast("数据编码出错：" + result.getMessage());
@@ -478,6 +479,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     @Override
                     public void run() {
                         missProDialog();
+                        DetLog.writeLog(TAG,"请求服务器失败，" + e.toString());
                         showStatusDialog("请求服务器失败，" + e.toString());
                     }
                 });
@@ -506,7 +508,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             e.printStackTrace();
         }
         if (StringUtils.isEmpty(respStr)) {
-            Log.d(TAG, "respStr is null");
+            DetLog.writeLog(TAG, "respStr is null");
             showToast("服务器返回数据失败！");
             return;
         }
@@ -514,7 +516,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         OnlineCheckResp serverResult = null;
         try {
             Result rptDecode = RptUtil.getRptDecode(respStr);
-            Log.d(TAG, "respStr: " + rptDecode);
+            DetLog.writeLog(TAG, "在线检查应答: " + rptDecode);
             if (rptDecode.isSuccess()) {
                 String data = (String) rptDecode.getData();
                 Log.d(TAG, "resp:" + data);
@@ -554,7 +556,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     }
 
                     if (isUnreg) {
-                        Log.d(TAG, "unRegDet:" + unRegDet);
+                        DetLog.writeLog(TAG, "已使用雷管:" + unRegDet);
                         showStatusDialog("已存在已使用雷管！");
                         uploadData(projectId);
                         return;
@@ -589,7 +591,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 }
             }
         } catch (Exception e) {
-            Log.d(TAG, "解析错误：" + e.getMessage());
+            DetLog.writeLog(TAG, "解析错误：" + e.getMessage());
         }
     }
 

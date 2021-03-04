@@ -1013,8 +1013,7 @@ public class DetApp {
 		}
 
 		ret = bCheckResult;
-//		return ret;
-		return 0;
+		return ret;
 	}
 
 	/***

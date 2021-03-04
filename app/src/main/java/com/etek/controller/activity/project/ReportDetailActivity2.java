@@ -25,6 +25,7 @@ import com.etek.controller.dto.ReportDto2;
 import com.etek.controller.dto.ServerResult;
 import com.etek.controller.enums.ReportServerEnum;
 import com.etek.controller.enums.ResultErrEnum;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.minaclient.DetMessage;
 import com.etek.controller.minaclient.MessageCodecFactory;
 import com.etek.controller.persistence.DBManager;
@@ -321,7 +322,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         reportDto.setWd(reportDto.getWd());
 
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
-        XLog.d(rptJson);
+        DetLog.writeLog(TAG,String.format("上报力芯：%s",rptJson));
         Result result = RptUtil.getRptEncode(rptJson);
         XLog.d(result);
         String url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
@@ -333,7 +334,7 @@ public class ReportDetailActivity2 extends BaseActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                XLog.e("IOException:", e.getMessage());
+                DetLog.writeLog(TAG,"上报力芯失败：:"+ e.getMessage());
                 sendCmdMessage(MSG_RPT_ETEK_TEST_ERR);
 
                 showSendRptMessage("上报ETEK失败","2");
@@ -343,7 +344,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String respStr = response.body().string();
                 if (StringUtils.isBlank(respStr)) {
-                    XLog.w("respStr is null ");
+                    DetLog.writeLog(TAG,"respStr is null ");
                     sendCmdMessage(MSG_RPT_ETEK_TEST_ERR);
                     return;
                 }
@@ -354,7 +355,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                     if (!serverResult.getSuccess().contains("0")) {
                         Integer code = Integer.parseInt(serverResult.getSuccess());
                         ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
-                        XLog.e("错误代码：", errEnum.getMessage());
+                        DetLog.writeLog(TAG,"力芯错误代码：" + errEnum.getMessage());
 //                        showToast("上传ETEK服务器失败!");
 //                        showToast("上传ETEK服务器成功!");
 
@@ -363,10 +364,11 @@ public class ReportDetailActivity2 extends BaseActivity {
                     } else {
                         step++;
                         sendCmdMessage(MSG_RPT_ETEK_TEST_OK);
+                        DetLog.writeLog(TAG,"上报ETEK成功");
                         showSendRptMessage("上报ETEK成功","1");
                     }
                 } catch (Exception e) {
-                    XLog.e("解析错误：", e.getMessage());
+                    DetLog.writeLog(TAG,"力芯返回解析错误："+ e.getMessage());
                     sendCmdMessage(MSG_RPT_ETEK_TEST_ERR);
                 }
             }
@@ -379,7 +381,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         reportDto.setWd(reportDto.getWd());
 
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
-        XLog.v(rptJson);
+        DetLog.writeLog(TAG,"丹灵上报数据：" + rptJson);
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
             showToast("数据编码出错：" + result.getMessage());
@@ -397,14 +399,14 @@ public class ReportDetailActivity2 extends BaseActivity {
                 XLog.e("IOException:", e.getMessage());
                 sendCmdMessage(MSG_RPT_DANLING_ERR);
 
-                showSendRptMessage("上报丹灵成功","1");
+                showSendRptMessage("上报丹灵失败","2");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 closeProgressDialog();
                 String respStr = response.body().string();
-                XLog.e("respStr:  " + respStr);
+                DetLog.writeLog(TAG,"丹灵返回 respStr:  " + respStr);
                 if (StringUtils.isEmpty(respStr)) {
                     XLog.w("respStr is null ");
                     sendCmdMessage(MSG_RPT_DANLING_ERR);
@@ -416,17 +418,17 @@ public class ReportDetailActivity2 extends BaseActivity {
                 try {
                     serverResult = JSON.parseObject(respStr, ServerResult.class);
                     if (serverResult.getSuccess().contains("fail")) {
-                        XLog.e("错误代码：", serverResult.getCwxxms());
+                        DetLog.writeLog(TAG,"丹灵返回错误代码："+ serverResult.getCwxxms());
                         sendCmdMessage(MSG_RPT_DANLING_ERR);
 
                         showSendRptMessage("上报丹灵失败","2");
                     } else {
                         sendCmdMessage(MSG_RPT_DANLING_OK);
-
+                        DetLog.writeLog(TAG,"丹灵上报成功");
                         showSendRptMessage("上报丹灵成功","1");
                     }
                 } catch (Exception e) {
-                    XLog.e("解析错误：" + e.getMessage());
+                    DetLog.writeLog(TAG,"丹灵返回解析错误：" + e.getMessage());
                     sendCmdMessage(MSG_RPT_DANLING_ERR);
 
                     showSendRptMessage("上报丹灵失败","2");
@@ -447,6 +449,7 @@ public class ReportDetailActivity2 extends BaseActivity {
 
             ConnectFuture cf;
             ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
+            DetLog.writeLog(TAG,String.format("中爆地址：%s:%d",reportServerEnum.getAddress(), reportServerEnum.getPort()));
             cf = connector.connect(new InetSocketAddress(reportServerEnum.getAddress(), reportServerEnum.getPort()));
             cf.awaitUninterruptibly();
             for (int j = 0; j < detMsgs.size(); j++) {
@@ -454,7 +457,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                 XLog.w("detMsgs:" + new String(bs));
                 cf.getSession().write(bs);
                 Thread.sleep(100);
-                Log.d(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
+                DetLog.writeLog(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
             }
 
             cf.getSession().getCloseFuture().awaitUninterruptibly();
@@ -463,10 +466,10 @@ public class ReportDetailActivity2 extends BaseActivity {
 
             showSendRptMessage("上报中爆成功","1");
         } catch (Exception e) {
-            Log.d(TAG,String.format("中爆 发送失败:%s",e.getMessage()));
+            DetLog.writeLog(TAG,String.format("中爆 发送失败:%s",e.getMessage()));
             showSendRptMessage("上报中爆失败","2");
         } finally {
-            Log.d(TAG,String.format("中爆 发送结束!"));
+            DetLog.writeLog(TAG,String.format("中爆 发送结束!"));
         }
     }
 

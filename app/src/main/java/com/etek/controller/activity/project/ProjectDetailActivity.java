@@ -92,6 +92,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private SoundPoolHelp soundPoolHelp;
     private ProgressDialog progressDialog;
 
+    private boolean bScanDetOver = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -606,8 +608,15 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         // 按钮7: 正常、CAPSLOC和Fn按下
         if ((keyCode == 14||keyCode==44||keyCode==137)
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
-            readDetNumTask1.execute();
+            if(bScanDetOver){
+                Log.d(TAG,"开始检测!");
+                bScanDetOver = false;
+                ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
+                readDetNumTask1.execute();
+            }else{
+                Log.d(TAG,"检测中，不响应...");
+            }
+
             return true;
         }
         //按钮8
@@ -619,8 +628,15 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         // 按钮9: 正常、CAPSLOC和Fn按下
         if ((keyCode == 16||keyCode==51||keyCode==139)
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
-            readDetNumTask1.execute();
+            if(bScanDetOver){
+                Log.d(TAG,"开始检测!");
+                bScanDetOver = false;
+                ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
+                readDetNumTask1.execute();
+            }else{
+                Log.d(TAG,"检测中，不响应...");
+            }
+
             return true;
         }
 
@@ -803,6 +819,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             });
             Log.d(TAG, "doInBackground: detNum = "+detNum.toString());
             Log.d(TAG, "doInBackground: detId = "+detId.toString());
+            bScanDetOver =true;
             if (result == 0) {
                 return detNum.toString();
             }

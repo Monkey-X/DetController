@@ -39,6 +39,7 @@ import com.etek.controller.dto.Zbqys;
 import com.etek.controller.entity.Detonator;
 import com.etek.controller.entity.OfflineDownloadBean;
 import com.etek.controller.hardware.test.HttpCallback;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.model.User;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
@@ -335,7 +336,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         }
         showProDialog("正在得到检验数据中。。。");
         String rptJson = JSON.toJSONString(offlineDownloadBean, SerializerFeature.WriteMapNullValue);
-        Log.d(TAG,rptJson);
+        DetLog.writeLog(TAG,String.format("离线校验数据:%s",rptJson));
 //        rptJson = " {\"dwdm\":\"5227224300086\",\"fbh\":\"\",\"htid\":\"522722320120002\",\"htm\":\"\",\"sbbh\":\"F61A8190423\",\"xmbh\":\"\",\"xtm\":\"I610c01K201014\"}";
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
@@ -356,6 +357,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onFaile(IOException e) {
                 missProDialog();
+                DetLog.writeLog(TAG,String.format("校验服务器出错：%s",e.getMessage()));
                 showStatusDialog("校验服务器出错：" + e.getMessage());
             }
 
@@ -368,18 +370,21 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                 } catch (IOException e) {
                 }
                 if (StringUtils.isEmpty(respStr)) {
+                    DetLog.writeLog(TAG,String.format("返回数据为空！"));
                     showStatusDialog("返回数据为空！");
                     return;
                 }
 
                 if (JsonUtil.isHtml(respStr)) {
                     Log.d(TAG,respStr);
+                    DetLog.writeLog(TAG,String.format("返回数据HTML：%s",respStr));
                     showStatusDialog("返回数据HTML！" + respStr);
                     return;
                 }
 
                 try {
                     Result rptDecode = RptUtil.getRptDecode(respStr);
+                    DetLog.writeLog(TAG,String.format("离线项目检查返回：%s",respStr));
                     if (rptDecode.isSuccess()) {
                         String data = (String) rptDecode.getData();
                         OnlineCheckStatusResp onlineCheckStatusResp = JSON.parseObject(data, OnlineCheckStatusResp.class);
@@ -388,6 +393,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                             OnlineCheckResp serverResult = JSON.parseObject(data, OnlineCheckResp.class);
 
                             if (serverResult.getLgs().getLg() == null || serverResult.getLgs().getLg().isEmpty()) {
+                                DetLog.writeLog(TAG,String.format("雷管信息为空！"));
                                 showStatusDialog("雷管信息为空！");
                                 return;
                             }
@@ -405,6 +411,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                                 }
                             }
                             if (isUsed > 0) {
+                                DetLog.writeLog(TAG,String.format("雷管信息异常！"));
                                 showStatusDialog("雷管信息异常！");
                                 offlineEditAdapter.notifyDataSetChanged();
                             }
@@ -427,7 +434,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                             proId = storeProjectInfo(projectFile, serverResult);
                             if (proId != 0) {
                                 showStatusDialog("项目保存成功！");
-
                             } else {
                                 showStatusDialog("项目保存失败！");
                             }
@@ -435,16 +441,15 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                             if (!StringUtils.isEmpty(onlineCheckStatusResp.getCwxxms())) {
                                 showStatusDialog(onlineCheckStatusResp.getCwxxms());
                             } else {
+                                DetLog.writeLog(TAG,String.format("服务器返回错误，数据错误 请调整！"));
                                 showStatusDialog("服务器返回错误，数据错误 请调整！");
                             }
-
-
                         }
                     }
                 } catch (Exception e) {
+                    DetLog.writeLog(TAG,String.format("解析错误：",e.getMessage()));
                     showLongToast("解析错误：" + e.getMessage());
                 }
-
             }
         });
 

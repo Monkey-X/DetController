@@ -62,6 +62,7 @@ public class DetProtocol {
 		//	CRC8;
 		szcmd[n-1] = GetCRC8(n-1,szcmd);
 
+		m_commobj.FlushComm();
 		if(DEBUG_PRINT) {
 			DetLog.writeLog(TAG,"SendBlock: " + String.format("\t命令：%s", DataConverter.bytes2HexString(szcmd)));
 		}
