@@ -191,6 +191,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.all_edit:
                 // 批量编辑
+                checkShow(3);
                 changeAllEdit();
                 layoutDownloadBtn.setVisibility(View.GONE);
                 break;
@@ -217,13 +218,22 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     private void checkShow(int type) {
-        if (type == 1) {
-            downLoadFail.setSelected(false);
-            allDet.setSelected(true);
-        } else if (type == 2) {
-            downLoadFail.setSelected(true);
-            allDet.setSelected(false);
+        allDet.setSelected(false);
+        downLoadFail.setSelected(false);
+        allEdit.setSelected(false);
+
+        switch (type){
+            case 1:
+                allDet.setSelected(true);
+                break;
+            case 2:
+                downLoadFail.setSelected(true);
+                break;
+            default:
+                allEdit.setSelected(true);
+                break;
         }
+        return;
     }
 
     private void showDownloadFail() {
@@ -314,8 +324,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             return true;
         }
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            allDetDownload();
-            return true;
+            if(!isCancelDownLoad){
+                allDetDownload();
+                return true;
+            }
         }
 
         //  右下角的退出键

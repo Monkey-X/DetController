@@ -29,6 +29,7 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import android.util.Log;
 
 /**
  * 项目列表页
@@ -40,6 +41,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
     private List<PendingProject> projectInfos = new ArrayList<>();
     private ProjectListAdapter projectListAdapter;
     private AlertDialog alertDialog;
+    private final String TAG="ProjectListActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String projectCodeStr = projectCode.getText().toString().trim();
+                Log.d(TAG,String.format("工程编号：%s",projectCodeStr));
                 if (TextUtils.isEmpty(projectCodeStr)) {
                     ToastUtils.showShort(ProjectListActivity.this, "请输入工程编号！");
                     return;
@@ -162,16 +165,27 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         String dateString = DateStringUtils.getDateString();
         if (TextUtils.isEmpty(stringInfo)) {
             projectNum = dateString + "-1";
-        } else {
-            if (stringInfo.contains("-")) {
-                String[] split = stringInfo.split("-");
-                if (split[0].equalsIgnoreCase(dateString)) {
-                    projectNum = split[0] + "-" + (Integer.parseInt(split[1]) + 1);
-                } else {
-                    projectNum = dateString + "-1";
-                }
-            }
+            setStringInfo(AppIntentString.PROJECT_ID, projectNum);
+            return;
         }
+
+        String[] split = stringInfo.split("-");
+        if(split.length<2) return;
+
+        try{
+            int ret = Integer.parseInt(split[1]);
+        }catch (NumberFormatException e)
+        {
+            Log.d(TAG,e.getMessage());
+            return;
+        }
+
+        if (split[0].equalsIgnoreCase(dateString)) {
+            projectNum = split[0] + "-" + (Integer.parseInt(split[1]) + 1);
+        } else {
+            projectNum = dateString + "-1";
+        }
+
         setStringInfo(AppIntentString.PROJECT_ID, projectNum);
     }
 

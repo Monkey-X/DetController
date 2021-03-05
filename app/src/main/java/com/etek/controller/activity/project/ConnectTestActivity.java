@@ -375,14 +375,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
+        Log.d(TAG,String.format("KeyCode:%d",keyCode));
         if (keyCode == 19 || keyCode == 20) {
             return true;
         }
 
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            allDetConnectTest();
-            return true;
+            if(isCancelTest){
+                allDetConnectTest();
+                return true;
+            }
         }
 
         //  右下角返回键
