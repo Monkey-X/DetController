@@ -90,6 +90,20 @@
         android:background="@color/btn_gray_normal" />
 
     <TextView
+        android:id="@+id/upload_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/seleted_status"
+        android:padding="8dp"
+        android:text="上传日志"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/btn_gray_normal" />
+
+    <TextView
         android:id="@+id/about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

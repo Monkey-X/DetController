@@ -71,4 +71,6 @@ public  class AppConstants {
 
     public static final String LONGMAO_UPLOAD = "http://129.211.7.213:9030/fileUpload";
 
+    public static final String UPLOAD_LOG ="http://47.117.132.63:6066/logs/upload";
+
 }
