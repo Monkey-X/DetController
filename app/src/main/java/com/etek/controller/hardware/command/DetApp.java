@@ -1603,7 +1603,7 @@ public class DetApp {
 			return -1;
 		}
 
-		return 0;
+		return ret;
 	}
 
 	/***
