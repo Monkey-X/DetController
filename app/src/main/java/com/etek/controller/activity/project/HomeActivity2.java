@@ -1,6 +1,7 @@
 package com.etek.controller.activity.project;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,10 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
@@ -48,11 +46,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
 
     private String TAG = "HomeActivity2";
-    private long lastBackKeyDownTick = 0;
-    public static final long MAX_DOUBLE_BACK_DURATION = 1500;
-    private RelativeLayout update;
-    private TextView speed;
-    private ProgressBar updateProgress;
     private RelativeLayout projectManage;
     private RelativeLayout projectImplement;
     private RelativeLayout assistFunction;
@@ -62,6 +55,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     private int mainBoardupdate = 1;
     private AlertDialog updateDialog;
     private MainBoardInfoBean mainBoardInfoBean;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +194,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
      * @param fileName    文件名称
      */
     private void downLoadFile(int flag, String downloadUrl, String path, String fileName) {
-        update.setVisibility(View.VISIBLE);
+        showDownLoadDialog();
         File targetFile = new File(path + File.separator + fileName);
         if (targetFile.exists()) {
             targetFile.delete();
@@ -215,7 +209,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                             @Override
                             public void run() {
                                 Log.e(TAG, "file下载完成: " + file.getName());
-                                update.setVisibility(View.GONE);
+                                dissDownLoadDialog();
                                 if (flag == appUpdate) {
                                     UpdateAppUtils.installApk(HomeActivity2.this, file);
                                 } else if (flag == mainBoardupdate) {
@@ -230,8 +224,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                         HomeActivity2.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateProgress.setProgress(progress);
-                                speed.setText(progress + " %");
+                                setDownLoadProgress(progress);
                             }
                         });
                         Log.e(TAG, "progress: " + progress);
@@ -242,7 +235,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                         HomeActivity2.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                update.setVisibility(View.GONE);
+                                dissDownLoadDialog();
                             }
                         });
                         Log.e(TAG, "Exception: " + e.getMessage());
@@ -250,6 +243,33 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 });
             }
         }).start();
+    }
+
+
+    private void showDownLoadDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMax(100);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setProgressPercentFormat(null);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("正在下载...");
+        }
+        progressDialog.show();
+    }
+
+    private void setDownLoadProgress(int value) {
+        if (progressDialog != null) {
+            progressDialog.setProgress(value);
+        }
+    }
+
+
+    private void dissDownLoadDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     private void getUserInfo() {
@@ -376,9 +396,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
     private void initView() {
         startTime = System.currentTimeMillis();
-        update = findViewById(R.id.rl_update);
-        speed = findViewById(R.id.speed);
-        updateProgress = findViewById(R.id.update_progress);
         projectManage = findViewById(R.id.home_project_manage);
         projectImplement = findViewById(R.id.home_project_implement);
         assistFunction = findViewById(R.id.home_assist_function);
