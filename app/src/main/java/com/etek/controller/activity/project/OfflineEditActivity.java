@@ -384,7 +384,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
                 try {
                     Result rptDecode = RptUtil.getRptDecode(respStr);
-                    DetLog.writeLog(TAG,String.format("离线项目检查返回：%s",respStr));
+                    DetLog.writeLog(TAG,String.format("离线项目检查返回：%s",rptDecode));
                     if (rptDecode.isSuccess()) {
                         String data = (String) rptDecode.getData();
                         OnlineCheckStatusResp onlineCheckStatusResp = JSON.parseObject(data, OnlineCheckStatusResp.class);

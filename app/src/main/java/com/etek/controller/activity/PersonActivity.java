@@ -98,18 +98,29 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void uploadLog(){
+        //  日志文件路径
         String path = Environment.getExternalStorageDirectory() + "/Log/"; //文件路径
-
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");// HH:mm:ss //获取当前时间
         Date date = new Date(System.currentTimeMillis());
         String fileName =path + String.format("ETEK%s.txt",simpleDateFormat.format(date));
 
         File logfile = new File(fileName);
         if(!logfile.exists()){
-            Toast.makeText(this, "没有日志需要上传！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "无 日志 需要上传！", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        //  起爆器编号
+        String strsno = getPreInfo(getString(R.string.controller_sno));
+        if(TextUtils.isEmpty(strsno))
+            strsno = "F00A8000000";
+        Log.d("LOG",String.format("起爆器编号：%s",strsno));
+
+        //  上传地址
+        String url =String.format(AppConstants.UPLOAD_LOG + "/%s",strsno);
+
+        //  HTTP请求
+        AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         try{
             params.put("file",logfile);
@@ -118,16 +129,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        String strsno = getPreInfo(getString(R.string.controller_sno));
-        if(TextUtils.isEmpty(strsno))
-            strsno = "F00A8000000";
-
-        Log.d("LOG",String.format("起爆器编号：%s",strsno));
-
-        String url =String.format(AppConstants.UPLOAD_LOG + "/%s",strsno);
-
-        progressDialog = ProgressDialog.show(PersonActivity.this,"提示","请稍等...",true,false);
+        progressDialog = ProgressDialog.show(mContext,"提示","请稍等...",true,false);
         progressDialog.show();
 
         // 上传文件
@@ -136,14 +138,14 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
             public void onSuccess(int statusCode, Header[] headers,
                                   byte[] responseBody) {
                 // 上传成功后要做的工作
-                Toast.makeText(mContext, "日志上传成功", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "日志 上传成功", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
             @Override
             public void onFailure(int statusCode, Header[] headers,
                                   byte[] responseBody, Throwable error) {
                 // 上传失败后要做到工作
-                Toast.makeText(mContext, "日志上传失败", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "日志 上传失败", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
         });
