@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.AssistActivity;
 import com.etek.controller.activity.PersonActivity;
+import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
@@ -35,6 +37,9 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jsoup.helper.StringUtil;
 
 import java.io.File;
@@ -50,7 +55,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     private RelativeLayout projectImplement;
     private RelativeLayout assistFunction;
     private RelativeLayout localSetting;
-    private long startTime;
     private int appUpdate = 0;
     private int mainBoardupdate = 1;
     private AlertDialog updateDialog;
@@ -62,6 +66,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_new_home2);
+
+        EventBus.getDefault().register(this);
 
         int initialize = DetApp.getInstance().Initialize();
         Log.d(TAG, "onCreate: initialize= " + initialize);
@@ -380,7 +386,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 mainBoardInfoBean.setStrConfig(strConfig);
                 setStringInfo(getString(R.string.controller_sno), strSNO);
                 setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
-//                showMainBoardDialog(mainBoardInfoBean);
                 DetApp.getInstance().SetCommTimeout(5000);
             }
         });
@@ -388,14 +393,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         return result;
     }
 
-    private void showMainBoardDialog(MainBoardInfoBean mainBoardInfoBean) {
-        MainBoardDialog mainBoardDialog = new MainBoardDialog();
-        mainBoardDialog.setMainBoardInfo(mainBoardInfoBean);
-        mainBoardDialog.show(getSupportFragmentManager(), "mainBoardDialog");
-    }
-
     private void initView() {
-        startTime = System.currentTimeMillis();
         projectManage = findViewById(R.id.home_project_manage);
         projectImplement = findViewById(R.id.home_project_implement);
         assistFunction = findViewById(R.id.home_assist_function);
@@ -422,7 +420,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 break;
 
             case R.id.home_local_setting://本机设置
-//                startActivity(UserInfoActivity.class);
                 startActivity(PersonActivity.class);
                 break;
         }
@@ -449,31 +446,24 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         Log.d(TAG, "onStop: ");
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event){
+        finish();
+    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        EventBus.getDefault().unregister(this);
         Log.d(TAG,String.format("电平拉高"));
         DetApp.getInstance().MainBoardSetBL(true);
 
         DetApp.getInstance().ShutdownProc();
         DetApp.getInstance().Finalize();
         Log.d(TAG, "onDestroy: ");
-    }
 
-    @Override
-    public void onBackPressed() {
-//        long currentTick = System.currentTimeMillis();
-//        if (currentTick - startTime < 5000) {
-//            return;
-//        }
-//        if (currentTick - lastBackKeyDownTick > MAX_DOUBLE_BACK_DURATION) {
-//            showToast("再按一次退出");
-//            lastBackKeyDownTick = currentTick;
-//        } else {
-//            finish();
-//        }
+        System.exit(0);
     }
 
     @Override

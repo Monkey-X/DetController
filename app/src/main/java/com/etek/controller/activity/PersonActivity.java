@@ -15,6 +15,7 @@ import com.etek.controller.activity.project.MainBoardUpdateActivity;
 import com.etek.controller.activity.project.SettingsActivity2;
 import com.etek.controller.activity.project.UserInfoActivity2;
 
+import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.common.AppConstants;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.loopj.android.http.AsyncHttpClient;
@@ -27,6 +28,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.ProgressDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 /**
  * 本机设置界面
  */
@@ -40,6 +46,9 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
+
+        EventBus.getDefault().register(this);
+
         initSupportActionBar(R.string.home_local_setting);
         initView();
     }
@@ -47,19 +56,32 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     private void initView() {
         userName = findViewById(R.id.user_name);
         TextView userManager = findViewById(R.id.user_manager);
-        TextView dataClean = findViewById(R.id.clean_data);
         TextView uploadLog = findViewById(R.id.upload_log);
         TextView mainBoardUpdate = findViewById(R.id.mainboard_update);
         TextView dataSetting = findViewById(R.id.data_setting);
         TextView about = findViewById(R.id.about);
         userManager.setOnClickListener(this);
-        dataClean.setOnClickListener(this);
         mainBoardUpdate.setOnClickListener(this);
         uploadLog.setOnClickListener(this);
         dataSetting.setOnClickListener(this);
         about.setOnClickListener(this);
         getUserName();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event){
+        finish();
     }
 
     private void getUserName() {
@@ -73,9 +95,6 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
             case R.id.user_manager:
                 Intent intent = new Intent(this, UserInfoActivity2.class);
                 startActivity(intent);
-                break;
-            case R.id.clean_data:
-                // TODO: 2020/11/21   清理数据
                 break;
             case R.id.mainboard_update:
                 Intent mainIntent = new Intent(this, MainBoardUpdateActivity.class);
@@ -91,6 +110,12 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 uploadLog();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void startActivity(Class clz) {

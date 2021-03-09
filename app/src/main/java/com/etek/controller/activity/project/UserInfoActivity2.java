@@ -1,6 +1,5 @@
 package com.etek.controller.activity.project;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
+import com.etek.controller.common.Globals;
 import com.etek.controller.model.User;
 import com.etek.controller.utils.IdCardUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -144,7 +144,7 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         Pattern compile = Pattern.compile(COMPANYCODE_REGEX);
         Matcher matcher = compile.matcher(comCode);
         if (!matcher.matches()) {
-            showToast( "请输入有效的单位代码");
+            showToast("请输入有效的单位代码");
             return;
         }
         User user = new User();
@@ -152,6 +152,7 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         user.setIdCode(userId);
         user.setCompanyName(comName);
         user.setName(userName);
+        Globals.user = user;
         setStringInfo("userInfo", JSON.toJSONString(user));
         showToast("信息已保存！");
     }

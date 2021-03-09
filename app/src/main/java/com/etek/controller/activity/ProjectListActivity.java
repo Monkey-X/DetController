@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.ProjectDetailActivity;
+import com.etek.controller.activity.project.UserInfoActivity2;
 import com.etek.controller.adapter.ProjectListAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
@@ -108,7 +109,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         if (Globals.user == null) {
-            Intent intent = new Intent(this, UserInfoActivity.class);
+            Intent intent = new Intent(this, UserInfoActivity2.class);
             startActivity(intent);
             return;
         }

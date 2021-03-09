@@ -265,13 +265,6 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    protected void initToolBar(String title) {
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        mToolbar.setTitle(title);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//这句代码使启用Activity回退功能，并显示Toolbar上的左侧回退图标
-
-    }
 
     protected void initSupportActionBar(int title) {
         getSupportActionBar().setTitle(title);
@@ -602,48 +595,6 @@ public class BaseActivity extends AppCompatActivity {
         return newStr;
     }
 
-
-    String path;
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == Activity.RESULT_OK) {
-//
-//            if(requestCode==REQUARE_FILE){
-//                Uri uri = data.getData();
-//                if ("file".equalsIgnoreCase(uri.getScheme())) {//使用第三方应用打开
-//                    path = uri.getPath();
-////                tv.setText(path);
-////                Toast.makeText(this,path+"11111",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {//4.4以后
-//                    path = getPath(this, uri);
-////                dataDecode();
-////                Toast.makeText(this,path,Toast.LENGTH_SHORT).show();
-//                } else {//4.4以下下系统调用方法
-//                    path = getRealPathFromURI(uri);
-//
-////                Toast.makeText(this, path+"222222", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//        }
-//    }
-
-
-    public String getRealPathFromURI(Uri contentUri) {
-        String res = null;
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if (null != cursor && cursor.moveToFirst()) {
-            ;
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            res = cursor.getString(column_index);
-            cursor.close();
-        }
-        return res;
-    }
 
     /**
      * 专为Android4.4设计的从Uri获取文件绝对路径，以前的方法已不好使

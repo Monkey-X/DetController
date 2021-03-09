@@ -1,23 +1,28 @@
 package com.etek.controller.activity.project;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.etek.controller.R;
-import com.etek.controller.common.Globals;
+import com.etek.controller.activity.project.eventbus.MessageEvent;
+import com.etek.controller.activity.project.manager.DataCleanManager;
 import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.github.angads25.toggle.interfaces.OnToggledListener;
 import com.github.angads25.toggle.model.ToggleableView;
 import com.github.angads25.toggle.widget.LabeledSwitch;
-import android.widget.PopupWindow;
-import android.view.Gravity;
-import android.widget.TextView;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 
 public class SettingsActivity2 extends BaseActivity implements OnToggledListener, View.OnClickListener {
 
@@ -58,10 +63,12 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         View modleNet = findViewById(R.id.modle_net);
         View setPassWord = findViewById(R.id.set_bomb_password);
         View loginReset = findViewById(R.id.set_login_in_info);
+        View recoverData = findViewById(R.id.recover_data);
         wifiSetting.setOnClickListener(this);
         modleNet.setOnClickListener(this);
         setPassWord.setOnClickListener(this);
         loginReset.setOnClickListener(this);
+        recoverData.setOnClickListener(this);
     }
 
     @Override
@@ -74,7 +81,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             case R.id.zhongbao_switch:
                 zhongbaoSwitch.setOn(isOn);
                 setBooleanInfo("isServerZhongbaoOn", isOn);
-                if(isOn){
+                if (isOn) {
                     shouPopuWindow(toggleableView);
                 }
                 break;
@@ -85,6 +92,24 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             default:
                 break;
         }
+    }
+
+    private void cleanAppData() {
+        DataCleanManager.deleteFile(new File("data/data/" + getPackageName()));
+
+        AlertDialog.Builder builder =new AlertDialog.Builder(this);
+        builder.setMessage("已恢复出厂设置，需要重启应用");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                EventBus.getDefault().post(new MessageEvent(""));
+                finish();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCancelable(false);
+        alertDialog.show();
     }
 
     @Override
@@ -105,6 +130,9 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
                 break;
             case R.id.set_login_in_info:
                 startActivity(new Intent(this,LoginInInfoResetActivity.class));
+                break;
+            case R.id.recover_data:
+                cleanAppData();
                 break;
         }
     }
