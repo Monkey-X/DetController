@@ -652,8 +652,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    private  String strerrmsg ="";
     @Override
     public void setDisplayText(String msg) {
+        strerrmsg = msg;
         Log.d(TAG, "setDisplayText: " + msg);
     }
 
@@ -670,7 +672,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             testAsyncTask = new TestAsyncTask();
             testAsyncTask.execute();
         } else {
-            showStatusDialog("未检测到雷管！");
+            showStatusDialog(strerrmsg);
 
             changeProgressView(true);
             setSelectBtnVisible(true);

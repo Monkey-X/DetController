@@ -16,7 +16,7 @@ public class DetLog {
      * @param content
      */
     public static void writeLog(String TAG,String content) {
-
+        Log.d(TAG,content);
         Log.d("DataConverter",String.format("日志内容：%s",content));
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");// HH:mm:ss //获取当前时间

@@ -73,7 +73,6 @@ public class DetsBusChargeTask extends AsyncTask<String, Integer, Integer> {
             public void setChargeData(int nVoltage, int nCurrent) {
                 ITaskCallback iTaskCallback = iTaskCallbackWeakReference.get();
                 iTaskCallback.setChargeData(nVoltage,nCurrent);
-
             }
         });
         return result;

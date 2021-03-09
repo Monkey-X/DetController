@@ -319,12 +319,12 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
+        Log.d(TAG,String.format("KeyCode:%d",keyCode));
         if (keyCode == 19 || keyCode == 20) {
             return true;
         }
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if(!isCancelDownLoad){
+            if(isCancelDownLoad){
                 allDetDownload();
                 return true;
             }
@@ -640,8 +640,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    private  String strerrmsg ="";
     @Override
     public void setDisplayText(String msg) {
+        strerrmsg = msg;
         Log.d(TAG, "setDisplayText: "+ msg);
     }
 
@@ -657,7 +659,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             delayDownloadTask = new DelayDownloadTask();
             delayDownloadTask.execute();
         }else{
-            showStatusDialog("未检测到雷管！");
+            showStatusDialog(strerrmsg);
 
             changeProgressView(true);
         }
