@@ -159,13 +159,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
-     * 获取筛选的数据并展示
-     */
-    private void showFiltrateData(int position) {
-
-    }
-
-    /**
      * 点击事件
      */
     @Override
@@ -670,7 +663,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             testAsyncTask = new TestAsyncTask();
             testAsyncTask.execute();
         } else {
-            showStatusDialog("未检测到雷管！");
+            showStatusDialog("总线短路，请检查线路连接是否正常！");
 
             changeProgressView(true);
             setSelectBtnVisible(true);
