@@ -1124,8 +1124,44 @@ public class DetApp {
 			}
 
 			if(ret>100) {
+				String strerrmsg ="";
+				switch(ret){
+					case 110:
+						break;
+					case 120:
+						strerrmsg="管码读取失败！";
+						break;
+					case 140:
+						strerrmsg="雷管参数校准失败！";
+						break;
+					case 145:
+						strerrmsg="雷管参数重置失败！";
+						break;
+					case 130:
+					case 155:
+						strerrmsg="雷管延时读取失败！";
+						break;
+					case 150:
+					case 160:
+						strerrmsg="雷管延时写入失败！";
+						break;
+					case 170:
+					case 180:
+					case 185:
+						strerrmsg="雷管药头错误！";
+						break;
+					case 190:
+						strerrmsg="雷管操作失败！";
+						break;
+					case 200:
+						strerrmsg="雷管药头错误！";
+						break;
+					default:
+						strerrmsg = String.format("雷管检测失败:%d",ret);
+						break;
+				}
 				Log.d(TAG,String.format("雷管检测失败:%d",ret));
-				cbobj.DisplayText(String.format("雷管检测失败:%d",ret));
+				cbobj.DisplayText(strerrmsg);
 				cbobj.SetProgressbarValue(ret);
 				break;
 			}
@@ -1319,7 +1355,28 @@ public class DetApp {
 				continue;
 			}
 
-			cbobj.DisplayText("总线上电与检测流 出错");
+			String strerrmsg ="";
+			switch (ret){
+				case 110:
+					strerrmsg="总线短路且硬件已保护";
+					break;
+				case 120:
+					strerrmsg="总线短路";
+					break;
+				case 140:
+					strerrmsg="总线漏电";
+					break;
+				case 170:
+					strerrmsg="总线能量输出不足";
+					break;
+				case 200:
+					strerrmsg="总线没有挂载雷管模组";
+					break;
+				default:
+					strerrmsg = String.format("总线上电与检测流 出错(%d)",ret);
+					break;
+			}
+			cbobj.DisplayText(strerrmsg);
 			return -1;
 		}
 		return 0;
@@ -1598,8 +1655,26 @@ public class DetApp {
 				continue;
 			}
 
+			String strerrmsg ="";
+			switch (ret){
+				case 170:
+					strerrmsg = "部分雷管无法充电！";
+					break;
+				case 180:
+					strerrmsg="部分雷管无法正常操作！";
+					break;
+				case 190:
+					strerrmsg="总线雷管模组脱落、开路！";
+					break;
+				case 200:
+					strerrmsg="总线能量输出不足！";
+					break;
+				default:
+					strerrmsg = String.format("雷管网络总线充电 出错(%d)",ret);
+					break;
+			}
 			if(null!=cbobj)
-				cbobj.DisplayText("雷管网络总线充电 出错");
+				cbobj.DisplayText(strerrmsg);
 			return -1;
 		}
 
@@ -1645,7 +1720,7 @@ public class DetApp {
 			ret = prt.RecvBlock(RESP_LEN, resp);
 			if(0!=ret) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电 结束1");
+					cbobj.DisplayText("雷管网络总线放电 主控板无应答");
 				break;
 			}
 
@@ -1654,18 +1729,18 @@ public class DetApp {
 
 			if(null==szdata) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电 结束2");
+					cbobj.DisplayText("雷管网络总线放电 主控板应答无数据！");
 				break;
 			}
 			if(szdata.length<RESP_LEN-1) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电 结束3");
+					cbobj.DisplayText("雷管网络总线放电 主控板应答数据错误！");
 				break;
 			}
 
 			if(szdata[0]!=(byte)RESP_HEAD) {
 				if(null!=cbobj)
-					cbobj.DisplayText("雷管网络总线放电 结束4");
+					cbobj.DisplayText("雷管网络总线放电 主控板应答格式错误！");
 				break;
 			}
 
@@ -1696,9 +1771,17 @@ public class DetApp {
 					cbobj.SetProgressbarValue(ret);
 				continue;
 			}
-
+			String strerrmsg ="";
+			switch (ret){
+				case 190:
+					strerrmsg="总线雷管模组脱落，开路！";
+					break;
+				default:
+					strerrmsg = String.format("雷管网络总线放电 出错(%d)！",ret);
+					break;
+			}
 			if(null!=cbobj)
-				cbobj.DisplayText("雷管网络总线放电 结束5");
+				cbobj.DisplayText(strerrmsg);
 			return -1;
 		}
 

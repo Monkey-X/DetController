@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.BusChargeCallback;
+import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -17,6 +19,7 @@ public class BusDisChargeTask extends AsyncTask<String, Integer, Integer> {
     private static final String TAG = "BusDisChargeTask";
     private final WeakReference<ITaskCallback> iTaskCallbackWeakReference;
 
+    private String strerrmsg ="";
     public BusDisChargeTask(ITaskCallback callback) {
         iTaskCallbackWeakReference = new WeakReference<>(callback);
     }
@@ -42,11 +45,16 @@ public class BusDisChargeTask extends AsyncTask<String, Integer, Integer> {
         int result = DetApp.getInstance().DetsBusDischarge(new BusChargeCallback() {
             @Override
             public void SetProgressbarValue(int nVal) {
-                    publishProgress(nVal);
+                publishProgress(nVal);
+                if(nVal>100){
+                    ToastUtils.show(null,strerrmsg);
+                }
             }
 
             @Override
             public void DisplayText(String strText) {
+                strerrmsg = strText;
+
                 Log.d(TAG, "DisplayText: " + strText);
                 ITaskCallback iTaskCallback = iTaskCallbackWeakReference.get();
                 iTaskCallback.setDisplayText(strText);

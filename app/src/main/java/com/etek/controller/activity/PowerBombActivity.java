@@ -322,6 +322,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 //  等待用户选择是否起爆
                 showBombDialog();
             } else {
+                ToastUtils.show(PowerBombActivity.this,resultString);
+
                 // 充电失败，进行拉高操作
                 StartSetBLTask(true);
             }
