@@ -114,9 +114,9 @@ public class CheckoutDetailActivity extends BaseActivity {
 
     //    @OnClick({R.id.pro_map_sel})
     public void getMap() {
-        Intent intent = new Intent(mContext, ProMapActivity.class);
-        intent.putExtra("projectId", projectInfo.getId());
-        startActivity(intent);
+//        Intent intent = new Intent(mContext, ProMapActivity.class);
+//        intent.putExtra("projectId", projectInfo.getId());
+//        startActivity(intent);
     }
 
     @Override

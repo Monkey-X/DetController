@@ -115,8 +115,8 @@ public class CheckoutActivity2 extends BaseActivity implements CheckOutAdapter2.
 
     @OnClick(R.id.select_location)
     public void selectLocation() {
-        Intent i = new Intent(this, SelectMapActivity.class);
-        startActivity(i);
+//        Intent i = new Intent(this, SelectMapActivity.class);
+//        startActivity(i);
     }
 
     private void getUserCompanyCode() {

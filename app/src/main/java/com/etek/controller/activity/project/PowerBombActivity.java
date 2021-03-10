@@ -1,8 +1,7 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.ReportListActivity;
 import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.activity.project.dialog.SudokuDialog;

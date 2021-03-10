@@ -76,9 +76,9 @@ public class DetInfoDetailActivity extends BaseActivity {
         selectMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, DetInfoDetailMapActivity.class);
-                intent.putExtra("detReport", detInf);
-                startActivity(intent);
+//                Intent intent = new Intent(mContext, DetInfoDetailMapActivity.class);
+//                intent.putExtra("detReport", detInf);
+//                startActivity(intent);
             }
         });
         initToolBar(R.string.title_activity_det_detail);

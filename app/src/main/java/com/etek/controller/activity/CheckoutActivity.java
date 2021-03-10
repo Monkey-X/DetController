@@ -286,8 +286,8 @@ public class CheckoutActivity extends BaseActivity {
 
     @OnClick(R.id.select_location)
     public void selectLocation() {
-        Intent i = new Intent(this, SelectMapActivity.class);
-        startActivity(i);
+//        Intent i = new Intent(this, SelectMapActivity.class);
+//        startActivity(i);
 //        getBaiduLocation();
     }
 

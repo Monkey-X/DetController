@@ -81,7 +81,7 @@
             android:name=".activity.ProjectListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.project.ProjectImplementActivity" />
-        <activity android:name=".activity.PowerBombActivity" />
+        <activity android:name=".activity.project.PowerBombActivity" />
         <activity
             android:name=".activity.project.AuthorizedDownloadActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -117,9 +117,6 @@
             android:label="@string/title_activity_personal_info" />
         <activity
             android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".activity.ProMapActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".activity.OfflineCheckActivity"
@@ -160,9 +157,6 @@
         <activity
             android:name=".activity.AuthorizeActivity"
             android:label="@string/title_activity_authority" />
-        <activity
-            android:name=".activity.SelectMapActivity"
-            android:label="@string/title_activity_selete_map" />
         <service android:name=".service.DownLoadAppService" />
 
         <provider

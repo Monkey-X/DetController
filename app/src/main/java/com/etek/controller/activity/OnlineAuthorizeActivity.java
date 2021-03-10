@@ -392,8 +392,7 @@ public class OnlineAuthorizeActivity extends BaseActivity {
 
     @OnClick(R.id.select_location)
     public void selectLocation() {
-        Intent i = new Intent(this, SelectMapActivity.class);
-        startActivity(i);
+
 
     }
 
