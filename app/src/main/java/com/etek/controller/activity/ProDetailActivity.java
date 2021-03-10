@@ -51,7 +51,6 @@ import com.etek.controller.persistence.gen.ChkControllerEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 
 
-import com.etek.controller.widget.MarqueeText;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
