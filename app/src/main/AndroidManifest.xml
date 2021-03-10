@@ -66,7 +66,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.FunctionTestActivity" />
-        <activity android:name=".activity.PersonActivity" />
+        <activity android:name=".activity.project.PersonActivity" />
         <activity android:name=".activity.project.MainBoardUpdateActivity" />
         <activity android:name=".activity.ReportActivity2" />
         <activity android:name=".activity.CheckoutActivity2" />
@@ -146,10 +146,6 @@
             android:name=".activity.ProDetailActivity"
             android:label="@string/title_activity_pro_detail" />
         <activity
-            android:name=".activity.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".activity.CheckoutActivity"
             android:label="@string/title_activity_checkout" />
         <activity
@@ -167,11 +163,6 @@
         <activity
             android:name=".activity.SelectMapActivity"
             android:label="@string/title_activity_selete_map" />
-        <activity
-            android:name=".activity.SettingsMoreActivity"
-            android:label="@string/title_activity_settings_more"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.UpdateActivity" /> <!-- <service android:name=".service.BLeSerialPortService" /> -->
         <service android:name=".service.DownLoadAppService" />
 
         <provider
