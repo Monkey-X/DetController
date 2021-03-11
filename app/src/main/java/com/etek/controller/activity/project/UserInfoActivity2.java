@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.Globals;
 import com.etek.controller.model.User;
 import com.etek.controller.utils.IdCardUtil;
@@ -58,7 +60,7 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
 
 
     private void initData() {
-        String userinfo = getStringInfo("userInfo");
+        String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (!TextUtils.isEmpty(userinfo)) {
             User user = JSON.parseObject(userinfo, User.class);
             if (user != null && !StringUtil.isBlank(user.getName())) {
@@ -99,7 +101,7 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
     }
 
     private boolean checkUserInfo() {
-        String userinfo = getStringInfo("userInfo");
+        String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (TextUtils.isEmpty(userinfo)) {
             return false;
         }
@@ -153,7 +155,8 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         user.setCompanyName(comName);
         user.setName(userName);
         Globals.user = user;
-        setStringInfo("userInfo", JSON.toJSONString(user));
+//        setStringInfo("userInfo", JSON.toJSONString(user));
+        SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_INFO,JSON.toJSONString(user));
         showToast("信息已保存！");
     }
 }

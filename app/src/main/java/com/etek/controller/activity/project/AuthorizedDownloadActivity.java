@@ -23,6 +23,8 @@ import com.etek.controller.R;
 import com.etek.controller.activity.UserInfoActivity;
 import com.etek.controller.activity.project.AuthDownLoadDetailActivity;
 import com.etek.controller.activity.project.OfflineEditActivity;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.ContractAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
@@ -105,7 +107,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
     }
 
     private void goToOfflineEditActivity() {
-        String userStr = getPreInfo("userInfo");
+        String userStr = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (TextUtils.isEmpty(userStr)) {
             Intent intent = new Intent(this, UserInfoActivity.class);
             startActivity(intent);

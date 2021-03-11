@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.model.User;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
@@ -82,8 +84,7 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
     }
 
     private void getUserInfo() {
-        SharedPreferences detInfo = getContext().getSharedPreferences("detInfo", getContext().MODE_PRIVATE);
-        String userInfo = detInfo.getString("userInfo", "");
+        String userInfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (!TextUtils.isEmpty(userInfo)) {
             User user = JSON.parseObject(userInfo, User.class);
             if (user != null) {

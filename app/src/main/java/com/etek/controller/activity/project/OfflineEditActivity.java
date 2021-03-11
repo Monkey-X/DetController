@@ -22,6 +22,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.OfflineEditAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
@@ -173,7 +174,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
     private void initData() {
         // 回填单位代码
-        String userStr = getPreInfo("userInfo");
+        String userStr = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (TextUtils.isEmpty(userStr)) {
             Intent intent = new Intent(this, UserInfoActivity2.class);
             startActivity(intent);

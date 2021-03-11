@@ -18,7 +18,9 @@ import com.alibaba.fastjson.JSONException;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.AssistActivity;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.eventbus.MessageEvent;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
@@ -276,7 +278,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     }
 
     private void getUserInfo() {
-        String userStr = getPreInfo("userInfo");
+        String userStr = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (TextUtils.isEmpty(userStr)) {
             startActivity(UserInfoActivity2.class);
         } else {

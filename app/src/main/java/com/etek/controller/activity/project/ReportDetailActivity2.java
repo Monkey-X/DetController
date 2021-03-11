@@ -17,6 +17,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.ReportDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
@@ -180,8 +182,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             controllerLocation.setText(loc);
             //起爆器时间
             controllerTime.setText(projectInfoEntity.getDate());
-
-            reportDtos = getReportDto(getStringInfo("userInfo"),projectInfoEntity);
+            String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
+            reportDtos = getReportDto(userinfo,projectInfoEntity);
         }
     }
 
