@@ -709,6 +709,14 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
 
+        Log.d(TAG,String.format("雷管数量(createDetData):%d",detonators.size()));
+        //  数量限制
+        if(detonators.size()>= AppConstants.MAX_DET_NUM){
+            showToast(String.format("雷管总数不能超过%d发！",AppConstants.MAX_DET_NUM));
+            playSound(false);
+            return;
+        }
+
         // 扫描插入
         if (isInsertItem) {
             isInsertItem = false;
@@ -730,7 +738,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
         createProjectDetData(strgm, scanType);
     }
-
 
     public void showAutoMissDialog(String msg) {
         if (alertDialog != null && alertDialog.isShowing()) {
@@ -851,8 +858,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
 
+        Log.d(TAG,String.format("雷管数量(createProjectDetData):%d",detonators.size()));
+
         //  数量限制
-        if(detonators.size()> AppConstants.MAX_DET_NUM){
+        if(detonators.size()>= AppConstants.MAX_DET_NUM){
             showToast(String.format("雷管总数不能超过%d发！",AppConstants.MAX_DET_NUM));
             playSound(false);
             return;
