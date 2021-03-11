@@ -73,4 +73,6 @@ public  class AppConstants {
 
     public static final String UPLOAD_LOG ="http://47.117.132.63:6066/logs/upload";
 
+    //  项目中雷管最大数量
+    public static final int MAX_DET_NUM = 500;
 }

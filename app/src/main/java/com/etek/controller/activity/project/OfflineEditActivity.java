@@ -217,7 +217,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                 return false;
             }
         }
-
         return true;
     }
 
@@ -280,39 +279,29 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         offlineDownloadBean.setDwdm(companyCode.getText().toString());
         String strContractCode = contractCode.getText().toString();
         String strProCode = proCode.getText().toString();
-        if (!TextUtils.isEmpty(strContractCode) || !TextUtils.isEmpty(strProCode)) {
 
+        //  长度为15位，数字开头，数字和字母组合
+        String regex = "^[0-9][0-9A-Za-z]{14}$";
+        boolean bOk = false;
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+
+        if (!TextUtils.isEmpty(strContractCode) || !TextUtils.isEmpty(strProCode)) {
             if (!TextUtils.isEmpty(strProCode)) {
-                if (containSpace(strProCode)) {
-                    ToastUtils.show(OfflineEditActivity.this,"项目编号不能包含空格！");
+                bOk = pattern.matcher(strProCode).matches();
+                if(!bOk){
+                    DetLog.writeLog(TAG,"项目编号不符合规定！"+strProCode);
+                    ToastUtils.show(mContext, "项目编号不符合规定！");
                     return;
                 }
             }
 
             if (!TextUtils.isEmpty(strContractCode)) {
-                if (containSpace(strContractCode)) {
-                    ToastUtils.show(OfflineEditActivity.this,"合同备案序列号不能包含空格！");
+                bOk = pattern.matcher(strContractCode).matches();
+                if(!bOk){
+                    DetLog.writeLog(TAG,"合同备案序号不符合规定！"+strContractCode);
+                    ToastUtils.show(mContext, "合同备案序号不符合规定！");
                     return;
                 }
-            }
-
-            if (!strIsLength(strContractCode)) {
-                ToastUtils.show(OfflineEditActivity.this,"请输入15位的合同备案序列号！");
-                return;
-            }
-            if (!strIsLength(strProCode)) {
-                ToastUtils.show(OfflineEditActivity.this,"请输入15位的项目编号！");
-                return;
-            }
-
-            if (!strMageRegex(strContractCode)) {
-                ToastUtils.show(OfflineEditActivity.this,"请输入有效的合同备案序列号！");
-                return;
-            }
-
-            if (!strMageRegex(strProCode)) {
-                ToastUtils.show(OfflineEditActivity.this,"请输入有效的项目编号！");
-                return;
             }
             offlineDownloadBean.setHtid(strContractCode);
             offlineDownloadBean.setXmbh(strProCode);

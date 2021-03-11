@@ -77,6 +77,7 @@ import java.util.Random;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import java.util.regex.Pattern;
 
 /**
  * 检查详情页
@@ -368,33 +369,63 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private void projectCheckData() {
         if (TextUtils.isEmpty(locationLongitude.getText().toString().trim())) {
             ToastUtils.show(mContext, "当前经度为空");
-        } else if (TextUtils.isEmpty(locationLatitude.getText().toString().trim())) {
-            ToastUtils.show(mContext, "当前纬度为空");
-        } else {
-            //  规则检查时pendingProject的经纬度根据界面上的调整
-            double longitude = Double.valueOf(locationLongitude.getText().toString().trim());
-            double latitude = Double.valueOf(locationLatitude.getText().toString().trim());
-
-            setCacheLongitude(longitude);
-            setCacheLatitude(latitude);
-
-            //  缓存当前地址（就算所有检查不合格，项目还有经纬度）
-            if (pendingProject != null) {
-                pendingProject.setLongitude(getEmuLongLatitude(longitude));
-                pendingProject.setLatitude(getEmuLongLatitude(latitude));
-
-                DetLog.writeLog(TAG,String.format("工程经纬度:%s,%s",longitude,latitude));
-            }
-
-            m_bChecking = true;
-            if ("online".equals(type)) {//在线检查
-                getVerifyResult(pendingProject);
-            } else if ("offline".equals(type)) {//离线检查
-                offlineCheck();
-            }
-            m_bChecking = false;
-
+            return;
         }
+
+        if (TextUtils.isEmpty(locationLatitude.getText().toString().trim())) {
+            ToastUtils.show(mContext, "当前纬度为空");
+            return;
+        }
+
+        //  合同备案序号判断(不为空判断）
+        String regex = "^[0-9][0-9A-Za-z]{14}$";
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+        String strcontractid = contractCode.getText().toString();
+        boolean bOk = false;
+        if(!TextUtils.isEmpty(strcontractid)){
+            bOk = pattern.matcher(strcontractid).matches();
+            if(!bOk){
+                DetLog.writeLog(TAG,"合同备案序号不符合规定！"+strcontractid);
+                ToastUtils.show(mContext, "合同备案序号不符合规定！");
+                return;
+            }
+        }
+
+        // 项目编号判断（不为空判断）
+        String strprojectid = proCode.getText().toString();
+        if(!TextUtils.isEmpty(strprojectid)) {
+            bOk = pattern.matcher(strprojectid).matches();
+            if(!bOk){
+                DetLog.writeLog(TAG,"项目编号不符合规定！"+strprojectid);
+                ToastUtils.show(mContext, "项目编号不符合规定！");
+                return;
+            }
+        }
+
+        //  规则检查时pendingProject的经纬度根据界面上的调整
+        double longitude = Double.valueOf(locationLongitude.getText().toString().trim());
+        double latitude = Double.valueOf(locationLatitude.getText().toString().trim());
+
+        setCacheLongitude(longitude);
+        setCacheLatitude(latitude);
+
+        //  缓存当前地址（就算所有检查不合格，项目还有经纬度）
+        if (pendingProject != null) {
+            pendingProject.setLongitude(getEmuLongLatitude(longitude));
+            pendingProject.setLatitude(getEmuLongLatitude(latitude));
+
+            DetLog.writeLog(TAG,String.format("工程经纬度:%s,%s",longitude,latitude));
+        }
+
+        m_bChecking = true;
+        if ("online".equals(type)) {//在线检查
+            getVerifyResult(pendingProject);
+        } else if ("offline".equals(type)) {//离线检查
+            offlineCheck();
+        }
+        m_bChecking = false;
+
+
     }
 
     private void goToBomb() {
