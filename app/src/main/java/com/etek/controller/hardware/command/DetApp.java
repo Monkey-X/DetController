@@ -1657,6 +1657,21 @@ public class DetApp {
 
 			String strerrmsg ="";
 			switch (ret){
+                case 115:
+                case 143:
+                case 193:
+                    strerrmsg = "用户取消！";
+                    break;
+                case 116:
+                case 144:
+                case 194:
+                    strerrmsg = "总线短路！";
+                    break;
+                case 145:
+                case 196:
+                case 197:
+                    strerrmsg = "有模组操作失败！";
+                    break;
 				case 170:
 					strerrmsg = "部分雷管无法充电！";
 					break;
@@ -1664,8 +1679,9 @@ public class DetApp {
 					strerrmsg="部分雷管无法正常操作！";
 					break;
 				case 190:
-					strerrmsg="总线雷管模组脱落、开路！";
-					break;
+                case 198:
+                    strerrmsg="总线雷管模组脱落、开路！";
+                    break;
 				case 200:
 					strerrmsg="总线能量输出不足！";
 					break;

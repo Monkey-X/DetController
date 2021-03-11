@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectDetailAdapter;
+import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.DetDelayBean;
 import com.etek.controller.fragment.DelaySettingDialog;
@@ -844,10 +845,19 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     // 根据孔内或者孔间设置延时
     private void createProjectDetData(String detCode, int type) {
+        Log.d(TAG, "createProjectDetData: type = " + type);
+
         if (checkTheSameDet(detCode)) {
             return;
         }
-        Log.d(TAG, "createProjectDetData: type = " + type);
+
+        //  数量限制
+        if(detonators.size()> AppConstants.MAX_DET_NUM){
+            showToast(String.format("雷管总数不能超过%d发！",AppConstants.MAX_DET_NUM));
+            playSound(false);
+            return;
+        }
+
         ProjectDetonator projectDetonator = new ProjectDetonator();
         projectDetonator.setProjectInfoId(projectId);
         projectDetonator.setCode(detCode);

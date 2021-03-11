@@ -349,9 +349,29 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             missProDialog();
+
+            String strerrmsg ="";
+            switch (result){
+                case 1:
+                    strerrmsg="主板初始化失败：低压低于下限！";
+                    break;
+                case 2:
+                    strerrmsg="主板初始化失败：低压高于下限！";
+                    break;
+                case 3:
+                    strerrmsg="主板初始化失败：高压低于下限！";
+                    break;
+                case 4:
+                    strerrmsg="主板初始化失败：高压高于上限！";
+                    break;
+                default:
+                    strerrmsg = String.format("主板初始化失败！ %d",result);
+                    break;
+            }
             if (result !=0) {
-                showStatusDialog(String.format("主板初始化失败！ %d",result));
+                showStatusDialog(strerrmsg);
                 DetApp.getInstance().SetCommTimeout(5000);
+                finish();
             }
         }
     }

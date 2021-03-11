@@ -119,7 +119,8 @@ public class ReportDetailActivity2 extends BaseActivity {
     private void initReportSwitch() {
         isServerDanningOn = getBooleanInfo("isServerDanningOn");
         isServerZhongbaoOn = getBooleanInfo("isServerZhongbaoOn");
-        isServerEtekOn = getBooleanInfo("isServerEtekOn");
+//        isServerEtekOn = getBooleanInfo("isServerEtekOn");
+        isServerEtekOn = true;
     }
 
     /**
