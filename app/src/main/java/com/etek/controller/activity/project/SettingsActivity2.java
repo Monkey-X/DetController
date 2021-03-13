@@ -33,6 +33,8 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
     private LabeledSwitch etekSwitch;
 
     private final String TAG="SettingsActivity2";
+    private TextView serverAddress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         danningSwitch = findViewById(R.id.danling_switch);
         zhongbaoSwitch = findViewById(R.id.zhongbao_switch);
         etekSwitch = findViewById(R.id.etek_switch);
+        serverAddress = findViewById(R.id.server_address);
         danningSwitch.setOnToggledListener(this);
         zhongbaoSwitch.setOnToggledListener(this);
         etekSwitch.setOnToggledListener(this);
@@ -156,6 +159,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆黔南");
+                serverAddress.setText("中爆黔南");
                 SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆黔南");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
@@ -170,6 +174,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆黔东南");
+                serverAddress.setText("中爆黔东南");
                 SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆黔东南");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
@@ -184,6 +189,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆广西");
+                serverAddress.setText("中爆广西");
                 SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆广西");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
@@ -198,6 +204,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆贵阳");
+                serverAddress.setText("中爆贵阳");
                 SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆贵阳");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
