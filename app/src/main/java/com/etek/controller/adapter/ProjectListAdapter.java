@@ -20,6 +20,10 @@ public class ProjectListAdapter extends BaseQuickAdapter<PendingProject, BaseVie
     @Override
     protected void convert(BaseViewHolder helper, PendingProject item) {
         int adapterPosition = helper.getAdapterPosition();
+        if (isNewProject && adapterPosition == 0) {
+            helper.itemView.requestFocus();
+            isNewProject = false;
+        }
         helper.setText(R.id.project_code, item.getProjectCode());
         helper.setText(R.id.create_date, item.getDate());
     }

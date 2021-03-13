@@ -152,13 +152,20 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
                 pendingProject.setCompanyCode(Globals.user.getCompanyCode());
                 pendingProject.setControllerId(getStringInfo(getString(R.string.controller_sno)));
                 DBManager.getInstance().getPendingProjectDao().insert(pendingProject);
-                initData();
+                addNewProject(pendingProject);
                 recycleView.scrollToPosition(0);
                 dialog.dismiss();
             }
         });
         alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void addNewProject(PendingProject pendingProject) {
+        noDataView.setVisibility(View.GONE);
+        projectInfos.add(0,pendingProject);
+        projectListAdapter.isNewProject(true);
+        projectListAdapter.notifyDataSetChanged();
     }
 
     private void createNewProject(String stringInfo) {
