@@ -5,9 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -16,8 +19,10 @@ import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.activity.project.manager.DataCleanManager;
 import com.etek.controller.activity.project.manager.SpManager;
+import com.etek.controller.common.AppConstants;
 import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
 import com.github.angads25.toggle.interfaces.OnToggledListener;
 import com.github.angads25.toggle.model.ToggleableView;
 import com.github.angads25.toggle.widget.LabeledSwitch;
@@ -131,24 +136,55 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
                 showNetSetting(ntype);
                 break;
             case R.id.set_bomb_password:
-                startActivity(new Intent(this,BombPassWordSettingActivity.class));
+                startActivity(new Intent(this, BombPassWordSettingActivity.class));
                 break;
             case R.id.set_login_in_info:
-                startActivity(new Intent(this,LoginInInfoResetActivity.class));
+                startActivity(new Intent(this, LoginInInfoResetActivity.class));
                 break;
             case R.id.recover_data:
-                cleanAppData();
+                showCleanDialog();
                 break;
         }
     }
 
+    private void showCleanDialog() {
+        // 展示提示框，进行数据清除
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_intput, null);
+        EditText editPossword = view.findViewById(R.id.edit_msg);
+        builder.setTitle("请输入恢复密码:");
+        builder.setView(view);
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String possword = editPossword.getText().toString().trim();
+                if (TextUtils.isEmpty(possword)) {
+                    ToastUtils.show(SettingsActivity2.this, "请输入密码！");
+                } else {
+                    if (possword.equals(AppConstants.CLEAN_DATA_PASSWORD)) {
+                        cleanAppData();
+                    } else {
+                        ToastUtils.show(SettingsActivity2.this, "输入密码有误！");
+                    }
+                }
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
     private void showNetSetting(int ntype) {
-        GeneralDisplayUI.showSettingNetworkSelect(this,ntype);
+        GeneralDisplayUI.showSettingNetworkSelect(this, ntype);
     }
 
     private void shouPopuWindow(View view) {
         String straddr = SpManager.getIntance().getSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS);
-        Log.d(TAG,"原设置为："+straddr);
+        Log.d(TAG, "原设置为：" + straddr);
 
         View popuView = getLayoutInflater().inflate(R.layout.popup_zhongbao_center, null, false);
         PopupWindow popupWindow = new PopupWindow(popuView, 200, 300);

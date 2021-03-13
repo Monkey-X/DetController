@@ -75,4 +75,7 @@ public  class AppConstants {
 
     //  项目中雷管最大数量
     public static final int MAX_DET_NUM = 500;
+
+
+    public static final String CLEAN_DATA_PASSWORD = "202102";
 }
