@@ -10,6 +10,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -44,7 +46,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void initData() {
-        String user_name = getStringInfo("User_Name");
+        String user_name = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_NAME);
         if (!TextUtils.isEmpty(user_name)) {
             userName.setText(user_name);
         }
@@ -95,12 +97,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             return;
         }
 
-        String user_name = getStringInfo("User_Name");
-        String user_passWord = getStringInfo("User_PassWord");
+        String user_name = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_NAME);
+        String user_passWord = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_PASSWORD);
 
         if (TextUtils.isEmpty(user_name) || TextUtils.isEmpty(user_passWord)) {
-            setStringInfo("User_Name", userStrName);
-            setStringInfo("User_PassWord", strPassword);
+            SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_NAME,userStrName);
+            SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_PASSWORD,user_passWord);
             startActivity(new Intent(this, HomeActivity2.class));
             finish();
             return;

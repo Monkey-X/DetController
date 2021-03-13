@@ -12,8 +12,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.activity.project.manager.DataCleanManager;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.github.angads25.toggle.interfaces.OnToggledListener;
@@ -41,13 +43,13 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
     }
 
     private void initData() {
-        Boolean isServerDanningOn = getBooleanInfo("isServerDanningOn");
+        Boolean isServerDanningOn = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.SEVER_DANNING_ON);
         danningSwitch.setOn(isServerDanningOn);
 
-        Boolean isServerZhongbaoOn = getBooleanInfo("isServerZhongbaoOn");
+        Boolean isServerZhongbaoOn = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.SEVER_ZHONGBAO_ON);
         zhongbaoSwitch.setOn(isServerZhongbaoOn);
 
-        Boolean isServerEtekOn = getBooleanInfo("isServerEtekOn");
+        Boolean isServerEtekOn = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.SEVER_ETEK_ON);
         etekSwitch.setOn(isServerEtekOn);
     }
 
@@ -76,18 +78,18 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         switch (toggleableView.getId()) {
             case R.id.danling_switch:
                 danningSwitch.setOn(isOn);
-                setBooleanInfo("isServerDanningOn", isOn);
+                SpManager.getIntance().saveSpBoolean(AppSpSaveConstant.SEVER_DANNING_ON,isOn);
                 break;
             case R.id.zhongbao_switch:
                 zhongbaoSwitch.setOn(isOn);
-                setBooleanInfo("isServerZhongbaoOn", isOn);
+                SpManager.getIntance().saveSpBoolean(AppSpSaveConstant.SEVER_ZHONGBAO_ON,isOn);
                 if (isOn) {
                     shouPopuWindow(toggleableView);
                 }
                 break;
             case R.id.etek_switch:
                 etekSwitch.setOn(isOn);
-                setBooleanInfo("isServerEtekOn", isOn);
+                SpManager.getIntance().saveSpBoolean(AppSpSaveConstant.SEVER_ETEK_ON,isOn);
                 break;
             default:
                 break;
@@ -142,7 +144,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
     }
 
     private void shouPopuWindow(View view) {
-        String straddr = getStringInfo("zhongbaoAddress");
+        String straddr = SpManager.getIntance().getSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS);
         Log.d(TAG,"原设置为："+straddr);
 
         View popuView = getLayoutInflater().inflate(R.layout.popup_zhongbao_center, null, false);
@@ -154,7 +156,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆黔南");
-                setStringInfo("zhongbaoAddress","中爆黔南");
+                SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆黔南");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
                 }
@@ -168,7 +170,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆黔东南");
-                setStringInfo("zhongbaoAddress","中爆黔东南");
+                SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆黔东南");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
                 }
@@ -182,7 +184,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆广西");
-                setStringInfo("zhongbaoAddress","中爆广西");
+                SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆广西");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
                 }
@@ -196,7 +198,7 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"中爆贵阳");
-                setStringInfo("zhongbaoAddress","中爆贵阳");
+                SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,"中爆贵阳");
                 if (popupWindow != null && popupWindow.isShowing()) {
                     popupWindow.dismiss();
                 }

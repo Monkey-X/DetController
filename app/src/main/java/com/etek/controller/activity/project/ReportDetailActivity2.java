@@ -119,8 +119,8 @@ public class ReportDetailActivity2 extends BaseActivity {
     }
 
     private void initReportSwitch() {
-        isServerDanningOn = getBooleanInfo("isServerDanningOn");
-        isServerZhongbaoOn = getBooleanInfo("isServerZhongbaoOn");
+        isServerDanningOn = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.SEVER_DANNING_ON);
+        isServerZhongbaoOn = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.SEVER_ZHONGBAO_ON);
 //        isServerEtekOn = getBooleanInfo("isServerEtekOn");
         isServerEtekOn = true;
     }
@@ -304,10 +304,10 @@ public class ReportDetailActivity2 extends BaseActivity {
      */
     private void UPZBThread(List<ProjectDetonator> detonatorEntities) {
         //  中爆设置了缺省地址：中爆黔南
-        Globals.zhongbaoAddress = getStringInfo("zhongbaoAddress");
+        Globals.zhongbaoAddress = SpManager.getIntance().getSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS);
         if (!TextUtils.isEmpty(Globals.zhongbaoAddress)) {
             Globals.zhongbaoAddress = "中爆黔南";
-            setStringInfo("zhongbaoAddress",Globals.zhongbaoAddress);
+            SpManager.getIntance().saveSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS,Globals.zhongbaoAddress);
         }
 
         ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);

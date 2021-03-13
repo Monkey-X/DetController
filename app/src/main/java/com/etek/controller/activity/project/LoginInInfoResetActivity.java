@@ -12,7 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.dialog.SudokuDialog;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -44,7 +46,7 @@ public class LoginInInfoResetActivity extends BaseActivity implements View.OnCli
     }
 
     private void initData() {
-        String str0 = getStringInfo("User_Name");
+        String str0 = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_NAME);
         Log.d(TAG,String.format("登录用户名：%s",str0));
         txtLoginID.setText(str0);
         txtLoginPswd.setText("");
@@ -91,16 +93,15 @@ public class LoginInInfoResetActivity extends BaseActivity implements View.OnCli
             return;
         }
 
-        String old_password = getStringInfo("User_PassWord");
+        String old_password = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_PASSWORD);
         if(!old_password.equals(txtLoginPswd.getText().toString())){
             Log.d(TAG,String.format("%s:%s",old_password,txtLoginPswd.getText().toString().trim()));
             showToast( "旧密码不正确，不能修改!");
             return;
         }
 
-        setStringInfo("User_Name",txtLoginID.getText().toString());
-        setStringInfo("User_PassWord",txtNewPassword.getText().toString());
-
+        SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_NAME,txtLoginID.getText().toString());
+        SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_PASSWORD,txtNewPassword.getText().toString());
         ToastUtils.show(this,"重置成功！");
         return;
     }
