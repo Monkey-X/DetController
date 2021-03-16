@@ -21,11 +21,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ConnectTestAdapter;
-import com.etek.controller.adapter.FiltrateAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.hardware.command.DetApp;
@@ -35,7 +33,6 @@ import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
-import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.utils.VibrateUtil;
@@ -351,7 +348,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 DetApp.getInstance().MainBoardBusPowerOff();
 
                 if(!b){
-                    VibrateUtil.vibrate(ConnectTestActivity.this, 150);
+                    playSound(b);
                 }
 
                 runOnUiThread(new Runnable() {
@@ -672,6 +669,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             testAsyncTask = new TestAsyncTask();
             testAsyncTask.execute();
         } else {
+            playSound(false);
             showStatusDialog(strerrmsg);
 
             changeProgressView(true);

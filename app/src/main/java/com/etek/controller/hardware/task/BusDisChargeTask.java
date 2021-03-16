@@ -46,9 +46,6 @@ public class BusDisChargeTask extends AsyncTask<String, Integer, Integer> {
             @Override
             public void SetProgressbarValue(int nVal) {
                 publishProgress(nVal);
-                if(nVal>100){
-                    ToastUtils.show(null,strerrmsg);
-                }
             }
 
             @Override

@@ -209,13 +209,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             //  百度获取到的经纬度，只是显示在TextView里，不缓存
             locationLongitude.setText(String.format("%.4f" ,longitude));
             locationLatitude.setText(String.format("%.4f",latitude));
-
-//            setStringInfo("Longitude", String.format("%.4f" ,longitude));
-//            setStringInfo("Latitude", String.format("%.4f",latitude));
-//            if (pendingProject != null) {
-//                pendingProject.setLongitude(longitude);
-//                pendingProject.setLatitude(latitude);
-//            }
         }
     }
 
@@ -314,6 +307,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         controllerId = findViewById(R.id.ctrl_id);
         locationLongitude = findViewById(R.id.ctrl_location_longitude);
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
+
         //  经纬度禁止输入
 //        locationLongitude.setKeyListener(null);
 //        locationLatitude.setKeyListener(null);
@@ -377,31 +371,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             return;
         }
 
-        //  合同备案序号判断(不为空判断）
-        String regex = "^[0-9][0-9A-Za-z]{14}$";
-        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
-        String strcontractid = contractCode.getText().toString();
-        boolean bOk = false;
-        if(!TextUtils.isEmpty(strcontractid)){
-            bOk = pattern.matcher(strcontractid).matches();
-            if(!bOk){
-                DetLog.writeLog(TAG,"合同备案序号不符合规定！"+strcontractid);
-                ToastUtils.show(mContext, "合同备案序号不符合规定！");
-                return;
-            }
-        }
-
-        // 项目编号判断（不为空判断）
-        String strprojectid = proCode.getText().toString();
-        if(!TextUtils.isEmpty(strprojectid)) {
-            bOk = pattern.matcher(strprojectid).matches();
-            if(!bOk){
-                DetLog.writeLog(TAG,"项目编号不符合规定！"+strprojectid);
-                ToastUtils.show(mContext, "项目编号不符合规定！");
-                return;
-            }
-        }
-
         //  规则检查时pendingProject的经纬度根据界面上的调整
         double longitude = Double.valueOf(locationLongitude.getText().toString().trim());
         double latitude = Double.valueOf(locationLatitude.getText().toString().trim());
@@ -461,10 +430,30 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      */
     private void getVerifyResult(PendingProject projectInfoEntity) {
 
-//        String longitude = locationLongitude.getText().toString().trim();
-//        String latitue = locationLatitude.getText().toString().trim();
-//        projectInfoEntity.setLongitude(Double.parseDouble(longitude));
-//        projectInfoEntity.setLatitude(Double.parseDouble(latitue));
+        //  合同备案序号判断(不为空判断）
+        String regex = "^[0-9][0-9A-Za-z]{14}$";
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+        String strcontractid = contractCode.getText().toString();
+        boolean bOk = false;
+        if(!TextUtils.isEmpty(strcontractid)){
+            bOk = pattern.matcher(strcontractid).matches();
+            if(!bOk){
+                DetLog.writeLog(TAG,"合同备案序号不符合规定！"+strcontractid);
+                ToastUtils.show(mContext, "合同备案序号不符合规定！");
+                return;
+            }
+        }
+
+        // 项目编号判断（不为空判断）
+        String strprojectid = proCode.getText().toString();
+        if(!TextUtils.isEmpty(strprojectid)) {
+            bOk = pattern.matcher(strprojectid).matches();
+            if(!bOk){
+                DetLog.writeLog(TAG,"项目编号不符合规定！"+strprojectid);
+                ToastUtils.show(mContext, "项目编号不符合规定！");
+                return;
+            }
+        }
 
         String strContractCode = contractCode.getText().toString().trim();
         String strProCode = proCode.getText().toString().trim();
@@ -475,9 +464,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
         onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
         onlineCheckDto.setHtid(projectInfoEntity.getContractCode());
-
-//        onlineCheckDto.setJd(projectInfoEntity.getLongitude() + "");
-//        onlineCheckDto.setWd(projectInfoEntity.getLatitude() + "");
 
         // 使用界面获取到的经纬度
         onlineCheckDto.setJd(getCacheLongitude() + "");
@@ -498,8 +484,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         String url = AppConstants.DanningServer + AppConstants.OnlineDownload;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());
-        //String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-        //Log.d(TAG, "newUrl: " + newUrl);
+
         AsyncHttpCilentUtil.httpPost(url, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -590,28 +575,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                         return;
                     }
 
-                    //  在线检查数据上报时，使用当前经纬度
-//                    Zbqys zbqys = serverResult.getZbqys();
-//                    List<Zbqy> zbqy = zbqys.getZbqy();
-//                    if (zbqy != null && zbqy.size() != 0) {
-//                        Zbqy zbqy1 = zbqy.get(0);
-//                        DecimalFormat df = new DecimalFormat("0.00");
-//                        String longitude = df.format(Double.parseDouble(zbqy1.getZbqyjd()));
-//                        Random random = new Random();
-//                        int ends = random.nextInt(99);
-//                        longitude += String.format(Locale.CHINA, "%02d", ends);
-//                        DecimalFormat df2 = new DecimalFormat("0.000");
-//                        String latitude = df2.format(Double.parseDouble(zbqy1.getZbqywd()));
-//                        ends = random.nextInt(99);
-//                        latitude += String.format(Locale.CHINA, "%02d", ends);
-//                        pendingProject.setLongitude(Double.parseDouble(longitude));
-//                        pendingProject.setLatitude(Double.parseDouble(latitude));
-
-//                        pendingProject.setLongitude(Double.parseDouble(zbqy1.getZbqyjd()));
-//                        pendingProject.setLatitude(Double.parseDouble(zbqy1.getZbqywd()));
-//
-//                        Log.d(TAG,String.format("工程经纬度:%s,%s",zbqy1.getZbqyjd(),zbqy1.getZbqywd()));
-//                    }
                     goToBomb();
                     uploadData(projectId);
                 } else {
@@ -852,22 +815,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
 
-            //  离线检查数据上报时，获取当前经纬度
-//            List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
-//            if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
-//                PermissibleZoneEntity permissibleZoneEntity = permissibleZoneList.get(0);
-//                DecimalFormat df = new DecimalFormat("0.00");
-//                String longitude = df.format(permissibleZoneEntity.getLongitude());
-//                Random random = new Random();
-//                int ends = random.nextInt(99);
-//                longitude += String.format(Locale.CHINA, "%02d", ends);
-//                DecimalFormat df2 = new DecimalFormat("0.000");
-//                String latitude = df2.format(permissibleZoneEntity.getLatitude());
-//                ends = random.nextInt(99);
-//                latitude += String.format(Locale.CHINA, "%02d", ends);
-//                pendingProject.setLongitude(Double.parseDouble(longitude));
-//                pendingProject.setLatitude(Double.parseDouble(latitude));
-//            }
             goToBomb();
             uploadData(projectInfo);
         }
@@ -918,16 +865,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * @param projectInfo
      */
     private boolean checkPermissibleZone(ProjectInfoEntity projectInfo) {
-//        String longitude = locationLongitude.getText().toString().trim();
-//        String latitue = locationLatitude.getText().toString().trim();
-//        setCacheLongitude(Double.parseDouble(longitude));
-//        setCacheLatitude(Double.parseDouble(latitue));
-
         List<PermissibleZoneEntity> permissibleZoneList = projectInfo.getPermissibleZoneList();
         if (permissibleZoneList != null && permissibleZoneList.size() != 0) {
             for (PermissibleZoneEntity permissibleZoneEntity : permissibleZoneList) {
                 LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), 30000);
-//                LocationUtil.LocationRange range = LocationUtil.getAround(permissibleZoneEntity.getLatitude(), permissibleZoneEntity.getLongitude(), permissibleZoneEntity.getRadius());
+
                 Log.d(TAG,String.format("缓存[%.4f,%.4f], 范围[%.4f,%.4f]",
                         getCacheLongitude(),getCacheLatitude(),
                         permissibleZoneEntity.getLongitude(),permissibleZoneEntity.getLatitude()));
