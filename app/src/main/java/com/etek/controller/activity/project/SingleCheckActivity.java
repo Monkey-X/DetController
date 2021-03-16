@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -139,12 +140,6 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                 }
 
 
-//                Log.d(TAG, "总线短路和漏电检测");
-//                // 总线短路和漏电检测
-//                StringBuilder strData = new StringBuilder();
-//                int i = DetApp.getInstance().CheckBusShortCircuit(strData);
-//                showBusShortResult(i,strData.toString());
-
                 Log.d(TAG, "获取雷管信息...");
 
                 int result = DetApp.getInstance().CheckSingleModule(new SingleCheckCallBack() {
@@ -217,10 +212,10 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         Log.d(TAG, "开始检测...");
 
         singleClick = true;
-        m_nLastDetID=-1;
+        m_nLastDetID = -1;
 
 
-        if(null!=m_sthd){
+        if (null != m_sthd) {
             try {
                 m_sthd.join();
             } catch (InterruptedException e) {
@@ -379,5 +374,22 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         }
         m_sthd = null;
         tv.setText("点 击 检 测");
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG,String.format("KeyCode:%d",keyCode));
+
+        //  右下角的退出键
+        if(4==keyCode){
+            if(singleClick) {
+                ToastUtils.show(this, "按停止检测后才能退出");
+                return true;
+            }
+            else{
+                finish();
+            }
+        }
+        return super.onKeyUp(keyCode, event);
     }
 }

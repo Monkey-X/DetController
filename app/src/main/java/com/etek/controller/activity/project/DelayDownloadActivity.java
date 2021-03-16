@@ -363,7 +363,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
                 DetApp.getInstance().MainBoardBusPowerOff();
                 if(!b){
-                    VibrateUtil.vibrate(DelayDownloadActivity.this, 150);
+                    playSound(false);
                 }
                 runOnUiThread(new Runnable() {
                     @Override
@@ -659,6 +659,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             delayDownloadTask = new DelayDownloadTask();
             delayDownloadTask.execute();
         }else{
+            playSound(false);
             showStatusDialog(strerrmsg);
 
             changeProgressView(true);

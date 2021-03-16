@@ -1263,10 +1263,23 @@ public class DetApp {
 		ret = DataConverter.getByteValue(szdata[11]) ;
 		if(0x0a==ret){
 			strdata.append("总线漏电");
+			ret = DataConverter.getByteValue(szdata[2]) ;
+			if(100==ret)
+				return 2;
 			return 1;
 		}
 		if(0x0f==ret){
 			strdata.append("总线短路");
+			ret = DataConverter.getByteValue(szdata[2]) ;
+			if(100==ret)
+				return 2;
+			return 1;
+		}
+		if(0x00==ret){
+			strdata.append("未检测");
+			ret = DataConverter.getByteValue(szdata[2]) ;
+			if(100==ret)
+				return 2;
 			return 1;
 		}
 
@@ -1305,8 +1318,8 @@ public class DetApp {
 		DetProtocol prt = new DetProtocol(m_commobj);
 		DetResponse resp = new DetResponse();
 
-		if(null!=cbobj)
-			cbobj.DisplayText("总线上电与检测流程 开始...");
+//		if(null!=cbobj)
+//			cbobj.DisplayText("总线上电与检测流程 开始...");
 
 		Log.d(TAG, "PowerOnSelfCheck: 总线上电与检测流程 开始...");
 		ret = cmd.BoardSendCmd85();

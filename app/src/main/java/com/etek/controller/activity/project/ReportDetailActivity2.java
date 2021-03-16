@@ -262,20 +262,28 @@ public class ReportDetailActivity2 extends BaseActivity {
             return;
         }
 
-        if (isServerEtekOn) {
-            Log.d(TAG,"力芯！");
-            sendReport2ETEKTest();
-        }
-
+        //  丹灵
         if (isServerDanningOn) {
             Log.d(TAG,"丹灵！");
             sendDanLingReport();
         }
 
+        //  中爆
         if (isServerZhongbaoOn) {
             Log.d(TAG,"中爆！");
             UPZBThread(detonatorEntityList);
         }
+
+        //  丹灵中爆任意打开一个，默认上传ETEK（正式）端口服务器
+        if(isServerDanningOn||isServerZhongbaoOn){
+            Log.d(TAG,"力芯（正式）！");
+            sendReport2ETEKTest();
+        }else{
+            //  丹灵/中爆开关不打开，默认上传ETEK（模拟）端口服务器
+            Log.d(TAG,"力芯（模拟）！");
+            sendReportToETEKBck();
+        }
+
 
     }
 
@@ -394,8 +402,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         String url = AppConstants.DanningServer + AppConstants.ProjectReport;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
-//        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-//        XLog.e("newUrl:  " + newUrl);
+
         AsyncHttpCilentUtil.httpPost(url, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -476,25 +483,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         }
     }
 
-    //  获取模拟的经纬度
-    //  因为每次上报位置不一样，所以不能在这里修改，在离线/在线检测成功后修改
-//    private String getEmuLongLatitude(String strjwd){
-//        Double d = Double.parseDouble(strjwd);
-//        int n0 = (int)(d*1000);
-//        n0= n0*100;
-//
-//        Random random = new Random();
-//        int ends = random.nextInt(99);
-//        n0 = n0+ends;
-//
-//        d = (n0*1.00)/(1000*100);
-//        String strd = String.format("%.5f",d);
-//
-//        Log.d(TAG,String.format("输入：%s，仿真为:%s",strjwd,strd));
-//
-//        return strd;
-//    }
-
     private void showSendRptMessage(String strmsg,String strStatus){
         projectInfoEntity.setReportStatus(strStatus);
         showLongToast(strmsg);
@@ -517,8 +505,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         String newUrl = SommerUtils.attachHttpGetParams(url, params);
 
         XLog.d("len:" + newUrl.length());
-//        FileUtils.saveFileToSDcard("detonator/et-report", "report-" + DateUtil.getDateStr(new Date()) + ".json", rptJson + "\n" + result.getData().toString());
-//        FileUtils.saveFileToSDcard("detonator/json", "report-" + DateUtil.getDateStr(new Date()) + ".json", result.getData().toString());
         AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
 
             @Override
@@ -544,8 +530,6 @@ public class ReportDetailActivity2 extends BaseActivity {
                         Integer code = Integer.parseInt(serverResult.getSuccess());
                         ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
                         XLog.e("错误代码：", errEnum.getMessage());
-//                        detController.setStatus(2);
-//                        reportDao.updateController(detController);
                         sendCmdMessage(MSG_RPT_ETEK_BCK_ERR);
                     } else {
                         step++;
@@ -581,7 +565,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         //  起爆器编号只使用后8位
         message.setSn(projectInfoEntity.getShortSn());
 
-        //String timestamp = projectInfoEntity.getDate();
         String timestamp;
         Log.d(TAG,String.format("PROJECT TIME:%s",projectInfoEntity.getDate()));
         try{

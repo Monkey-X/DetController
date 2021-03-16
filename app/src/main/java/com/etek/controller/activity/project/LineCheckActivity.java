@@ -3,6 +3,7 @@ package com.etek.controller.activity.project;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,13 +27,20 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     private Handler handler = new Handler();
     private SoundPoolHelp soundPoolHelp;
 
+    private boolean m_bCancel = false;
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             StringBuilder strData = new StringBuilder();
             int i = DetApp.getInstance().MainBoardLineCheckGetValue(strData);
             showResultNew(i, strData.toString());
-            handler.postDelayed(runnable, 1000);
+            if(i==2){
+                m_bCancel = true;
+            }
+            if(!m_bCancel){
+                Log.d(TAG,"1S后继续执行");
+                handler.postDelayed(runnable, 1000);
+            }
         }
     };
 
@@ -43,7 +51,7 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
                 if (ret == 1) {
                     Log.d(TAG, "获取电压电流 失败 " + ret);
                     playSound(false);
-                    ToastUtils.show(LineCheckActivity.this, data);
+                    ToastUtils.showCustom(LineCheckActivity.this, data);
                     return;
                 } else if (ret == 0) {
                     float fv = (float) (Integer.parseInt(data.substring(0, 8), 16) * 0.001);
@@ -53,6 +61,13 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
                     Log.d(TAG, String.format("电压：%.2fV\t电流：%,2fmA", fv, fc));
                     return;
                 } else if (ret == 2) {
+                    //  Runnable必须先停止，否则会导致接收串口延时
+                    if (handler != null) {
+                        if (runnable != null) {
+                            handler.removeCallbacks(runnable);
+                        }
+                        handler.removeCallbacksAndMessages(null);
+                    }
                     // 等于2 才可以退出
                     DetApp.getInstance().MainBoardSetBL(true);
                     finish();
@@ -66,7 +81,7 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_check);
         initView();
-        initDate();
+        initData();
         initSound();
 
         checkLineData();
@@ -115,7 +130,8 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     /**
      * 页面展示的数据
      */
-    private void initDate() {
+    private void initData() {
+        m_bCancel = false;
     }
 
     @Override
@@ -139,12 +155,6 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (handler != null) {
-            if (runnable != null) {
-                handler.removeCallbacks(runnable);
-            }
-            handler.removeCallbacksAndMessages(null);
-        }
         releaseSound();
         // 必须总线下电
         DetApp.getInstance().MainBoardBusPowerOff();
@@ -159,93 +169,15 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
     }
 
 
-    // 检查总线电流和电压
-    private void checkVA() {
-        showProDialog("检测中...");
-        new Thread() {
-            @Override
-            public void run() {
-                StringBuilder strData = new StringBuilder();
-                int ret = DetApp.getInstance().MainBoardGetCurrentVoltage(strData);
-                showResult(ret, strData.toString());
-            }
-        }.start();
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //  右下角返回键
+        if(4==keyCode){
+            cancelLineCheck();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
-    private void showResult(int ret, String data) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                missProDialog();
-                if (ret != 0) {
-                    Log.d(TAG, "获取电压电流 失败 " + ret);
-                    ToastUtils.show(LineCheckActivity.this, "获取电压电流 失败 " + ret);
-                    return;
-                }
-
-                Log.d(TAG, String.format("返回数据:%s",data));
-                if(data.length()<18){
-                    ToastUtils.show(LineCheckActivity.this, "返回数据错误，长度不足!");
-                    return;
-                }
-
-                String strResult = data.substring(16,18).toUpperCase();
-                Log.d(TAG, String.format("检测结果:%s",strResult));
-
-                if(strResult.equals("00")){
-                    playSound(false);
-                    dianya.setText("未检测");
-                    dianliu.setText("");
-                    return;
-                }
-
-                if(strResult.equals("01")){
-                    float fv = (float) (Integer.parseInt(data.substring(0, 8), 16) * 0.001);
-                    float fc = (float) (Integer.parseInt(data.substring(8, 16), 16) * 0.001);
-                    dianya.setText(fv + "V");
-                    dianliu.setText(fc + "mA");
-                    Log.d(TAG, String.format("电压：%.2fV\t电流：%,2fmA", fv, fc));
-                    return;
-                }
-
-                if(strResult.equals("0A")){
-                    playSound(false);
-                    dianya.setText("总线漏电");
-                    dianliu.setText("");
-                    return;
-                }
-
-                if(strResult.equals("0F")){
-                    playSound(false);
-                    dianya.setText("总线短路");
-                    dianliu.setText("");
-                    return;
-                }
-
-            }
-        });
-    }
-
-    // 检查短路
-    private void checkShort() {
-        new Thread() {
-            @Override
-            public void run() {
-                StringBuilder strData = new StringBuilder();
-                int i = DetApp.getInstance().CheckBusShortCircuit(strData);
-                Log.d(TAG, "CheckBusShortCircuit result = " + i);
-                showResult(i,strData.toString());
-            }
-        }.start();
-    }
-
-
-    private void showResult(int result){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
-    }
 }
