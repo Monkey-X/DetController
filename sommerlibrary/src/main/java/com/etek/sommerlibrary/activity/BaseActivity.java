@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
@@ -13,16 +12,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,17 +26,12 @@ import android.view.Display;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
-
 import com.elvishew.xlog.XLog;
 import com.etek.sommerlibrary.R;
 import com.etek.sommerlibrary.common.ActivityCollector;
-import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.StringTool;
 import com.etek.sommerlibrary.utils.ToastUtils;
 import com.maning.mndialoglibrary.MProgressDialog;
-import com.maning.mndialoglibrary.config.MDialogConfig;
-import com.maning.mndialoglibrary.listeners.OnDialogDismissListener;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +79,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void missProDialog() {
-        if (progressDialog != null) { progressDialog.dismiss();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
         }
     }
 
