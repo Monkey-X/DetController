@@ -38,7 +38,9 @@ import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
+import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
+import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.scan.ScannerInterface;
 import com.etek.controller.utils.DetDelayTimeValidation;
 import com.etek.controller.utils.VibrateUtil;
@@ -94,6 +96,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private ProgressDialog progressDialog;
 
     private boolean bScanDetOver = true;
+    private PendingProject projectInfoEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +201,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (projectId == -1) {
             return;
         }
+        projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(projectId)).unique();
         mDetonatorEntities = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(projectId);
         if (mDetonatorEntities != null && mDetonatorEntities.size() != 0) {
             detonators.clear();
@@ -421,6 +425,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                 detonatorEntity.setRelay(Integer.parseInt(nowDelayTime));
                 DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
                 projectDetailAdapter.notifyDataSetChanged();
+                changeProjectStatus();
                 dialog.dismiss();
             }
         });
@@ -501,7 +506,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         popupWindow.showAtLocation(view, Gravity.RIGHT|Gravity.TOP, 0, location[1]+25);
     }
 
-    // 插入数据  怎么扫码插入 todo
+    // 插入数据  怎么扫码插入
     private void insertItemView(int position) {
         isInsertItem = true;
         insertPosition = position;
@@ -532,6 +537,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
         detonators.remove(position);
         projectDetailAdapter.notifyDataSetChanged();
+        changeProjectStatus();
     }
 
 
@@ -732,7 +738,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity1);
             detonators.add(insertPosition, detonatorEntity1);
             projectDetailAdapter.notifyDataSetChanged();
-
+            changeProjectStatus();
             playSound(true);
             return;
         }
@@ -839,13 +845,23 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             super.onPostExecute(result);
             missProDialog();
 
-            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
+            VibrateUtil.vibrate(ProjectDetailActivity.this, 150);
             if (TextUtils.isEmpty(result)) {
                 showAutoMissDialog("获取雷管码失败！");
                 playSound(false);
             } else {
                 createProjectDetData(result, type);
-                //playSound(true);
+            }
+        }
+    }
+
+    // 编辑改变工程的状态
+    private void changeProjectStatus() {
+        if (projectInfoEntity != null) {
+            int projectStatus = projectInfoEntity.getProjectStatus();
+            if (projectStatus != AppIntentString.PROJECT_IMPLEMENT_DELAY_DOWNLOAD1 && projectStatus != AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1) {
+                projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_CONNECT_TEST1);
+                DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
             }
         }
     }
@@ -858,7 +874,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
 
-        Log.d(TAG,String.format("雷管数量(createProjectDetData):%d",detonators.size()));
+        Log.d(TAG, String.format("雷管数量(createProjectDetData):%d", detonators.size()));
 
         //  数量限制
         if(detonators.size()>= AppConstants.MAX_DET_NUM){
@@ -894,6 +910,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         detonators.add(projectDetonator);
         projectDetailAdapter.setSelectedPosition(detonators.size() - 1);
         projectDetailAdapter.notifyDataSetChanged();
+        changeProjectStatus();
         recycleView.scrollToPosition(detonators.size() - 1);
         playSound(true);
     }

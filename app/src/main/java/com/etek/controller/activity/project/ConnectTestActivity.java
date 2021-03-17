@@ -288,7 +288,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 if (mPopupWindow != null && mPopupWindow.isShowing()) {
                     mPopupWindow.dismiss();
                 }
-
                 changeProjectStatus();
 
             }
