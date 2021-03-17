@@ -58,6 +58,12 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
 
         Boolean isServerEtekOn = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.SEVER_ETEK_ON);
         etekSwitch.setOn(isServerEtekOn);
+
+        String straddr = SpManager.getIntance().getSpString(AppSpSaveConstant.ZHONGBAO_ADDRESS);
+        if(TextUtils.isEmpty(straddr)){
+            straddr = "中爆黔南";
+        }
+        serverAddress.setText(straddr);
     }
 
     private void initView() {
