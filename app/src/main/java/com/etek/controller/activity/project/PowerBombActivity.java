@@ -131,7 +131,10 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             soundPoolHelp.releaseSound();
         }
     }
-
+    private void playSound(boolean b){
+        soundPoolHelp.playSound(b);
+        VibrateUtil.vibrate(this, 1000);
+    }
     boolean isCanBomb = false;
 
     private void showVerifyDialog(){
@@ -184,8 +187,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         isCanBomb = false;
         if (!isBombing) {
             // 蜂鸣+震动1秒钟
-            soundPoolHelp.playSound(true);
-            VibrateUtil.vibrate(this, 1000);
+            playSound(true);
 
             isBombing = true;
             showProDialog("起爆中...");
@@ -196,8 +198,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void showAlterDialog(String strmsg){
-        soundPoolHelp.playSound(false);
-        VibrateUtil.vibrate(this, 1000);
+        playSound(false);
 
         new AlertDialog.Builder(this)
                 .setTitle("提示")
@@ -313,37 +314,98 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void postResult(int result, int type) {
+        android.app.AlertDialog.Builder builder = null;
+
         Log.d(TAG, "postResult: result = " + result + "   type = " + type);
         toastText.setText(resultString);
         dissProgressDialog();
-        if (type == ITaskCallback.CHARGE_TYPE) {
-            showstring.setText("");
-            if (result == 0) {
-                //  等待用户选择是否起爆
-                showBombDialog();
-            } else {
-                ToastUtils.show(PowerBombActivity.this,resultString);
+        switch (type){
+            case ITaskCallback.CHARGE_TYPE: //  雷管充电
+                showstring.setText("");
+                if (result == 0) {
+                    //  等待用户选择是否起爆
+                    showBombDialog();
+                    break;
+                }
 
-                // 充电失败，进行拉高操作
+                playSound(false);
+
+                // 雷管充电失败
+                builder = new android.app.AlertDialog.Builder(this);
+                builder.setCancelable(false);
+                builder.setMessage(resultString);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 充电失败，进行拉高操作
+                        StartSetBLTask(true);
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+                break;
+
+            case ITaskCallback.DETONATE:
+                detonateResult(result);
+                break;
+
+            case ITaskCallback.MIS_CHARGE:      //  放电操作
+                if(result!=0){
+                    playSound(false);
+
+                    builder = new android.app.AlertDialog.Builder(this);
+                    builder.setCancelable(false);
+                    String str =resultString + "\n放电失败，请重新进行放电操作，若仍失败，请半小时之后再进入爆破场地";
+                    builder.setMessage(str);
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 充电失败，进行拉高操作
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.create().show();
+                }
+
+                powerBank.setVisibility(View.VISIBLE);
+                break;
+
+            case ITaskCallback.BL_TRUE:
+                startDisChangeTask();
+                break;
+
+            case ITaskCallback.BL_FALSE:
+                missProDialog();
                 StartSetBLTask(true);
-            }
-        } else if (type == ITaskCallback.DETONATE) {
-            detonateResult(result);
-        } else if (type == ITaskCallback.MIS_CHARGE) {
-            powerBank.setVisibility(View.VISIBLE);
-        } else if (type == ITaskCallback.BL_TRUE) {
-            startDisChangeTask();
-        } else if (type == ITaskCallback.BL_FALSE) {
-            missProDialog();
-            StartSetBLTask(true);
-        } else if (type == ITaskCallback.DROP_OFF) {
-            dropOffResult(result);
-        } else if (type == ITaskCallback.POWER_ON) {
-            if (result == 0) {
-                // 成功
-                StartChargeTask();
-            }
+                break;
+
+            case ITaskCallback.DROP_OFF:
+                dropOffResult(result);
+                break;
+
+            case ITaskCallback.POWER_ON:        //  上电自检（总线充电）
+                if (result == 0) {
+                    StartChargeTask();
+                    break;
+                }
+
+                playSound(false);
+
+                // 上电自检失败
+                builder = new android.app.AlertDialog.Builder(this);
+                builder.setCancelable(false);
+                builder.setMessage(resultString);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+
+                break;
         }
+        return;
     }
 
     /**

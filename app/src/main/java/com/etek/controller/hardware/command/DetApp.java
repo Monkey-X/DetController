@@ -1973,20 +1973,6 @@ public class DetApp {
 			System.out.println(String.format("总线短路与漏电检测 失败 %d", ret));
 		}
 
-//		//	单颗模组检测
-//		DetCallback cbobj = new DetCallback();
-//		ret = CheckSingleModule(cbobj);
-//		if(ret!=0) {
-//			System.out.println(String.format("单颗模组检测 失败 %d", ret));
-//		}
-//
-//		//	总线上电与检测流程
-//		ret = PowerOnSelfCheck(cbobj);
-//		if(ret!=0) {
-//			System.out.println(String.format("总线上电与检测流程 失败 %d", ret));
-//		}
-
-
 		return;
 	}
 
