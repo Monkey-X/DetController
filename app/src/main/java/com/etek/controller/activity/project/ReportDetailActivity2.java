@@ -400,7 +400,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                         uploadToDanlingFail(firstLoad);
                     } else {
                         DetLog.writeLog(TAG, "丹灵上报成功");
-                        danlingLoadReturn = serverResult.getSuccess();
+                        danlingLoadReturn = "上报丹灵成功";
                         showSendRptMessage("上报丹灵成功", "1");
                         uploadToDanlingSuccess(firstLoad);
                     }
