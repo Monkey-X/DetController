@@ -259,9 +259,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             Log.d(TAG, "丹灵！");
             showProDialog("正在上传数据...");
             sendDanLingReport(true);
-        }
-
-        if (isServerZhongbaoOn) {
+        }else if (isServerZhongbaoOn){
             Log.d(TAG, "中爆！");
             showProDialog("正在上传数据...");
             UPZBThread(detonatorEntityList, true);
@@ -275,6 +273,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             //  丹灵or中爆开关全部Off，传输到DET/Post
             Log.d(TAG, "力芯Post！");
             sendRptToEtekServer(false,reportDotInfo);
+            showReproteDialog();
         }
 
     }
@@ -328,7 +327,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 DetLog.writeLog(TAG,"上报力芯失败：:"+ e.getMessage());
-                showSendRptMessage("上报ETEK失败","2");
+                showLongToast("上报ETEK失败");
             }
 
             @Override
@@ -346,14 +345,14 @@ public class ReportDetailActivity2 extends BaseActivity {
                         Integer code = Integer.parseInt(serverResult.getSuccess());
                         ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
                         DetLog.writeLog(TAG, "力芯错误代码：" + errEnum.getMessage());
-                        showSendRptMessage("上报ETEK失败", "2");
+                        showLongToast("上报ETEK失败");
                     } else {
                         DetLog.writeLog(TAG,"上报ETEK成功");
-                        showSendRptMessage("上报ETEK成功","1");
+                        showLongToast("上报ETEK成功");
                     }
                 } catch (Exception e) {
                     DetLog.writeLog(TAG, "力芯返回解析错误：" + e.getMessage());
-                    showSendRptMessage("上报ETEK失败", "2");
+                    showLongToast("上报ETEK失败");
                 }
             }
         });
