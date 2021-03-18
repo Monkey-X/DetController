@@ -108,6 +108,12 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             return;
         }
 
+        //  百度没定位到，返回经纬度都是0
+        if((Math.abs(longitude)<0.00001)&&(Math.abs(latitude)<0.00001)){
+            DetLog.writeLog(TAG,String.format("百度未定位到：%.5f,%.5f",longitude,latitude));
+            return;
+        }
+
         if(strCacheLocation.toUpperCase().equals("CACHE")){
             DetLog.writeLog(TAG, String.format("缓存经纬度：%.4f,%.4f", longitude, latitude));
             setStringInfo("Longitude", longitude + "");

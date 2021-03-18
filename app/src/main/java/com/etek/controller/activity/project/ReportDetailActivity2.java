@@ -327,7 +327,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 DetLog.writeLog(TAG,"上报力芯失败：:"+ e.getMessage());
-                showLongToast("上报ETEK失败");
+//                showLongToast("上报ETEK失败");
             }
 
             @Override
@@ -345,14 +345,14 @@ public class ReportDetailActivity2 extends BaseActivity {
                         Integer code = Integer.parseInt(serverResult.getSuccess());
                         ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
                         DetLog.writeLog(TAG, "力芯错误代码：" + errEnum.getMessage());
-                        showLongToast("上报ETEK失败");
+//                        showLongToast("上报ETEK失败");
                     } else {
                         DetLog.writeLog(TAG,"上报ETEK成功");
-                        showLongToast("上报ETEK成功");
+//                        showLongToast("上报ETEK成功");
                     }
                 } catch (Exception e) {
                     DetLog.writeLog(TAG, "力芯返回解析错误：" + e.getMessage());
-                    showLongToast("上报ETEK失败");
+//                    showLongToast("上报ETEK失败");
                 }
             }
         });
@@ -366,7 +366,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
             missProDialog();
-            showToast("数据编码出错：" + result.getMessage());
+//            showToast("数据编码出错：" + result.getMessage());
             return;
         }
         String url = AppConstants.DanningServer + AppConstants.ProjectReport;
@@ -489,7 +489,7 @@ public class ReportDetailActivity2 extends BaseActivity {
     private void showSendRptMessage(String strmsg, String strStatus) {
         projectInfoEntity.setReportStatus(strStatus);
         DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
-        showLongToast(strmsg);
+//        showLongToast(strmsg);
     }
 
 //    private void sendReportToETEKBck() {

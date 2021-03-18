@@ -158,7 +158,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         option.setCoorType("bd09ll");
         option.setScanSpan(0);
         option.setOpenGps(true);
-        option.setLocationNotify(true);
+        option.setLocationNotify(false);
         option.setWifiCacheTimeOut(2 * 60 * 1000);
         option.setNeedNewVersionRgc(true);
         locationClient.setLocOption(option);
@@ -234,7 +234,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             locationLongitude.setText(String.format("%.4f" ,longitude));
             locationLatitude.setText(String.format("%.4f",latitude));
 
-            //DetLog.writeLog(TAG,"刷新本地经纬度："+longitude+","+latitude);
+            DetLog.writeLog(TAG,"刷新本地经纬度："+longitude+","+latitude);
         }
     }
 
