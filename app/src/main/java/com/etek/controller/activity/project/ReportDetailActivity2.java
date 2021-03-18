@@ -158,6 +158,9 @@ public class ReportDetailActivity2 extends BaseActivity {
             String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
             // 上报的信息
             reportDotInfo = getReportDot(userinfo, projectInfoEntity);
+
+            DetLog.writeLog(TAG,projectInfoEntity.toString());
+
         }
     }
 
@@ -252,20 +255,28 @@ public class ReportDetailActivity2 extends BaseActivity {
             return;
         }
 
-        if (isServerEtekOn) {
-            Log.d(TAG, "力芯！");
-            sendRptToEtekServer(reportDotInfo);
-        }
-
         if (isServerDanningOn) {
             Log.d(TAG, "丹灵！");
             showProDialog("正在上传数据...");
             sendDanLingReport(true);
-        } else if (isServerZhongbaoOn) {
+        }
+
+        if (isServerZhongbaoOn) {
             Log.d(TAG, "中爆！");
             showProDialog("正在上传数据...");
             UPZBThread(detonatorEntityList, true);
         }
+
+        if(isServerDanningOn||isServerZhongbaoOn){
+            //  丹灵or中爆开关全部或之一On，传输到DetBackUp/Post
+            Log.d(TAG, "力芯DetBackUp！");
+            sendRptToEtekServer(true,reportDotInfo);
+        }else{
+            //  丹灵or中爆开关全部Off，传输到DET/Post
+            Log.d(TAG, "力芯Post！");
+            sendRptToEtekServer(false,reportDotInfo);
+        }
+
     }
 
     /**
@@ -296,13 +307,19 @@ public class ReportDetailActivity2 extends BaseActivity {
     }
 
     //  上传到力芯后台
-    private void sendRptToEtekServer(ReportDto2 reportDto) {
+    private void sendRptToEtekServer(boolean bBackup,ReportDto2 reportDto) {
 
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         DetLog.writeLog(TAG,String.format("上报力芯：%s",rptJson));
         Result result = RptUtil.getRptEncode(rptJson);
         XLog.d(result);
-        String url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+        String url = "";
+        if(bBackup) {
+            url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
+        }else{
+            url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+        }
+
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());
         String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");

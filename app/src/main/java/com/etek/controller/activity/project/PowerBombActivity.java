@@ -61,7 +61,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private List<ProjectDetonator> detonatorEntityList;
     private String bombPassWord;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,8 +166,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
         // 通信不通
         if(0!=ret){
-            showAlterDialog("检测到雷管脱落或短路！");
-            StartSetBLTask(true);
+            resultString = "检测到雷管脱落或短路！";
+            postResult(0x0c,ITaskCallback.DROP_OFF);
             return;
         }
 
@@ -178,8 +177,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         Log.d(TAG, String.format("DetsCheckDropOff checkString: %s",checkString.toString()));
         int checkInt = Integer.parseInt(checkString, 16);
         if (checkInt != 1) {
-            showAlterDialog("检测到雷管脱落或短路！");
-            StartSetBLTask(true);
+            resultString = "检测到雷管脱落或短路！";
+            postResult(0x0c,ITaskCallback.DROP_OFF);
             return;
         }
 
@@ -197,16 +196,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void showAlterDialog(String strmsg){
-        playSound(false);
-
-        new AlertDialog.Builder(this)
-                .setTitle("提示")
-                .setMessage(strmsg)
-                .setPositiveButton("确定", null)
-                .show();
-        return;
-    }
     /**
      * 注销
      */
@@ -379,10 +368,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 StartSetBLTask(true);
                 break;
 
-            case ITaskCallback.DROP_OFF:
-                dropOffResult(result);
-                break;
-
             case ITaskCallback.POWER_ON:        //  上电自检（总线充电）
                 if (result == 0) {
                     StartChargeTask();
@@ -398,6 +383,24 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+
+                break;
+
+            case ITaskCallback.DROP_OFF:
+                Log.d(TAG,"进入到短路对话框！");
+                playSound(false);
+                builder = new android.app.AlertDialog.Builder(this);
+                builder.setCancelable(false);
+                builder.setMessage(resultString);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 充电失败，进行拉高操作
+                        dropOffResult(result);
                         dialog.dismiss();
                     }
                 });

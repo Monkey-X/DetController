@@ -67,6 +67,8 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         about.setOnClickListener(this);
         getUserName();
 
+        TextView locate_position = findViewById(R.id.locate_position);
+        locate_position.setOnClickListener(this);
     }
 
     @Override
@@ -108,6 +110,11 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.upload_log:
                 uploadLog();
+                break;
+            case R.id.locate_position:
+                Intent intentpos = new Intent(this, MapActivity.class);
+                intentpos.putExtra("cachePositon","CACHE");
+                startActivity(intentpos);
                 break;
         }
     }

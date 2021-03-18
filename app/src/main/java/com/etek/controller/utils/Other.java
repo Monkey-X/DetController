@@ -2,27 +2,20 @@ package com.etek.controller.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.elvishew.xlog.XLog;
-import com.etek.controller.activity.ReportDetailActivity;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.dto.ReportDto;
 import com.etek.controller.minaclient.MessageCodecFactory;
-import com.etek.controller.persistence.DBManager;
 import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.DateUtil;
-import com.etek.sommerlibrary.utils.FileUtils;
 
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class Other {
 //    void testRename(){
