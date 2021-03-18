@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -297,7 +298,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         }
 
         ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
-        Log.d(TAG, "zhognbao: reportServerEnum " + Globals.zhongbaoAddress + reportServerEnum);
+        DetLog.writeLog(TAG, "zhognbao: reportServerEnum " + Globals.zhongbaoAddress + reportServerEnum);
 
         new Thread(() -> {
             List<String> msgs = createMessageList(detonatorEntities);
@@ -313,11 +314,13 @@ public class ReportDetailActivity2 extends BaseActivity {
         Result result = RptUtil.getRptEncode(rptJson);
         XLog.d(result);
         String url = "";
-        if(bBackup) {
-            url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
-        }else{
-            url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
-        }
+//        if(bBackup) {
+//            url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
+//        }else{
+//            url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+//        }
+
+        url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
 
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());
@@ -471,7 +474,9 @@ public class ReportDetailActivity2 extends BaseActivity {
                 DetLog.writeLog(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
             }
 
-            cf.getSession().getCloseFuture().awaitUninterruptibly();
+            DetLog.writeLog(TAG,String.format("中爆 等待结束 "));
+            cf.getSession().getCloseFuture().awaitUninterruptibly(5, TimeUnit.SECONDS);
+            DetLog.writeLog(TAG,String.format("中爆 上报结束"));
 
             connector.dispose();
 

@@ -4,15 +4,10 @@ package com.etek.controller.common;
 
 public  class AppConstants {
 
-
-
     public static final   String BaiduAddress = "http://api.map.baidu.com/geocoder/v2/";
-
-
 
     public final static String DET_DETAIL="http://222.191.229.234:1018/api/DetMsg/GetDetMsgInfo";
     public final static String DET_APP= "http://222.191.229.234:1018/api/DET/GET?id=";
-
 
     public final static String ZHONGBAO_HTTP= "113.140.1.135";
     public final static int ZHONGBAO_PORT= 9903;
@@ -55,11 +50,8 @@ public  class AppConstants {
     public final static String DETUnCheck = "/api/DETUnCheck/PostFromBody";     //  【离线/在线检查】
     public final static String DETBACKUP = "/api/DetBackUp/Post";               //  【数据上报（正式）】，丹灵和中爆其中之一打开或全打开时
 
-
-
     public final static String DanningServer = "http://qq.mbdzlg.com";
     public final static String DanningTestServer = "http://test.mbdzlg.com";
-
 
     public final static String ETEKTestServer = "http://222.191.229.234:1018";
 
