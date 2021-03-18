@@ -683,6 +683,7 @@ public class ReportDetailActivity2 extends BaseActivity {
 
         public void messageReceived(IoSession session, Object message) {
             if (message == null) {
+                DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误");
                 showSendRptMessage("上传中爆服务器错误!", "2");
                 zhongbaoLoadReturn = "上传中爆服务器错误";
                 uploadToZhongBaoFail(firstLoad);
@@ -695,10 +696,12 @@ public class ReportDetailActivity2 extends BaseActivity {
                 XLog.d(cmds[0]);
                 if (cmds[0].contains("O")) {
                     showSendRptMessage("上传中爆服务器成功!", "1");
+                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器成功");
                     zhongbaoLoadReturn = "上传中爆服务器成功";
                     uploadToZhongBaoSuccess(firstLoad);
                 } else {
                     zhongbaoLoadReturn = "上传中爆服务器错误";
+                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误 not contain 0");
                     showSendRptMessage("上传中爆服务器错误!", "2");
                     uploadToZhongBaoFail(firstLoad);
                 }
@@ -766,8 +769,13 @@ public class ReportDetailActivity2 extends BaseActivity {
      * 数据上报丹灵和中爆后的操作
      */
     private void uploadFinish(){
-        missProDialog();
-        showReproteDialog();
-        showPreportStatus();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                missProDialog();
+                showReproteDialog();
+                showPreportStatus();
+            }
+        });
     }
 }
