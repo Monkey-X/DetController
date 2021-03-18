@@ -189,7 +189,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             locationLongitude.setText("" + longitude);
             locationLatitude.setText("" + latitude);
 
-            Log.d(TAG,"缓存经纬度"+longitudeStr+","+latitudeStr);
+            DetLog.writeLog(TAG,"缓存经纬度"+longitudeStr+","+latitudeStr);
         }
 
 //        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))) {
@@ -218,8 +218,14 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             //  如果正在检查中，不更新经纬度
             if(m_bChecking) return;
 
-            double latitude = location.getLatitude();    //获取纬度信息
+            double latitude = location.getLatitude();       //获取纬度信息
             double longitude = location.getLongitude();    //获取经度信息
+
+            //  百度没定位到，返回经纬度都是0
+            if((Math.abs(longitude)<0.00001)&&(Math.abs(latitude)<0.00001)){
+                DetLog.writeLog(TAG,String.format("百度未定位到：%.5f,%.5f",longitude,latitude));
+                return;
+            }
 
             setCacheLongitude(longitude);
             setCacheLatitude(latitude);
@@ -227,6 +233,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             //  百度获取到的经纬度，只是显示在TextView里，不缓存
             locationLongitude.setText(String.format("%.4f" ,longitude));
             locationLatitude.setText(String.format("%.4f",latitude));
+
+            //DetLog.writeLog(TAG,"刷新本地经纬度："+longitude+","+latitude);
         }
     }
 
@@ -305,9 +313,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             pendingProject.refresh();
             projectDetonatorList= DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
         }
-
         //  起爆器编号使用全局设置信息
         pendingProject.setControllerId(getStringInfo(getString(R.string.controller_sno)));
+
+        DetLog.writeLog(TAG,"getProjectId 合同编号："+pendingProject.getContractCode()
+                + "项目编号："+pendingProject.getProCode());
     }
 
     /**
@@ -356,6 +366,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private void saveData(){
         if (pendingProject == null)
             return;
+
+        DetLog.writeLog(TAG,"saveData 合同编号："+contractCode.getText().toString()
+                + "项目编号："+proCode.getText().toString());
 
         //合同编号
         pendingProject.setContractCode(contractCode.getText().toString());
@@ -761,6 +774,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             showStatusDialog("没有找到雷管规则所对应的项目2");
             return;
         }
+        // 离线检查的合同编号和项目编号需要设置
+        contractCode.setText(projectInfo.getContractCode());
+        proCode.setText(projectInfo.getProCode());
+
+        DetLog.writeLog(TAG,projectInfo.toString());
 
         //  离线不检查F99起爆器
         Log.d(TAG,"起爆器厂商："+strControllerId.substring(0,3));
@@ -855,13 +873,13 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         projectInfoEntity.setLongitude(getCacheLongitude());
         projectInfoEntity.setLatitude(getCacheLatitude());
 
-
         Log.d(TAG,String.format("上报ETEK 经纬度:%.5f,%.5f",projectInfoEntity.getLongitude(),projectInfoEntity.getLatitude()));
+
 
         String rptJson = getReportDto(projectInfoEntity);
         String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
 
-        Log.d(TAG,String.format("上报ETEK JSON:%s",rptJson));
+        DetLog.writeLog(TAG,String.format("上报ETEK JSON:%s",rptJson));
 
         AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
 

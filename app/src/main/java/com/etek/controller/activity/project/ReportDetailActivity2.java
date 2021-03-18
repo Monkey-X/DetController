@@ -158,6 +158,9 @@ public class ReportDetailActivity2 extends BaseActivity {
             String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
             // 上报的信息
             reportDotInfo = getReportDot(userinfo, projectInfoEntity);
+
+            DetLog.writeLog(TAG,projectInfoEntity.toString());
+
         }
     }
 

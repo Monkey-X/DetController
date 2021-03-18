@@ -18,6 +18,7 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.etek.controller.R;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -108,7 +109,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         }
 
         if(strCacheLocation.toUpperCase().equals("CACHE")){
-            Log.d(TAG,String.format("缓存经纬度：%.4f,%.4f",longitude,latitude));
+            DetLog.writeLog(TAG, String.format("缓存经纬度：%.4f,%.4f", longitude, latitude));
             setStringInfo("Longitude", longitude + "");
             setStringInfo("Latitude", latitude + "");
             ToastUtils.showCustom(MapActivity.this,"经纬度缓存成功！");

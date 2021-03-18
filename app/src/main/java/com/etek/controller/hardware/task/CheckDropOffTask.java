@@ -22,6 +22,12 @@ public class CheckDropOffTask extends AsyncTask<String, Integer, Integer> {
         iTaskCallbackWeakReference = new WeakReference<>(callback);
     }
 
+    private void DisplayText(String strText) {
+        Log.d(TAG, "DisplayText: " + strText);
+        ITaskCallback iTaskCallback = iTaskCallbackWeakReference.get();
+        iTaskCallback.setDisplayText(strText);
+    }
+
     @Override
     protected Integer doInBackground(String... strings) {
         ITaskCallback iTaskCallback = iTaskCallbackWeakReference.get();
@@ -40,6 +46,20 @@ public class CheckDropOffTask extends AsyncTask<String, Integer, Integer> {
             String checkString = checkResult.substring(8);
             int checkInt = Integer.parseInt(checkString, 16);
             if (checkInt != 1) {
+                //  0x0B：总线能量输出不足；0x0C：总线雷管模组脱落，开路
+                Log.d(TAG,"checkInt"+checkInt);
+                switch (checkInt){
+                    case 0x0b:
+                        DisplayText("总线能量输出不足");
+                        break;
+                    case 0x0c:
+                        DisplayText("总线雷管模组脱落，开路");
+                        break;
+                    default:
+                        DisplayText("检查雷管是否脱落失败"+checkInt);
+                        break;
+                }
+
                 i = -1;
                 return i;
             }
