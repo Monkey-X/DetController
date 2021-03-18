@@ -314,14 +314,11 @@ public class ReportDetailActivity2 extends BaseActivity {
         Result result = RptUtil.getRptEncode(rptJson);
         XLog.d(result);
         String url = "";
-//        if(bBackup) {
-//            url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
-//        }else{
-//            url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
-//        }
-
-        url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
-
+        if(bBackup) {
+            url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
+        }else{
+            url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+        }
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());
         String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
@@ -336,26 +333,30 @@ public class ReportDetailActivity2 extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String respStr = response.body().string();
+                DetLog.writeLog(TAG,"力芯返回："+respStr);
+
                 if (StringUtils.isBlank(respStr)) {
                     DetLog.writeLog(TAG,"respStr is null ");
                     return;
                 }
 
-                ServerResult serverResult = null;
                 try {
-                    serverResult = JSON.parseObject(respStr, ServerResult.class);
-                    if (!serverResult.getSuccess().contains("0")) {
-                        Integer code = Integer.parseInt(serverResult.getSuccess());
-                        ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
-                        DetLog.writeLog(TAG, "力芯错误代码：" + errEnum.getMessage());
-//                        showLongToast("上报ETEK失败");
-                    } else {
+                    if(bBackup){
+                        //  返回： {"result":1,"msg":"成功"}
                         DetLog.writeLog(TAG,"上报ETEK成功");
-//                        showLongToast("上报ETEK成功");
+                    }else{
+                        //  返回： {"success":0,"cwxx":"成功"}
+                        ServerResult serverResult = JSON.parseObject(respStr, ServerResult.class);
+                        if (!serverResult.getSuccess().contains("0")) {
+                            Integer code = Integer.parseInt(serverResult.getSuccess());
+                            ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
+                            DetLog.writeLog(TAG, "力芯错误代码：" + errEnum.getMessage());
+                        } else {
+                            DetLog.writeLog(TAG,"上报ETEK成功");
+                        }
                     }
                 } catch (Exception e) {
                     DetLog.writeLog(TAG, "力芯返回解析错误：" + e.getMessage());
-//                    showLongToast("上报ETEK失败");
                 }
             }
         });
@@ -464,8 +465,20 @@ public class ReportDetailActivity2 extends BaseActivity {
             ConnectFuture cf;
             ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
             DetLog.writeLog(TAG,String.format("中爆地址：%s:%d",reportServerEnum.getAddress(), reportServerEnum.getPort()));
+
             cf = connector.connect(new InetSocketAddress(reportServerEnum.getAddress(), reportServerEnum.getPort()));
-            cf.awaitUninterruptibly();
+            cf.awaitUninterruptibly(10,TimeUnit.SECONDS);
+            if(cf.isConnected()){
+                DetLog.writeLog(TAG,String.format("中爆 isConnteded"));
+            }else{
+                DetLog.writeLog(TAG,String.format("中爆 is Not Connteded"));
+                zhongbaoLoadReturn ="中爆服务器连接失败！";
+
+                missProDialog();
+                showReproteDialog();
+                return;
+            }
+
             for (int j = 0; j < detMsgs.size(); j++) {
                 byte[] bs = detMsgs.get(j).getBytes();
                 XLog.w("detMsgs:" + new String(bs));
@@ -476,72 +489,40 @@ public class ReportDetailActivity2 extends BaseActivity {
 
             DetLog.writeLog(TAG,String.format("中爆 等待结束 "));
             cf.getSession().getCloseFuture().awaitUninterruptibly(5, TimeUnit.SECONDS);
-            DetLog.writeLog(TAG,String.format("中爆 上报结束"));
+            if(cf.isDone()){
+                DetLog.writeLog(TAG,String.format("中爆 上报结束"));
+                zhongbaoLoadReturn ="上报中爆成功";
+            }else{
+                DetLog.writeLog(TAG,String.format("中爆 上报失败"));
+                zhongbaoLoadReturn ="上报中爆失败";
+            }
 
+            if(cf.isConnected()){
+                DetLog.writeLog(TAG,String.format("中爆 isConnteded"));
+            }else{
+                DetLog.writeLog(TAG,String.format("中爆 is Not Connteded"));
+            }
+            uploadToZhongBaoSuccess(firstLoad);
             connector.dispose();
-
         } catch (Exception e) {
             DetLog.writeLog(TAG, String.format("中爆 发送失败:%s", e.getMessage()));
             showSendRptMessage("上报中爆失败", "2");
-            zhongbaoLoadReturn = e.getMessage();
+            zhongbaoLoadReturn = String.format("上报中爆失败：%s",e.getMessage());
             uploadToZhongBaoFail(firstLoad);
         } finally {
             DetLog.writeLog(TAG,String.format("中爆 发送结束!"));
         }
+
+        missProDialog();
+        showReproteDialog();
+        return;
     }
 
 
     private void showSendRptMessage(String strmsg, String strStatus) {
         projectInfoEntity.setReportStatus(strStatus);
         DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
-//        showLongToast(strmsg);
     }
-
-//    private void sendReportToETEKBck() {
-//        sendRptToEtekServerBck(reportDtos.get(step - allSize));
-//    }
-//
-//    private void sendRptToEtekServerBck(ReportDto2 reportDto) {
-//        String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
-//        XLog.d(rptJson);
-//        Result result = RptUtil.getRptEncode(rptJson);
-//        XLog.d(result);
-//        String url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
-//
-//        LinkedHashMap params = new LinkedHashMap();
-//        params.put("param", result.getData());    //
-//        String newUrl = SommerUtils.attachHttpGetParams(url, params);
-//
-//        AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
-//
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                XLog.e("IOException:", e.getMessage());
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                String respStr = response.body().string();
-//                if (StringUtils.isBlank(respStr)) {
-//                    return;
-//                }
-//
-//                ServerResult serverResult = null;
-//                try {
-//                    serverResult = JSON.parseObject(respStr, ServerResult.class);
-//                    if (!serverResult.getSuccess().contains("0")) {
-//                        Integer code = Integer.parseInt(serverResult.getSuccess());
-//                        ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
-//                        XLog.e("错误代码：", errEnum.getMessage());
-//                    } else {
-////                        sendCmdMessage(MSG_RPT_ETEK_BCK_OK);
-//                    }
-//                } catch (Exception e) {
-//                    XLog.e("解析错误：", e.getMessage());
-//                }
-//            }
-//        });
-//    }
 
     private List<String> createMessageList(List<ProjectDetonator> detonators) {
         List<String> msgs = new ArrayList<String>();
@@ -611,67 +592,6 @@ public class ReportDetailActivity2 extends BaseActivity {
 
         return msgs;
     }
-
-//    private void sendCmdMessage(int msg) {
-//        Message message = new Message();
-//        message.what = msg;
-//        if (handler != null) {
-//            handler.sendMessage(message);
-//        }
-//    }
-
-//
-//    private Handler handler = new Handler(msg -> {
-//
-//        if (msg.what == MSG_RPT_OK) {
-//            result = Activity.RESULT_OK;
-//            rptStatus.setText(R.string.reported);
-//            rptStatus.setTextColor(getMyColor(R.color.green));
-//        } else if (msg.what == MSG_RPT_ZHONGBAO_ERR) {
-//            result = Activity.RESULT_CANCELED;
-//            rptStatus.setText("中爆服务器错误");
-//            rptStatus.setTextColor(getMyColor(R.color.red_normal));
-//        }else if (msg.what == MSG_RPT_DANLING_ERR) {
-//            dismissProgressBar();
-//            projectInfoEntity.setReportStatus("2");
-//            DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
-//            XLog.e("解析异常");
-//        } else if (msg.what == MSG_RPT_ETEK_TEST_ERR) {
-//        } else if (msg.what == MSG_RPT_ETEK_BCK) {
-////            sendReportToETEKBck();
-//        } else if (msg.what == MSG_RPT_ETEK_TEST_OK) {
-//            XLog.i("step:" + step);
-//            if (step == allSize) {
-//                dismissProgressBar();
-//                showToast("上传ETEK服务器成功!");
-//                result = Activity.RESULT_OK;
-//                rptStatus.setText(R.string.reported);
-//                rptStatus.setTextColor(getMyColor(R.color.green));
-//                projectInfoEntity.setReportStatus("1");
-//                DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
-//            } else {
-//                setProgressBar(step);
-//                sendRptToEtekServer(reportDtos.get(step));
-//            }
-//        } else if (msg.what == MSG_RPT_ETEK_BCK_OK) {
-//            XLog.i("step:" + step);
-//            if (step == allSize * 2) {
-//                dismissProgressBar();
-//                result = Activity.RESULT_OK;
-//                rptStatus.setText(R.string.reported);
-//                rptStatus.setTextColor(getMyColor(R.color.green));
-//                projectInfoEntity.setReportStatus("1");
-//                DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
-//            } else {
-//                setProgressBar(step);
-////                sendRptToEtekServerBck(reportDtos.get(step - allSize));
-//            }
-//
-//        } else if (msg.what == MSG_RPT_ETEK_BCK_ERR) {
-//            dismissProgressBar();
-//        }
-//        return false;
-//    });
 
     public class MinaHandler extends IoHandlerAdapter {
 
