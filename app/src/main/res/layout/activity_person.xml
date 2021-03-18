@@ -90,6 +90,20 @@
         android:background="@color/btn_gray_normal" />
 
     <TextView
+        android:id="@+id/locate_position"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/seleted_status"
+        android:padding="8dp"
+        android:text="当前定位"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/btn_gray_normal" />
+
+    <TextView
         android:id="@+id/about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -49,12 +49,11 @@ public  class AppConstants {
 
     public final static String OnlineDownload = "/mbdzlgtxzx/servlet/DzlgMmxzJsonServlert";
 
-
-    public final static String ProjectReportTest = "/api/DET/Post";
-    public final static String CheckoutReport = "/api/DET/PostFromBody";
+    public final static String ProjectReportTest = "/api/DET/Post";             //  【数据上报】（模拟），当丹灵和中爆同时关闭时
+    public final static String CheckoutReport = "/api/DET/PostFromBody";        //  【离线授权（授权下载）】
     public final static String WhiteBlackList = "/api/DET";
-    public final static String DETUnCheck = "/api/DETUnCheck/PostFromBody";
-    public final static String DETBACKUP = "/api/DetBackUp/Post";
+    public final static String DETUnCheck = "/api/DETUnCheck/PostFromBody";     //  【离线/在线检查】
+    public final static String DETBACKUP = "/api/DetBackUp/Post";               //  【数据上报（正式）】，丹灵和中爆其中之一打开或全打开时
 
 
 

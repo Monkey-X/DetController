@@ -1,14 +1,5 @@
 package com.etek.controller.common;
 
-import com.etek.controller.R;
-import com.etek.controller.activity.AssistActivity;
-import com.etek.controller.activity.AuthBombActivity;
-import com.etek.controller.activity.project.ConnectTestActivity;
-import com.etek.controller.activity.project.DelayDownloadActivity;
-import com.etek.controller.activity.NetWorkActivity;
-import com.etek.controller.activity.ReportActivity2;
-import com.etek.controller.activity.UserInfoActivity;
-import com.etek.controller.entity.FuncationActivity;
 import com.etek.controller.model.User;
 
 public class Globals {

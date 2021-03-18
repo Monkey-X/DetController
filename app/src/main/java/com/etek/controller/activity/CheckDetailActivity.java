@@ -172,8 +172,26 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         locationLongitude.setText("");
         locationLatitude.setText("");
 
-//        String longitudeStr = getStringInfo("Longitude");
-//        String latitudeStr = getStringInfo("Latitude");
+        if ("online".equals(type))
+            return;
+
+        //  离线检查时，先使用缓存中的经纬度
+        String longitudeStr = getStringInfo("Longitude");
+        String latitudeStr = getStringInfo("Latitude");
+
+        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))){
+            double longitude = Double.valueOf(longitudeStr);
+            double latitude = Double.valueOf(latitudeStr);
+
+            setCacheLongitude(longitude);
+            setCacheLatitude(latitude);
+
+            locationLongitude.setText("" + longitude);
+            locationLatitude.setText("" + latitude);
+
+            Log.d(TAG,"缓存经纬度"+longitudeStr+","+latitudeStr);
+        }
+
 //        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))) {
 //            double longitude = Double.valueOf(longitudeStr);
 //            double latitude = Double.valueOf(latitudeStr);
@@ -182,7 +200,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 //
 //            locationLongitude.setText("" + longitude);
 //            locationLatitude.setText("" + latitude);
-
+//
 //            if (pendingProject != null) {
 //                pendingProject.setLongitude(longitude);
 //                pendingProject.setLatitude(latitude);

@@ -1,6 +1,8 @@
 package com.etek.controller.activity.project;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,6 +19,9 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.etek.controller.R;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.ToastUtils;
+
+import android.util.Log;
 
 /**
  * 百度地图查看位置信息
@@ -28,6 +33,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private MapView mMapView;
     private BaiduMap map;
     private LocationClient mLocationClient;
+
+    private final String TAG ="MapActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +61,9 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         builder.zoom(16.0f);
         map.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         //定位初始化
-        mLocationClient = new LocationClient(this);
+        //  mLocationClient = new LocationClient(this);
+        //  必须用getApplicationContext()，否则其他地方使用MapActivity会报错
+        mLocationClient = new LocationClient(getApplicationContext());
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true); // 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
@@ -84,9 +93,30 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
             MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(latLng);
             map.animateMapStatus(update);
+
+            //  对于离线作业，需要先缓存经纬度，然后在【离线检查】中使用
+            CachePositon(location.getLongitude(),location.getLatitude());
         }
     }
 
+    private void CachePositon(double longitude,double latitude){
+        Intent intent = getIntent();
+        String  strCacheLocation =intent.getStringExtra("cachePositon");
+        if(TextUtils.isEmpty(strCacheLocation)){
+            Log.d(TAG,"不缓存经纬度");
+            return;
+        }
+
+        if(strCacheLocation.toUpperCase().equals("CACHE")){
+            Log.d(TAG,String.format("缓存经纬度：%.4f,%.4f",longitude,latitude));
+            setStringInfo("Longitude", longitude + "");
+            setStringInfo("Latitude", latitude + "");
+            ToastUtils.showCustom(MapActivity.this,"经纬度缓存成功！");
+        }else{
+            Log.d(TAG,"不缓存经纬度");
+        }
+
+    }
     @Override
     public void onClick(View v) {
         // 刷新地图
@@ -119,4 +149,5 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         mMapView.onDestroy();
         mMapView = null;
     }
+
 }

@@ -103,7 +103,6 @@
         <activity
             android:name=".activity.NetWorkActivity"
             android:theme="@style/activity_theme" />
-        <activity android:name=".activity.AuthBombActivity" />
         <activity
             android:name=".activity.project.ConnectTestActivity"
             android:theme="@style/activity_theme" />
@@ -116,25 +115,11 @@
             android:name=".activity.UserInfoActivity"
             android:label="@string/title_activity_personal_info" />
         <activity
-            android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
             android:name=".activity.OfflineCheckActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".activity.OnlineCheckActivity"
             android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".activity.OnlineCheckoutActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".activity.ReportDetailActivity"
-            android:label="数据详情"
-            android:screenOrientation="unspecified" />
-        <activity
-            android:name=".activity.ReportActivity"
-            android:label="数据上报"
-            android:screenOrientation="unspecified" />
         <activity
             android:name=".activity.DetInfoDetailActivity"
             android:label="@string/title_activity_det_detail"
@@ -143,17 +128,8 @@
             android:name=".activity.ProDetailActivity"
             android:label="@string/title_activity_pro_detail" />
         <activity
-            android:name=".activity.CheckoutActivity"
-            android:label="@string/title_activity_checkout" />
-        <activity
-            android:name=".activity.OnlineAuthorizeActivity"
-            android:label="@string/title_act_online_checkout" />
-        <activity
             android:name=".activity.OnlineEditActivity"
             android:label="@string/title_act_online_checkout" />
-        <activity
-            android:name=".activity.CheckoutDetailActivity"
-            android:label="@string/title_activity_checkout_detail" />
         <activity
             android:name=".activity.AuthorizeActivity"
             android:label="@string/title_activity_authority" />
