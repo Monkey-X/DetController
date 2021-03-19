@@ -118,7 +118,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             DetLog.writeLog(TAG, String.format("缓存经纬度：%.4f,%.4f", longitude, latitude));
             setStringInfo("Longitude", longitude + "");
             setStringInfo("Latitude", latitude + "");
-            ToastUtils.showCustom(MapActivity.this,"经纬度缓存成功！");
+            ToastUtils.showCustom(MapActivity.this,"已获取经纬度！");
         }else{
             Log.d(TAG,"不缓存经纬度");
         }

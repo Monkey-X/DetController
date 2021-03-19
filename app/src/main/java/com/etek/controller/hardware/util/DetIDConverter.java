@@ -25,6 +25,8 @@ public class DetIDConverter {
         m_mapDeskCode.put(28, "BCDEFGHIJ");
         m_mapDeskCode.put(60, "546789abd");
         m_mapDeskCode.put(9, "ADXYZ1234");
+        m_mapDeskCode.put(7, "9        ");
+        m_mapDeskCode.put(30, "6        ");
     }
 
     public DetIDConverter() {

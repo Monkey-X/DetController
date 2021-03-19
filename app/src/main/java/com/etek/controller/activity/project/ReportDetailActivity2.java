@@ -51,7 +51,11 @@ import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -274,6 +278,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             //  丹灵or中爆开关全部Off，传输到DET/Post
             Log.d(TAG, "力芯Post！");
             sendRptToEtekServer(false,reportDotInfo);
+
+            Log.d(TAG,"showReproteDialog1");
             showReproteDialog();
         }
 
@@ -302,7 +308,8 @@ public class ReportDetailActivity2 extends BaseActivity {
 
         new Thread(() -> {
             List<String> msgs = createMessageList(detonatorEntities);
-            sendRptToZhongBao(msgs, firstLoad);
+            //sendRptToZhongBao(msgs, firstLoad);
+            sendRptToZhongBaoSocket(msgs, firstLoad);
         }).start();
     }
 
@@ -428,6 +435,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             UPZBThread(detonatorEntityList, false);
         } else {
             missProDialog();
+
+            Log.d(TAG,"showReproteDialog2");
             showReproteDialog();
         }
     }
@@ -441,10 +450,11 @@ public class ReportDetailActivity2 extends BaseActivity {
         } else {
             // 展示上报的对话框
             missProDialog();
+
+            Log.d(TAG,"showReproteDialog3");
             showReproteDialog();
         }
     }
-
 
     private void showReproteDialog() {
         ReprotDialog reprotDialog = new ReprotDialog();
@@ -452,72 +462,191 @@ public class ReportDetailActivity2 extends BaseActivity {
         reprotDialog.show(getSupportFragmentManager(), "reprot");
     }
 
-    //  上传到中爆后台
-    private void sendRptToZhongBao(List<String> detMsgs, boolean firstLoad) {
-        try {
-            NioSocketConnector connector = new NioSocketConnector();
-            connector.getFilterChain().addLast("encode", new ProtocolCodecFilter(new MessageCodecFactory()));
-            connector.getSessionConfig().setReadBufferSize(2048);
-            connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10000);
-            connector.setConnectTimeoutMillis(1000 * 60 * 3);
-            connector.setHandler(new ReportDetailActivity2.MinaHandler(firstLoad));
+//    //  上传到中爆后台
+//    private void sendRptToZhongBao(List<String> detMsgs, boolean firstLoad) {
+//        try {
+//            NioSocketConnector connector = new NioSocketConnector();
+//            connector.getFilterChain().addLast("encode", new ProtocolCodecFilter(new MessageCodecFactory()));
+//            connector.getSessionConfig().setReadBufferSize(2048);
+//            connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10000);
+//            connector.setConnectTimeoutMillis(1000 * 60 * 3);
+//            connector.setHandler(new ReportDetailActivity2.MinaHandler(firstLoad));
+//
+//            ConnectFuture cf;
+//            ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
+//            DetLog.writeLog(TAG,String.format("中爆地址：%s:%d",reportServerEnum.getAddress(), reportServerEnum.getPort()));
+//
+//            cf = connector.connect(new InetSocketAddress(reportServerEnum.getAddress(), reportServerEnum.getPort()));
+//            cf.awaitUninterruptibly(10, TimeUnit.SECONDS);
+//            if(cf.isConnected()){
+//                DetLog.writeLog(TAG,String.format("中爆 isConnteded"));
+//            }else{
+//                DetLog.writeLog(TAG,String.format("中爆 is Not Connteded"));
+//                zhongbaoLoadReturn ="中爆服务器连接失败！";
+//
+//                missProDialog();
+//
+//                Log.d(TAG,"showReproteDialog4");
+//                showReproteDialog();
+//                return;
+//            }
+//
+//            for (int j = 0; j < detMsgs.size(); j++) {
+//                byte[] bs = detMsgs.get(j).getBytes();
+//                XLog.w("detMsgs:" + new String(bs));
+//                cf.getSession().write(bs);
+//                Thread.sleep(100);
+//                DetLog.writeLog(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
+//            }
+//
+//            cf.getSession().getCloseFuture().awaitUninterruptibly();
+//            if(cf.isDone()){
+//                DetLog.writeLog(TAG,String.format("中爆 上报结束"));
+//            }else{
+//                DetLog.writeLog(TAG,String.format("中爆 上报失败"));
+//                //zhongbaoLoadReturn ="上报中爆失败";
+//            }
+//            //zhongbaoLoadReturn ="上报中爆成功";
+//            //uploadToZhongBaoSuccess(firstLoad);
+//
+//            connector.dispose();
+//        } catch (Exception e) {
+//            DetLog.writeLog(TAG, String.format("中爆 发送失败:%s", e.getMessage()));
+//            showSendRptMessage("上报中爆失败", "2");
+//            zhongbaoLoadReturn = String.format("上报中爆失败：%s",e.getMessage());
+//            uploadToZhongBaoFail(firstLoad);
+//        } finally {
+//            DetLog.writeLog(TAG,String.format("中爆 发送结束!"));
+//        }
+//
+//        missProDialog();
+//
+//        Log.d(TAG,"showReproteDialog5");
+//        showReproteDialog();
+//        return;
+//    }
 
-            ConnectFuture cf;
+    //  上传到中爆后台
+    private void sendRptToZhongBaoSocket(List<String> detMsgs, boolean firstLoad) {
+        Socket socket =new Socket();
+        OutputStream os = null;
+        InputStream in =null;
+
+        final int MAX_TIME_OUT = 10000;
+
+        //  连接
+        try{
             ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
             DetLog.writeLog(TAG,String.format("中爆地址：%s:%d",reportServerEnum.getAddress(), reportServerEnum.getPort()));
 
-            cf = connector.connect(new InetSocketAddress(reportServerEnum.getAddress(), reportServerEnum.getPort()));
-            cf.awaitUninterruptibly(10,TimeUnit.SECONDS);
-            if(cf.isConnected()){
-                DetLog.writeLog(TAG,String.format("中爆 isConnteded"));
-            }else{
-                DetLog.writeLog(TAG,String.format("中爆 is Not Connteded"));
-                zhongbaoLoadReturn ="中爆服务器连接失败！";
+            SocketAddress socketAddress = new InetSocketAddress(reportServerEnum.getAddress(),reportServerEnum.getPort());
+            //SocketAddress socketAddress = new InetSocketAddress("192.168.1.2",18800);
+            socket.connect(socketAddress,10000);
+            Log.d(TAG,"连接成功！");
 
-                missProDialog();
-                showReproteDialog();
-                return;
-            }
+            os = socket.getOutputStream();
+            in = socket.getInputStream();
+        }catch (Exception e) {
+            DetLog.writeLog(TAG, String.format("中爆 连接失败:%s", e.getMessage()));
+            uploadToZhongBaoFail(firstLoad);
+            zhongbaoLoadReturn ="连接失败";
+            return;
+        }
 
+        try{
+            //  先循环发送
             for (int j = 0; j < detMsgs.size(); j++) {
                 byte[] bs = detMsgs.get(j).getBytes();
                 XLog.w("detMsgs:" + new String(bs));
-                cf.getSession().write(bs);
-                Thread.sleep(100);
+                os.write(bs);
                 DetLog.writeLog(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
+                Thread.sleep(100);
             }
 
-            DetLog.writeLog(TAG,String.format("中爆 等待结束 "));
-            cf.getSession().getCloseFuture().awaitUninterruptibly(5, TimeUnit.SECONDS);
-            if(cf.isDone()){
-                DetLog.writeLog(TAG,String.format("中爆 上报结束"));
-                zhongbaoLoadReturn ="上报中爆成功";
-            }else{
-                DetLog.writeLog(TAG,String.format("中爆 上报失败"));
-                zhongbaoLoadReturn ="上报中爆失败";
+            //  接收服务器的应答
+            Date dt0= new Date();
+            Long tm0 = dt0.getTime();
+            DetLog.writeLog(TAG,String.format("当前时间:%d",tm0));
+
+            int n=0;
+            while(true){
+                n = in.available();
+                if(n>0)
+                    break;
+
+                Date dt1= new Date();
+                Long tm1 = dt1.getTime();
+                if((tm1-tm0)>MAX_TIME_OUT){
+                    DetLog.writeLog(TAG,String.format("超时，但无数据:%d——>%d",tm0,tm1));
+                    break;
+                }
+                Thread.sleep(100);
             }
 
-            if(cf.isConnected()){
-                DetLog.writeLog(TAG,String.format("中爆 isConnteded"));
-            }else{
-                DetLog.writeLog(TAG,String.format("中爆 is Not Connteded"));
+            //  没有数据
+            if(n<=0) {
+                DetLog.writeLog(TAG, "上报中爆无应答！");
+                showSendRptMessage("上报中爆发送接收失败", "2");
+                uploadToZhongBaoFail(firstLoad);
+                zhongbaoLoadReturn = "服务器无应答";
+
+                in.close();
+                os.close();
+                socket.close();
+                return;
             }
-            uploadToZhongBaoSuccess(firstLoad);
-            connector.dispose();
-        } catch (Exception e) {
-            DetLog.writeLog(TAG, String.format("中爆 发送失败:%s", e.getMessage()));
-            showSendRptMessage("上报中爆失败", "2");
-            zhongbaoLoadReturn = String.format("上报中爆失败：%s",e.getMessage());
+
+            //  接收数据
+            byte[] data = new byte[1024];
+            in.read(data,0,1024);
+            String msg = new String((byte[]) data).trim();
+            DetLog.writeLog(TAG,"接收到"+msg);
+
+            // 数据为空
+            if(TextUtils.isEmpty(msg)){
+                DetLog.writeLog(TAG,"上报中爆无应答！");
+                showSendRptMessage("上报中爆发送接收失败", "2");
+                uploadToZhongBaoFail(firstLoad);
+                zhongbaoLoadReturn ="服务器无应答";
+
+                in.close();
+                os.close();
+                socket.close();
+                return;
+            }
+
+            // 数据Split
+            String[] cmds = msg.split("\\$");
+            if (cmds[0].contains("O")){
+                DetLog.writeLog(TAG,"上报中爆成功！");
+                zhongbaoLoadReturn ="上报成功";
+                uploadToZhongBaoSuccess(firstLoad);
+
+                missProDialog();
+                showReproteDialog();
+
+                in.close();
+                os.close();
+                socket.close();
+                return;
+            }
+
+            DetLog.writeLog(TAG,"上报中爆应答信息不包含0！");
+            showSendRptMessage("服务器应答错误", "2");
             uploadToZhongBaoFail(firstLoad);
-        } finally {
-            DetLog.writeLog(TAG,String.format("中爆 发送结束!"));
+            zhongbaoLoadReturn ="服务器无应答";
+
+            in.close();
+            os.close();
+            socket.close();
+        }catch (Exception e){
+            zhongbaoLoadReturn ="发送接收异常";
+            DetLog.writeLog(TAG, String.format("中爆 发送接收失败:%s", e.getMessage()));
+            uploadToZhongBaoFail(firstLoad);
         }
 
-        missProDialog();
-        showReproteDialog();
         return;
     }
-
 
     private void showSendRptMessage(String strmsg, String strStatus) {
         projectInfoEntity.setReportStatus(strStatus);
@@ -593,71 +722,73 @@ public class ReportDetailActivity2 extends BaseActivity {
         return msgs;
     }
 
-    public class MinaHandler extends IoHandlerAdapter {
-
-        private boolean firstLoad;
-
-        public MinaHandler(boolean firstLoad) {
-            this.firstLoad = firstLoad;
-        }
-
-        public void messageReceived(IoSession session, Object message) {
-            if (message == null) {
-                DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误");
-                showSendRptMessage("上传中爆服务器错误!", "2");
-                zhongbaoLoadReturn = "上传中爆服务器错误";
-                uploadToZhongBaoFail(firstLoad);
-                return;
-            }
-            String msg = new String((byte[]) message).trim();
-            XLog.e(msg);
-            if (!StringUtils.isBlank(msg)) {
-                String[] cmds = msg.split("\\$");
-                XLog.d(cmds[0]);
-                if (cmds[0].contains("O")) {
-                    showSendRptMessage("上传中爆服务器成功!", "1");
-                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器成功");
-                    zhongbaoLoadReturn = "上传中爆服务器成功";
-                    uploadToZhongBaoSuccess(firstLoad);
-                } else {
-                    zhongbaoLoadReturn = "上传中爆服务器错误";
-                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误 not contain 0");
-                    showSendRptMessage("上传中爆服务器错误!", "2");
-                    uploadToZhongBaoFail(firstLoad);
-                }
-            }
-        }
-
-        public void messageSent(IoSession session, Object message) {
-
-        }
-
-        public void sessionClosed(IoSession session) {
-            session.closeNow();
-            XLog.e("sessionClosed");
-        }
-
-        public void sessionCreated(IoSession session) {
-            IoSessionConfig cfg1 = session.getConfig();
-            if (cfg1 instanceof SocketSessionConfig) {
-                SocketSessionConfig cfg = (SocketSessionConfig) session.getConfig();
-                cfg.setReceiveBufferSize(2 * 1024 * 1024);
-                cfg.setReadBufferSize(2 * 1024 * 1024);
-                cfg.setKeepAlive(true);
-                cfg.setSoLinger(0);
-                cfg.setTcpNoDelay(true);
-                cfg.setWriteTimeout(1000);
-            }
-        }
-
-        public void sessionIdle(IoSession session, IdleStatus idle) throws Exception {
-            XLog.e("sessionIdle");
-        }
-
-        public void sessionOpened(IoSession session) {
-            XLog.w("sessionOpened");
-        }
-    }
+//    public class MinaHandler extends IoHandlerAdapter {
+//
+//        private boolean firstLoad;
+//
+//        public MinaHandler(boolean firstLoad) {
+//            this.firstLoad = firstLoad;
+//        }
+//
+//        public void messageReceived(IoSession session, Object message) {
+//            if (message == null) {
+//                DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误");
+//                showSendRptMessage("上传中爆服务器错误!", "2");
+//                zhongbaoLoadReturn = "上传中爆服务器错误";
+//                uploadToZhongBaoFail(firstLoad);
+//                return;
+//            }
+//            String msg = new String((byte[]) message).trim();
+//            DetLog.writeLog(TAG,"中爆返回:"+msg);
+//            if (!StringUtils.isBlank(msg)) {
+//                String[] cmds = msg.split("\\$");
+//                XLog.d(cmds[0]);
+//                if (cmds[0].contains("O")) {
+//                    showSendRptMessage("上传中爆服务器成功!", "1");
+//                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器成功");
+//                    zhongbaoLoadReturn = "上传中爆服务器成功";
+//                    uploadToZhongBaoSuccess(firstLoad);
+//                } else {
+//                    zhongbaoLoadReturn = "上传中爆服务器错误";
+//                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误 not contain 0");
+//                    showSendRptMessage("上传中爆服务器错误!", "2");
+//                    uploadToZhongBaoFail(firstLoad);
+//                }
+//                Log.d(TAG,"CLOSE Session");
+//                session.closeNow();
+//            }
+//        }
+//
+//        public void messageSent(IoSession session, Object message) {
+//
+//        }
+//
+//        public void sessionClosed(IoSession session) {
+//            session.closeNow();
+//            XLog.e("sessionClosed");
+//        }
+//
+//        public void sessionCreated(IoSession session) {
+//            IoSessionConfig cfg1 = session.getConfig();
+//            if (cfg1 instanceof SocketSessionConfig) {
+//                SocketSessionConfig cfg = (SocketSessionConfig) session.getConfig();
+//                cfg.setReceiveBufferSize(2 * 1024 * 1024);
+//                cfg.setReadBufferSize(2 * 1024 * 1024);
+//                cfg.setKeepAlive(true);
+//                cfg.setSoLinger(0);
+//                cfg.setTcpNoDelay(true);
+//                cfg.setWriteTimeout(1000);
+//            }
+//        }
+//
+//        public void sessionIdle(IoSession session, IdleStatus idle) throws Exception {
+//            XLog.e("sessionIdle");
+//        }
+//
+//        public void sessionOpened(IoSession session) {
+//            XLog.w("sessionOpened");
+//        }
+//    }
 
     /**
      * 上传中爆服务器失败
@@ -665,6 +796,7 @@ public class ReportDetailActivity2 extends BaseActivity {
      * @param firstLoad
      */
     private void uploadToZhongBaoFail(boolean firstLoad) {
+        showSendRptMessage("上报中爆失败", "2");
         if (firstLoad && isServerDanningOn) {
             sendDanLingReport(false);
         } else {
@@ -678,6 +810,7 @@ public class ReportDetailActivity2 extends BaseActivity {
      * @param firstLoad
      */
     private void uploadToZhongBaoSuccess(boolean firstLoad) {
+        showSendRptMessage("上报中爆成功", "1");
         if (firstLoad && isServerDanningOn) {
             sendDanLingReport(false);
         } else {
@@ -693,6 +826,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             @Override
             public void run() {
                 missProDialog();
+
+                Log.d(TAG,"showReproteDialog7");
                 showReproteDialog();
                 showPreportStatus();
             }
