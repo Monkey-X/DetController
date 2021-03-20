@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.activity.AuthBombActivity2;
 import com.etek.controller.adapter.ProjectDelayAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.entity.FastEditBean;

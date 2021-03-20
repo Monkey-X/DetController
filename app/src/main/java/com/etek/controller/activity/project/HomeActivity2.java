@@ -17,7 +17,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.activity.AssistActivity;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.activity.project.manager.SpManager;

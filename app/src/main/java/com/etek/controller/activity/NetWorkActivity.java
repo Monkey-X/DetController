@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.etek.controller.R;
 import com.etek.controller.activity.project.ProjectDetailActivity;
+import com.etek.controller.activity.project.UserInfoActivity2;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.ProjectAdapter;
@@ -92,7 +93,7 @@ public class NetWorkActivity extends BaseActivity implements View.OnClickListene
     private void showMakeProjectDialog() {
         String userStr = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (TextUtils.isEmpty(userStr)) {
-            startActivity(new Intent(NetWorkActivity.this,UserInfoActivity.class));
+            startActivity(new Intent(NetWorkActivity.this, UserInfoActivity2.class));
             return;
         }
         ProjectDialog projectDialog = new ProjectDialog();

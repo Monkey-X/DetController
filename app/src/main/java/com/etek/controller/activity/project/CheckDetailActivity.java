@@ -1,4 +1,4 @@
-package com.etek.controller.activity;
+package com.etek.controller.activity.project;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,8 +23,6 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.activity.project.MapActivity;
-import com.etek.controller.activity.project.PowerBombActivity;
 import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
