@@ -139,10 +139,18 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
                     m_nLastDetID = -1;
                 }
 
+                Log.d(TAG, "检查是否短路...");
+                StringBuilder strData = new StringBuilder();
+                int result = DetApp.getInstance().CheckBusShortCircuit(strData);
+                result = showBusShortResult(result,strData.toString());
+                if(0!=result){
+                    Log.d(TAG,"短路检测失败");
+                    m_nLastDetID = -1;
+                    continue;
+                }
 
                 Log.d(TAG, "获取雷管信息...");
-
-                int result = DetApp.getInstance().CheckSingleModule(new SingleCheckCallBack() {
+                result = DetApp.getInstance().CheckSingleModule(new SingleCheckCallBack() {
                     private String m_strmsg;
                     @Override
                     public void DisplayText(String strText) {
@@ -265,43 +273,36 @@ public class SingleCheckActivity extends BaseActivity implements View.OnClickLis
         });
     }
 
-    private void showBusShortResult(int ret, String data) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (ret != 0) {
-                    Log.d(TAG, "获取电压电流 失败 " + ret);
-                    ToastUtils.show(SingleCheckActivity.this, "获取电压电流 失败 " + ret);
-                    return;
-                }
+    private int showBusShortResult(int ret, String data) {
+        if (ret != 0) {
+            Log.d(TAG, "获取电压电流 失败 " + ret);
+            showCheckErrorMessage(-1, "获取电压电流 失败 " + ret);
+            return -1;
+        }
 
-                Log.d(TAG, String.format("返回数据:%s",data));
-                if(data.length()<18){
-                    ToastUtils.show(SingleCheckActivity.this, "返回数据错误，长度不足!");
-                    return;
-                }
-                String strResult = data.substring(16,18).toUpperCase();
-                Log.d(TAG, String.format("检测结果:%s",strResult));
-                if(strResult.equals("00")){
-                    playSound(false);
-                    ToastUtils.show(SingleCheckActivity.this, "未检测");
-                    return;
-                }
+        Log.d(TAG, String.format("返回数据:%s",data));
+        if(data.length()<18){
+            showCheckErrorMessage(-1,  "返回数据错误，长度不足!");
+            return -1;
+        }
+        String strResult = data.substring(16,18).toUpperCase();
+        Log.d(TAG, String.format("检测结果:%s",strResult));
+        if(strResult.equals("00")){
+            showCheckErrorMessage(-1,  "未检测");
+            return -1;
+        }
 
-                if(strResult.equals("0A")){
-                    playSound(false);
-                    ToastUtils.show(SingleCheckActivity.this, "总线漏电");
-                    return;
-                }
+        if(strResult.equals("0A")){
+            showCheckErrorMessage(-1, "总线漏电");
+            return -1;
+        }
 
-                if(strResult.equals("0F")){
-                    playSound(false);
-                    ToastUtils.show(SingleCheckActivity.this, "总线短路");
-                    return;
-                }
+        if(strResult.equals("0F")){
+            showCheckErrorMessage(-1, "总线短路");
+            return -1;
+        }
 
-            }
-        });
+        return 0;
     }
 
 

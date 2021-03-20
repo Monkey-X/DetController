@@ -1,7 +1,12 @@
 package com.etek.controller.entity;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.etek.controller.dto.ReportDto2;
+import com.etek.controller.model.User;
+import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ReportEntity;
 
 import com.etek.controller.persistence.entity.RptDetonatorEntity;
@@ -9,6 +14,7 @@ import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.MD5Util;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -23,31 +29,32 @@ import static java.lang.String.format;
  * 起爆控制器
  */
 public class DetController implements Serializable {
-
-    private long id;
+    private Date blastTime;
     private String company;
     private String companyCode;
-    private String sn;
-    private int detCount;
-
     private String contractId;
+    private int detCount;
+    private long id;
     private double latitude;
     private double longitude;
-    private Date blastTime;
-    private int type;
     private String projectId;
-
-
+    private String sn;
     private int status;
-
-    private String userIDCode;
-
     private String token;
-
-    private boolean isValid;
+    private int type;
+    private String userIDCode;
+    private String uuid;
+    private boolean valid;
 
     private List<Detonator> detList;
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public DetController() {
         detList = new ArrayList<>();
@@ -94,7 +101,7 @@ public class DetController implements Serializable {
         this.company = company;
     }
 
-    //    public int getIndex() {
+//    public int getIndex() {
 //        return index;
 //    }
 //
@@ -120,13 +127,13 @@ public class DetController implements Serializable {
 
     public boolean initData(byte[] data) {
         if (data == null || data.length < 6 || data.length > 10) {
-            isValid = false;
+            valid = false;
             return false;
         }
         StringBuilder sb = new StringBuilder();
         String tmp;
         if (data[0] != 0x46) {
-            isValid = false;
+            valid = false;
             return false;
         }
         tmp = format("%C", data[0]);
@@ -150,7 +157,7 @@ public class DetController implements Serializable {
             sb.append(tmp);
 
             sn = sb.toString().toUpperCase();
-            isValid = true;
+            valid = true;
             type = 1;
             return true;
         }
@@ -168,7 +175,7 @@ public class DetController implements Serializable {
             sb.append(tmp);
 
             sn = sb.toString().toUpperCase();
-            isValid = true;
+            valid = true;
             type = 2;
             return true;
         }
@@ -192,7 +199,7 @@ public class DetController implements Serializable {
             tmp = format("%02x", data[6]);
             sb.append(tmp);
             sn = sb.toString().toUpperCase();
-            isValid = true;
+            valid = true;
             type = 1;
             return true;
         }
@@ -274,11 +281,11 @@ public class DetController implements Serializable {
     }
 
     public boolean isValid() {
-        return isValid;
+        return valid;
     }
 
     public void setValid(boolean valid) {
-        isValid = valid;
+        valid = valid;
     }
 
     public String getCompanyCode() {
@@ -367,6 +374,7 @@ public class DetController implements Serializable {
         return reportEntity;
     }
 
+    @JSONField(serialize = false)
     public String getTokenByDetList() {
         StringBuilder sb = new StringBuilder();
         for (Detonator detonator : detList) {
@@ -410,7 +418,7 @@ public class DetController implements Serializable {
                 ", status=" + status +
                 ", userIDCode='" + userIDCode + '\'' +
                 ", token='" + token + '\'' +
-                ", isValid=" + isValid +
+                ", isValid=" + valid +
                 ", detList=" + detList +
                 '}';
     }
@@ -425,5 +433,50 @@ public class DetController implements Serializable {
             }
         }
         return false;
+    }
+
+
+    public DetController(String userInfo,PendingProject prj) {
+        String strTime = prj.getDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        try {
+            this.blastTime = simpleDateFormat.parse(strTime);
+        }catch (Exception e){
+            this.blastTime = new Date();
+        }
+        this.company = prj.getCompanyName();
+        this.companyCode = prj.getCompanyCode();
+        this.contractId = prj.getContractCode();
+        this.detCount = prj.getDetonatorList().size();
+        this.id = prj.getId();
+        this.latitude = prj.getLatitude();
+        this.longitude = prj.getLongitude();
+        this.projectId = prj.getProjectCode();
+        this.sn = prj.getControllerId();
+        this.status = prj.getProjectStatus();
+        this.token = "";
+        this.type = 0;
+        User user = JSON.parseObject(userInfo, User.class);
+        this.userIDCode = user.getIdCode();
+        this.uuid = "";
+        valid = false;
+
+        int n = 0;
+        if (prj.getDetonatorList() != null && prj.getDetonatorList().size() > 0) {
+            detList = new ArrayList<>();
+            for (ProjectDetonator rptDetBean : prj.getDetonatorList()) {
+                Detonator detonator = new Detonator(rptDetBean);
+
+                n++;
+                detonator.setNum(n);
+                detonator.setRelay(n);
+                detonator.setTime(blastTime);
+
+                detList.add(detonator);
+            }
+        }
+
+        this.token = getTokenByDetList();
+
     }
 }

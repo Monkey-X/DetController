@@ -1,9 +1,11 @@
 package com.etek.controller.entity;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.etek.controller.enums.DetStatusEnum;
 import com.etek.controller.persistence.entity.ChkDetonatorEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
+import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.RptDetonatorEntity;
 import com.etek.controller.utils.CRCUtil;
 import com.etek.controller.utils.SommerUtils;
@@ -21,7 +23,25 @@ import java.util.Map;
 
 
 public class Detonator implements Serializable {
+    private byte[] acCode;      //雷管工作码 gzm
+    private String chipID;      //芯片内部ID
+    private String detCode;     //雷管发编号 fbh
+    private byte[] extId;       //额外ID
+    private byte[] ids;         //芯片内部ID
+    private int num;            // 个数
+    private int relay;          //雷管起爆延时时间 relay
+    private byte[] source;      //雷管原始上传数据
+    private int status;         //状态码
+    private String statusName;  // 类型 0 ranyi new 1
+    private Date time;           //雷管有效期 yxq
+    private int type;           // 类型 0 ranyi new 1
+    private String uid;         //雷管码 uid
+    private boolean valid;      //是否有效
+    private String zBDetCodeStr;
+    private String zbDetCode;   // 中爆管码
 
+
+     @JSONField(serialize = false)
     final public static int RanYiCode = 61;
     final public static int QianJingCode = 38;
     final public static int QingHuaCode = 64;
@@ -92,22 +112,7 @@ public class Detonator implements Serializable {
 
     }};
 
-    private int num; // 指数
-    private byte[] ids;          //芯片内部ID
-    private String chipID;      //芯片内部ID
-    private byte[] source;      //雷管原始上传数据
-    private String uid;         //雷管码 uid
-    private String detCode;     //雷管发编号 fbh
-    private int relay;          //雷管起爆延时时间 relay
-    private Date time;           //雷管有效期 yxq
-    private boolean isValid;    //是否有效
-    private byte[] acCode;      //雷管工作码 gzm
-    private int status;         //状态码
-    private byte[] extId;       //额外ID
-    private String zbDetCode;  // 中爆管码
-    private int type;           // 类型 0 ranyi new 1
 
-    private String statusName;           // 类型 0 ranyi new 1
 
     public Detonator(ChkDetonatorEntity detonatorEntity) {
         detCode = detonatorEntity.getCode();
@@ -204,7 +209,7 @@ ExtID 说明 例子
             byte[] ids = SommerUtils.intToBytes2(dc);
             this.ids = ids;
             this.time= new Date();
-            isValid = true;
+            valid = true;
             byte[] c1 = SommerUtils.intToBytes(cCode);
             String uidStr = String.format(Locale.CHINA, "%02d", c1[0]);
             if(nian==0){
@@ -253,7 +258,7 @@ ExtID 说明 例子
 
     public Detonator(byte[] encode) {
         if (encode == null || encode.length < 18) {
-            isValid = false;
+            valid = false;
             return;
         }
         ids = new byte[4];
@@ -276,7 +281,7 @@ ExtID 说明 例子
         getUidStr();
         getAcCodeFromCode();
         getZBDetCodeStr();
-        isValid = true;
+        valid = true;
         type = 0;
         status = 0;
         getStatusNameByStatus();
@@ -561,11 +566,11 @@ ExtID 说明 例子
     }
 
     public boolean isValid() {
-        return isValid;
+        return valid;
     }
 
     public void setValid(boolean valid) {
-        isValid = valid;
+        valid = valid;
     }
 
     public int getStatus() {
@@ -576,6 +581,13 @@ ExtID 说明 例子
         this.status = status;
     }
 
+    public String getzBDetCodeStr() {
+        return zBDetCodeStr;
+    }
+
+    public void setzBDetCodeStr(String zBDetCodeStr) {
+        this.zBDetCodeStr = zBDetCodeStr;
+    }
 
     private String getChipId() {
         StringBuilder sb = new StringBuilder("");
@@ -697,7 +709,7 @@ ExtID 说明 例子
                 ", detCode='" + detCode + '\'' +
                 ", relay=" + relay +
                 ", time=" + time +
-                ", isValid=" + isValid +
+                ", valid=" + valid +
                 ", acCode='" + SommerUtils.bytesToHexString(acCode) +
                 ", status=" + status +
                 ", statusName=" + statusName +
@@ -706,4 +718,32 @@ ExtID 说明 例子
                 '}';
     }
 
+
+    public Detonator(ProjectDetonator pdet) {
+        //acCode
+        //chipID
+
+        detCode = pdet.getCode();
+        //extID
+        uid = pdet.getUid();
+
+        relay = pdet.getRelay();
+//        time =
+        ids = SommerUtils.hexStringToBytes(pdet.getUid());
+//        acCode = SommerUtils.hexStringToBytes(detonatorEntity.getWorkCode());
+        status = pdet.getStatus();
+        if (status == 0) {
+            statusName = "正常";
+        } else if (status == 1) {
+            statusName = "未注册";
+        } else if (status == 2) {
+            statusName = "已使用";
+        } else if (status == 3) {
+            statusName = "不存在";
+        } else {
+            statusName = "异常";
+        }
+        zbDetCode = uid;
+        zBDetCodeStr = uid;
+    }
 }

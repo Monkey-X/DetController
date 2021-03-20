@@ -23,6 +23,7 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
 import com.etek.controller.dto.ReportDto2;
 import com.etek.controller.dto.ServerResult;
+import com.etek.controller.entity.DetController;
 import com.etek.controller.enums.ReportServerEnum;
 import com.etek.controller.enums.ResultErrEnum;
 import com.etek.controller.hardware.util.DetLog;
@@ -49,6 +50,7 @@ import org.apache.mina.core.session.IoSessionConfig;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import java.util.concurrent.TimeUnit;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +65,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -315,26 +317,36 @@ public class ReportDetailActivity2 extends BaseActivity {
 
     //  上传到力芯后台
     private void sendRptToEtekServer(boolean bBackup,ReportDto2 reportDto) {
-
-        String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
-        DetLog.writeLog(TAG,String.format("上报力芯：%s",rptJson));
-        Result result = RptUtil.getRptEncode(rptJson);
-        XLog.d(result);
-        String url = "";
-        if(bBackup) {
-            url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
+        if(bBackup){
+            sendRptToZTEKBackUpPOST();
         }else{
-            url = AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+            sendRptToZTEKDetPOST(reportDto);
         }
-        LinkedHashMap params = new LinkedHashMap();
-        params.put("param", result.getData());
-        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-        AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
+        return;
+    }
 
+    /**
+     * 上报到力芯的/Det/BackUp/Post接口，参数不加密，使用DetController对象上报
+     */
+    private void sendRptToZTEKBackUpPOST(){
+
+        String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
+        DetController dc = new DetController(userinfo,projectInfoEntity);
+
+        String rptJson = JSON.toJSONString(dc, SerializerFeature.WriteMapNullValue);
+        DetLog.writeLog(TAG,String.format("上报力芯：%s",rptJson));
+
+        // 力芯BackUp/Post接口： 不加密传输
+        //        Result result = RptUtil.getRptEncode(rptJson);
+        //        XLog.d(result);
+        //        LinkedHashMap params = new LinkedHashMap();
+        //        params.put("param", result.getData());
+
+        String url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
+        AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 DetLog.writeLog(TAG,"上报力芯失败：:"+ e.getMessage());
-//                showLongToast("上报ETEK失败");
             }
 
             @Override
@@ -348,20 +360,54 @@ public class ReportDetailActivity2 extends BaseActivity {
                 }
 
                 try {
-                    if(bBackup){
-                        //  返回： {"result":1,"msg":"成功"}
+                    DetLog.writeLog(TAG,"上报ETEK成功");
+                } catch (Exception e) {
+                    DetLog.writeLog(TAG, "力芯返回解析错误：" + e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * 上报到力芯DET/POST，使用原有接口、参数加密，使用ReportDto2对象上报
+     * @param reportDto
+     */
+    private void sendRptToZTEKDetPOST(ReportDto2 reportDto){
+        String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
+        DetLog.writeLog(TAG,String.format("上报力芯：%s",rptJson));
+        Result result = RptUtil.getRptEncode(rptJson);
+        XLog.d(result);
+        String url =  AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
+        LinkedHashMap params = new LinkedHashMap();
+        params.put("param", result.getData());
+        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
+        AsyncHttpCilentUtil.httpPost(newUrl, null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                DetLog.writeLog(TAG,"上报力芯失败：:"+ e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String respStr = response.body().string();
+                DetLog.writeLog(TAG,"力芯返回："+respStr);
+
+                if (StringUtils.isBlank(respStr)) {
+                    DetLog.writeLog(TAG,"respStr is null ");
+                    return;
+                }
+
+                try {
+                    //  返回： {"success":0,"cwxx":"成功"}
+                    ServerResult serverResult = JSON.parseObject(respStr, ServerResult.class);
+                    if (!serverResult.getSuccess().contains("0")) {
+                        Integer code = Integer.parseInt(serverResult.getSuccess());
+                        ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
+                        DetLog.writeLog(TAG, "力芯错误代码：" + errEnum.getMessage());
+                    } else {
                         DetLog.writeLog(TAG,"上报ETEK成功");
-                    }else{
-                        //  返回： {"success":0,"cwxx":"成功"}
-                        ServerResult serverResult = JSON.parseObject(respStr, ServerResult.class);
-                        if (!serverResult.getSuccess().contains("0")) {
-                            Integer code = Integer.parseInt(serverResult.getSuccess());
-                            ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
-                            DetLog.writeLog(TAG, "力芯错误代码：" + errEnum.getMessage());
-                        } else {
-                            DetLog.writeLog(TAG,"上报ETEK成功");
-                        }
                     }
+
                 } catch (Exception e) {
                     DetLog.writeLog(TAG, "力芯返回解析错误：" + e.getMessage());
                 }
