@@ -2,8 +2,11 @@ package com.etek.controller.activity.project;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -82,6 +85,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         getMainBoardInfo();
         // 进行app升级的检查
         checkAppUpdate();
+
+        initScreenReceiver();
     }
     /**
      * 获取主控板信息
@@ -488,6 +493,42 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
     @Override
     protected void onTitleChanged(CharSequence title, int color) {
         super.onTitleChanged(this.getString(R.string.home), color);
+    }
+
+    //放在文件申明部分
+    // add: detect screen status, false for power off, ture for power up.
+    ScreenStatusReceiver mScreenStatusReceiver;//全局广播接受对象
+    //广播接受类
+    private class ScreenStatusReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if("android.intent.action.SCREEN_ON".equals(intent.getAction())) {
+                Log.d(TAG, "Detect screen on ");
+
+            } else if("android.intent.action.SCREEN_OFF".equals(intent.getAction())) {
+                Log.d(TAG, "Detect screen off");
+                finish();
+            }
+        }
+    }
+
+    private void initScreenReceiver(){
+        //广播在哪里使用就在哪里进行注册
+        //Register Receiver
+        ScreenStatusReceiver mScreenStatusReceiver = new ScreenStatusReceiver();//new一个接受者
+        IntentFilter filterIF = new IntentFilter();//new一个intent过滤器
+        filterIF.addAction("android.intent.action.SCREEN_ON");//增加亮屏操作
+        filterIF.addAction("android.intent.action.SCREEN_OFF");//增加灭屏操作
+        registerReceiver(mScreenStatusReceiver, filterIF);//注册监听
+
+    }
+
+    //在ondestory里面进行对象的销毁
+    private void closeScreenReceiver() {
+        if(null!=mScreenStatusReceiver){
+            unregisterReceiver(mScreenStatusReceiver);//注销监听
+            mScreenStatusReceiver = null;//清空对象
+        }
     }
 
 }

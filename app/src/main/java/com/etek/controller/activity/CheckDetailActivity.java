@@ -114,6 +114,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private LocationManager locationManager;
 
     private boolean m_bChecking =false;
+
+    private boolean m_bBaiduLocationValid = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,6 +177,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         option.setNeedNewVersionRgc(true);
         locationClient.setLocOption(option);
         locationClient.start();
+
+        m_bBaiduLocationValid = false;
     }
 
     /**
@@ -246,6 +251,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             locationLatitude.setText(String.format("%.4f",latitude));
 
             //DetLog.writeLog(TAG,"刷新本地经纬度："+longitude+","+latitude);
+
+            m_bBaiduLocationValid = true;
         }
     }
 
@@ -1100,6 +1107,11 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
+
+            // 如果百度网络定位有效，不需要GPS定位
+            if(m_bBaiduLocationValid){
+                return;
+            }
 
             //  百度没定位到，返回经纬度都是0
             if((Math.abs(longitude)<0.00001)&&(Math.abs(latitude)<0.00001)){
