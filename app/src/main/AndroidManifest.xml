@@ -52,7 +52,7 @@
             android:name=".activity.project.OfflineEditActivity"
             android:theme="@style/activity_theme" />
         <activity android:name=".activity.project.MapActivity" />
-        <activity android:name=".activity.ReportListActivity" />
+        <activity android:name=".activity.project.ReportListActivity" />
         <activity android:name=".activity.project.ProjectManagerActivity" />
         <activity android:name=".activity.project.AuthDownLoadDetailActivity" />
         <activity android:name=".activity.project.AboutActivity" />
@@ -68,26 +68,21 @@
         <activity android:name=".activity.FunctionTestActivity" />
         <activity android:name=".activity.project.PersonActivity" />
         <activity android:name=".activity.project.MainBoardUpdateActivity" />
-        <activity android:name=".activity.ReportActivity2" />
-        <activity android:name=".activity.CheckoutActivity2" />
-        <activity android:name=".activity.OnlineCheckoutActivity2" />
-        <activity android:name=".activity.OnlineAuthorizeActivity2" />
-        <activity android:name=".activity.CheckoutDetailActivity2" />
         <activity android:name=".activity.project.ReportDetailActivity2" />
         <activity
             android:name=".activity.project.HomeActivity2"
             android:launchMode="singleInstance" />
         <activity
-            android:name=".activity.ProjectListActivity"
+            android:name=".activity.project.ProjectListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.project.ProjectImplementActivity" />
         <activity android:name=".activity.project.PowerBombActivity" />
         <activity
             android:name=".activity.project.AuthorizedDownloadActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.AuthBombActivity2" />
+        <activity android:name=".activity.project.AuthBombActivity2" />
         <activity
-            android:name=".activity.CheckDetailActivity"
+            android:name=".activity.project.CheckDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.project.ProjectDetailActivity"
@@ -99,7 +94,7 @@
         <activity
             android:name=".activity.project.DelayDownloadActivity"
             android:theme="@style/activity_theme" />
-        <activity android:name=".activity.AssistActivity" />
+        <activity android:name=".activity.project.AssistActivity" />
         <activity
             android:name=".activity.NetWorkActivity"
             android:theme="@style/activity_theme" />
@@ -110,30 +105,6 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="Gtq6BIbB27g6drxAABY7lOSjgQVH49R1" />
-
-        <activity
-            android:name=".activity.UserInfoActivity"
-            android:label="@string/title_activity_personal_info" />
-        <activity
-            android:name=".activity.OfflineCheckActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".activity.OnlineCheckActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".activity.DetInfoDetailActivity"
-            android:label="@string/title_activity_det_detail"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activity.ProDetailActivity"
-            android:label="@string/title_activity_pro_detail" />
-        <activity
-            android:name=".activity.OnlineEditActivity"
-            android:label="@string/title_act_online_checkout" />
-        <activity
-            android:name=".activity.AuthorizeActivity"
-            android:label="@string/title_activity_authority" />
-        <service android:name=".service.DownLoadAppService" />
 
         <provider
             android:name=".provider.InstallProvider"

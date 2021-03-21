@@ -1,13 +1,10 @@
 package com.etek.controller.activity.project;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
 import com.etek.controller.R;
-import com.etek.controller.activity.ProjectListActivity;
-import com.etek.controller.activity.ReportListActivity;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 public class ProjectManagerActivity extends BaseActivity implements View.OnClickListener {
