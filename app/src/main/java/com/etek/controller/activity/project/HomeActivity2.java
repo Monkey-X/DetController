@@ -85,9 +85,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         getMainBoardInfo();
         // 进行app升级的检查
         checkAppUpdate();
-
-        initScreenReceiver();
     }
+
     /**
      * 获取主控板信息
      */
@@ -495,7 +494,9 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         super.onTitleChanged(this.getString(R.string.home), color);
     }
 
-    //放在文件申明部分
+
+
+
     // add: detect screen status, false for power off, ture for power up.
     ScreenStatusReceiver mScreenStatusReceiver;//全局广播接受对象
     //广播接受类

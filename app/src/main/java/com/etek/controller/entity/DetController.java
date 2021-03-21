@@ -451,9 +451,9 @@ public class DetController implements Serializable {
         this.id = prj.getId();
         this.latitude = prj.getLatitude();
         this.longitude = prj.getLongitude();
-        this.projectId = prj.getProjectCode();
+        this.projectId = prj.getProCode();
         this.sn = prj.getControllerId();
-        this.status = prj.getProjectStatus();
+        this.status = 2;
         this.token = "";
         this.type = 0;
         User user = JSON.parseObject(userInfo, User.class);

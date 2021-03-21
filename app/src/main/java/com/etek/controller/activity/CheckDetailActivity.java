@@ -237,23 +237,28 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             double latitude = location.getLatitude();       //获取纬度信息
             double longitude = location.getLongitude();    //获取经度信息
 
-            //  百度没定位到，返回经纬度都是0
-            if((Math.abs(longitude)<0.00001)&&(Math.abs(latitude)<0.00001)){
-                DetLog.writeLog(TAG,String.format("百度未定位到：%.5f,%.5f",longitude,latitude));
-                return;
-            }
-
-            setCacheLongitude(longitude);
-            setCacheLatitude(latitude);
-
-            //  百度获取到的经纬度，只是显示在TextView里，不缓存
-            locationLongitude.setText(String.format("%.4f" ,longitude));
-            locationLatitude.setText(String.format("%.4f",latitude));
-
-            //DetLog.writeLog(TAG,"刷新本地经纬度："+longitude+","+latitude);
-
-            m_bBaiduLocationValid = true;
+            refreshBaiduLocation(longitude,latitude);
         }
+    }
+
+
+    public void refreshBaiduLocation(double longitude,double latitude){
+        //  百度没定位到，返回经纬度都是0
+        if((Math.abs(longitude)<0.00001)&&(Math.abs(latitude)<0.00001)){
+            DetLog.writeLog(TAG,String.format("百度未定位到：%.5f,%.5f",longitude,latitude));
+            return;
+        }
+
+        setCacheLongitude(longitude);
+        setCacheLatitude(latitude);
+
+        //  百度获取到的经纬度，只是显示在TextView里，不缓存
+        locationLongitude.setText(String.format("%.4f" ,longitude));
+        locationLatitude.setText(String.format("%.4f",latitude));
+
+        //DetLog.writeLog(TAG,"刷新本地经纬度："+longitude+","+latitude);
+
+        m_bBaiduLocationValid = true;
     }
 
     // 获取黑白名单
