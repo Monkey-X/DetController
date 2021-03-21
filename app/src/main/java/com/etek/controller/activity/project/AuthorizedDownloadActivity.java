@@ -1,72 +1,27 @@
 package com.etek.controller.activity.project;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
-import com.etek.controller.activity.UserInfoActivity;
-import com.etek.controller.activity.project.AuthDownLoadDetailActivity;
-import com.etek.controller.activity.project.OfflineEditActivity;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.ContractAdapter;
-import com.etek.controller.common.AppConstants;
-import com.etek.controller.common.AppIntentString;
-import com.etek.controller.common.Globals;
-import com.etek.controller.dto.Jbqy;
-import com.etek.controller.dto.Jbqys;
-import com.etek.controller.dto.Lg;
-import com.etek.controller.dto.Lgs;
-import com.etek.controller.dto.ProInfoDto;
-import com.etek.controller.dto.ProjectFileDto;
-import com.etek.controller.dto.Sbbhs;
-import com.etek.controller.dto.Zbqy;
-import com.etek.controller.dto.Zbqys;
-import com.etek.controller.fragment.AuthorizedDownloadDialog;
 import com.etek.controller.persistence.DBManager;
-import com.etek.controller.persistence.entity.ControllerEntity;
-import com.etek.controller.persistence.entity.DetonatorEntity;
-import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
-import com.etek.controller.persistence.entity.PendingProject;
-import com.etek.controller.persistence.entity.PermissibleZoneEntity;
-import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
-import com.etek.controller.utils.AppUtils;
-import com.etek.controller.utils.AsyncHttpCilentUtil;
-import com.etek.controller.utils.SommerUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.NetUtil;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 /**
  * 授权下载
@@ -109,7 +64,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
     private void goToOfflineEditActivity() {
         String userStr = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (TextUtils.isEmpty(userStr)) {
-            Intent intent = new Intent(this, UserInfoActivity.class);
+            Intent intent = new Intent(this, UserInfoActivity2.class);
             startActivity(intent);
             return;
         }

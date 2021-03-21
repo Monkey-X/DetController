@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.etek.controller.R;
-import com.etek.controller.activity.ReportListActivity;
 import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.activity.project.dialog.SudokuDialog;
