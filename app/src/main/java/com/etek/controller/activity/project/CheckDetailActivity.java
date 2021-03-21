@@ -67,8 +67,10 @@ import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -189,6 +191,26 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if ("online".equals(type))
             return;
 
+        // 上次缓存时间
+        String strCacheTime = getStringInfo("LocationCacheTime");
+        if(TextUtils.isEmpty(strCacheTime)){
+            return;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try{
+            Date cacheTime = simpleDateFormat.parse(strCacheTime);
+            Date nowTime = new Date();
+            //  秒
+            long ldiff =(nowTime.getTime()-cacheTime.getTime())/1000;
+            if(ldiff>(3*24*60*60)){
+                DetLog.writeLog(TAG,String.format("距离上次定位时间（%s）太长，缓存不使用",strCacheTime));
+                return;
+            }
+            Log.d(TAG,"距上次定位相差（秒）："+ldiff);
+        }catch (Exception e){
+            return;
+        }
+
         //  离线检查时，先使用缓存中的经纬度
         String longitudeStr = getStringInfo("Longitude");
         String latitudeStr = getStringInfo("Latitude");
@@ -203,7 +225,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             locationLongitude.setText("" + longitude);
             locationLatitude.setText("" + latitude);
 
+            DetLog.writeLog(TAG,"缓存时间："+strCacheTime);
             DetLog.writeLog(TAG,"缓存经纬度"+longitudeStr+","+latitudeStr);
+
         }
 
 //        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))) {

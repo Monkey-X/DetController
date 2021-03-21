@@ -24,6 +24,8 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+
 /**
  * 百度地图查看位置信息
  */
@@ -73,6 +75,9 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         MyLocationListener myLocationListener = new MyLocationListener();
         mLocationClient.registerLocationListener(myLocationListener);
         mLocationClient.start();
+
+        longitude.setText("0.0000");
+        latitude.setText("0.0000");
     }
 
     public class MyLocationListener extends BDAbstractLocationListener {
@@ -82,8 +87,8 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             if (location == null || mMapView == null) {
                 return;
             }
-            longitude.setText(location.getLongitude()+"");
-            latitude.setText(location.getLatitude()+"");
+            longitude.setText(String.format("%.4f",location.getLongitude()));
+            latitude.setText(String.format("%.4f",location.getLatitude()));
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360
@@ -118,6 +123,13 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             DetLog.writeLog(TAG, String.format("缓存经纬度：%.4f,%.4f", longitude, latitude));
             setStringInfo("Longitude", longitude + "");
             setStringInfo("Latitude", latitude + "");
+
+            // 经纬度缓存时间
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            java.util.Date date=new java.util.Date();
+            String str=sdf.format(date);
+            setStringInfo("LocationCacheTime",str);
+
             ToastUtils.showCustom(MapActivity.this,"已获取经纬度！");
         }else{
             Log.d(TAG,"不缓存经纬度");
