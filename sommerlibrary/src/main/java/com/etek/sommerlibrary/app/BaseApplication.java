@@ -23,7 +23,6 @@ import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator;
 import com.etek.sommerlibrary.BuildConfig;
 import com.etek.sommerlibrary.R;
 import com.etek.sommerlibrary.exception.MyCrashHandler;
-import com.etek.sommerlibrary.utils.ContextUtils;
 
 import java.io.File;
 
@@ -45,7 +44,6 @@ public class BaseApplication extends Application {
         // 程序创建的时候执行
 
         appContext = this;
-        ContextUtils.init(this);
 
         //        if (BuildConfig.DEBUG) {
         //Timber日志打印
