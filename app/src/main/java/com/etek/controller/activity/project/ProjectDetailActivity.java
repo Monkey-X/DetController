@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,7 +42,8 @@ import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.gen.PendingProjectDao;
-import com.etek.controller.scan.ScannerInterface;
+import com.etek.controller.scan.ScannerBase;
+import com.etek.controller.scan.ScannerFactory;
 import com.etek.controller.utils.DetDelayTimeValidation;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -65,7 +67,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     private ProjectDetailAdapter projectDetailAdapter;
     private LinearLayout rootView;
     private List<ProjectDetonator> mDetonatorEntities;
-    private ScannerInterface scanner;
+    private ScannerBase scanner;
 
     //*******重要
     private static final String RES_ACTION = "android.intent.action.SCANRESULT";
@@ -156,7 +158,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void initScanner() {
-        scanner = new ScannerInterface(this);
+//        scanner = new ScannerInterface(this);
+        scanner = ScannerFactory.getScannerObject(this);
         scanner.setOutputMode(1);
         scanner.lockScanKey();
         //  扫描失败是否发送广播
@@ -168,6 +171,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         //注册广播接受者
         scanReceiver = new ScannerResultReceiver();
         registerReceiver(scanReceiver, intentFilter);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(scanReceiver,intentFilter);
     }
 
     @Override
@@ -182,6 +187,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         //取消接收扫描广播，并恢复输出模式为默认
 
         if (scanReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(scanReceiver);
             unregisterReceiver(scanReceiver);
         }
 
@@ -596,55 +602,60 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (keyCode == 19 || keyCode == 20) {
             return true;
         }
-        // 左边189 右边190  中间188
-        if (keyCode == 189 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            scanType = AppIntentString.TYPE_HOLE_IN;
-            return true;
-        }
-        // 中间按钮
-        if (keyCode == 188 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            scanType = AppIntentString.TYPE_HOLE_OUT;
-            return true;
-        }
-        // 右边按钮
-        if (keyCode == 190 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            scanType = AppIntentString.TYPE_HOLE_IN;
-            return true;
-        }
+        int nAction = event.getAction();
 
-        // 按钮7: 正常、CAPSLOC和Fn按下
-        if ((keyCode == 14||keyCode==44||keyCode==137)
-                && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if(bScanDetOver){
-                Log.d(TAG,"开始检测!");
-                bScanDetOver = false;
-                ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
-                readDetNumTask1.execute();
-            }else{
-                Log.d(TAG,"检测中，不响应...");
+        if(KeyEvent.ACTION_DOWN==nAction){
+            // 只处理Key_DOWNW消息
+            // 左边189 右边190  中间188
+            if ((keyCode == 189) || ( 284 == keyCode)){
+                scanType = AppIntentString.TYPE_HOLE_IN;
+                scanner.doScan();
+                return true;
+            }
+            // 中间按钮
+            if ((keyCode == 188)||(288 == keyCode)) {
+                scanType = AppIntentString.TYPE_HOLE_OUT;
+                scanner.doScan();
+                return true;
+            }
+            // 右边按钮
+            if ((keyCode == 190)||( 285 == keyCode)) {
+                scanType = AppIntentString.TYPE_HOLE_IN;
+                scanner.doScan();
+                return true;
             }
 
-            return true;
-        }
-        //按钮8
-//        if (keyCode == 15 && event.getAction() == KeyEvent.ACTION_DOWN) {
-//            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
-//            readDetNumTask1.execute();
-//            return true;
-//        }
-        // 按钮9: 正常、CAPSLOC和Fn按下
-        if ((keyCode == 16||keyCode==51||keyCode==139)
-                && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if(bScanDetOver){
-                Log.d(TAG,"开始检测!");
-                bScanDetOver = false;
-                ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
-                readDetNumTask1.execute();
-            }else{
-                Log.d(TAG,"检测中，不响应...");
-            }
+            // 按钮7: 正常、CAPSLOC和Fn按下
+            if (keyCode == 14||keyCode==44||keyCode==137) {
+                if(bScanDetOver){
+                    Log.d(TAG,"开始检测!");
+                    bScanDetOver = false;
+                    ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_IN);
+                    readDetNumTask1.execute();
+                }else{
+                    Log.d(TAG,"检测中，不响应...");
+                }
 
-            return true;
+                return true;
+            }
+            //按钮8
+    //        if (keyCode == 15) {
+    //            ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_NO_CHANGE);
+    //            readDetNumTask1.execute();
+    //            return true;
+    //        }
+            // 按钮9: 正常、CAPSLOC和Fn按下
+            if (keyCode == 16||keyCode==51||keyCode==139) {
+                if(bScanDetOver){
+                    Log.d(TAG,"开始检测!");
+                    bScanDetOver = false;
+                    ReadDetNumTask readDetNumTask1 = new ReadDetNumTask(AppIntentString.TYPE_HOLE_OUT);
+                    readDetNumTask1.execute();
+                }else{
+                    Log.d(TAG,"检测中，不响应...");
+                }
+                return true;
+            }
         }
 
         //  右下角返回键
@@ -654,6 +665,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         Log.d(TAG, "onKeyDown: scanType = " + scanType);
         return super.onKeyUp(keyCode, event);
     }
+
 
 
     /**

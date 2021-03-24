@@ -31,7 +31,8 @@ import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.model.User;
-import com.etek.controller.scan.ScannerInterface;
+import com.etek.controller.scan.ScannerBase;
+import com.etek.controller.scan.ScannerFactory;
 import com.etek.controller.utils.AppUtils;
 import com.etek.controller.utils.UpdateAppUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -373,10 +374,22 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                     strerrmsg = String.format("主板初始化失败！ %d",result);
                     break;
             }
+
             if (result !=0) {
-                showStatusDialog(strerrmsg);
                 DetApp.getInstance().SetCommTimeout(5000);
-                finish();
+
+                // 初始化失败
+                AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HomeActivity2.this);
+                builder.setCancelable(false);
+                builder.setMessage(strerrmsg);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+                builder.create().show();
             }
         }
     }
@@ -385,7 +398,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
      * 解除扫描对按间的占用
      */
     private void unlockScanKey() {
-        ScannerInterface scannerInterface = new ScannerInterface(this);
+        //ScannerBase scannerInterface = new ScannerInterface(this);
+        ScannerBase scannerInterface = ScannerFactory.getScannerObject(this);
         scannerInterface.unlockScanKey();
     }
 

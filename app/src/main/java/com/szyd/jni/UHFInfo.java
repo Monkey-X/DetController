@@ -4,6 +4,9 @@ import android.util.Log;
 
 import java.io.FileDescriptor;
 
+/***
+ * iData手持机 串口驱动
+ */
 public class UHFInfo {
 
     public FileDescriptor mFd;

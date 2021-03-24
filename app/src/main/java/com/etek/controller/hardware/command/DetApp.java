@@ -28,6 +28,7 @@ import com.etek.controller.hardware.util.DetIDConverter;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.util.DataConverter;
+import com.szyd.jni.SerialCommFactory;
 
 
 public class DetApp {
@@ -60,7 +61,8 @@ public class DetApp {
 
 		m_detError=new DetErrorCode((byte)0x00,0);
 
-		m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
+		//m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
+		m_commobj = SerialCommFactory.getSerialCommObject( "/dev/ttyS1",115200);
 		m_cmdObj = new DetCmd(m_commobj);
 
 		int ret = m_commobj.OpenPort();

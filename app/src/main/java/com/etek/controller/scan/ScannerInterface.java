@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 
 /**
- *  雷管扫描接口类
+ *  iData 扫描接口类
  */
-public class ScannerInterface {
+public class ScannerInterface extends ScannerBase {
     /********************************************扫描接口常量定义******************************/
     //打开与关闭扫描头
     //4.2.1及以前
@@ -97,11 +97,8 @@ public class ScannerInterface {
     static final String SET_SIMULATION_KEYBOARD_STRING = "com.android.simulation.keyboard.string";
     /****************************************************************************************************/
 
-    private Context mContext;
-    private static ScannerInterface androidjni;
-
     public ScannerInterface(Context context) {
-        mContext = context;
+        super(context);
     }
 
     /*********扫描 控制接口*********************/
@@ -340,5 +337,9 @@ public class ScannerInterface {
             Intent intent = new Intent(KEY_RESET_ACTION);
             mContext.sendBroadcast(intent);
         }
+    }
+
+    public void doScan(){
+        return;
     }
 }

@@ -1,6 +1,4 @@
-package com.szyd.jni; /***
- * 手持机串口通信类
- */
+package com.szyd.jni;
 
 import android.util.Log;
 
@@ -16,8 +14,10 @@ import java.io.IOException;
 import java.util.Arrays;
 
 
+/***
+ * iData手持机串口通信类
+ */
 public class HandSetSerialComm extends SerialCommBase {
-
 
 	private String TAG = "HandSetSerialComm";
 
