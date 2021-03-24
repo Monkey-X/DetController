@@ -26,8 +26,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.etek.controller.utils.UploadHelper.TAG;
-
 
 /**
  * 更新管理器
@@ -35,6 +33,8 @@ import static com.etek.controller.utils.UploadHelper.TAG;
  */
 @SuppressWarnings("unused")
 public class UpdateAppUtils {
+
+    public static final String TAG = "UploadHelper";
 
 //    http://192.168.0.7:12018/api/DingJPackage/ERPGetExcel?strSheetId=M586-TFME2003020003&modelId=0
 
