@@ -1,5 +1,6 @@
 package com.etek.controller.activity.project;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.ContractAdapter;
+import com.etek.controller.fragment.ProjectDialog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -26,7 +28,7 @@ import java.util.List;
 /**
  * 授权下载
  */
-public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener, View.OnClickListener, BaseQuickAdapter.OnItemLongClickListener {
+public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener, View.OnClickListener, BaseQuickAdapter.OnItemLongClickListener, ProjectDialog.OnMakeProjectListener {
 
     private RecyclerView recycleView;
     private LinearLayout noDataView;
@@ -53,12 +55,24 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.text_btn:
-                goToOfflineEditActivity();
+//                goToOfflineEditActivity();
+                showProjectDialog();
                 break;
             case R.id.back_img:
                 finish();
                 break;
         }
+    }
+
+    private void showProjectDialog() {
+        ProjectDialog projectDialog = new ProjectDialog();
+        projectDialog.setOnMakeProjectListener(this);
+        projectDialog.show(getSupportFragmentManager(),"projectDialog");
+    }
+
+    @Override
+    public void makeProject(String strCompanyId, String strAuthCode) {
+      // 进行离线文件的下载 todo
     }
 
     private void goToOfflineEditActivity() {
@@ -147,4 +161,5 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
 
         return true;
     }
+
 }

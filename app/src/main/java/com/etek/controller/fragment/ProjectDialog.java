@@ -30,18 +30,15 @@ import com.etek.sommerlibrary.utils.ToastUtils;
 import butterknife.ButterKnife;
 
 /**
- * 创建项目的dialog
+ * 下载授权文件的dialog
+ *
  */
 public class ProjectDialog extends DialogFragment implements View.OnClickListener {
 
 
-    private EditText proName;
-    private EditText proId;
-    private EditText companyName;
     private EditText companyId;
-    private EditText contractId;
-    private EditText contractName;
     private OnMakeProjectListener listener;
+    private EditText authCode;
 
     @Override
     public void onStart() {
@@ -67,12 +64,8 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.dialog_make_project, null);
-        proName = rootView.findViewById(R.id.pro_name);
-        proId = rootView.findViewById(R.id.pro_id);
-        companyName = rootView.findViewById(R.id.company_name);
         companyId = rootView.findViewById(R.id.company_id);
-        contractId = rootView.findViewById(R.id.contract_id);
-        contractName = rootView.findViewById(R.id.contract_name);
+        authCode = rootView.findViewById(R.id.auth_code);
 
         getUserInfo();
 
@@ -88,7 +81,6 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
         if (!TextUtils.isEmpty(userInfo)) {
             User user = JSON.parseObject(userInfo, User.class);
             if (user != null) {
-                companyName.setText(user.getCompanyName());
                 companyId.setText(user.getCompanyCode());
             }
         }
@@ -99,9 +91,6 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
         switch (v.getId()) {
             case R.id.cancel:
                 this.dismiss();
-                if (listener != null) {
-                    listener.makeProjectCancel();
-                }
                 break;
             case R.id.makeSure:
                 // 点击确定，进行批量的修改
@@ -112,47 +101,23 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
 
     private void makeProject() {
 
-        String strProName = getString(proName);
-        if (TextUtils.isEmpty(strProName)) {
-            ToastUtils.show(getContext(), "请输入项目名称！");
+        String strAuthCode = getString(authCode);
+        if (TextUtils.isEmpty(strAuthCode)) {
+            ToastUtils.show(getContext(), "请输入授权码！");
             return;
 
         }
-        String strProId = getString(proId);
-        if (TextUtils.isEmpty(strProId)) {
-            ToastUtils.show(getContext(), "请输入项目编号！");
-            return;
 
-        }
-        String strContractName = getString(contractName);
-        if (TextUtils.isEmpty(strContractName)) {
-            ToastUtils.show(getContext(), "请输入合同名称！");
-            return;
-
-        }
-        String strContractId = getString(contractId);
-        if (TextUtils.isEmpty(strContractId)) {
-            ToastUtils.show(getContext(), "请输入合同代码！");
-            return;
-        }
-
-        ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
-        projectInfoEntity.setProName(strProName);
-        projectInfoEntity.setProCode(strProId);
-        projectInfoEntity.setCompanyName(getString(companyName));
-        projectInfoEntity.setCompanyCode(getString(companyId));
-        projectInfoEntity.setContractName(strContractName);
-        projectInfoEntity.setContractCode(strContractId);
+        String strCompanyId = getString(companyId);
 
         if (listener != null) {
-            listener.makeProject(projectInfoEntity);
+            listener.makeProject(strCompanyId,strAuthCode);
         }
         dismiss();
     }
 
     public interface OnMakeProjectListener {
-        void makeProject(ProjectInfoEntity bean);
-        void makeProjectCancel();
+        void makeProject(String strCompanyId, String strAuthCode);
     }
 
     public void setOnMakeProjectListener(OnMakeProjectListener listener) {

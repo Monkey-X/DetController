@@ -96,9 +96,6 @@
             android:theme="@style/activity_theme" />
         <activity android:name=".activity.project.AssistActivity" />
         <activity
-            android:name=".activity.NetWorkActivity"
-            android:theme="@style/activity_theme" />
-        <activity
             android:name=".activity.project.ConnectTestActivity"
             android:theme="@style/activity_theme" />
 
