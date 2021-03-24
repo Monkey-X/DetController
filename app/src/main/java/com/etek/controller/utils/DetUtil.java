@@ -5,8 +5,6 @@ import com.etek.controller.persistence.entity.DetonatorEntity;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
-import java.util.Locale;
 
 public class DetUtil {
 

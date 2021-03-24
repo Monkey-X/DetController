@@ -58,7 +58,6 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -309,7 +308,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         offlineDownloadBean.setXtm("");
         offlineDownloadBean.setHtm("");
         String controller = controllerSn.getText().toString();
-        if (StringUtils.isEmpty(controller) || controller.length() != 11 || controller.contains(" ")) {
+        if (TextUtils.isEmpty(controller) || controller.length() != 11 || controller.contains(" ")) {
             showToast("请输入有效的起爆器编号");
             return;
         } else {
@@ -359,7 +358,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                     respStr = response.body().string();
                 } catch (IOException e) {
                 }
-                if (StringUtils.isEmpty(respStr)) {
+                if (TextUtils.isEmpty(respStr)) {
                     DetLog.writeLog(TAG,String.format("返回数据为空！"));
                     showStatusDialog("返回数据为空！");
                     return;
@@ -428,7 +427,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                                 showStatusDialog("项目保存失败！");
                             }
                         } else {
-                            if (!StringUtils.isEmpty(onlineCheckStatusResp.getCwxxms())) {
+                            if (!TextUtils.isEmpty(onlineCheckStatusResp.getCwxxms())) {
                                 showStatusDialog(onlineCheckStatusResp.getCwxxms());
                             } else {
                                 DetLog.writeLog(TAG,String.format("服务器返回错误，数据错误 请调整！"));
@@ -473,7 +472,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             for (Lg lg : lgs.getLg()) {
 //                XLog.v("lg:" + lg);
                 DetonatorEntity detonatorBean = new DetonatorEntity();
-                if (StringUtils.isEmpty(lg.getFbh())) {
+                if (TextUtils.isEmpty(lg.getFbh())) {
                     for (Detonator detonator : detList) {
 //                        debug(detonator.toString());
                         if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {

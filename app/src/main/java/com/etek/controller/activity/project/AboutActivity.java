@@ -28,7 +28,6 @@ import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.NetUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
-import org.jsoup.helper.StringUtil;
 
 import java.io.File;
 
@@ -60,7 +59,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
      */
     private void getMainBoardInfo() {
         String preInfo = getPreInfo(getString(R.string.mainBoardInfo_sp));
-        if (!StringUtil.isBlank(preInfo)) {
+        if (!TextUtils.isEmpty(preInfo)) {
             try {
                 mainBoardInfoBean = JSON.parseObject(preInfo, MainBoardInfoBean.class);
             } catch (JSONException e) {

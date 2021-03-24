@@ -17,9 +17,6 @@ import com.etek.controller.model.User;
 import com.etek.controller.utils.IdCardUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.helper.StringUtil;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +60,7 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (!TextUtils.isEmpty(userinfo)) {
             User user = JSON.parseObject(userinfo, User.class);
-            if (user != null && !StringUtil.isBlank(user.getName())) {
+            if (user != null && !TextUtils.isEmpty(user.getName())) {
                 personalInfoName.setText(user.getName());
                 personalIdCode.setText(user.getIdCode());
                 companyName.setText(user.getCompanyName());
@@ -119,7 +116,7 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         }
 
         String userId = personalIdCode.getText().toString().trim();
-        if (StringUtils.isEmpty(userId)) {
+        if (TextUtils.isEmpty(userId)) {
             showToast( "身份证号码必须不为空");
             return;
         }

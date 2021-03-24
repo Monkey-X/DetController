@@ -41,17 +41,6 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.NetUtil;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.mina.core.future.ConnectFuture;
-import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
-import org.apache.mina.core.session.IoSessionConfig;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.transport.socket.SocketSessionConfig;
-import org.apache.mina.transport.socket.nio.NioSocketConnector;
-import java.util.concurrent.TimeUnit;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -144,11 +133,11 @@ public class ReportDetailActivity2 extends BaseActivity {
 
         if (projectInfoEntity != null) {
             //序号
-            if (!StringUtils.isEmpty(projectInfoEntity.getCompanyCode())) {
+            if (!TextUtils.isEmpty(projectInfoEntity.getCompanyCode())) {
                 proHint.setText("项目编号：");
                 snId.setText(projectInfoEntity.getProCode());
             }
-            if (!StringUtils.isEmpty(projectInfoEntity.getContractCode())) {
+            if (!TextUtils.isEmpty(projectInfoEntity.getContractCode())) {
                 proHint.setText("合同备案序号：");
                 snId.setText(projectInfoEntity.getContractCode());
             }
@@ -203,7 +192,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         if (detonatorEntityList != null && !detonatorEntityList.isEmpty()) {
             reportDto.setDetControllerWithoutDet2(userInfo, projectInfoEntity);
             reportDto.setDets2(detonatorEntityList);
-            if (StringUtils.isEmpty(reportDto.getDwdm())) {
+            if (TextUtils.isEmpty(reportDto.getDwdm())) {
                 reportDto.setDwdm(Globals.user.getCompanyCode());
             }
         }
@@ -354,7 +343,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                 String respStr = response.body().string();
                 DetLog.writeLog(TAG,"力芯返回："+respStr);
 
-                if (StringUtils.isBlank(respStr)) {
+                if (TextUtils.isEmpty(respStr)) {
                     DetLog.writeLog(TAG,"respStr is null ");
                     return;
                 }
@@ -392,7 +381,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                 String respStr = response.body().string();
                 DetLog.writeLog(TAG,"力芯返回："+respStr);
 
-                if (StringUtils.isBlank(respStr)) {
+                if (TextUtils.isEmpty(respStr)) {
                     DetLog.writeLog(TAG,"respStr is null ");
                     return;
                 }
@@ -441,7 +430,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String respStr = response.body().string();
                 DetLog.writeLog(TAG,"丹灵返回 respStr:  " + respStr);
-                if (StringUtils.isEmpty(respStr)) {
+                if (TextUtils.isEmpty(respStr)) {
                     danlingLoadReturn = "返回信息为空";
                     showSendRptMessage("上报丹灵失败", "2");
                     uploadToDanlingFail(firstLoad);

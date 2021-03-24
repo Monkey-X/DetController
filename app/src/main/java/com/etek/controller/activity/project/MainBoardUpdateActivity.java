@@ -2,6 +2,7 @@ package com.etek.controller.activity.project;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -18,7 +19,6 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
-import org.jsoup.helper.StringUtil;
 
 import java.io.File;
 
@@ -74,7 +74,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
         sno = findViewById(R.id.sno);
 
         String preInfo = getPreInfo(getString(R.string.mainBoardInfo_sp));
-        if (!StringUtil.isBlank(preInfo)) {
+        if (!TextUtils.isEmpty(preInfo)) {
             try {
                 MainBoardInfoBean mainBoardInfoBean = JSON.parseObject(preInfo, MainBoardInfoBean.class);
                 if (mainBoardInfoBean != null) {

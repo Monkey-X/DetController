@@ -66,8 +66,6 @@ import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -215,7 +213,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         String longitudeStr = getStringInfo("Longitude");
         String latitudeStr = getStringInfo("Latitude");
 
-        if (!StringUtils.isEmpty(longitudeStr) && !(StringUtils.isEmpty(latitudeStr))){
+        if (!TextUtils.isEmpty(longitudeStr) && !(TextUtils.isEmpty(latitudeStr))){
             double longitude = Double.valueOf(longitudeStr);
             double latitude = Double.valueOf(latitudeStr);
 
@@ -298,7 +296,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String respStr = response.body().string();
-                if (!StringUtils.isEmpty(respStr)) {
+                if (!TextUtils.isEmpty(respStr)) {
                     WhiteBlackController whiteBlackController = JSON.parseObject(respStr, WhiteBlackController.class);
                     List<WhiteBlackController.Hbmd> hbmds = whiteBlackController.getHbmd();
                     if (hbmds != null && !hbmds.isEmpty()) {
@@ -596,7 +594,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (StringUtils.isEmpty(respStr)) {
+        if (TextUtils.isEmpty(respStr)) {
             DetLog.writeLog(TAG, "respStr is null");
             showToast("服务器返回数据失败！");
             return;
@@ -692,7 +690,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             for (Lg lg : lgs.getLg()) {
 
                 DetonatorEntity detonatorBean = new DetonatorEntity();
-                if (StringUtils.isEmpty(lg.getFbh())) {
+                if (TextUtils.isEmpty(lg.getFbh())) {
                     for (ProjectDetonator detonator : projectDetonatorList) {
                         if (detonator.getUid().equalsIgnoreCase(lg.getUid())) {
                             lg.setFbh(detonator.getCode());

@@ -37,11 +37,11 @@ import com.etek.controller.utils.UpdateAppUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jsoup.helper.StringUtil;
 
 import java.io.File;
 
@@ -71,8 +71,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         EventBus.getDefault().register(this);
 
         int initialize = DetApp.getInstance().Initialize();
-        Log.d(TAG, "onCreate: initialize= " + initialize);
-
+        Logger.d("onCreate: initialize= " + initialize);
         initView();
 
         initMainBoard();
@@ -91,7 +90,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
      */
     private void getMainBoardInfo() {
         String preInfo = getPreInfo(getString(R.string.mainBoardInfo_sp));
-        if (!StringUtil.isBlank(preInfo)) {
+        if (!TextUtils.isEmpty(preInfo)) {
             try {
                 mainBoardInfoBean = JSON.parseObject(preInfo, MainBoardInfoBean.class);
             } catch (JSONException e) {
@@ -325,28 +324,13 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
             DetApp.getInstance().SetCommTimeout(1000);
 
-            Log.d(TAG,String.format("电平拉高"));
+            Logger.d("电平拉高");
             DetApp.getInstance().MainBoardSetBL(true);
 
-            Log.d(TAG,String.format("上电"));
+            Logger.d("上电");
             DetApp.getInstance().MainBoardPowerOn();
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//            }
-//
-//            //  1.0.0.12版本的OS，启动后是拉低
-//            Log.d(TAG,String.format("电平拉高"));
-//            DetApp.getInstance().MainBoardSetBL(true);
 
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-
-            Log.d(TAG,String.format("初始化"));
-
+            Logger.d("初始化");
             int result = mainBoardInit();
             return result;
         }
