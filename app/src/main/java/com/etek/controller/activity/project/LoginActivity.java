@@ -14,9 +14,12 @@ import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.dialog.ReprotDialog;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
+
+import java.util.Calendar;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
@@ -98,12 +101,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             return;
         }
 
+
+        Calendar calendar = Calendar.getInstance();
+        int ret =  calendar.get(Calendar.YEAR);
+        ret = ret + calendar.get(Calendar.MONTH)+1;     // MONTH是从0-11
+        ret = ret + calendar.get(Calendar.DAY_OF_MONTH);
+        ret = ret + calendar.get(Calendar.HOUR_OF_DAY);
+
+        //  测试用户，进入到测试模式
+        if(userStrName.toUpperCase().equals("WXSCTEST")
+                && strPassword.equals(ret+"")) {
+            HandsetWorkMode.getInstance().setWorkMode(HandsetWorkMode.MODE_TEST);
+            startActivity(new Intent(this, HomeActivity2.class));
+            finish();
+            return;
+        }
+
+        //  缓存的登录名和密码
         String user_name = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_NAME);
         String user_passWord = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_PASSWORD);
 
+        //  缓存的用户名和密码有一个是空的时候更新
         if (TextUtils.isEmpty(user_name) || TextUtils.isEmpty(user_passWord)) {
             SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_NAME,userStrName);
-            SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_PASSWORD,user_passWord);
+            SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_PASSWORD,strPassword);
             startActivity(new Intent(this, HomeActivity2.class));
             finish();
             return;

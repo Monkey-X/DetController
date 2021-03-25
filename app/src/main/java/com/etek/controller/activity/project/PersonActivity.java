@@ -18,6 +18,7 @@ import com.etek.controller.activity.project.UserInfoActivity2;
 import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.common.AppConstants;
 import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.sommerlibrary.utils.NetUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -130,6 +131,12 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void uploadLog(){
+
+        if (NetUtil.getNetType(mContext) < 0) {
+            Toast.makeText(mContext, "无法上传日志，请去设置网络", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         //  日志文件路径
         String path = Environment.getExternalStorageDirectory() + "/Log/"; //文件路径
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");// HH:mm:ss //获取当前时间

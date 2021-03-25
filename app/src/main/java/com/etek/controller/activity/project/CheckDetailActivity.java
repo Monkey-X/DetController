@@ -30,6 +30,7 @@ import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.dto.Jbqy;
 import com.etek.controller.dto.Jbqys;
 import com.etek.controller.dto.Lg;
@@ -382,8 +383,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
 
         //  经纬度禁止输入
-//        locationLongitude.setKeyListener(null);
-//        locationLatitude.setKeyListener(null);
+        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
+            locationLongitude.setKeyListener(null);
+            locationLatitude.setKeyListener(null);
+            controllerId.setKeyListener(null);
+        }
+
 
         getLocation = findViewById(R.id.get_location);
         proCode = findViewById(R.id.pro_code);
@@ -827,7 +832,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
         //  离线不检查F99起爆器
         Log.d(TAG,"起爆器厂商："+strControllerId.substring(0,3));
-        if(!strControllerId.substring(0,3).equals("F99")){
+        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
             if (!checkControllerData(projectInfo)) {
                 showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆2",strControllerId));
                 return;
@@ -864,34 +869,74 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * @param detInProjectId
      */
     private void checkDetonatorData(ProjectInfoEntity projectInfo, Long detInProjectId) {
+        int nUsedCount = 0;
         List<DetonatorEntity> detonatorList = projectInfo.getDetonatorList();
         if (detonatorList != null && detonatorList.size() != 0) {
             int unUserCount = detonatorList.size();
             int unRegiestCount = 0;
             boolean isUnUsed;
             for (ProjectDetonator projectDetonator : projectDetonatorList) {
+
+                //  `在 授权下载 中查找雷管 projectDetonator 是否存在
                 isUnUsed = true;
                 for (DetonatorEntity detonatorEntity : detonatorList) {
                     if (projectDetonator.getCode().equalsIgnoreCase(detonatorEntity.getCode())
                             && projectDetonator.getUid().equalsIgnoreCase(detonatorEntity.getUid())) {
+
+                        // 项目中的雷管 projectDetonator 在 授权下载 中找到了 detonatorEntity
                         if (!DetUtil.getAcCodeFromDet(detonatorEntity).equalsIgnoreCase(detonatorEntity.getWorkCode()))
                             break;
+
+                        int nStatus =detonatorEntity.getStatus();
+                        switch (nStatus){
+                            case 0:         //  0 正常
+                                projectDetonator.setStatus(0);
+                                break;
+                            case 1:         //  1 黑名单
+                                projectDetonator.setStatus(1);
+                                break;
+                            case 2:         //  2 已使用
+                                projectDetonator.setStatus(2);
+                                nUsedCount++;
+                                break;
+                            case 3:         //  3 不存在
+                            default:
+                                projectDetonator.setStatus(nStatus);
+                                break;
+                        }
+
                         unUserCount--;
                         if (unUserCount < 0) {
                             unUserCount = 0;
                         }
+
                         isUnUsed = false;
                         projectDetonator.setStatus(0);
+                        break;
                     }
                 }
-                if (isUnUsed) {
-                    projectDetonator.setStatus(2);
+
+                if (isUnUsed) {     //  没在 授权下载 中找到
+                    projectDetonator.setStatus(3);
                     unRegiestCount++;
                 }
             }
 
             refreshData();
+
+            //  同时存在已使用和未注册雷管
+            if((unRegiestCount>0)&&(nUsedCount>0)){
+                showStatusDialog(CheckRuleEnum.ERR_DET.getMessage() + unRegiestCount);
+                return;
+            }
+            //  未注册雷管
             if (unRegiestCount > 0) {
+                showStatusDialog(CheckRuleEnum.UNREG_DET.getMessage() + unRegiestCount);
+                return;
+            }
+
+            //  已使用雷管
+            if (nUsedCount > 0) {
                 showStatusDialog(CheckRuleEnum.USED_DET.getMessage() + unRegiestCount);
                 return;
             }
@@ -1058,7 +1103,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         Double d = (n0*1.00)/(1000*100);
         return d;
     }
-
 
     //  https://blog.csdn.net/jason0539/article/details/12047963#
     private void initGPSLocation(){

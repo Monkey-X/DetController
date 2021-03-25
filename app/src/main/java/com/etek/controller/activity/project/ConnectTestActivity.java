@@ -29,6 +29,9 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
+import com.etek.controller.hardware.test.DetMisconnectionCallback;
+import com.etek.controller.hardware.test.PowerCheckCallBack;
+import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -74,6 +77,11 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private TextView cancelTest;
     private RelativeLayout layoutTestBtn;
     private PendingProject projectInfoEntity;
+
+    private MisDetonatorTask mistask;
+    private List<ProjectDetonator> misConnectData = new ArrayList<>();
+
+    private int buttonid = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,6 +175,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      */
     @Override
     public void onClick(View v) {
+        buttonid = v.getId();
+
         switch (v.getId()) {
             case R.id.back_img://返回
                 if(isCancelTest){
@@ -232,6 +242,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         // 筛选后点击展示全部
         if (proId >= 0) {
             List<ProjectDetonator> list = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
+            Log.d(TAG,"工程雷管数："+list.size());
+
             connectData.clear();
             Collections.sort(list);
             connectData.addAll(list);
@@ -241,12 +253,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     // 筛选 误接状态
     private void changeFalseConnect() {
-        if (connectData == null || connectData.size() == 0) {
-            ToastUtils.show(this, "未录入数据");
-            return;
-        }
         // TODO: 2020/10/31
-
+        connectData.clear();
+        connectData.addAll(misConnectData);
+        connectTestAdapter.notifyDataSetChanged();
     }
 
     // 筛选失联 状态
@@ -270,9 +280,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onItemClick(View view, int position) {
         // 点击条目弹出 popuWindow 提示删除或者测试
-        if(isCancelTest) {
+        if(!isCancelTest) return;
+
+        if(buttonid==R.id.false_connect){
+            shouMisconnectPopuWindow(view,position);
+        }else{
             shouPopuWindow(view, position);
         }
+
+
     }
 
     private void shouPopuWindow(View view, int position) {
@@ -302,6 +318,55 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     mPopupWindow.dismiss();
                 }
                 testItem(position);
+            }
+        });
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.showAtLocation(view, Gravity.RIGHT|Gravity.TOP, 0, location[1]+25);
+    }
+
+
+
+    private void shouMisconnectPopuWindow(View view, int position) {
+        int[] location = new int[2];
+        view.getLocationInWindow(location);
+        View popuView = getLayoutInflater().inflate(R.layout.popuwindow_view, null, false);
+        PopupWindow mPopupWindow = new PopupWindow(popuView, 150, 120);
+        TextView deleteitem = popuView.findViewById(R.id.delete_item);
+        deleteitem.setVisibility(View.GONE);
+
+        TextView addDetToProject = popuView.findViewById(R.id.insert_item);
+        addDetToProject.setText("添加到工程");
+        addDetToProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProjectDetonator detonatorEntity = misConnectData.get(position);
+
+                android.app.AlertDialog.Builder builder = null;
+                builder = new android.app.AlertDialog.Builder(ConnectTestActivity.this);
+                builder.setCancelable(false);
+                builder.setMessage("雷管["+detonatorEntity.getCode()+"]加入到工程，延时为["+detonatorEntity.getRelay()+"]");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG,"误接雷管插入工程"+detonatorEntity.toString());
+
+                        detonatorEntity.setId(null);
+
+                        try{
+                            DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
+                        }catch (Exception e){
+                            Log.d(TAG,"保存失败！");
+                            e.printStackTrace();
+                        }
+
+                        misConnectData.remove(detonatorEntity);
+                        connectData.remove(detonatorEntity);
+                        connectTestAdapter.notifyDataSetChanged();
+                    }
+                });
+                builder.create().show();
+
+                mPopupWindow.dismiss();
             }
         });
         mPopupWindow.setOutsideTouchable(true);
@@ -480,6 +545,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         detonatorEntity.setTestStatus(testResult);
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
         playSound(testResult == 0);
+
+        //  Halt
+        DetApp.getInstance().ModuleSetDormantStatus(Integer.parseInt(detId));
         return testResult == 0;
     }
 
@@ -513,13 +581,14 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         Log.d(TAG,"总线下电");
         DetApp.getInstance().MainBoardBusPowerOff();
 
-        if (successNum == projectDetonators.size()) {
+        int nMisCount = misConnectData.size();
+        if ((successNum == projectDetonators.size())&&(nMisCount==0)) {
             //全部检测测功了，更新项目状态和，提示进去延时下载
             updateAndHint();
         } else {
             // 未全部检测成功，展示检测结果
             if (!isCancelTest) {
-                showTestResult(projectDetonators.size(), successNum, faileNum);
+                showTestResult(projectDetonators.size(), successNum, faileNum,nMisCount);
                 isCancelTest = true;
             }
         }
@@ -567,11 +636,11 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     }
 
     // 展示检测的结果
-    private void showTestResult(int size, int successNum, int faileNum) {
+    private void showTestResult(int size, int successNum, int faileNum,int nMisCount) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
-        builder.setTitle(String.format("共检测雷管：%d发", size));
-        builder.setMessage(String.format("成功：%d\t失败：%d", successNum, faileNum));
+        builder.setTitle(String.format("共检测雷管：%d发", size+nMisCount));
+        builder.setMessage(String.format("成功：%d\t失联：%d\t误接：%d", successNum, faileNum,nMisCount));
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -584,16 +653,31 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     // 异步进行在线检测
     public class TestAsyncTask extends AsyncTask<String, Integer, Integer> {
+        private boolean m_bmistask = false;
+
         @Override
         protected Integer doInBackground(String... strings) {
             for (int i = 0; i < connectData.size(); i++) {
-
                 if (isCancelTest) {
                     return null;
                 }
                 boolean b = detSingleCheck(i);
                 publishProgress(i);
             }
+
+            int ret = DetApp.getInstance().ModuleGetID();
+            if(170==ret){
+                //  0xAA：证明无误接雷管；执行Active（0x5A+00000000，所有管子都唤醒）完毕
+                DetApp.getInstance().ModuleSetWakeupStatus(0);
+            }
+
+            //  有误接的雷管
+            if(161==ret
+                ||168==ret
+                ||169==ret){
+                m_bmistask = true;
+            }
+
             return null;
         }
 
@@ -612,10 +696,115 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
+
+            if(m_bmistask){
+                mistask = new MisDetonatorTask();
+                mistask.execute();
+            }else{
+                connectTestAdapter.notifyDataSetChanged();
+                changeProgressView(true);
+                setSelectBtnVisible(true);
+                updateProjectStatus();
+            }
+
+            m_bmistask = false;
+        }
+    }
+
+    //  异步查找其他误接雷管
+    public class MisDetonatorTask extends AsyncTask<String, Integer, Integer>{
+        private int m_nMaxRelayTime = 0;
+        private long m_nIdNo = 0;
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+            Log.d(TAG,"MisDetonatorTask doInBackground");
+
+            int result = DetApp.getInstance().DetsFindMisconnect(new DetMisconnectionCallback() {
+                @Override
+                public void DisplayText(String strText) {
+                    //  展示信息
+                    setProDialogText(strText);
+                }
+
+                @Override
+                public void FindMisconnectDet(int nNo,int nID,String strDC) {
+                    // 是否已经存在于工程内
+                    if(connectData.size()>0){
+                        for(ProjectDetonator det0:connectData){
+                            if(strDC.equals(det0.getCode()))
+                                return;
+                        }
+                    }
+
+                    //  是否已经存在于失联
+                    if(misConnectData.size()>0){
+                        for(ProjectDetonator det0:misConnectData){
+                            if(strDC.equals(det0.getCode()))
+                                return;
+                        }
+                    }
+
+                    // 雷管以扫描的方式插入到列表中
+                    ProjectDetonator det = new ProjectDetonator();
+
+                    m_nIdNo++;
+                    det.setId(m_nIdNo);
+
+                    long nid = (nID&0xFFFFFFFFL);
+                    det.setUid(DetIDConverter.getDetUid(nid+"",strDC));
+                    det.setCode(strDC);
+                    det.setDetId(nid+"");
+                    det.setStatus(-1);
+                    det.setHolePosition("0-0");
+                    det.setRelay(m_nMaxRelayTime);
+                    det.setDownLoadStatus(-1);
+                    det.setTestStatus(-1);
+                    det.setProjectInfoId(proId);
+
+                    misConnectData.add(det);
+
+                    Log.d(TAG,"MISCONN DET:"+det.toString());
+                }
+            });
+            return result;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Log.d(TAG,"MisDetonatorTask onPreExecute");
+            super.onPreExecute();
+
+            showProDialog("开始查找误接雷管...");
+            misConnectData.clear();
+
+            for (ProjectDetonator det : connectData) {
+                if(m_nMaxRelayTime<det.getRelay()){
+                    m_nMaxRelayTime = det.getRelay();
+                }
+                if(m_nIdNo < det.getId()){
+                    m_nIdNo = det.getId();
+                }
+
+                Log.d(TAG,"PRJOECT DET:"+det.toString());
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            Log.d(TAG,"MisDetonatorTask onPostExecute");
+
+            super.onPostExecute(integer);
+            missProDialog();
+
+            isCancelTest = false;
+
             connectTestAdapter.notifyDataSetChanged();
             changeProgressView(true);
             setSelectBtnVisible(true);
             updateProjectStatus();
+
         }
     }
 

@@ -25,9 +25,9 @@ public enum CheckRuleEnum {
     IN_FORBIDDEN((byte)2,"在禁爆区域"),
     TOO_EARLY((byte)3,"未到起爆开始时间"),
     TOO_LATER((byte)4,"超过起爆结束时间"),
-    UNREG_DET((byte)5,"有未注册的雷管"),
-    UNUSED_DET((byte)6,"有未使用的雷管"),
-    ERR_DET((byte)7,"有未使用的雷管/有未注册的雷管"),
+    UNREG_DET((byte)5,"存在未注册的雷管"),
+    UNUSED_DET((byte)6,"存在未使用的雷管"),
+    ERR_DET((byte)7,"存在已使用和未注册的雷管"),
     OUT_CONTROLLER((byte)0X0A,"起爆器未注册，不允许起爆 "),
     USED_DET((byte)0X0B,"存在已使用雷管"),
     ;

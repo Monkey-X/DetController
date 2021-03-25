@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.DetCallback;
@@ -201,6 +202,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                     mainBoardInfoBean.setStrSNO(strSNO);
                     mainBoardInfoBean.setStrConfig(strConfig);
                     setStringInfo(getString(R.string.controller_sno), strSNO);
+                    HandsetWorkMode.getInstance().setControllerNo(strSNO);
                     setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
                 }
             });

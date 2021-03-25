@@ -152,4 +152,20 @@ public class ProjectDetonator implements Comparable<ProjectDetonator> {
     public String getZBDetCodeStr() {
         return code;
     }
+
+    @Override
+    public String toString() {
+        return "ProjectDetonator{" +
+                "id=" + id +
+                ", uid='" + uid + '\'' +
+                ", code='" + code + '\'' +
+                ", detId='" + detId + '\'' +
+                ", relay=" + relay +
+                ", status=" + status +
+                ", holePosition='" + holePosition + '\'' +
+                ", downLoadStatus=" + downLoadStatus +
+                ", testStatus=" + testStatus +
+                ", projectInfoId=" + projectInfoId +
+                '}';
+    }
 }

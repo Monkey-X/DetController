@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 
 import com.etek.controller.R;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.gen.PendingProjectDao;
@@ -112,7 +113,7 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
         }
 
         if (!TextUtils.isEmpty(controllerSno)) {
-            if (controllerSno.contains("F99")) {
+            if(HandsetWorkMode.MODE_TEST==HandsetWorkMode.getInstance().getWorkMode()){
                 return;
             }
         }

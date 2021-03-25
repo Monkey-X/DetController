@@ -26,6 +26,7 @@ import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.OfflineEditAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.dto.Jbqy;
 import com.etek.controller.dto.Jbqys;
 import com.etek.controller.dto.Lg;
@@ -129,6 +130,10 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         //contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         companyCode = findViewById(R.id.company_code);
         controllerSn = findViewById(R.id.controller_sn);
+        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
+            controllerSn.setKeyListener(null);
+        }
+
         View addDet = findViewById(R.id.add_det);
         addDet.setOnClickListener(this);
         numPostion = findViewById(R.id.num_position);
@@ -138,6 +143,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         detCode.setText("管码");
         detStatus.setText("状态");
         offlineRecycleView = findViewById(R.id.offline_recycleView);
+
 
         // 设置界面的数据
         detList = new ArrayList<>();
@@ -326,7 +332,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         }
         showProDialog("正在得到检验数据中。。。");
         String rptJson = JSON.toJSONString(offlineDownloadBean, SerializerFeature.WriteMapNullValue);
-        DetLog.writeLog(TAG,String.format("离线校验数据:%s",rptJson));
+        DetLog.writeLog(TAG,String.format("授权下载申请:%s",rptJson));
 //        rptJson = " {\"dwdm\":\"5227224300086\",\"fbh\":\"\",\"htid\":\"522722320120002\",\"htm\":\"\",\"sbbh\":\"F61A8190423\",\"xmbh\":\"\",\"xtm\":\"I610c01K201014\"}";
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
@@ -340,9 +346,9 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         url = AppConstants.DanningServer + AppConstants.OfflineDownload;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());    //
-        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-        Log.d(TAG,String.format("newUrl:%s",newUrl));
-        AsyncHttpCilentUtil.httpPostNew(this, newUrl, null, new HttpCallback() {
+//        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
+//        Log.d(TAG,String.format("newUrl:%s",newUrl));
+        AsyncHttpCilentUtil.httpPostNew(this, url, params, new HttpCallback() {
 
             @Override
             public void onFaile(IOException e) {
@@ -374,7 +380,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
                 try {
                     Result rptDecode = RptUtil.getRptDecode(respStr);
-                    DetLog.writeLog(TAG,String.format("离线项目检查返回：%s",rptDecode));
+                    DetLog.writeLog(TAG,String.format("授权下载应答：%s",rptDecode));
                     if (rptDecode.isSuccess()) {
                         String data = (String) rptDecode.getData();
                         OnlineCheckStatusResp onlineCheckStatusResp = JSON.parseObject(data, OnlineCheckStatusResp.class);
@@ -646,25 +652,35 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             showToast("请输入有效的雷管数！");
             return;
         }
+        if(detNumStr.length()>3){
+            showToast("请输入有效的雷管数！");
+            return;
+        }
+
         int num = Integer.parseInt(detNumStr);
         if (num <= 0) {
             showToast("请输入有效的雷管数！");
             return;
         }
-        int tube = Integer.parseInt(detCodeStr.substring(11, 13));
+        int tube = Integer.parseInt(detCodeStr.substring(9, 13));
+        Log.d(TAG,"detCodeStr.substring(9, 13)"+detCodeStr.substring(9, 13));
+        Log.d(TAG,"tube is "+tube);
+
         boolean isOdd = false;
         if (tube % 2 != 0) {
             isOdd = true;
         }
         for (int i = 0; i < num; i++) {
-            if (tube > 100) {
-                showToast("一次编辑雷管少于100！");
+            if (num >= 1000) {
+                showToast("一次编辑雷管少于1000！");
                 break;
             }
-            String newFbh = detCodeStr.substring(0, 11) + String.format(Locale.CHINA, "%02d", tube);
+            String newFbh = detCodeStr.substring(0, 9) + String.format(Locale.CHINA, "%04d", tube);
             Detonator detonator = new Detonator(newFbh);
+            Log.d(TAG,"detCodeStr.substring(0, 9)"+detCodeStr.substring(0, 9));
 
             int status = detonator.getDetonatorByFbh(newFbh);
+            Log.d(TAG,"tube is "+tube);
 
             if (status == 1) {
                 detonator.setStatus(0);

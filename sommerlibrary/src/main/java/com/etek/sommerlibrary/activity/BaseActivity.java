@@ -84,6 +84,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    protected void setProDialogText(String strText){
+        if(null!=progressDialog){
+            progressDialog.setMessage(strText);
+        }
+    }
+
 
     protected void showStatusDialog(final String content) {
         runOnUiThread(() -> {
