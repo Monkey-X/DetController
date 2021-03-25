@@ -19,11 +19,6 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">18sp</item>
     </style>
-    <style name="animate_dialog_custom">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowEnterAnimation">@anim/dialog_scale_enter</item>
-        <item name="android:windowExitAnimation">@anim/dialog_scale_exit</item>
-    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -83,18 +78,6 @@
 
 
     <!-- ToolBar -->
-    <style name="ToolBarStyle" parent="AppTheme">
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="actionMenuTextColor">@android:color/white</item>
-    </style>
-
-    <style name="bg">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/backgroundColor</item>
-        <item name="android:orientation">vertical</item>
-    </style>
 
 
 

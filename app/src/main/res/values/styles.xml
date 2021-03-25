@@ -64,10 +64,6 @@
         <item name="android:background">@drawable/selector_normal_button_view</item>
     </style>
 
-    <style name="DialogTheme">
-        <item name="android:windowEnterAnimation">@anim/zoom_in</item>
-        <item name="android:windowExitAnimation">@anim/zoom_out</item>
-    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
