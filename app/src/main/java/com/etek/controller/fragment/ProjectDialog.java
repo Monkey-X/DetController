@@ -22,12 +22,9 @@ import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
-import com.etek.controller.entity.FastEditBean;
 import com.etek.controller.model.User;
-import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
-import butterknife.ButterKnife;
 
 /**
  * 下载授权文件的dialog
