@@ -3,7 +3,6 @@ package com.etek.controller.dto;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONType;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.entity.DetController;
 import com.etek.controller.entity.Detonator;
 import com.etek.controller.model.User;
@@ -13,6 +12,7 @@ import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.utils.DateUtil;
 import com.etek.sommerlibrary.utils.StringTool;
+import com.orhanobut.logger.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -152,7 +152,7 @@ public class ReportDto2 {
         }
         User user = JSON.parseObject(userInfo, User.class);
         bprysfz = user.getIdCode();
-        XLog.e("IdCode: " + userInfo);
+        Logger.e("IdCode: " + userInfo);
         dwdm = projectInfoEntity.getCompanyCode();
     }
 

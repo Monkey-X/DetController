@@ -11,8 +11,7 @@ import com.etek.controller.R;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.utils.VibrateUtil;
-import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.utils.ToastUtils;
+import com.etek.controller.activity.BaseActivity;
 
 /**
  * 线路检测
@@ -51,7 +50,7 @@ public class LineCheckActivity extends BaseActivity implements View.OnClickListe
                 if (ret == 1) {
                     Log.d(TAG, "获取电压电流 失败 " + ret);
                     playSound(false);
-                    ToastUtils.showCustom(LineCheckActivity.this, data);
+                    ToastNewUtils.getInstance(LineCheckActivity.this).showShortToast(data);
                     return;
                 } else if (ret == 0) {
                     float fv = (float) (Integer.parseInt(data.substring(0, 8), 16) * 0.001);

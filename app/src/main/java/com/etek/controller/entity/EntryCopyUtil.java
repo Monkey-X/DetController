@@ -1,9 +1,9 @@
 package com.etek.controller.entity;
 
-import com.elvishew.xlog.XLog;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.sommerlibrary.utils.MD5Util;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class EntryCopyUtil {
             sb.append(detonator.getCode());
         }
 //        XLog.i(JSON.toJSONString(detList));
-        XLog.i("sb:" + sb.toString());
+        Logger.i("sb:" + sb.toString());
         String token = MD5Util.md5(sb.toString());;
         return token;
     }

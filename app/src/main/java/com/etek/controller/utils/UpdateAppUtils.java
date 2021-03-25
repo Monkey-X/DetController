@@ -11,13 +11,13 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
-import com.elvishew.xlog.XLog;
 
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.dto.AppResp;
 import com.etek.controller.entity.AppUpdateBean;
 import com.etek.controller.model.UpdateAppResp;
 import com.google.gson.Gson;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class UpdateAppUtils {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                XLog.e( "onFailure:" + call.request());
+                Logger.e( "onFailure:" + call.request());
                 updateCallback.onError();
             }
 
@@ -55,13 +55,12 @@ public class UpdateAppUtils {
             public void onResponse(Call call, Response response) throws IOException {
 //                XLog.d(LOG_TAG, "onSuccess:" + response.toString());
                 String updateJson = response.body().string();
-                XLog.d( "onSuccess:" + updateJson);
                 try {
 
-                    XLog.d( "updateJson:" + updateJson);
+                    Logger.d( "updateJson:" + updateJson);
                     Gson gson = new Gson();
                     AppResp result = gson.fromJson(updateJson, AppResp.class);
-                    XLog.d( "result:" + result);
+                    Logger.d( "result:" + result);
                     if (result != null) {
 
                         updateCallback.onSuccess(result);
@@ -88,13 +87,12 @@ public class UpdateAppUtils {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String updateJson = response.body().string();
-                XLog.d( "onSuccess:" + updateJson);
                 try {
 
-                    XLog.d( "updateJson:" + updateJson);
+                    Logger.d( "updateJson:" + updateJson);
                     Gson gson = new Gson();
                     AppUpdateBean result = gson.fromJson(updateJson, AppUpdateBean.class);
-                    XLog.d( "result:" + result);
+                    Logger.d( "result:" + result);
                     if (result != null) {
                         updateCallback.onSuccess(result);
                     }
@@ -135,7 +133,7 @@ public class UpdateAppUtils {
 //        String appUrl = updateInfo.data.appURL;
 
         if (appUrl == null || appUrl.isEmpty()) {
-            XLog.e( "请填写\"App下载地址\"");
+            Logger.e( "请填写\"App下载地址\"");
             return;
         }
 
@@ -145,7 +143,7 @@ public class UpdateAppUtils {
             appUrl = "http://" + appUrl; // 添加Http信息
         }
 
-        XLog.d( "appUrl: " + appUrl);
+        Logger.d( "appUrl: " + appUrl);
 
         DownloadManager.Request request;
         try {

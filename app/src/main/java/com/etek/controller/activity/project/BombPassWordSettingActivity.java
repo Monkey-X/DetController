@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.activity.project.dialog.SudokuDialog;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 public class BombPassWordSettingActivity extends BaseActivity implements View.OnClickListener {

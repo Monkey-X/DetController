@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.etek.controller.R;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 public class ProjectManagerActivity extends BaseActivity implements View.OnClickListener {
 

@@ -11,11 +11,10 @@ import android.widget.TextView;
 
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
-import com.etek.controller.activity.project.dialog.ReprotDialog;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.utils.GeneralDisplayUI;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {

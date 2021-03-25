@@ -18,7 +18,7 @@ import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

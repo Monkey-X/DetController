@@ -1,7 +1,5 @@
 package com.etek.sommerlibrary.utils;
 
-import com.elvishew.xlog.XLog;
-
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -18,7 +16,6 @@ public class IOUtils {
             try {
                 io.close();
             } catch (IOException e) {
-                XLog.e(e);
             }
         }
         return true;

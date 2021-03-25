@@ -1,6 +1,5 @@
 package com.etek.controller.utils;
 
-import com.elvishew.xlog.XLog;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -15,10 +14,7 @@ public class HttpLogger implements HttpLoggingInterceptor.Logger {
             message = new String(message.getBytes(),UTF8);
         } catch (Exception e) {
 //            e.printStackTrace();
-            XLog.tag("HttpLogger").e(e);
         }
-        XLog.tag("HttpLogger").d( message);
-
 
     }
 }

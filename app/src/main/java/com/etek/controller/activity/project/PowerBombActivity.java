@@ -32,7 +32,7 @@ import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.utils.DateStringUtils;
 import com.etek.controller.utils.VibrateUtil;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.List;

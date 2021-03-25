@@ -8,13 +8,12 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
-import com.etek.controller.activity.project.ReportDetailActivity2;
 import com.etek.controller.adapter.ProjectReportAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.gen.PendingProjectDao;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;

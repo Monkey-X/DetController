@@ -21,7 +21,7 @@ import com.etek.controller.activity.project.manager.DataCleanManager;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.utils.GeneralDisplayUI;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 import com.github.angads25.toggle.interfaces.OnToggledListener;
 import com.github.angads25.toggle.model.ToggleableView;

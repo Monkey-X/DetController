@@ -19,8 +19,7 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.etek.controller.R;
 import com.etek.controller.hardware.util.DetLog;
-import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.utils.ToastUtils;
+import com.etek.controller.activity.BaseActivity;
 
 import android.util.Log;
 
@@ -130,7 +129,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             String str=sdf.format(date);
             setStringInfo("LocationCacheTime",str);
 
-            ToastUtils.showCustom(MapActivity.this,"已获取经纬度！");
+            ToastNewUtils.getInstance(MapActivity.this).showShortToast("已获取经纬度！");
         }else{
             Log.d(TAG,"不缓存经纬度");
         }

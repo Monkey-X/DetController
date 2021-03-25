@@ -24,7 +24,6 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
@@ -62,9 +61,10 @@ import com.etek.controller.utils.BeanPropertiesUtil;
 import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.RptUtil;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
+import com.orhanobut.logger.Logger;
 
 
 import java.io.IOException;
@@ -204,7 +204,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 DetLog.writeLog(TAG,String.format("距离上次定位时间（%s）太长，缓存不使用",strCacheTime));
                 return;
             }
-            Log.d(TAG,"距上次定位相差（秒）："+ldiff);
+            Logger.d(TAG,"距上次定位相差（秒）："+ldiff);
         }catch (Exception e){
             return;
         }
@@ -290,7 +290,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
             @Override
             public void onFailure(Call call, IOException e) {
-                XLog.e("IOException:", e.getMessage());
+                Logger.e("IOException:", e.getMessage());
             }
 
             @Override
@@ -308,8 +308,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                             }
                         }
                     }
-                    XLog.d("white:" + whiteList);
-                    XLog.d("black:" + blackList);
+                    Logger.d("white:" + whiteList);
+                    Logger.d("black:" + blackList);
                 }
             }
         });
@@ -350,7 +350,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         Intent intent = getIntent();
         type = intent.getStringExtra("type");
         proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
-        XLog.d("proId: " + proId);
+        Logger.d("proId: " + proId);
         if (proId >= 0) {
             pendingProject = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
             pendingProject.refresh();
@@ -666,7 +666,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * @param onlineCheckResp
      */
     private long storeProjectInfo(ProjectFileDto projectFile, OnlineCheckResp onlineCheckResp) {
-        XLog.v("onlineCheckResp:"+ onlineCheckResp);
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setApplyDate(onlineCheckResp.getSqrq());
         projectInfoEntity.setProCode(projectFile.getXmbh());
@@ -683,7 +682,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if (proId == 0) {
             return 0;
         }
-        XLog.v("proid:"+proId);
         Lgs lgs = onlineCheckResp.getLgs();
         if (!lgs.getLg().isEmpty()) {
             List<DetonatorEntity> detonatorEntityList = new ArrayList<>();

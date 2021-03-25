@@ -9,15 +9,15 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;
+import com.orhanobut.logger.Logger;
 
 
 import java.io.File;
@@ -85,7 +85,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                XLog.e(e.getMessage());
+                Logger.e(e.getMessage());
             }
         }
     }

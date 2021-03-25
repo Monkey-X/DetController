@@ -4,7 +4,6 @@ package com.etek.controller.dto;
 
 
 import com.alibaba.fastjson.JSON;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.entity.DetController;
 import com.etek.controller.enums.ResultErrEnum;
 
@@ -12,6 +11,7 @@ import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.Base64Utils;
 import com.etek.sommerlibrary.utils.DES3Utils;
+import com.orhanobut.logger.Logger;
 
 
 public class ProjectFileDto {
@@ -181,7 +181,7 @@ public class ProjectFileDto {
                     mingma = detInfoStr;
                     detInfoDto = JSON.parseObject(detInfoStr, ProInfoDto.class);
 
-                    XLog.d(detInfoDto.toString());
+                    Logger.d(detInfoDto.toString());
                     if (detInfoDto == null) {
                         return Result.errorMsg("解析数据为空");
                     }
@@ -189,7 +189,7 @@ public class ProjectFileDto {
                 }
 
             } catch (Exception e) {
-                XLog.e(e.getMessage());
+                Logger.e(e.getMessage());
 
                 return Result.errorMsg("数据错误：" + e.getMessage());
 

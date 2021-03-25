@@ -12,7 +12,7 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.gen.PendingProjectDao;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 
 /**

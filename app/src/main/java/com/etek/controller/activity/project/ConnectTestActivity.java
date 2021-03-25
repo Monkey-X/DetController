@@ -12,16 +12,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.adapter.ConnectTestAdapter;
 import com.etek.controller.adapter.ProjectDetailAdapter;
@@ -36,8 +33,9 @@ import com.etek.controller.persistence.entity.ProjectDetonator;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.utils.VibrateUtil;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,7 +96,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      */
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
-        XLog.d("proId: " + proId);
+        Logger.d("proId: " + proId);
     }
 
     /**

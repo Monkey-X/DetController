@@ -15,7 +15,7 @@ import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.Globals;
 import com.etek.controller.model.User;
 import com.etek.controller.utils.IdCardUtil;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

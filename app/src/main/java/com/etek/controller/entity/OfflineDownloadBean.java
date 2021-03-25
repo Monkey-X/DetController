@@ -1,6 +1,7 @@
 package com.etek.controller.entity;
 
-import com.elvishew.xlog.XLog;
+
+import com.orhanobut.logger.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -89,7 +90,6 @@ public class OfflineDownloadBean {
         }
         List<String> dets = new ArrayList<>();
         for (Detonator detonator : detonators) {
-            XLog.d(detonator);
             dets.add(detonator.getDetCode());
 
         }

@@ -36,24 +36,14 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.elvishew.xlog.XLog;
-//import com.j256.ormlite.dao.ForeignCollection;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -379,26 +369,6 @@ public class SommerUtils {
 
     }
 
-    public static boolean copyAppDbToDownloadFolder(Context context,String dbName,String toName)throws IOException {
-        try {
-            File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),toName);
-            //例如"my_data_backup.db"文件
-            File currentDB = context.getApplicationContext().getDatabasePath(dbName); // databaseName =您当前的应用程序数据库名称,例如"my_data.db"
-            if(currentDB.exists()){
-                FileInputStream fis = new FileInputStream(currentDB);
-                FileOutputStream fos = new FileOutputStream(backupDB);
-                fos.getChannel().transferFrom(fis.getChannel(),0,fis.getChannel().size());
-                //或fis.getChannel().transferTo(0,fis.getChannel().size(),fos.getChannel()); 
-                fis.close();
-                fos.close();
-                XLog.i("数据库成功 复制到下载文件夹");
-                return true;
-            } else XLog.i("复制数据库  失败,数据库未找到");
-        } catch(IOException e){
-            XLog.e("复制数据库 失败,原因：",e);
-        }
-        return  false;
-    }
     /**
      * 为HttpGet 的 url 方便的添加多个name value 参数。
      * @param url

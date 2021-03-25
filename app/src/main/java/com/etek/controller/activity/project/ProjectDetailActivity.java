@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
@@ -44,7 +45,7 @@ import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.scan.ScannerInterface;
 import com.etek.controller.utils.DetDelayTimeValidation;
 import com.etek.controller.utils.VibrateUtil;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void initDelaySetting() {
-        String delaySetting = getDelaySetting(AppIntentString.DELAY_SETTING);
+        String delaySetting = SpManager.getIntance().getSpString(AppIntentString.DELAY_SETTING);
         if (!TextUtils.isEmpty(delaySetting)) {
             DetDelayBean detDelayBean = JSON.parseObject(delaySetting, DetDelayBean.class);
             if (detDelayBean != null) {
@@ -369,7 +370,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
                     isStartTimeChange = true;
                     detDelayBean.setStartTime(intTime);
                 }
-                setDelaySetting(AppIntentString.DELAY_SETTING, JSON.toJSONString(detDelayBean));
+                SpManager.getIntance().saveSpString(AppIntentString.DELAY_SETTING, JSON.toJSONString(detDelayBean));
                 delayText.setText(String.valueOf(intTime));
                 dialog.dismiss();
             }
@@ -544,7 +545,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void setDelayTime(DetDelayBean bean) {
         this.detDelayBean = bean;
-        setDelaySetting(AppIntentString.DELAY_SETTING, JSON.toJSONString(bean));
+        SpManager.getIntance().saveSpString(AppIntentString.DELAY_SETTING, JSON.toJSONString(bean));
         if (!detonators.isEmpty()) {
             changeDetDelay();
         }

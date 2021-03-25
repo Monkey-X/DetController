@@ -10,14 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etek.controller.R;
-import com.etek.controller.activity.project.AboutActivity;
-import com.etek.controller.activity.project.MainBoardUpdateActivity;
-import com.etek.controller.activity.project.SettingsActivity2;
-import com.etek.controller.activity.project.UserInfoActivity2;
 
 import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.common.AppConstants;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.AsyncHttpResponseHandler;

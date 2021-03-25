@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.eventbus.MessageEvent;
@@ -34,7 +33,7 @@ import com.etek.controller.model.User;
 import com.etek.controller.scan.ScannerInterface;
 import com.etek.controller.utils.AppUtils;
 import com.etek.controller.utils.UpdateAppUtils;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.ToastUtils;
 import com.orhanobut.logger.Logger;
@@ -95,7 +94,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 mainBoardInfoBean = JSON.parseObject(preInfo, MainBoardInfoBean.class);
             } catch (JSONException e) {
                 e.printStackTrace();
-                XLog.e(e.getMessage());
+                Logger.e(e.getMessage());
             }
         }
     }

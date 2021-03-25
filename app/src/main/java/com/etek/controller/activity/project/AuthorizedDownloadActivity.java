@@ -1,6 +1,5 @@
 package com.etek.controller.activity.project;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +18,7 @@ import com.etek.controller.adapter.ContractAdapter;
 import com.etek.controller.fragment.ProjectDialog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;

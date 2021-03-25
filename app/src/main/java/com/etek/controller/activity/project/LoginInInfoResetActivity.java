@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 public class LoginInInfoResetActivity extends BaseActivity implements View.OnClickListener {

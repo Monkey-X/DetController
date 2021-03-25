@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
@@ -54,7 +52,7 @@ import com.etek.controller.utils.BeanPropertiesUtil;
 import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.JsonUtil;
 import com.etek.controller.utils.RptUtil;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
@@ -447,7 +445,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
     private long storeProjectInfo(final ProjectFileDto projectFile, OnlineCheckResp onlineCheckResp) {
 
-        XLog.v("onlineCheckResp:" + onlineCheckResp);
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setApplyDate(onlineCheckResp.getSqrq());
         projectInfoEntity.setProCode(projectFile.getXmbh());
@@ -464,7 +461,6 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         if (proId == 0) {
             return 0;
         }
-        XLog.v("proid:" + proId);
 
         Lgs lgs = onlineCheckResp.getLgs();
         if (!lgs.getLg().isEmpty()) {

@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.BusChargeCallback;
-import com.etek.sommerlibrary.activity.BaseActivity;
-import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.lang.ref.WeakReference;
 

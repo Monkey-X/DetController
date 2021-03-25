@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
@@ -23,10 +22,11 @@ import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.utils.AppUtils;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.utils.UpdateAppUtils;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
 import com.etek.sommerlibrary.utils.NetUtil;
 import com.etek.sommerlibrary.utils.ToastUtils;
+import com.orhanobut.logger.Logger;
 
 
 import java.io.File;
@@ -64,7 +64,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                 mainBoardInfoBean = JSON.parseObject(preInfo, MainBoardInfoBean.class);
             } catch (JSONException e) {
                 e.printStackTrace();
-                XLog.e(e.getMessage());
+                Logger.e(e.getMessage());
             }
         }
     }

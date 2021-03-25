@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.dialog.ReprotDialog;
@@ -28,7 +27,6 @@ import com.etek.controller.enums.ReportServerEnum;
 import com.etek.controller.enums.ResultErrEnum;
 import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.minaclient.DetMessage;
-import com.etek.controller.minaclient.MessageCodecFactory;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
@@ -37,9 +35,10 @@ import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.NetUtil;
+import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,7 +110,7 @@ public class ReportDetailActivity2 extends BaseActivity {
      */
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
-        XLog.d(TAG,"proIds: " + proId);
+        Logger.d(TAG,"proIds: " + proId);
         projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
     }
@@ -365,7 +364,7 @@ public class ReportDetailActivity2 extends BaseActivity {
         String rptJson = JSON.toJSONString(reportDto, SerializerFeature.WriteMapNullValue);
         DetLog.writeLog(TAG,String.format("上报力芯：%s",rptJson));
         Result result = RptUtil.getRptEncode(rptJson);
-        XLog.d(result);
+        Logger.d(result);
         String url =  AppConstants.ETEKTestServer + AppConstants.ProjectReportTest;
         LinkedHashMap params = new LinkedHashMap();
         params.put("param", result.getData());
@@ -592,7 +591,7 @@ public class ReportDetailActivity2 extends BaseActivity {
             //  先循环发送
             for (int j = 0; j < detMsgs.size(); j++) {
                 byte[] bs = detMsgs.get(j).getBytes();
-                XLog.w("detMsgs:" + new String(bs));
+                Logger.w("detMsgs:" + new String(bs));
                 os.write(bs);
                 DetLog.writeLog(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
                 Thread.sleep(100);

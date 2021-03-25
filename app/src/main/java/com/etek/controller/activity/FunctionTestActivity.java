@@ -11,7 +11,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
 import com.etek.controller.adapter.FunctionTestAdapter;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import java.util.ArrayList;

@@ -1,11 +1,11 @@
 package com.etek.controller.utils;
 
+import com.orhanobut.logger.Logger;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import com.elvishew.xlog.XLog;
 
 public class IdCardUtil {
 
@@ -100,7 +100,7 @@ public class IdCardUtil {
             // 非18位为假
             int s=18;
             if (idcard.length() != s) {
-                XLog.e("身份证位数不正确!");
+                Logger.e("身份证位数不正确!");
                 return false;
             }
             // 获取前17位

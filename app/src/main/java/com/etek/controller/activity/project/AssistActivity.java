@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.etek.controller.R;
 import com.etek.controller.hardware.command.DetApp;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 /**
  * 辅助功能

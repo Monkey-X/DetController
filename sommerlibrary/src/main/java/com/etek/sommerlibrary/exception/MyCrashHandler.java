@@ -46,7 +46,7 @@ public class MyCrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     private String logFilePath = Environment.getExternalStorageDirectory() + File.separator + "Android" +
-            File.separator + "data" + File.separator + BaseApplication.getAppContext().getPackageName() + File.separator + "crashLog";
+            File.separator + "data"  + File.separator + "crashLog";
 
     private void saveThrowableMessage(String errorMessage) {
         if (TextUtils.isEmpty(errorMessage)) {

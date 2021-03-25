@@ -3,10 +3,9 @@ package com.etek.controller.activity.project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.common.AppIntentString;
-import com.etek.sommerlibrary.activity.BaseActivity;
+import com.etek.controller.activity.BaseActivity;
 
 
 /**
@@ -29,7 +28,6 @@ public class AuthBombActivity2 extends BaseActivity implements View.OnClickListe
      */
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
-        XLog.d("proId: " + proId);
     }
 
     /**

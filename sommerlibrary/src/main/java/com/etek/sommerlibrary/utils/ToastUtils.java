@@ -5,10 +5,6 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.etek.sommerlibrary.R;
-import com.maning.mndialoglibrary.MToast;
-import com.maning.mndialoglibrary.config.MToastConfig;
-
 /**
  * Toast工具类
  *
@@ -18,30 +14,6 @@ import com.maning.mndialoglibrary.config.MToastConfig;
 public class ToastUtils {
 
     static Toast toast = null;
-
-
-
-    public static void showCustom(Context context, String text) {
-        MToastConfig config = new MToastConfig.Builder()
-                .setTextColor(context.getResources().getColor(R.color.white))
-                .setBackgroundColor(context.getResources().getColor(R.color.actionBarColor))
-                .setToastIcon(context.getResources().getDrawable(R.mipmap.ic_launcher))
-                .setTextSize(18)
-                .build();
-        MToast.makeTextShort(context, text, config);
-
-    }
-
-    public static void showLongCustom(Context context, String text) {
-        MToastConfig config = new MToastConfig.Builder()
-                .setTextColor(context.getResources().getColor(R.color.white))
-                .setBackgroundColor(context.getResources().getColor(R.color.actionBarColor))
-                .setToastIcon(context.getResources().getDrawable(R.mipmap.ic_launcher))
-                .setTextSize(18)
-                .build();
-        MToast.makeTextLong(context, text, config);
-
-    }
 
 
     public static void show(Context context, String text) {
