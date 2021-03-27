@@ -8,10 +8,20 @@ import com.etek.controller.hardware.test.HttpCallback;
 import com.loopj.android.http.AsyncHttpClient;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,16 +70,6 @@ public class AsyncHttpCilentUtil {
                 .get()//传递请求体
                 .build();
         client.newCall(request).enqueue(httpCallBack);
-//        new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                XLog.e(LOG_TAG,"onFailure:"+call);
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                XLog.d(LOG_TAG,"onSuccess:"+response.toString());
-//            }});//回调方法的使用与get异步请求相同，此时略。
     }
     /**
      * Post请求 异步
@@ -111,6 +111,8 @@ public class AsyncHttpCilentUtil {
             HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLogger());
             logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .hostnameVerifier(new TrustAllHostnameVerifier())
+                    .sslSocketFactory(createSSLSocketFactory())
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .addNetworkInterceptor(logInterceptor)
                     .build();
@@ -198,6 +200,42 @@ public class AsyncHttpCilentUtil {
                     .build();
             okHttpClient.newCall(request).enqueue(callback);
         }).start();
+    }
+
+
+    private static class TrustAllCerts implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
+    }
+
+    private static class TrustAllHostnameVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    }
+    private static SSLSocketFactory createSSLSocketFactory() {
+        SSLSocketFactory ssfFactory = null;
+
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, new TrustManager[]{new TrustAllCerts()}, new SecureRandom());
+
+            ssfFactory = sc.getSocketFactory();
+        } catch (Exception e) {
+        }
+
+        return ssfFactory;
     }
 
 }

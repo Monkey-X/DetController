@@ -20,13 +20,13 @@ import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.persistence.gen.ReportEntityDao;
 import com.etek.controller.persistence.gen.RptDetonatorEntityDao;
 import com.etek.controller.persistence.gen.SingleCheckEntityDao;
+import com.etek.controller.persistence.gen.YunnanAuthBobmEntityDao;
 
 import org.greenrobot.greendao.database.Database;
 
 
 public class DBManager {
     public static String DB_NAME = "et-detonator.db";
-    //    private DaoMaster.DevOpenHelper mHelper;
     private SQLiteDatabase db;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
@@ -40,7 +40,6 @@ public class DBManager {
 
     private DBManager(Context context) {
         dbHelper = new DBHelper(context);
-//        mHelper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);  //创建数据库
         db = dbHelper.getWritableDatabase();
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
@@ -60,14 +59,6 @@ public class DBManager {
         return mDaoSession.getDetonatorEntityDao();
     }
 
-    public SingleCheckEntityDao getSingleCheckEntityDao(){
-        return mDaoSession.getSingleCheckEntityDao();
-    }
-
-    public DetReportEntityDao getDetReportEntityDao() {
-        return mDaoSession.getDetReportEntityDao();
-    }
-
     public ForbiddenZoneEntityDao getForbiddenZoneEntityDao() {
         return mDaoSession.getForbiddenZoneEntityDao();
     }
@@ -80,27 +71,6 @@ public class DBManager {
         return mDaoSession.getProjectInfoEntityDao();
     }
 
-    public ReportEntityDao getReportEntityDao() {
-        return mDaoSession.getReportEntityDao();
-    }
-
-
-    public RptDetonatorEntityDao getRptDetonatorEntityDao() {
-        return mDaoSession.getRptDetonatorEntityDao();
-    }
-
-    public ChkControllerEntityDao getChkControllerEntityDao() {
-        return mDaoSession.getChkControllerEntityDao();
-    }
-
-    public ChkDetonatorEntityDao getChkDetonatorEntityDao() {
-        return mDaoSession.getChkDetonatorEntityDao();
-    }
-
-    public ProjectDownLoadEntityDao getProjectDownLoadEntityDao(){
-        return mDaoSession.getProjectDownLoadEntityDao();
-    }
-
 
     public PendingProjectDao getPendingProjectDao(){
         return mDaoSession.getPendingProjectDao();
@@ -108,6 +78,11 @@ public class DBManager {
 
     public ProjectDetonatorDao getProjectDetonatorDao(){
         return mDaoSession.getProjectDetonatorDao();
+    }
+
+
+    public YunnanAuthBobmEntityDao getYunnanAuthBombEntityDao(){
+        return mDaoSession.getYunnanAuthBobmEntityDao();
     }
 
 }

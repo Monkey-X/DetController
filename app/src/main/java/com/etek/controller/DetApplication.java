@@ -9,8 +9,6 @@ import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.tencent.mmkv.MMKV;
 
-
-
 public class DetApplication extends BaseApplication {
 
     @Override
@@ -29,6 +27,6 @@ public class DetApplication extends BaseApplication {
 
         Logger.addLogAdapter(new AndroidLogAdapter());
         Logger.addLogAdapter(new DiskLogAdapter());
-    }
 
+    }
 }

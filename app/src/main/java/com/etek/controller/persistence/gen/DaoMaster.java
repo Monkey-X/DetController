@@ -22,6 +22,7 @@ public class DaoMaster extends AbstractDaoMaster {
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
         ProjectDownLoadEntityDao.createTable(db, ifNotExists);
+        YunnanAuthBobmEntityDao.createTable(db, ifNotExists);
         ChkControllerEntityDao.createTable(db, ifNotExists);
         ReportEntityDao.createTable(db, ifNotExists);
         ProjectInfoEntityDao.createTable(db, ifNotExists);
@@ -40,6 +41,7 @@ public class DaoMaster extends AbstractDaoMaster {
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         ProjectDownLoadEntityDao.dropTable(db, ifExists);
+        YunnanAuthBobmEntityDao.dropTable(db, ifExists);
         ChkControllerEntityDao.dropTable(db, ifExists);
         ReportEntityDao.dropTable(db, ifExists);
         ProjectInfoEntityDao.dropTable(db, ifExists);
@@ -72,6 +74,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
         registerDaoClass(ProjectDownLoadEntityDao.class);
+        registerDaoClass(YunnanAuthBobmEntityDao.class);
         registerDaoClass(ChkControllerEntityDao.class);
         registerDaoClass(ReportEntityDao.class);
         registerDaoClass(ProjectInfoEntityDao.class);

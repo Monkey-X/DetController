@@ -25,4 +25,11 @@ public class DateStringUtils {
         return format;
     }
 
+
+    public static String getDateString(long time){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(time);
+        String format = simpleDateFormat.format(date);
+        return format;
+    }
 }

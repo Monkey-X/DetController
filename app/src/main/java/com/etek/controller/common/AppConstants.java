@@ -69,4 +69,11 @@ public  class AppConstants {
 
     // 数据恢复时需要输入的校验密码
     public static final String CLEAN_DATA_PASSWORD = "202102";
+
+    // 云南准爆文件的下载地址
+    public static final String YunNanFileDownload = "https://47.117.132.63:6062/api/handset/yunnan/getSqwjBdl";
+
+    // 云南起爆文件的上传地址
+    public static final String YunNanFileUpload = "https://47.117.132.63:6062/api/handset/yunnan/uploadQbwjBdl";
+
 }

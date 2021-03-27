@@ -9,6 +9,7 @@ import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
 import com.etek.controller.dto.ProjectDownLoadEntity;
+import com.etek.controller.yunnan.enetity.YunnanAuthBobmEntity;
 import com.etek.controller.persistence.entity.ChkControllerEntity;
 import com.etek.controller.persistence.entity.ReportEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
@@ -24,6 +25,7 @@ import com.etek.controller.persistence.entity.ControllerEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 
 import com.etek.controller.persistence.gen.ProjectDownLoadEntityDao;
+import com.etek.controller.persistence.gen.YunnanAuthBobmEntityDao;
 import com.etek.controller.persistence.gen.ChkControllerEntityDao;
 import com.etek.controller.persistence.gen.ReportEntityDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
@@ -48,6 +50,7 @@ import com.etek.controller.persistence.gen.DetonatorEntityDao;
 public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig projectDownLoadEntityDaoConfig;
+    private final DaoConfig yunnanAuthBobmEntityDaoConfig;
     private final DaoConfig chkControllerEntityDaoConfig;
     private final DaoConfig reportEntityDaoConfig;
     private final DaoConfig projectInfoEntityDaoConfig;
@@ -63,6 +66,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig detonatorEntityDaoConfig;
 
     private final ProjectDownLoadEntityDao projectDownLoadEntityDao;
+    private final YunnanAuthBobmEntityDao yunnanAuthBobmEntityDao;
     private final ChkControllerEntityDao chkControllerEntityDao;
     private final ReportEntityDao reportEntityDao;
     private final ProjectInfoEntityDao projectInfoEntityDao;
@@ -83,6 +87,9 @@ public class DaoSession extends AbstractDaoSession {
 
         projectDownLoadEntityDaoConfig = daoConfigMap.get(ProjectDownLoadEntityDao.class).clone();
         projectDownLoadEntityDaoConfig.initIdentityScope(type);
+
+        yunnanAuthBobmEntityDaoConfig = daoConfigMap.get(YunnanAuthBobmEntityDao.class).clone();
+        yunnanAuthBobmEntityDaoConfig.initIdentityScope(type);
 
         chkControllerEntityDaoConfig = daoConfigMap.get(ChkControllerEntityDao.class).clone();
         chkControllerEntityDaoConfig.initIdentityScope(type);
@@ -124,6 +131,7 @@ public class DaoSession extends AbstractDaoSession {
         detonatorEntityDaoConfig.initIdentityScope(type);
 
         projectDownLoadEntityDao = new ProjectDownLoadEntityDao(projectDownLoadEntityDaoConfig, this);
+        yunnanAuthBobmEntityDao = new YunnanAuthBobmEntityDao(yunnanAuthBobmEntityDaoConfig, this);
         chkControllerEntityDao = new ChkControllerEntityDao(chkControllerEntityDaoConfig, this);
         reportEntityDao = new ReportEntityDao(reportEntityDaoConfig, this);
         projectInfoEntityDao = new ProjectInfoEntityDao(projectInfoEntityDaoConfig, this);
@@ -139,6 +147,7 @@ public class DaoSession extends AbstractDaoSession {
         detonatorEntityDao = new DetonatorEntityDao(detonatorEntityDaoConfig, this);
 
         registerDao(ProjectDownLoadEntity.class, projectDownLoadEntityDao);
+        registerDao(YunnanAuthBobmEntity.class, yunnanAuthBobmEntityDao);
         registerDao(ChkControllerEntity.class, chkControllerEntityDao);
         registerDao(ReportEntity.class, reportEntityDao);
         registerDao(ProjectInfoEntity.class, projectInfoEntityDao);
@@ -156,6 +165,7 @@ public class DaoSession extends AbstractDaoSession {
     
     public void clear() {
         projectDownLoadEntityDaoConfig.clearIdentityScope();
+        yunnanAuthBobmEntityDaoConfig.clearIdentityScope();
         chkControllerEntityDaoConfig.clearIdentityScope();
         reportEntityDaoConfig.clearIdentityScope();
         projectInfoEntityDaoConfig.clearIdentityScope();
@@ -173,6 +183,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public ProjectDownLoadEntityDao getProjectDownLoadEntityDao() {
         return projectDownLoadEntityDao;
+    }
+
+    public YunnanAuthBobmEntityDao getYunnanAuthBobmEntityDao() {
+        return yunnanAuthBobmEntityDao;
     }
 
     public ChkControllerEntityDao getChkControllerEntityDao() {

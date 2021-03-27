@@ -12,17 +12,29 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.etek.controller.R;
+import com.etek.controller.activity.BaseActivity;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
-import com.etek.controller.adapter.ContractAdapter;
+import com.etek.controller.common.AppConstants;
 import com.etek.controller.fragment.ProjectDialog;
+import com.etek.controller.hardware.test.HttpCallback;
 import com.etek.controller.persistence.DBManager;
-import com.etek.controller.persistence.entity.ProjectInfoEntity;
-import com.etek.controller.activity.BaseActivity;
+import com.etek.controller.utils.AsyncHttpCilentUtil;
+import com.etek.controller.yunnan.YunAuthDataAdapter;
+import com.etek.controller.yunnan.YunDownloadDetailActivity;
+import com.etek.controller.yunnan.bean.OfflineAuthBombBean;
+import com.etek.controller.yunnan.bean.YunnanResponse;
+import com.etek.controller.yunnan.enetity.YunnanAuthBobmEntity;
+import com.etek.controller.yunnan.util.DataTransformUtil;
+import com.google.gson.Gson;
+import com.orhanobut.logger.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import okhttp3.Response;
 
 /**
  * 授权下载
@@ -31,11 +43,11 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
 
     private RecyclerView recycleView;
     private LinearLayout noDataView;
-    private List<ProjectInfoEntity> projectInfos = new ArrayList<>();
-    private ContractAdapter contractAdapter;
-    private String respStr = "";
-    private static final int UPDATE = 10;
+//    private List<ProjectInfoEntity> projectInfos = new ArrayList<>();
+    private List<YunnanAuthBobmEntity> projectInfos = new ArrayList<>();
+//    private ContractAdapter contractAdapter;
     private String TAG = "AuthorizedDownloadActivity";
+    private YunAuthDataAdapter yunAuthDataAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +83,50 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
 
     @Override
     public void makeProject(String strCompanyId, String strAuthCode) {
-      // 进行离线文件的下载 todo
+        // 进行离线文件的下载
+        showProDialog("正在得到检验数据中。。。");
+        String url = AppConstants.YunNanFileDownload + "?dwdm=" + strCompanyId + "&sqm=" + strAuthCode;
+        AsyncHttpCilentUtil.httpPostNew(this, url, null, new HttpCallback() {
+            @Override
+            public void onFaile(IOException e) {
+                missProDialog();
+                ToastNewUtils.getInstance(AuthorizedDownloadActivity.this).showLongToast("请求数据失败！");
+                Logger.w( "yunnan file download faile!");
+            }
+
+            @Override
+            public void onSuccess(Response response) {
+                missProDialog();
+                try {
+                    String string = response.body().string();
+                    if (TextUtils.isEmpty(string)) {
+                        Logger.w("YunNanFileDownload response is empty");
+                        ToastNewUtils.getInstance(AuthorizedDownloadActivity.this).showLongToast("请求数据失败！");
+                        return;
+                    }
+                    Logger.d(string);
+                    YunnanResponse yunnanResponse = new Gson().fromJson(string, YunnanResponse.class);
+                    if (yunnanResponse != null && yunnanResponse.getResult() != null) {
+                       // 获取数据成功，存储到数据库，并刷新界面
+                        OfflineAuthBombBean offlineAuthBombBean = yunnanResponse.getResult();
+                        saveDataToDB(offlineAuthBombBean);
+                    }else{
+                        ToastNewUtils.getInstance(AuthorizedDownloadActivity.this).showLongToast("请求数据失败！");
+                        Logger.w("yunnanResponse is null");
+                    }
+                } catch (IOException e) {
+                    ToastNewUtils.getInstance(AuthorizedDownloadActivity.this).showLongToast("请求数据失败！");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void saveDataToDB(OfflineAuthBombBean offlineAuthBombBean) {
+        YunnanAuthBobmEntity yunnanAuthBobmEntity = DataTransformUtil.tranToEntity(offlineAuthBombBean);
+        DBManager.getInstance().getYunnanAuthBombEntityDao().save(yunnanAuthBobmEntity);
+        projectInfos.add(0,yunnanAuthBobmEntity);
+        yunAuthDataAdapter.notifyDataSetChanged();
     }
 
     private void goToOfflineEditActivity() {
@@ -99,44 +154,65 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
         recycleView = findViewById(R.id.authorized_download_recycleView);
         noDataView = findViewById(R.id.nodata_view);
         recycleView.setLayoutManager(new LinearLayoutManager(this));
-        contractAdapter = new ContractAdapter(R.layout.contract_item_view, projectInfos);
-        recycleView.setAdapter(contractAdapter);
-        contractAdapter.setOnItemClickListener(this);
-        contractAdapter.setOnItemLongClickListener(this);
+//        contractAdapter = new ContractAdapter(R.layout.contract_item_view, projectInfos);
+//        recycleView.setAdapter(contractAdapter);
+//        contractAdapter.setOnItemClickListener(this);
+//        contractAdapter.setOnItemLongClickListener(this);
+
+        yunAuthDataAdapter = new YunAuthDataAdapter(R.layout.contract_item_view, projectInfos);
+        recycleView.setAdapter(yunAuthDataAdapter);
+        yunAuthDataAdapter.setOnItemClickListener(this);
+        yunAuthDataAdapter.setOnItemLongClickListener(this);
     }
 
     /**
      * 初始化数据
      */
     private void initData() {
-        List<ProjectInfoEntity> projectDownLoadEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
-
+//        List<ProjectInfoEntity> projectDownLoadEntities = DBManager.getInstance().getProjectInfoEntityDao().loadAll();
+//
+//        projectInfos.clear();
+//        if (projectDownLoadEntities != null && projectDownLoadEntities.size() > 0) {
+//            noDataView.setVisibility(View.GONE);
+//            Collections.reverse(projectDownLoadEntities);
+//            projectInfos.addAll(projectDownLoadEntities);
+//        } else {
+//            noDataView.setVisibility(View.VISIBLE);
+//        }
+//        contractAdapter.notifyDataSetChanged();
+        List<YunnanAuthBobmEntity> yunnanAuthBobmEntities = DBManager.getInstance().getYunnanAuthBombEntityDao().loadAll();
         projectInfos.clear();
-        if (projectDownLoadEntities != null && projectDownLoadEntities.size() > 0) {
+        if (yunnanAuthBobmEntities != null && yunnanAuthBobmEntities.size() > 0) {
             noDataView.setVisibility(View.GONE);
-            Collections.reverse(projectDownLoadEntities);
-            projectInfos.addAll(projectDownLoadEntities);
+            Collections.reverse(yunnanAuthBobmEntities);
+            projectInfos.addAll(yunnanAuthBobmEntities);
         } else {
             noDataView.setVisibility(View.VISIBLE);
         }
-        contractAdapter.notifyDataSetChanged();
+        yunAuthDataAdapter.notifyDataSetChanged();
     }
 
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        ProjectInfoEntity projectInfoEntity = projectInfos.get(position);
-        Long projectId = projectInfoEntity.getId();
+//        ProjectInfoEntity projectInfoEntity = projectInfos.get(position);
+//        Long projectId = projectInfoEntity.getId();
+//
+//        Intent intent = new Intent(this, AuthDownLoadDetailActivity.class);
+//        intent.putExtra(AuthDownLoadDetailActivity.PROJECT_ID,projectId);
+//        startActivity(intent);
 
-        Intent intent = new Intent(this, AuthDownLoadDetailActivity.class);
-        intent.putExtra(AuthDownLoadDetailActivity.PROJECT_ID,projectId);
+        YunnanAuthBobmEntity yunnanAuthBobmEntity = projectInfos.get(position);
+        Long projectId = yunnanAuthBobmEntity.getId();
+        Intent intent = new Intent(this, YunDownloadDetailActivity.class);
+        intent.putExtra(YunDownloadDetailActivity.PROJECT_ID, projectId);
         startActivity(intent);
     }
 
     @Override
     public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
 
-        ProjectInfoEntity projectInfoEntity = projectInfos.get(position);
+        YunnanAuthBobmEntity yunnanAuthBobmEntity = projectInfos.get(position);
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         builder.setTitle("确定删除吗？");
@@ -150,9 +226,9 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //删除数据
-                DBManager.getInstance().getProjectInfoEntityDao().delete(projectInfoEntity);
+                DBManager.getInstance().getYunnanAuthBombEntityDao().delete(yunnanAuthBobmEntity);
                 projectInfos.remove(position);
-                contractAdapter.notifyDataSetChanged();
+                yunAuthDataAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         });
