@@ -112,11 +112,15 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
     private List<String> whiteList;
     private List<String> blackList;
-    private LocationManager locationManager;
 
     private boolean m_bChecking =false;
 
     private boolean m_bBaiduLocationValid = false;
+
+    private LocationClient mLocationClient;
+    private MyLocationListener myLocationListener;
+
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,10 +169,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initBaiduLocation() {
-        LocationClient locationClient = new LocationClient(getApplicationContext());
+        mLocationClient = new LocationClient(getApplicationContext());
         LocationClientOption option = new LocationClientOption();
-        MyLocationListener myLocationListener = new MyLocationListener();
-        locationClient.registerLocationListener(myLocationListener);
+        myLocationListener = new MyLocationListener();
+        mLocationClient.registerLocationListener(myLocationListener);
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         option.setCoorType("bd09ll");
         option.setScanSpan(0);
@@ -176,8 +180,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         option.setLocationNotify(false);
         option.setWifiCacheTimeOut(2 * 60 * 1000);
         option.setNeedNewVersionRgc(true);
-        locationClient.setLocOption(option);
-        locationClient.start();
+        mLocationClient.setLocOption(option);
+        mLocationClient.start();
 
         m_bBaiduLocationValid = false;
     }
@@ -436,7 +440,32 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     protected void onDestroy() {
         saveData();
         super.onDestroy();
+
+        closeBaiduLocation();
+
+        closeGPSLocation();
     }
+
+
+    private void closeBaiduLocation(){
+        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        if(null!=mLocationClient){
+            mLocationClient.stop();
+
+            mLocationClient.unRegisterLocationListener(myLocationListener);
+            mLocationClient = null;
+        }
+        myLocationListener = null;
+    }
+
+    private void closeGPSLocation(){
+        if(null!=locationManager){
+            locationManager.removeUpdates(locationListener);
+            locationManager = null;
+        }
+        locationListener = null;
+    }
+
 
     /**
      * 进行规则的检查

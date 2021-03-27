@@ -46,6 +46,7 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     private MapView mMapView;
     private BaiduMap map;
     private LocationClient mLocationClient;
+    private MyLocationListener myLocationListener;
 
     private final String TAG ="MapActivity";
 
@@ -84,13 +85,17 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
         //  必须用getApplicationContext()，否则其他地方使用MapActivity会报错
         mLocationClient = new LocationClient(getApplicationContext());
         LocationClientOption option = new LocationClientOption();
-        option.setOpenGps(true); // 打开gps
-        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);   // 高精度
+        option.setOpenGps(true);                                                    // 打开gps
+        option.setCoorType("bd09ll");                                               // 设置坐标类型
+        option.setIsNeedAddress(true);// 位置，一定要设置，否则后面得不到地址
         option.setScanSpan(0);
+        option.setNeedDeviceDirect(true);        // 返回的定位结果包含手机机头的方向
         mLocationClient.setLocOption(option);
-        MyLocationListener myLocationListener = new MyLocationListener();
+        myLocationListener = new MyLocationListener();
         mLocationClient.registerLocationListener(myLocationListener);
         mLocationClient.start();
+
 
         longitude.setText("0.0000");
         latitude.setText("0.0000");
@@ -180,11 +185,33 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mLocationClient.stop();
-        map.setMyLocationEnabled(false);
+
+        closeBaiduLocation();
+
+        closeGPSLocation();
+
         mMapView.onDestroy();
         mMapView = null;
+    }
+
+    private void closeBaiduLocation(){
+        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        if(null!=mLocationClient){
+            mLocationClient.stop();
+
+            mLocationClient.unRegisterLocationListener(myLocationListener);
+            mLocationClient = null;
+        }
+        myLocationListener = null;
+        map.setMyLocationEnabled(false);
+    }
+
+    private void closeGPSLocation(){
+        if(null!=locationManager){
+            locationManager.removeUpdates(locationListener);
+            locationManager = null;
+        }
+        locationListener = null;
     }
 
     private void initGPSLocation(){
@@ -222,8 +249,6 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
 
             // 1秒更新一次，或最小位移变化超过1米更新一次；
             // 注意：此处更新准确度非常低，推荐在service里面启动一个Thread，在run中sleep(10000);然后执行handler.sendMessage(),更新位置
-
-
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
         }else{
             ToastUtils.show(MapActivity.this,"请在设置里授权");

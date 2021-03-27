@@ -364,6 +364,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                         connectTestAdapter.notifyDataSetChanged();
                     }
                 });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+                    }
+                });
                 builder.create().show();
 
                 mPopupWindow.dismiss();
@@ -577,10 +583,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             }
         }
 
-        // 总线下电
-        Log.d(TAG,"总线下电");
-        DetApp.getInstance().MainBoardBusPowerOff();
-
         int nMisCount = misConnectData.size();
         if ((successNum == projectDetonators.size())&&(nMisCount==0)) {
             //全部检测测功了，更新项目状态和，提示进去延时下载
@@ -653,8 +655,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     // 异步进行在线检测
     public class TestAsyncTask extends AsyncTask<String, Integer, Integer> {
-        private boolean m_bmistask = false;
-
         @Override
         protected Integer doInBackground(String... strings) {
             for (int i = 0; i < connectData.size(); i++) {
@@ -664,20 +664,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 boolean b = detSingleCheck(i);
                 publishProgress(i);
             }
-
-            int ret = DetApp.getInstance().ModuleGetID();
-            if(170==ret){
-                //  0xAA：证明无误接雷管；执行Active（0x5A+00000000，所有管子都唤醒）完毕
-                DetApp.getInstance().ModuleSetWakeupStatus(0);
-            }
-
-            //  有误接的雷管
-            if(161==ret
-                ||168==ret
-                ||169==ret){
-                m_bmistask = true;
-            }
-
             return null;
         }
 
@@ -697,17 +683,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
 
-            if(m_bmistask){
-                mistask = new MisDetonatorTask();
-                mistask.execute();
-            }else{
-                connectTestAdapter.notifyDataSetChanged();
-                changeProgressView(true);
-                setSelectBtnVisible(true);
-                updateProjectStatus();
-            }
-
-            m_bmistask = false;
+            mistask = new MisDetonatorTask();
+            mistask.execute();
         }
     }
 
@@ -715,6 +692,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public class MisDetonatorTask extends AsyncTask<String, Integer, Integer>{
         private int m_nMaxRelayTime = 0;
         private long m_nIdNo = 0;
+        private int m_nFirstNum = 0;
+        private int m_nSecondNum = 0;
+
+        private String m_strmsg ="";
 
         @Override
         protected Integer doInBackground(String... strings) {
@@ -725,6 +706,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 public void DisplayText(String strText) {
                     //  展示信息
                     setProDialogText(strText);
+                    m_strmsg = strText;
                 }
 
                 @Override
@@ -756,17 +738,25 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     det.setCode(strDC);
                     det.setDetId(nid+"");
                     det.setStatus(-1);
-                    det.setHolePosition("0-0");
+                    String str = String.format("%d-%d",m_nFirstNum+1,1);
+                    det.setHolePosition(str);
                     det.setRelay(m_nMaxRelayTime);
                     det.setDownLoadStatus(-1);
                     det.setTestStatus(-1);
                     det.setProjectInfoId(proId);
 
                     misConnectData.add(det);
-
-                    Log.d(TAG,"MISCONN DET:"+det.toString());
                 }
             });
+
+            Log.d(TAG,"result = "+result);
+            if(0==result){
+                if(connectData.size()>0) {
+                    playSound(false);
+                }
+                return 0;
+            }
+
             return result;
         }
 
@@ -785,8 +775,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 if(m_nIdNo < det.getId()){
                     m_nIdNo = det.getId();
                 }
+                String[] thisSplit = det.getHolePosition().split("-");
+                if(thisSplit.length>1){
+                    int thisFirstNum = Integer.parseInt(thisSplit[0]);
+                    if(m_nFirstNum<thisFirstNum)
+                        m_nFirstNum = thisFirstNum;
 
-                Log.d(TAG,"PRJOECT DET:"+det.toString());
+                    int thisSecondNum = Integer.parseInt(thisSplit[1]);
+                    m_nSecondNum = thisSecondNum;
+                }
             }
         }
 
@@ -794,16 +791,34 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected void onPostExecute(Integer integer) {
             Log.d(TAG,"MisDetonatorTask onPostExecute");
-
             super.onPostExecute(integer);
             missProDialog();
 
             isCancelTest = false;
-
             connectTestAdapter.notifyDataSetChanged();
             changeProgressView(true);
             setSelectBtnVisible(true);
-            updateProjectStatus();
+
+            // 总线下电
+            Log.d(TAG,"总线下电");
+            DetApp.getInstance().MainBoardBusPowerOff();
+
+            if(integer!=0){
+                playSound(false);
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ConnectTestActivity.this);
+                builder.setCancelable(false);
+                builder.setMessage(m_strmsg);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }else{
+                updateProjectStatus();
+            }
+            return;
 
         }
     }

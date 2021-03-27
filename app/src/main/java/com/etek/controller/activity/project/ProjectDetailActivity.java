@@ -746,7 +746,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             detonatorEntity1.setProjectInfoId(projectId);
             String detId = getDetIdByGm(strgm);
             detonatorEntity1.setDetId(detId);
-            detonatorEntity1.setUid(getDetUid(detId, strgm));
+            detonatorEntity1.setUid(DetIDConverter.getDetUid(detId, strgm));
             DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity1);
             detonators.add(insertPosition, detonatorEntity1);
             projectDetailAdapter.notifyDataSetChanged();
@@ -900,7 +900,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         projectDetonator.setCode(detCode);
         String detId = getDetIdByGm(detCode);
         projectDetonator.setDetId(detId);
-        projectDetonator.setUid(getDetUid(detId, detCode));
+        projectDetonator.setUid(DetIDConverter.getDetUid(detId, detCode));
         if (detonators.size() == 0) {
             projectDetonator.setHolePosition("1-1");
             isStartTimeChange = false;
@@ -996,31 +996,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         return i;
     }
 
-
-    // 雷管ID 获取uid
-    private String getDetUid(String detId ) {
-        StringBuilder stringBuilder = new StringBuilder();
-        int i = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
-        Log.d(TAG, "getDetUid: " + stringBuilder.toString());
-        return stringBuilder.toString();
-    }
-
-    // 雷管ID 获取uid
-    private String getDetUid(String detId, String detdc) {
-        int nid = Integer.parseInt(detId);
-
-        String struid = detdc.substring(0, 2);
-
-        String stry = detdc.substring(2, 3);
-        int nyear = Integer.parseInt(stry);
-        if (nyear == 0x09) {
-            stry = "19";
-        } else {
-            stry = String.valueOf(20 + nyear);
-        }
-        struid = struid + stry + "A8" + String.format("%08X", nid);
-        return struid;
-    }
 
 
 }

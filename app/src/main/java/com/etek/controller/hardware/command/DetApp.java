@@ -2029,12 +2029,24 @@ public class DetApp {
 
             //  [15] //搜索的进程：0x00：正在搜索中；0x01：已经搜索结束
             ret = DataConverter.getByteValue(szdata[15]);
-            if(1==ret){
-                if(null!=cbobj){
-                    cbobj.DisplayText("搜索结束");
-                }
-                break;
-            }
+            switch (ret){
+				case 0:
+					break;
+
+				case 1:
+					cbobj.DisplayText("搜索结束");
+					ModuleSetWakeupStatus(0);
+					//  恢复超时设置
+					m_commobj.SetTimeout(nTimeout);
+					return 0;
+
+				default:
+					cbobj.DisplayText("搜索误接雷管出错，请检查连接后重新检测");
+					ModuleSetWakeupStatus(0);
+					//  恢复超时设置
+					m_commobj.SetTimeout(nTimeout);
+					return ret;
+			}
 
             //  [2] 已搜索到的第N个雷管
             int nNo = DataConverter.getByteValue(szdata[2]);

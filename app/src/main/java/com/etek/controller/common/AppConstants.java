@@ -69,4 +69,7 @@ public  class AppConstants {
 
     // 数据恢复时需要输入的校验密码
     public static final String CLEAN_DATA_PASSWORD = "202102";
+
+    public static final String ETEK_ONLINE_GET_PSWD ="http://47.117.132.63:6062/sms/pword/reset?phone=%s";
+
 }
