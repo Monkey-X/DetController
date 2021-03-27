@@ -131,6 +131,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             HandsetWorkMode.getInstance().setWorkMode(HandsetWorkMode.MODE_TEST);
             startActivity(new Intent(this, HomeActivity2.class));
             finish();
+            return;
         }
 
         if(!isValidCellphoneNo(userStrName)){
@@ -231,9 +232,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
 
         String url = String.format(AppConstants.ETEK_ONLINE_GET_PSWD,phoneno);
-        AsyncHttpCilentUtil.httpPostNew(this, url, null, new HttpCallback() {
+        AsyncHttpCilentUtil.httpsPost(this, url, null, new HttpCallback() {
             @Override
             public void onFaile(IOException e) {
+                e.printStackTrace();
+                Log.d(TAG,e.getMessage());
                 ToastUtils.showShort(LoginActivity.this, "在线获取动态码失败！");
             }
 
@@ -245,6 +248,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 } catch (IOException e) {
                     ToastUtils.showShort(LoginActivity.this, "在线获取动态码失败！");
                     e.printStackTrace();
+                    Log.d(TAG,e.getMessage());
                     return;
                 }
 

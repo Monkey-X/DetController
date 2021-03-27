@@ -79,8 +79,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private PendingProject projectInfoEntity;
 
     private MisDetonatorTask mistask;
-    private List<ProjectDetonator> misConnectData = new ArrayList<>();
-
+    private List<ProjectDetonator> misConnectData = new ArrayList<>();  //  误接的雷管
+    private List<ProjectDetonator> lostDetData = new ArrayList<>();     //  失联的雷管
     private int buttonid = 0;
 
     @Override
@@ -261,19 +261,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
     // 筛选失联 状态
     private void changeMissEvent() {
-        if (connectData == null || connectData.size() == 0) {
-            ToastUtils.show(this, "未录入数据");
-            return;
-        }
-
-        List<ProjectDetonator> missConnect = new ArrayList<>();
-        for (ProjectDetonator connectDatum : connectData) {
-            if (connectDatum.getTestStatus() != 0) {
-                missConnect.add(connectDatum);
-            }
-        }
         connectData.clear();
-        connectData.addAll(missConnect);
+        connectData.addAll(lostDetData);
         connectTestAdapter.notifyDataSetChanged();
     }
 
@@ -344,7 +333,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 android.app.AlertDialog.Builder builder = null;
                 builder = new android.app.AlertDialog.Builder(ConnectTestActivity.this);
                 builder.setCancelable(false);
-                builder.setMessage("雷管["+detonatorEntity.getCode()+"]加入到工程，延时为["+detonatorEntity.getRelay()+"]");
+                builder.setMessage("雷管["+detonatorEntity.getCode()
+                        +"]加入到工程? "
+                        + "\r\n延时："+detonatorEntity.getRelay()
+                        + "\r\n孔位："+detonatorEntity.getHolePosition());
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -367,7 +359,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
+                       dialog.dismiss();
                     }
                 });
                 builder.create().show();
@@ -657,11 +649,17 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public class TestAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
         protected Integer doInBackground(String... strings) {
+            lostDetData.clear();
+
             for (int i = 0; i < connectData.size(); i++) {
                 if (isCancelTest) {
                     return null;
                 }
                 boolean b = detSingleCheck(i);
+                if(!b){
+                    lostDetData.add(connectData.get(i));
+                }
+
                 publishProgress(i);
             }
             return null;

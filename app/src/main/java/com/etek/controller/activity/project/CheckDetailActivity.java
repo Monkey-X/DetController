@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -156,7 +157,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             case R.id.get_location:
                 // 跳转地图界面
                 Intent intent = new Intent(this, MapActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
                 break;
             case R.id.back_img:
                 finish();
@@ -165,6 +166,23 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 projectCheckData();
                 break;
 
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d(TAG,String.format("requestCode: %d ResultCode:%d",requestCode,resultCode));
+        //调用基类的方法，此句代码会自动生成
+        super.onActivityResult(requestCode, resultCode, data);
+        if(1==requestCode){
+            if(1==resultCode){
+                Log.d(TAG,"Map Activity:回调"
+                    + data.getStringExtra("Longitude")
+                    + ","
+                    + data.getStringExtra("Latitude"));
+                locationLongitude.setText(data.getStringExtra("Longitude"));
+                locationLatitude.setText(data.getStringExtra("Latitude"));
+            }
         }
     }
 
@@ -899,65 +917,66 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      */
     private void checkDetonatorData(ProjectInfoEntity projectInfo, Long detInProjectId) {
         int nUsedCount = 0;
+        int unRegisteredCount = 0;
+
         List<DetonatorEntity> detonatorList = projectInfo.getDetonatorList();
         if (detonatorList != null && detonatorList.size() != 0) {
-            int unUserCount = detonatorList.size();
             int unRegiestCount = 0;
-            boolean isUnUsed;
-            for (ProjectDetonator projectDetonator : projectDetonatorList) {
+            boolean isUsed = false;
+            boolean isUnReigstered = true;
 
+            for (ProjectDetonator projectDetonator : projectDetonatorList) {
+                Log.d(TAG,String.format("雷管1：%s\t状态：%d",projectDetonator.getCode(),projectDetonator.getStatus()));
+
+                isUnReigstered = true;
                 //  `在 授权下载 中查找雷管 projectDetonator 是否存在
-                isUnUsed = true;
                 for (DetonatorEntity detonatorEntity : detonatorList) {
                     if (projectDetonator.getCode().equalsIgnoreCase(detonatorEntity.getCode())
                             && projectDetonator.getUid().equalsIgnoreCase(detonatorEntity.getUid())) {
+                        isUnReigstered = false;
 
-                        // 项目中的雷管 projectDetonator 在 授权下载 中找到了 detonatorEntity
-                        if (!DetUtil.getAcCodeFromDet(detonatorEntity).equalsIgnoreCase(detonatorEntity.getWorkCode()))
-                            break;
-
+                        Log.d(TAG,String.format("雷管2：%s\t状态：%d",detonatorEntity.getCode(),detonatorEntity.getStatus()));
                         int nStatus =detonatorEntity.getStatus();
                         switch (nStatus){
                             case 0:         //  0 正常
+                                isUsed = false;
                                 projectDetonator.setStatus(0);
                                 break;
                             case 1:         //  1 黑名单
                                 projectDetonator.setStatus(1);
                                 break;
                             case 2:         //  2 已使用
-                                projectDetonator.setStatus(2);
+                                isUsed = true;
                                 nUsedCount++;
+                                projectDetonator.setStatus(2);
                                 break;
                             case 3:         //  3 不存在
                             default:
+                                isUnReigstered =true;
+                                unRegiestCount++;
                                 projectDetonator.setStatus(nStatus);
                                 break;
                         }
-
-                        unUserCount--;
-                        if (unUserCount < 0) {
-                            unUserCount = 0;
-                        }
-
-                        isUnUsed = false;
-                        projectDetonator.setStatus(0);
                         break;
                     }
                 }
-
-                if (isUnUsed) {     //  没在 授权下载 中找到
-                    projectDetonator.setStatus(3);
+                if(isUnReigstered) {
+                    Log.d(TAG, String.format("雷管4：%s\t不存在", projectDetonator.getCode()));
                     unRegiestCount++;
                 }
             }
-
             refreshData();
+
+            Log.d(TAG,String.format("未注册：%d\t已使用：%d",unRegiestCount,nUsedCount));
 
             //  同时存在已使用和未注册雷管
             if((unRegiestCount>0)&&(nUsedCount>0)){
-                showStatusDialog(CheckRuleEnum.ERR_DET.getMessage() + unRegiestCount);
+                showStatusDialog(String.format(CheckRuleEnum.ERR_DET.getMessage()
+                        ,nUsedCount
+                        ,unRegiestCount));
                 return;
             }
+
             //  未注册雷管
             if (unRegiestCount > 0) {
                 showStatusDialog(CheckRuleEnum.UNREG_DET.getMessage() + unRegiestCount);
@@ -966,7 +985,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
             //  已使用雷管
             if (nUsedCount > 0) {
-                showStatusDialog(CheckRuleEnum.USED_DET.getMessage() + unRegiestCount);
+                showStatusDialog(CheckRuleEnum.USED_DET.getMessage() + nUsedCount);
                 return;
             }
 

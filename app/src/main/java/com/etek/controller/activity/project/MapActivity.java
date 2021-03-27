@@ -166,6 +166,18 @@ public class MapActivity extends BaseActivity implements View.OnClickListener {
             mLocationClient.start();
         }
 
+        double dlongitude = Double.valueOf(longitude.getText().toString());
+        double dlatitude = Double.valueOf(latitude.getText().toString());
+        if((Math.abs(dlongitude)<0.00001)&&(Math.abs(dlatitude)<0.00001)){
+            return;
+        }
+
+        Intent intent=new Intent();
+        intent.putExtra("Longitude",longitude.getText().toString());
+        intent.putExtra("Latitude",latitude.getText().toString());
+        //设置结果码标识当前Activity，回传数据。不管多早调用这句代码，
+        // 这句代码在当前Activity销毁时才会执行，即此Activity销毁时才会回传数据。请求码和结果码不必相同。
+        setResult(1,intent);
     }
 
     @Override
