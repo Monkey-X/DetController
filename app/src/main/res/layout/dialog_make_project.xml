@@ -26,6 +26,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:maxLines="1"
+            android:inputType="number"
             android:background="@null"
             android:padding="5dp"
             android:textSize="18sp" />
@@ -57,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:inputType="number"
             android:background="@null"
             android:padding="5dp"
             android:textSize="18sp" />
@@ -65,7 +67,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="2dp"
         android:background="@color/btn_gray_normal"/>
 
 
