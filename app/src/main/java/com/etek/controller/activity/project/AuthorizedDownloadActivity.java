@@ -123,6 +123,14 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
     }
 
     private void saveDataToDB(OfflineAuthBombBean offlineAuthBombBean) {
+        if (projectInfos.size() !=0) {
+            for (YunnanAuthBobmEntity projectInfo : projectInfos) {
+                if (projectInfo.getFileId() == offlineAuthBombBean.getId()) {
+                    ToastNewUtils.getInstance(this).showShortToast("准爆文件已下载！");
+                    return;
+                }
+            }
+        }
         YunnanAuthBobmEntity yunnanAuthBobmEntity = DataTransformUtil.tranToEntity(offlineAuthBombBean);
         DBManager.getInstance().getYunnanAuthBombEntityDao().save(yunnanAuthBobmEntity);
         projectInfos.add(0,yunnanAuthBobmEntity);
