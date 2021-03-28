@@ -39,6 +39,8 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         public final static Property Latitude = new Property(12, double.class, "latitude", false, "LATITUDE");
         public final static Property ReportStatus = new Property(13, String.class, "reportStatus", false, "REPORT_STATUS");
         public final static Property ControllerId = new Property(14, String.class, "controllerId", false, "CONTROLLER_ID");
+        public final static Property LocationTime = new Property(15, long.class, "locationTime", false, "LOCATION_TIME");
+        public final static Property FileId = new Property(16, String.class, "fileId", false, "FILE_ID");
     }
 
     private DaoSession daoSession;
@@ -71,7 +73,9 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
                 "\"LONGITUDE\" REAL NOT NULL ," + // 11: longitude
                 "\"LATITUDE\" REAL NOT NULL ," + // 12: latitude
                 "\"REPORT_STATUS\" TEXT," + // 13: reportStatus
-                "\"CONTROLLER_ID\" TEXT);"); // 14: controllerId
+                "\"CONTROLLER_ID\" TEXT," + // 14: controllerId
+                "\"LOCATION_TIME\" INTEGER NOT NULL ," + // 15: locationTime
+                "\"FILE_ID\" TEXT);"); // 16: fileId
     }
 
     /** Drops the underlying database table. */
@@ -146,6 +150,12 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         if (controllerId != null) {
             stmt.bindString(15, controllerId);
         }
+        stmt.bindLong(16, entity.getLocationTime());
+ 
+        String fileId = entity.getFileId();
+        if (fileId != null) {
+            stmt.bindString(17, fileId);
+        }
     }
 
     @Override
@@ -214,6 +224,12 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         if (controllerId != null) {
             stmt.bindString(15, controllerId);
         }
+        stmt.bindLong(16, entity.getLocationTime());
+ 
+        String fileId = entity.getFileId();
+        if (fileId != null) {
+            stmt.bindString(17, fileId);
+        }
     }
 
     @Override
@@ -244,7 +260,9 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
             cursor.getDouble(offset + 11), // longitude
             cursor.getDouble(offset + 12), // latitude
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // reportStatus
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14) // controllerId
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // controllerId
+            cursor.getLong(offset + 15), // locationTime
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16) // fileId
         );
         return entity;
     }
@@ -266,6 +284,8 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         entity.setLatitude(cursor.getDouble(offset + 12));
         entity.setReportStatus(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
         entity.setControllerId(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setLocationTime(cursor.getLong(offset + 15));
+        entity.setFileId(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
      }
     
     @Override

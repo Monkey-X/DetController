@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.CheckType;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -56,8 +57,8 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
 
             case R.id.project_check_authorization://检查授权
                 startActivity(new Intent(this, AuthBombActivity2.class).putExtra(AppIntentString.PROJECT_ID, proId));
-                break;
 
+                break;
             case R.id.project_power_bomb://充电起爆
                 startActivity(new Intent(this, PowerBombActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
                 break;

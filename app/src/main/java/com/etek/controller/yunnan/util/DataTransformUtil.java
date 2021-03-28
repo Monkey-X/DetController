@@ -1,12 +1,18 @@
 package com.etek.controller.yunnan.util;
 
+import android.text.TextUtils;
+
+import com.etek.controller.dto.LocationBean;
 import com.etek.controller.yunnan.bean.OfflineAuthBombBean;
 import com.etek.controller.yunnan.enetity.YunnanAuthBobmEntity;
+import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * 数据库存储数据的转换
+ * 云南数据和 数据库存储数据的转换
  */
 public class DataTransformUtil {
 
@@ -66,10 +72,44 @@ public class DataTransformUtil {
             String s = stringBuilder.toString();
 
             stringBuilder1.append(s);
-            if (i != zbqy.size()-1) {
+            if (i != zbqy.size() - 1) {
                 stringBuilder1.append("/");
             }
         }
         return stringBuilder1.toString();
+    }
+
+   // 云南数据获取准爆区域
+    public static List<LocationBean> getQyList(String data) {
+        if (TextUtils.isEmpty(data)) {
+            return null;
+        }
+
+        String[] split = data.split("/");
+        List<LocationBean> locations = new ArrayList<>();
+        if (split != null && split.length > 0) {
+            for (int i = 0; i < split.length; i++) {
+                String locationStr = split[i];
+                Logger.d(locationStr);
+                String[] split1 = locationStr.split("&");
+                double longitude = Double.parseDouble(split1[0]);
+                double latitude = Double.parseDouble(split1[1]);
+                LocationBean locationBean = new LocationBean(longitude, latitude);
+                locations.add(locationBean);
+            }
+        }
+        return locations;
+    }
+
+    // 云南数据的转换
+    public static List<String> strToList(String dataStr) {
+        if (TextUtils.isEmpty(dataStr)) {
+            return null;
+        }
+
+        String[] split = dataStr.split("/");
+
+        List<String> strings = Arrays.asList(split);
+        return strings;
     }
 }

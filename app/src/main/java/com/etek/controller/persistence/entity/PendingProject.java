@@ -202,6 +202,26 @@ public class PendingProject {
     private String reportStatus ; //上报状态
     private String controllerId ; //起爆器设备编号(Sbbh)
 
+    private long locationTime;// 定位的时间
+
+    private String fileId;// 规则文件的id
+
+    public long getLocationTime() {
+        return locationTime;
+    }
+
+    public void setLocationTime(long locationTime) {
+        this.locationTime = locationTime;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
+    }
+
     public double getLongitude() {
         return longitude;
     }
@@ -253,11 +273,11 @@ public class PendingProject {
     @Generated(hash = 796773759)
     private transient PendingProjectDao myDao;
 
-    @Generated(hash = 1485658593)
+    @Generated(hash = 1360227072)
     public PendingProject(Long id, String date, String projectCode, int projectStatus, String proCode,
             String proName, String companyCode, String companyName, String contractCode,
             String contractName, String fileSn, double longitude, double latitude, String reportStatus,
-            String controllerId) {
+            String controllerId, long locationTime, String fileId) {
         this.id = id;
         this.date = date;
         this.projectCode = projectCode;
@@ -273,6 +293,8 @@ public class PendingProject {
         this.latitude = latitude;
         this.reportStatus = reportStatus;
         this.controllerId = controllerId;
+        this.locationTime = locationTime;
+        this.fileId = fileId;
     }
 
     @Generated(hash = 1532219714)

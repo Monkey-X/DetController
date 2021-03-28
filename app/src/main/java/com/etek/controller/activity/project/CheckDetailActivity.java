@@ -4,7 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -25,6 +30,8 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.etek.controller.R;
+import com.etek.controller.activity.BaseActivity;
+import com.etek.controller.activity.project.comment.CheckType;
 import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
@@ -56,16 +63,18 @@ import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.controller.persistence.gen.PendingProjectDao;
 import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
+import com.etek.controller.persistence.gen.YunnanAuthBobmEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
 import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.RptUtil;
-import com.etek.controller.activity.BaseActivity;
+import com.etek.controller.yunnan.enetity.YunnanAuthBobmEntity;
+import com.etek.controller.yunnan.util.CheckHelperUtil;
+import com.etek.controller.yunnan.util.DataTransformUtil;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
 import com.orhanobut.logger.Logger;
-
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -74,17 +83,11 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import java.util.regex.Pattern;
-
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationProvider;
-import android.widget.Toast;
 
 /**
  * 检查详情页
@@ -103,8 +106,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private CheckDetailAdapter checkDetailAdapter;
     private List<ProjectDetonator> projectDetonatorList;
     private PendingProject pendingProject;
-    private int GO_TO_GPS = 150;
-    private StringBuilder uid = new StringBuilder();
     private String type;
 
     private List<String> whiteList;
@@ -136,10 +137,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         TextView textbtn = findViewById(R.id.text_btn);
         textbtn.setText("检查");
         textbtn.setOnClickListener(this);
-        if ("online".equals(type)) {
+        if (CheckType.ONLINE_TYPE.equals(type)) {
             textTitle.setText("在线详情");
-        } else if ("offline".equals(type)) {
+        } else if (CheckType.OFFLINE_TYPE.equals(type)) {
             textTitle.setText("离线详情");
+        } else if (CheckType.YUNNAN_TYPE.equals(type)) {
+            textTitle.setText("检查详情");
         }
     }
 
@@ -186,7 +189,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         locationLongitude.setText("");
         locationLatitude.setText("");
 
-        if ("online".equals(type))
+        if (CheckType.ONLINE_TYPE.equals(type))
             return;
 
         // 上次缓存时间
@@ -276,6 +279,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         locationLongitude.setText(String.format("%.4f" ,longitude));
         locationLatitude.setText(String.format("%.4f",latitude));
 
+        // 记录定位的时间
+        pendingProject.setLocationTime(System.currentTimeMillis());
+
         //DetLog.writeLog(TAG,"刷新本地经纬度："+longitude+","+latitude);
 
         m_bBaiduLocationValid = true;
@@ -348,7 +354,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      */
     private void getProjectId() {
         Intent intent = getIntent();
-        type = intent.getStringExtra("type");
+        type = intent.getStringExtra(CheckType.CHECK_TYPE);
         proId = intent.getLongExtra(AppIntentString.PROJECT_ID, -1);
         Logger.d("proId: " + proId);
         if (proId >= 0) {
@@ -369,7 +375,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private void initView() {
         LinearLayout layoutPro = findViewById(R.id.layout_pro);
         LinearLayout layoutContract = findViewById(R.id.layout_contract);
-        if ("offline".equals(type)) {
+        if (CheckType.OFFLINE_TYPE.equals(type)) {
             layoutContract.setVisibility(View.GONE);
             layoutPro.setVisibility(View.GONE);
         }
@@ -461,14 +467,115 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         }
 
         m_bChecking = true;
-        if ("online".equals(type)) {//在线检查
+        if (CheckType.ONLINE_TYPE.equals(type)) {//在线检查
             getVerifyResult(pendingProject);
-        } else if ("offline".equals(type)) {//离线检查
+        } else if (CheckType.OFFLINE_TYPE.equals(type)) {//离线检查
             offlineCheck();
+        } else if (CheckType.YUNNAN_TYPE.equals(type)) {
+            yunnanCheck();
         }
         m_bChecking = false;
 
 
+    }
+
+    // 进行云南的规则检查
+    private void yunnanCheck() {
+        // 1.获取检查的文件
+        List<YunnanAuthBobmEntity> list = DBManager.getInstance().getYunnanAuthBombEntityDao().queryBuilder().orderDesc(YunnanAuthBobmEntityDao.Properties.Date).list();
+        if (list == null || list.size() == 0) {
+            showStatusDialog("请下载准爆清单文件！");
+            return;
+        }
+        YunnanAuthBobmEntity authDownloadFile = CheckHelperUtil.getAuthDownloadFile(list, projectDetonatorList);
+        if (authDownloadFile == null) {
+            showStatusDialog("没有找到雷管规则所对应的准爆清单文件！");
+            return;
+        }
+        // 2.检查起爆器
+        String strControllerId = controllerId.getText().toString().trim();
+        boolean checkController = CheckHelperUtil.checkController(strControllerId, authDownloadFile);
+        if (!checkController) {
+            showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆", strControllerId));
+            return;
+        }
+
+        // 3.时间规则的检查
+        boolean usefulDate = CheckHelperUtil.checkUsefulDate(authDownloadFile);
+        if (!usefulDate) {
+            // 弹框提示用户
+            showYunHintDialog("可能违反起爆规则，是否继续起爆", 1, authDownloadFile);
+            return;
+        }
+        // 4.起爆区域的检查
+        checkYunLocation(authDownloadFile);
+    }
+
+    // 起爆区的检查
+    private void checkYunLocation(YunnanAuthBobmEntity authDownloadFile) {
+        boolean allowErea = CheckHelperUtil.checkLocation(authDownloadFile, getCacheLongitude(), getCacheLatitude(), pendingProject);
+        if (!allowErea) {
+            showYunHintDialog("定位可能违反起爆规则，是否继续起爆", 2, authDownloadFile);
+            return;
+        }
+        // 5.起爆雷管检查
+        checkDetData(authDownloadFile);
+    }
+
+    // 检查雷管的信息
+    private void checkDetData(YunnanAuthBobmEntity authDownloadFile) {
+        String lgmStr = authDownloadFile.getLgmStr();
+        if (!TextUtils.isEmpty(lgmStr)) {
+            List<String> dets = DataTransformUtil.strToList(lgmStr);
+            if (projectDetonatorList.size() > dets.size()) {
+                showStatusDialog("录入的雷管数大于准爆清单文件中的雷管数！");
+                return;
+            }
+            String detCode = CheckHelperUtil.checkDetFile(dets, projectDetonatorList);
+            if (!TextUtils.isEmpty(detCode)) {
+                showStatusDialog(String.format("接入的%s雷管不在允许起爆清单内，不允许起爆",detCode));
+                return;
+            }
+            // 允许起爆
+            if (pendingProject !=null) {
+                pendingProject.setFileId(authDownloadFile.getFileId());
+            }
+            String detCheckHint = String.format("检测到%1$d发雷管，清单内有%2$d发，是否继续", projectDetonatorList.size(), dets.size());
+            showYunHintDialog(detCheckHint,3,null);
+        }else{
+            showStatusDialog("解析下载的准爆清单文件失败！");
+        }
+    }
+
+
+    private void showYunHintDialog(String msg, int type, YunnanAuthBobmEntity authDownloadFile) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (type) {
+                    case 1:
+                        checkYunLocation(authDownloadFile);
+                        break;
+                    case 2:
+                        checkDetData(authDownloadFile);
+                        break;
+                    case 3:
+                        goToBomb();
+                        break;
+                }
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
     }
 
     private void goToBomb() {
