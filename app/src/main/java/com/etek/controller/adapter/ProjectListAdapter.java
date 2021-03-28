@@ -25,7 +25,7 @@ public class ProjectListAdapter extends BaseQuickAdapter<PendingProject, BaseVie
             isNewProject = false;
         }
         helper.setText(R.id.project_code, item.getProjectCode());
-        helper.setText(R.id.create_date, item.getDate());
+        helper.setText(R.id.create_date, item.getCreateTime());
     }
 
     public void isNewProject(boolean isNewProject) {
