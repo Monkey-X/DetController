@@ -138,6 +138,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
         yunnanAuthBobmEntity.setAuthCode(authCode);
         DBManager.getInstance().getYunnanAuthBombEntityDao().save(yunnanAuthBobmEntity);
         projectInfos.add(0,yunnanAuthBobmEntity);
+        noDataView.setVisibility(View.GONE);
         yunAuthDataAdapter.notifyDataSetChanged();
     }
 
@@ -241,6 +242,9 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
                 DBManager.getInstance().getYunnanAuthBombEntityDao().delete(yunnanAuthBobmEntity);
                 projectInfos.remove(position);
                 yunAuthDataAdapter.notifyDataSetChanged();
+                if (projectInfos.size() == 0) {
+                    noDataView.setVisibility(View.VISIBLE);
+                }
                 dialog.dismiss();
             }
         });
