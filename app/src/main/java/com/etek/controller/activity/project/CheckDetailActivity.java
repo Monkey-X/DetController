@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.dto.Jbqy;
 import com.etek.controller.dto.Jbqys;
 import com.etek.controller.dto.Lg;
@@ -97,7 +99,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     private static final String TAG = "CheckDetailActivity";
     private long proId;
     private TextView contractCode;
-    private TextView controllerId;
+    private EditText controllerId;
     private EditText locationLongitude;
     private EditText locationLatitude;
     private Button getLocation;
@@ -152,7 +154,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             case R.id.get_location:
                 // 跳转地图界面
                 Intent intent = new Intent(this, MapActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
                 break;
             case R.id.back_img:
                 finish();
@@ -161,6 +163,23 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 projectCheckData();
                 break;
 
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d(TAG,String.format("requestCode: %d ResultCode:%d",requestCode,resultCode));
+        //调用基类的方法，此句代码会自动生成
+        super.onActivityResult(requestCode, resultCode, data);
+        if(1==requestCode){
+            if(1==resultCode){
+                Log.d(TAG,"Map Activity:回调"
+                        + data.getStringExtra("Longitude")
+                        + ","
+                        + data.getStringExtra("Latitude"));
+                locationLongitude.setText(data.getStringExtra("Longitude"));
+                locationLatitude.setText(data.getStringExtra("Latitude"));
+            }
         }
     }
 
@@ -384,10 +403,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         controllerId = findViewById(R.id.ctrl_id);
         locationLongitude = findViewById(R.id.ctrl_location_longitude);
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
-
         //  经纬度禁止输入
-//        locationLongitude.setKeyListener(null);
-//        locationLatitude.setKeyListener(null);
+        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
+            locationLongitude.setKeyListener(null);
+            locationLatitude.setKeyListener(null);
+            controllerId.setKeyListener(null);
+        }
 
         getLocation = findViewById(R.id.get_location);
         proCode = findViewById(R.id.pro_code);

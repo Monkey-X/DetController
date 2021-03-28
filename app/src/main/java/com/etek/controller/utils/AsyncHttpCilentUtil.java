@@ -283,4 +283,67 @@ public class AsyncHttpCilentUtil {
         return ssfFactory;
     }
 
+
+    /**
+     * 不认证的https访问
+     * @param activity
+     * @param url
+     * @param params
+     * @param callback
+     */
+    public static void httpsPost(Activity activity,final String url, final Map<String, String> params, final HttpCallback callback) {
+        new Thread(() -> {
+            HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLogger());
+            logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .hostnameVerifier(new TrustAllHostnameVerifier())
+                    .sslSocketFactory(createSSLSocketFactory())
+                    .addNetworkInterceptor(logInterceptor)
+                    .build();
+            FormBody.Builder formBodyBuilder = new FormBody.Builder();
+            if(params!=null){
+                Set<String> keySet = params.keySet();
+                for (String key : keySet) {
+                    String value = params.get(key);
+                    formBodyBuilder.add(key, value);
+                }
+            }
+
+            FormBody formBody = formBodyBuilder.build();
+            Request request = new Request
+                    .Builder()
+                    .post(formBody)
+                    .url(url)
+                    .build();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback!=null) {
+                                callback.onFaile(e);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback!=null) {
+                                callback.onSuccess(response);
+                            }
+                        }
+                    });
+                }
+            });
+        }).start();
+    }
+
+
 }

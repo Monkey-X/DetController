@@ -39,6 +39,7 @@ import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.activity.BaseActivity;
 import com.etek.controller.yunnan.bean.YunUploadBean;
 import com.etek.controller.yunnan.bean.YunUploadResponse;
+import com.etek.controller.yunnan.bean.YunUploadResult;
 import com.etek.controller.yunnan.util.DataTransformUtil;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.NetUtil;
@@ -262,12 +263,16 @@ public class ReportDetailActivity2 extends BaseActivity {
         String companyCode = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_COMPANY_CODE);
         String authCode = projectInfoEntity.getAuthCode();
         String url = String.format(AppConstants.YunNanFileUpload,companyCode,authCode);
+        DetLog.writeLog(TAG,"上报地址："+url);
+        DetLog.writeLog(TAG,"上报数据："+uploadString);
+
         AsyncHttpCilentUtil.httpPostJson(this, url, uploadString, new HttpCallback() {
             @Override
             public void onFaile(IOException e) {
                 missProDialog();
                 showSendRptMessage(null, "2");
                 showPreportStatus();
+                Log.d(TAG,"上报失败！"+ e.getMessage());
                 showStatusDialog("上报失败！");
             }
 
@@ -276,20 +281,22 @@ public class ReportDetailActivity2 extends BaseActivity {
                 missProDialog();
                 try {
                     String string = response.body().string();
+                    Log.d(TAG,"上报返回数据："+string);
                     if (TextUtils.isEmpty(string)) {
                         showSendRptMessage(null, "2");
+                        Log.d(TAG,"上报返回数据为空");
                         showStatusDialog("上报失败！");
                         return;
                     }
 
-                    YunUploadResponse yunUploadResponse = new Gson().fromJson(string, YunUploadResponse.class);
-                    if (yunUploadResponse!=null && yunUploadResponse.isOk()) {
+                    YunUploadResult yunUploadResponse = new Gson().fromJson(string, YunUploadResult.class);
+                    if (yunUploadResponse!=null && yunUploadResponse.getResult().isOk()) {
                         showSendRptMessage(null, "1");
                         showStatusDialog("上报成功！");
                         return;
                     }
                 } catch (IOException e) {
-                    Logger.w("sendreportToYun faile");
+                    Log.d(TAG,"sendreportToYun faile"+e.getMessage());
                 }
                 showSendRptMessage(null, "2");
                 showStatusDialog("上报失败！");

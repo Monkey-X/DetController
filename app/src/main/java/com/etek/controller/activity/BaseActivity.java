@@ -43,6 +43,13 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
+	
+	protected void setProDialogText(String strText){
+        if(null!=progressDialog){
+            progressDialog.setMessage(strText);
+        }
+    }
+		
 
     protected void missProDialog() {
         if (progressDialog != null) {

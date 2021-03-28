@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">雷管E联</string>
+    <string name="app_name">雷管E联_云南</string>
     <string name="action_settings">连接</string>
     <string name="ble_not_supported">不支持BLE</string>
     <string name="scan">扫描</string>

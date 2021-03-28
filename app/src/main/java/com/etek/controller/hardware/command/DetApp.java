@@ -19,15 +19,19 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.etek.controller.hardware.test.BusChargeCallback;
+import com.etek.controller.hardware.test.DetMisconnectionCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.hardware.test.PowerCheckCallBack;
 import com.etek.controller.hardware.test.SingleCheckCallBack;
 import com.etek.controller.hardware.util.DetIDConverter;
+import com.etek.controller.hardware.util.DetLog;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.util.DataConverter;
+import com.szyd.jni.SerialCommFactory;
 
 
 public class DetApp {
@@ -60,7 +64,8 @@ public class DetApp {
 
 		m_detError=new DetErrorCode((byte)0x00,0);
 
-		m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
+		//m_commobj = new HandSetSerialComm( "/dev/ttyS1",115200);
+		m_commobj = SerialCommFactory.getSerialCommObject( "/dev/ttyS1",115200);
 		m_cmdObj = new DetCmd(m_commobj);
 
 		int ret = m_commobj.OpenPort();
@@ -275,7 +280,7 @@ public class DetApp {
 
 		m_detError.Setter((byte)0x50, ret);
 
-		if(0!=ret) return -1;
+		if(0!=ret) return ret;
 
 		byte[] arr = DataConverter.hexStringToBytes(strData.toString());
 		ret = DataConverter.lsbBytes2Int(arr);
@@ -384,8 +389,19 @@ public class DetApp {
 	 * @return
 	 */
 	public int ModuleSetDormantStatus(int nID) {
-		int ret;
-		ret = m_cmdObj.ModCmd59(nID);
+		int ret = 0;
+
+		for(int i=0;i<MAX_TRY;i++){
+			ret = m_cmdObj.ModCmd59(nID);
+			if(0==ret){
+				break;
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
 		m_detError.Setter((byte)0x59, ret);
 
@@ -1183,7 +1199,7 @@ public class DetApp {
 			int ndt = DataConverter.lsbBytes2Int(dt);
 
 			//	比较起爆器厂商编码
-			if(99!=m_bMID){
+			if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
 				if(dc[0]!=m_bMID){
 					Log.d(TAG,String.format("雷管厂商代码：%d，起爆器厂商代码:%d",dc[0],m_bMID));
 					cbobj.DisplayText("雷管和起爆器厂家编码不一致！");
@@ -1948,6 +1964,122 @@ public class DetApp {
 
 		return 0;
 	}
+
+    /**
+     * 查找误接雷管
+     * @param cbobj
+     * @return
+     */
+	public int DetsFindMisconnect(DetMisconnectionCallback cbobj){
+        int ret;
+        final int RESP_LEN = 17;
+        final byte RESP_HEAD = (byte)0xbb;
+        byte[] szdata  = null;
+
+        DetCmd cmd = new DetCmd(m_commobj);
+        DetProtocol prt = new DetProtocol(m_commobj);
+        DetResponse resp = new DetResponse();
+
+        ret = cmd.BoardSendCmd8B();
+        m_detError.Setter((byte)0x8b, ret);
+        if(0!=ret) return ret;
+
+
+        int nTimeout = m_commobj.GetTimeout();
+        m_commobj.SetTimeout(10000);
+
+		if(null!=cbobj)
+			cbobj.DisplayText("开始搜寻误接雷管...");
+
+        while(true) {
+            ret = prt.RecvBlock(RESP_LEN, resp);
+            if(0!=ret) {
+                if(null!=cbobj)
+                    cbobj.DisplayText("搜寻误接的雷管 超时无应答");
+                break;
+            }
+
+            String str0 = resp.GetRespData();
+            szdata = DataConverter.hexStringToBytes(str0);
+
+            if(null==szdata) {
+                if(null!=cbobj)
+                    cbobj.DisplayText("搜寻误接的雷管  获取无效数据");
+                break;
+            }
+            if(szdata.length<RESP_LEN-1) {
+                if(null!=cbobj)
+                    cbobj.DisplayText("搜寻误接的雷管 获取数据长度不足");
+                break;
+            }
+
+            if(szdata[0]!=(byte)RESP_HEAD) {
+                if(null!=cbobj)
+                    cbobj.DisplayText("搜寻误接的雷管 首数据无效");
+                break;
+            }
+
+            //[0] //BB
+            //[1] //固定值0E，有效数据包DAT长度
+            //[2] //已搜索到的第N个雷管
+            //[3~6] //搜索到雷管的ID
+            //[7~14] //搜索到雷管的管码
+            //[15] //搜索的进程：0x00：正在搜索中；0x01：已经搜索结束
+            //[16] //CRC8
+
+            //  [15] //搜索的进程：0x00：正在搜索中；0x01：已经搜索结束
+            ret = DataConverter.getByteValue(szdata[15]);
+            switch (ret){
+				case 0:
+					break;
+
+				case 1:
+					cbobj.DisplayText("搜索结束");
+					ModuleSetWakeupStatus(0);
+					//  恢复超时设置
+					m_commobj.SetTimeout(nTimeout);
+					return 0;
+
+				default:
+					cbobj.DisplayText("搜索误接雷管出错，请检查连接后重新检测");
+					ModuleSetWakeupStatus(0);
+					//  恢复超时设置
+					m_commobj.SetTimeout(nTimeout);
+					return ret;
+			}
+
+            //  [2] 已搜索到的第N个雷管
+            int nNo = DataConverter.getByteValue(szdata[2]);
+            if(0==nNo){
+                continue;
+            }
+
+            byte[] id = new byte[4];
+            byte[] dc = new byte[8];
+
+            System.arraycopy(szdata, 3, id, 0, 4);
+            System.arraycopy(szdata, 7, dc, 0, 8);
+
+            DetIDConverter ic = new DetIDConverter();
+            String strdc = ic.GetDisplayDC(dc);
+
+            ret = DataConverter.lsbBytes2Int(id);
+            if(cbobj!=null){
+                cbobj.DisplayText(String.format("搜寻到 第%d颗 误接雷管",nNo));
+                cbobj.FindMisconnectDet(nNo,ret,strdc);
+            }
+
+            Log.d(TAG,String.format("第 %d 颗雷管 %s",nNo,strdc));
+        }
+
+		ModuleSetWakeupStatus(0);
+
+        //  恢复超时设置
+        m_commobj.SetTimeout(nTimeout);
+
+        return 0;
+    }
+
 
 	public void testDetAPP() {
 		String strErrMsg ="";

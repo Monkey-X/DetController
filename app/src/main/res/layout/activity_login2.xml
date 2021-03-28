@@ -20,7 +20,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="90dp"
         android:gravity="center"
-        android:text="雷管E联_D"
+        android:text="雷管E联_云南"
         android:textColor="@color/white"
         android:textSize="28sp" />
 
@@ -121,6 +121,19 @@
             android:textColor="@color/white"
             android:textSize="18sp">
 
+        </TextView>
+        <TextView
+            android:id="@+id/get_online_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:textAlignment="textEnd"
+            android:textSize="14dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="获取认证码"
+            android:textColor="@color/blue"
+            tools:ignore="RtlCompat">
         </TextView>
 
     </LinearLayout>

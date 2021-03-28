@@ -1,6 +1,7 @@
 package com.etek.controller.yunnan.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.etek.controller.dto.LocationBean;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -18,6 +19,7 @@ import java.util.Random;
  */
 public class CheckHelperUtil {
 
+    private static final String TAG="CheckHelperUtil";
     /**
      * 云南项目获取比对的离线准爆文件
      *
@@ -94,11 +96,15 @@ public class CheckHelperUtil {
             return true;
         }
 
-        Logger.d("准爆半径：" + authDownloadFile.getZbbj());
+        // 缺省认为准爆报警为10km
+        if(0==authDownloadFile.getZbbj())
+            authDownloadFile.setZbbj(10);
+
+        Log.d(TAG,"准爆半径：" + authDownloadFile.getZbbj());
         for (LocationBean locationBean : qyList) {
             LocationUtil.LocationRange range = LocationUtil.getAround(locationBean.getLatitude(), locationBean.getLongitude(), authDownloadFile.getZbbj());
 
-            Logger.d(String.format("缓存[%.4f,%.4f], 范围[%.4f,%.4f]",
+            Log.d(TAG,String.format("缓存[%.4f,%.4f], 范围[%.4f,%.4f]",
                     cacheLongitude, cacheLatitude,
                     locationBean.getLongitude(), locationBean.getLatitude()));
             if (cacheLatitude > range.getMinLat()

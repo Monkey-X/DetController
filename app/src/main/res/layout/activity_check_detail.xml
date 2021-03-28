@@ -74,7 +74,7 @@
             android:layout_marginLeft="10dp"
             android:text="@string/device_id" />
 
-        <TextView
+        <EditText
             android:id="@+id/ctrl_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

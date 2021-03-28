@@ -25,6 +25,7 @@ import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.activity.service.DownloadUtil;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.entity.AppUpdateBean;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.hardware.command.DetApp;
@@ -390,6 +391,7 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 mainBoardInfoBean.setStrSNO(strSNO);
                 mainBoardInfoBean.setStrConfig(strConfig);
                 setStringInfo(getString(R.string.controller_sno), strSNO);
+                HandsetWorkMode.getInstance().setControllerNo(strSNO);
                 setStringInfo(getString(R.string.mainBoardInfo_sp), JSON.toJSONString(mainBoardInfoBean));
                 DetApp.getInstance().SetCommTimeout(5000);
             }

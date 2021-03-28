@@ -76,4 +76,5 @@ public  class AppConstants {
     // 云南起爆文件的上传地址
     public static final String YunNanFileUpload = "https://47.117.132.63:6062/api/handset/yunnan/uploadQbwjBdl?dwdm=%1$s&sqm=%2$s";
 
+    public static final String ETEK_ONLINE_GET_PSWD ="https://47.117.132.63:6062/sms/pword/reset?phone=%s";
 }

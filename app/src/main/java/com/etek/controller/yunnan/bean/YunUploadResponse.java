@@ -2,14 +2,17 @@ package com.etek.controller.yunnan.bean;
 
 public class YunUploadResponse {
 
-    boolean ok;
+    String ok;
     String msg;
 
     public boolean isOk() {
-        return ok;
+        if(ok.toUpperCase().equals("TRUE"))
+            return true;
+
+        return false;
     }
 
-    public void setOk(boolean ok) {
+    public void setOk(String ok) {
         this.ok = ok;
     }
 

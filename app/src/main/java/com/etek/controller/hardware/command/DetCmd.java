@@ -320,6 +320,20 @@ public class DetCmd {
 		return ret;
 	}
 
+	/*
+	* 搜寻误接的雷管（总线此时必须有电！）
+	* */
+	public int BoardSendCmd8B() {
+		byte[] szcmd = new byte[2];
+
+		szcmd[0]=(byte)0x8B;szcmd[1]=0x00;
+
+		DetProtocol prt = new DetProtocol(m_commobj);
+
+		int ret = prt.SendBlock(szcmd);
+		return ret;
+	}
+
 	/***
 	 * 雷管网络充电流程
 	 * @return

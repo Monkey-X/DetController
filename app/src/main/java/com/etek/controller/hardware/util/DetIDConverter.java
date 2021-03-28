@@ -6,6 +6,9 @@ package com.etek.controller.hardware.util; /***
 
 import android.util.Log;
 
+import com.etek.controller.common.HandsetWorkMode;
+import com.etek.controller.hardware.command.DetApp;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -239,7 +242,7 @@ public class DetIDConverter {
             return false;
         }
 
-        if(99!=m_bMID){
+        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
             if(ret!=m_bMID){
                 String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",ret,m_bMID);
                 Log.d(TAG, strmsg);
@@ -269,7 +272,7 @@ public class DetIDConverter {
      */
     private static boolean VerifyOldQRCheckValue(String strQRCode){
 
-        if(99!=m_bMID){
+        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
             if(61!=m_bMID){
                 String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",61,m_bMID);
                 Log.d(TAG, strmsg);
@@ -332,4 +335,29 @@ public class DetIDConverter {
         return;
     }
 
+
+    // 雷管ID 获取uid
+    public static String getDetUid(String detId ) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int i = DetApp.getInstance().ModuleGetUID(Integer.parseInt(detId), stringBuilder);
+        Log.d(TAG, "getDetUid: " + stringBuilder.toString());
+        return stringBuilder.toString();
+    }
+
+    // 雷管ID 获取uid
+    public static  String getDetUid(String detId, String detdc) {
+        int nid = Integer.parseInt(detId);
+
+        String struid = detdc.substring(0, 2);
+
+        String stry = detdc.substring(2, 3);
+        int nyear = Integer.parseInt(stry);
+        if (nyear == 0x09) {
+            stry = "19";
+        } else {
+            stry = String.valueOf(20 + nyear);
+        }
+        struid = struid + stry + "A8" + String.format("%08X", nid);
+        return struid;
+    }
 }
