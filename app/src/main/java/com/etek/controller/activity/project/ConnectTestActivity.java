@@ -542,8 +542,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
         detonatorEntity.setTestStatus(testResult);
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
-        playSound(testResult == 0);
-
         //  Halt
         DetApp.getInstance().ModuleSetDormantStatus(Integer.parseInt(detId));
         return testResult == 0;
@@ -735,7 +733,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     det.setUid(DetIDConverter.getDetUid(nid+"",strDC));
                     det.setCode(strDC);
                     det.setDetId(nid+"");
-                    det.setStatus(-1);
+                    det.setStatus(3);
                     String str = String.format("%d-%d",m_nFirstNum+1,1);
                     det.setHolePosition(str);
                     det.setRelay(m_nMaxRelayTime);
