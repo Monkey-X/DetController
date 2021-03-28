@@ -286,6 +286,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                         showSendRptMessage(null, "2");
                         Log.d(TAG,"上报返回数据为空");
                         showStatusDialog("上报失败！");
+                        showPreportStatus();
                         return;
                     }
 
@@ -293,6 +294,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                     if (yunUploadResponse!=null && yunUploadResponse.getResult().isOk()) {
                         showSendRptMessage(null, "1");
                         showStatusDialog("上报成功！");
+                        showPreportStatus();
                         return;
                     }
                 } catch (IOException e) {
