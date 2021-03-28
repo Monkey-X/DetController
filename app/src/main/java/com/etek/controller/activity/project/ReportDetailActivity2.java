@@ -270,10 +270,8 @@ public class ReportDetailActivity2 extends BaseActivity {
             @Override
             public void onFaile(IOException e) {
                 missProDialog();
-                showSendRptMessage(null, "2");
-                showPreportStatus();
                 Log.d(TAG,"上报失败！"+ e.getMessage());
-                showStatusDialog("上报失败！");
+                showYunReport("上报失败！","2");
             }
 
             @Override
@@ -283,28 +281,28 @@ public class ReportDetailActivity2 extends BaseActivity {
                     String string = response.body().string();
                     Log.d(TAG,"上报返回数据："+string);
                     if (TextUtils.isEmpty(string)) {
-                        showSendRptMessage(null, "2");
                         Log.d(TAG,"上报返回数据为空");
-                        showStatusDialog("上报失败！");
-                        showPreportStatus();
+                        showYunReport("上报失败！","2");
                         return;
                     }
 
                     YunUploadResult yunUploadResponse = new Gson().fromJson(string, YunUploadResult.class);
                     if (yunUploadResponse!=null && yunUploadResponse.getResult().isOk()) {
-                        showSendRptMessage(null, "1");
-                        showStatusDialog("上报成功！");
-                        showPreportStatus();
+                        showYunReport("上报成功！","1");
                         return;
                     }
                 } catch (IOException e) {
                     Log.d(TAG,"sendreportToYun faile"+e.getMessage());
                 }
-                showSendRptMessage(null, "2");
-                showStatusDialog("上报失败！");
-                showPreportStatus();
+                showYunReport("上报失败！","2");
             }
         });
+    }
+
+    private void showYunReport(String msg,String strStatus){
+        showSendRptMessage(null, strStatus);
+        showStatusDialog(msg);
+        showPreportStatus();
     }
 
     /**
