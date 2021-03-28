@@ -241,7 +241,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         builder.setIcon(R.mipmap.ic_launcher);
         builder.setPositiveButton("确认", (dialog, which) -> {
             dialog.dismiss();
-//            sendReport();
             sendreportToYun();
         });
         builder.setNegativeButton("取消", null);
@@ -391,11 +390,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         DetLog.writeLog(TAG,String.format("上报力芯：%s",rptJson));
 
         // 力芯BackUp/Post接口： 不加密传输
-        //        Result result = RptUtil.getRptEncode(rptJson);
-        //        XLog.d(result);
-        //        LinkedHashMap params = new LinkedHashMap();
-        //        params.put("param", result.getData());
-
         String url = AppConstants.ETEKTestServer + AppConstants.DETBACKUP;
         AsyncHttpCilentUtil.httpPostJson(url, rptJson, new Callback() {
             @Override
@@ -561,70 +555,6 @@ public class ReportDetailActivity2 extends BaseActivity {
         reprotDialog.setReturnString(danlingLoadReturn, zhongbaoLoadReturn);
         reprotDialog.show(getSupportFragmentManager(), "reprot");
     }
-
-//    //  上传到中爆后台
-//    private void sendRptToZhongBao(List<String> detMsgs, boolean firstLoad) {
-//        try {
-//            NioSocketConnector connector = new NioSocketConnector();
-//            connector.getFilterChain().addLast("encode", new ProtocolCodecFilter(new MessageCodecFactory()));
-//            connector.getSessionConfig().setReadBufferSize(2048);
-//            connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10000);
-//            connector.setConnectTimeoutMillis(1000 * 60 * 3);
-//            connector.setHandler(new ReportDetailActivity2.MinaHandler(firstLoad));
-//
-//            ConnectFuture cf;
-//            ReportServerEnum reportServerEnum = ReportServerEnum.getByName(Globals.zhongbaoAddress);
-//            DetLog.writeLog(TAG,String.format("中爆地址：%s:%d",reportServerEnum.getAddress(), reportServerEnum.getPort()));
-//
-//            cf = connector.connect(new InetSocketAddress(reportServerEnum.getAddress(), reportServerEnum.getPort()));
-//            cf.awaitUninterruptibly(10, TimeUnit.SECONDS);
-//            if(cf.isConnected()){
-//                DetLog.writeLog(TAG,String.format("中爆 isConnteded"));
-//            }else{
-//                DetLog.writeLog(TAG,String.format("中爆 is Not Connteded"));
-//                zhongbaoLoadReturn ="中爆服务器连接失败！";
-//
-//                missProDialog();
-//
-//                Log.d(TAG,"showReproteDialog4");
-//                showReproteDialog();
-//                return;
-//            }
-//
-//            for (int j = 0; j < detMsgs.size(); j++) {
-//                byte[] bs = detMsgs.get(j).getBytes();
-//                XLog.w("detMsgs:" + new String(bs));
-//                cf.getSession().write(bs);
-//                Thread.sleep(100);
-//                DetLog.writeLog(TAG,String.format("中爆 包[%d]: (%s)发送成功！",j+1,detMsgs.get(j)));
-//            }
-//
-//            cf.getSession().getCloseFuture().awaitUninterruptibly();
-//            if(cf.isDone()){
-//                DetLog.writeLog(TAG,String.format("中爆 上报结束"));
-//            }else{
-//                DetLog.writeLog(TAG,String.format("中爆 上报失败"));
-//                //zhongbaoLoadReturn ="上报中爆失败";
-//            }
-//            //zhongbaoLoadReturn ="上报中爆成功";
-//            //uploadToZhongBaoSuccess(firstLoad);
-//
-//            connector.dispose();
-//        } catch (Exception e) {
-//            DetLog.writeLog(TAG, String.format("中爆 发送失败:%s", e.getMessage()));
-//            showSendRptMessage("上报中爆失败", "2");
-//            zhongbaoLoadReturn = String.format("上报中爆失败：%s",e.getMessage());
-//            uploadToZhongBaoFail(firstLoad);
-//        } finally {
-//            DetLog.writeLog(TAG,String.format("中爆 发送结束!"));
-//        }
-//
-//        missProDialog();
-//
-//        Log.d(TAG,"showReproteDialog5");
-//        showReproteDialog();
-//        return;
-//    }
 
     //  上传到中爆后台
     private void sendRptToZhongBaoSocket(List<String> detMsgs, boolean firstLoad) {
@@ -821,74 +751,6 @@ public class ReportDetailActivity2 extends BaseActivity {
 
         return msgs;
     }
-
-//    public class MinaHandler extends IoHandlerAdapter {
-//
-//        private boolean firstLoad;
-//
-//        public MinaHandler(boolean firstLoad) {
-//            this.firstLoad = firstLoad;
-//        }
-//
-//        public void messageReceived(IoSession session, Object message) {
-//            if (message == null) {
-//                DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误");
-//                showSendRptMessage("上传中爆服务器错误!", "2");
-//                zhongbaoLoadReturn = "上传中爆服务器错误";
-//                uploadToZhongBaoFail(firstLoad);
-//                return;
-//            }
-//            String msg = new String((byte[]) message).trim();
-//            DetLog.writeLog(TAG,"中爆返回:"+msg);
-//            if (!StringUtils.isBlank(msg)) {
-//                String[] cmds = msg.split("\\$");
-//                XLog.d(cmds[0]);
-//                if (cmds[0].contains("O")) {
-//                    showSendRptMessage("上传中爆服务器成功!", "1");
-//                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器成功");
-//                    zhongbaoLoadReturn = "上传中爆服务器成功";
-//                    uploadToZhongBaoSuccess(firstLoad);
-//                } else {
-//                    zhongbaoLoadReturn = "上传中爆服务器错误";
-//                    DetLog.writeLog(TAG, "messageReceived：上传中爆服务器错误 not contain 0");
-//                    showSendRptMessage("上传中爆服务器错误!", "2");
-//                    uploadToZhongBaoFail(firstLoad);
-//                }
-//                Log.d(TAG,"CLOSE Session");
-//                session.closeNow();
-//            }
-//        }
-//
-//        public void messageSent(IoSession session, Object message) {
-//
-//        }
-//
-//        public void sessionClosed(IoSession session) {
-//            session.closeNow();
-//            XLog.e("sessionClosed");
-//        }
-//
-//        public void sessionCreated(IoSession session) {
-//            IoSessionConfig cfg1 = session.getConfig();
-//            if (cfg1 instanceof SocketSessionConfig) {
-//                SocketSessionConfig cfg = (SocketSessionConfig) session.getConfig();
-//                cfg.setReceiveBufferSize(2 * 1024 * 1024);
-//                cfg.setReadBufferSize(2 * 1024 * 1024);
-//                cfg.setKeepAlive(true);
-//                cfg.setSoLinger(0);
-//                cfg.setTcpNoDelay(true);
-//                cfg.setWriteTimeout(1000);
-//            }
-//        }
-//
-//        public void sessionIdle(IoSession session, IdleStatus idle) throws Exception {
-//            XLog.e("sessionIdle");
-//        }
-//
-//        public void sessionOpened(IoSession session) {
-//            XLog.w("sessionOpened");
-//        }
-//    }
 
     /**
      * 上传中爆服务器失败
