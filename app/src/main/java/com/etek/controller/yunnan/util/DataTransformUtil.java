@@ -3,7 +3,12 @@ package com.etek.controller.yunnan.util;
 import android.text.TextUtils;
 
 import com.etek.controller.dto.LocationBean;
+import com.etek.controller.persistence.entity.PendingProject;
+import com.etek.controller.persistence.entity.ProjectDetonator;
+import com.etek.controller.utils.DateStringUtils;
 import com.etek.controller.yunnan.bean.OfflineAuthBombBean;
+import com.etek.controller.yunnan.bean.YunDetInfoBean;
+import com.etek.controller.yunnan.bean.YunUploadBean;
 import com.etek.controller.yunnan.enetity.YunnanAuthBobmEntity;
 import com.orhanobut.logger.Logger;
 
@@ -111,5 +116,32 @@ public class DataTransformUtil {
 
         List<String> strings = Arrays.asList(split);
         return strings;
+    }
+
+    // 获取上报给云南的数据
+    public static YunUploadBean getYunUploadData(PendingProject projectInfoEntity, List<ProjectDetonator> detonatorEntityList){
+        YunUploadBean yunUploadBean = new YunUploadBean();
+        yunUploadBean.setId(projectInfoEntity.getFileId());
+        String dateString = DateStringUtils.getDateString(projectInfoEntity.getLocationTime());
+        yunUploadBean.setDwsj(dateString);
+        yunUploadBean.setQbq(projectInfoEntity.getControllerId());
+        List<Double> locations = new ArrayList<>();
+        locations.add(projectInfoEntity.getLongitude());
+        locations.add(projectInfoEntity.getLatitude());
+        yunUploadBean.setZbqy(locations);
+        yunUploadBean.setQssj(projectInfoEntity.getCreateTime());
+
+        List<YunDetInfoBean> yunDetInfoBeans = new ArrayList<>();
+        for (ProjectDetonator projectDetonator : detonatorEntityList) {
+            YunDetInfoBean yunDetInfoBean = new YunDetInfoBean();
+            yunDetInfoBean.setLgm(projectDetonator.getCode());
+            yunDetInfoBean.setUID(projectDetonator.getUid());
+            yunDetInfoBean.setZt("1");
+            yunDetInfoBeans.add(yunDetInfoBean);
+        }
+
+        yunUploadBean.setLgm(yunDetInfoBeans);
+
+        return yunUploadBean;
     }
 }

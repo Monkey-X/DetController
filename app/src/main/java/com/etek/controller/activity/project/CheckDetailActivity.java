@@ -539,6 +539,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             // 允许起爆
             if (pendingProject !=null) {
                 pendingProject.setFileId(authDownloadFile.getFileId());
+                pendingProject.setAuthCode(authDownloadFile.getAuthCode());
             }
             String detCheckHint = String.format("检测到%1$d发雷管，清单内有%2$d发，是否继续", projectDetonatorList.size(), dets.size());
             showYunHintDialog(detCheckHint,3,null);

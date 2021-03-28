@@ -41,6 +41,8 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         public final static Property ControllerId = new Property(14, String.class, "controllerId", false, "CONTROLLER_ID");
         public final static Property LocationTime = new Property(15, long.class, "locationTime", false, "LOCATION_TIME");
         public final static Property FileId = new Property(16, String.class, "fileId", false, "FILE_ID");
+        public final static Property CreateTime = new Property(17, String.class, "createTime", false, "CREATE_TIME");
+        public final static Property AuthCode = new Property(18, String.class, "authCode", false, "AUTH_CODE");
     }
 
     private DaoSession daoSession;
@@ -75,7 +77,9 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
                 "\"REPORT_STATUS\" TEXT," + // 13: reportStatus
                 "\"CONTROLLER_ID\" TEXT," + // 14: controllerId
                 "\"LOCATION_TIME\" INTEGER NOT NULL ," + // 15: locationTime
-                "\"FILE_ID\" TEXT);"); // 16: fileId
+                "\"FILE_ID\" TEXT," + // 16: fileId
+                "\"CREATE_TIME\" TEXT," + // 17: createTime
+                "\"AUTH_CODE\" TEXT);"); // 18: authCode
     }
 
     /** Drops the underlying database table. */
@@ -156,6 +160,16 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         if (fileId != null) {
             stmt.bindString(17, fileId);
         }
+ 
+        String createTime = entity.getCreateTime();
+        if (createTime != null) {
+            stmt.bindString(18, createTime);
+        }
+ 
+        String authCode = entity.getAuthCode();
+        if (authCode != null) {
+            stmt.bindString(19, authCode);
+        }
     }
 
     @Override
@@ -230,6 +244,16 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         if (fileId != null) {
             stmt.bindString(17, fileId);
         }
+ 
+        String createTime = entity.getCreateTime();
+        if (createTime != null) {
+            stmt.bindString(18, createTime);
+        }
+ 
+        String authCode = entity.getAuthCode();
+        if (authCode != null) {
+            stmt.bindString(19, authCode);
+        }
     }
 
     @Override
@@ -262,7 +286,9 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // reportStatus
             cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // controllerId
             cursor.getLong(offset + 15), // locationTime
-            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16) // fileId
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // fileId
+            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // createTime
+            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18) // authCode
         );
         return entity;
     }
@@ -286,6 +312,8 @@ public class PendingProjectDao extends AbstractDao<PendingProject, Long> {
         entity.setControllerId(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
         entity.setLocationTime(cursor.getLong(offset + 15));
         entity.setFileId(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setCreateTime(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
+        entity.setAuthCode(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
      }
     
     @Override

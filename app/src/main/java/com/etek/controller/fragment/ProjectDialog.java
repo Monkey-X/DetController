@@ -62,6 +62,7 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
 
         View rootView = inflater.inflate(R.layout.dialog_make_project, null);
         companyId = rootView.findViewById(R.id.company_id);
+        companyId.setEnabled(false);
         authCode = rootView.findViewById(R.id.auth_code);
 
         getUserInfo();
@@ -74,13 +75,8 @@ public class ProjectDialog extends DialogFragment implements View.OnClickListene
     }
 
     private void getUserInfo() {
-        String userInfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
-        if (!TextUtils.isEmpty(userInfo)) {
-            User user = JSON.parseObject(userInfo, User.class);
-            if (user != null) {
-                companyId.setText(user.getCompanyCode());
-            }
-        }
+        String companyCode = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_COMPANY_CODE);
+        companyId.setText(companyCode);
     }
 
     @Override

@@ -146,7 +146,7 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
                 createNewProject(projectCodeStr);
                 PendingProject pendingProject = new PendingProject();
                 pendingProject.setProjectCode(projectCodeStr);
-                pendingProject.setDate(DateStringUtils.getCurrentTime());
+                pendingProject.setCreateTime(DateStringUtils.getCurrentTime());
                 pendingProject.setCompanyCode(Globals.user.getCompanyCode());
                 pendingProject.setControllerId(getStringInfo(getString(R.string.controller_sno)));
                 DBManager.getInstance().getPendingProjectDao().insert(pendingProject);

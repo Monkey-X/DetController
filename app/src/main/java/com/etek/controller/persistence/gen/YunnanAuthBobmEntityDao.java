@@ -38,6 +38,7 @@ public class YunnanAuthBobmEntityDao extends AbstractDao<YunnanAuthBobmEntity, L
         public final static Property QbqCount = new Property(11, int.class, "qbqCount", false, "QBQ_COUNT");
         public final static Property ZbqyCount = new Property(12, int.class, "zbqyCount", false, "ZBQY_COUNT");
         public final static Property LgmCount = new Property(13, int.class, "lgmCount", false, "LGM_COUNT");
+        public final static Property AuthCode = new Property(14, String.class, "authCode", false, "AUTH_CODE");
     }
 
 
@@ -66,7 +67,8 @@ public class YunnanAuthBobmEntityDao extends AbstractDao<YunnanAuthBobmEntity, L
                 "\"DATE\" INTEGER," + // 10: date
                 "\"QBQ_COUNT\" INTEGER NOT NULL ," + // 11: qbqCount
                 "\"ZBQY_COUNT\" INTEGER NOT NULL ," + // 12: zbqyCount
-                "\"LGM_COUNT\" INTEGER NOT NULL );"); // 13: lgmCount
+                "\"LGM_COUNT\" INTEGER NOT NULL ," + // 13: lgmCount
+                "\"AUTH_CODE\" TEXT);"); // 14: authCode
     }
 
     /** Drops the underlying database table. */
@@ -128,6 +130,11 @@ public class YunnanAuthBobmEntityDao extends AbstractDao<YunnanAuthBobmEntity, L
         stmt.bindLong(12, entity.getQbqCount());
         stmt.bindLong(13, entity.getZbqyCount());
         stmt.bindLong(14, entity.getLgmCount());
+ 
+        String authCode = entity.getAuthCode();
+        if (authCode != null) {
+            stmt.bindString(15, authCode);
+        }
     }
 
     @Override
@@ -183,6 +190,11 @@ public class YunnanAuthBobmEntityDao extends AbstractDao<YunnanAuthBobmEntity, L
         stmt.bindLong(12, entity.getQbqCount());
         stmt.bindLong(13, entity.getZbqyCount());
         stmt.bindLong(14, entity.getLgmCount());
+ 
+        String authCode = entity.getAuthCode();
+        if (authCode != null) {
+            stmt.bindString(15, authCode);
+        }
     }
 
     @Override
@@ -206,7 +218,8 @@ public class YunnanAuthBobmEntityDao extends AbstractDao<YunnanAuthBobmEntity, L
             cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10), // date
             cursor.getInt(offset + 11), // qbqCount
             cursor.getInt(offset + 12), // zbqyCount
-            cursor.getInt(offset + 13) // lgmCount
+            cursor.getInt(offset + 13), // lgmCount
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14) // authCode
         );
         return entity;
     }
@@ -227,6 +240,7 @@ public class YunnanAuthBobmEntityDao extends AbstractDao<YunnanAuthBobmEntity, L
         entity.setQbqCount(cursor.getInt(offset + 11));
         entity.setZbqyCount(cursor.getInt(offset + 12));
         entity.setLgmCount(cursor.getInt(offset + 13));
+        entity.setAuthCode(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
      }
     
     @Override

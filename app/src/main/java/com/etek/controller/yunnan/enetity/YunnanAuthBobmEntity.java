@@ -40,10 +40,21 @@ public class YunnanAuthBobmEntity {
 
     private int lgmCount;
 
-    @Generated(hash = 53320164)
+    public String getAuthCode() {
+        return authCode;
+    }
+
+    public void setAuthCode(String authCode) {
+        this.authCode = authCode;
+    }
+
+    private String authCode;
+
+    @Generated(hash = 1559485046)
     public YunnanAuthBobmEntity(Long id, String mc, String FileId, int bpcs,
             String kssj, String jssj, int zbbj, String qbqStr, String zbqyStr,
-            String lgmStr, Long date, int qbqCount, int zbqyCount, int lgmCount) {
+            String lgmStr, Long date, int qbqCount, int zbqyCount, int lgmCount,
+            String authCode) {
         this.id = id;
         this.mc = mc;
         this.FileId = FileId;
@@ -58,6 +69,7 @@ public class YunnanAuthBobmEntity {
         this.qbqCount = qbqCount;
         this.zbqyCount = zbqyCount;
         this.lgmCount = lgmCount;
+        this.authCode = authCode;
     }
 
     @Generated(hash = 112868987)

@@ -48,6 +48,8 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
 //    private ContractAdapter contractAdapter;
     private String TAG = "AuthorizedDownloadActivity";
     private YunAuthDataAdapter yunAuthDataAdapter;
+    // 文件下载的授权码
+    private String authCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +86,9 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
     @Override
     public void makeProject(String strCompanyId, String strAuthCode) {
         // 进行离线文件的下载
+        this.authCode = strAuthCode;
         showProDialog("正在得到检验数据中。。。");
-        String url = AppConstants.YunNanFileDownload + "?dwdm=" + strCompanyId + "&sqm=" + strAuthCode;
+        String url = String.format(AppConstants.YunNanFileDownload,strCompanyId,strAuthCode);
         AsyncHttpCilentUtil.httpPostNew(this, url, null, new HttpCallback() {
             @Override
             public void onFaile(IOException e) {
@@ -132,6 +135,7 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
             }
         }
         YunnanAuthBobmEntity yunnanAuthBobmEntity = DataTransformUtil.tranToEntity(offlineAuthBombBean);
+        yunnanAuthBobmEntity.setAuthCode(authCode);
         DBManager.getInstance().getYunnanAuthBombEntityDao().save(yunnanAuthBobmEntity);
         projectInfos.add(0,yunnanAuthBobmEntity);
         yunAuthDataAdapter.notifyDataSetChanged();

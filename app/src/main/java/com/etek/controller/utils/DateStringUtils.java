@@ -20,7 +20,7 @@ public class DateStringUtils {
      * @return
      */
     public static String getCurrentTime(){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(System.currentTimeMillis());
         String format = simpleDateFormat.format(date);
         return format;

@@ -180,6 +180,51 @@ public class AsyncHttpCilentUtil {
         }).start();
     }
 
+    public static void httpPostJson(Activity activity,final String url, final String jsonStr, final HttpCallback callback) {
+        new Thread(() -> {
+            HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLogger());
+            logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .hostnameVerifier(new TrustAllHostnameVerifier())
+                    .sslSocketFactory(createSSLSocketFactory())
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .addNetworkInterceptor(logInterceptor)
+                    .build();
+            RequestBody body = RequestBody.create(JSON, jsonStr);
+            Request request = new Request
+                    .Builder()
+                    .post(body)
+                    .url(url)
+                    .build();
+            //Response response = null;
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback!=null) {
+                                callback.onFaile(e);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback!=null) {
+                                callback.onSuccess(response);
+                            }
+                        }
+                    });
+                }
+            });
+        }).start();
+    }
+
 
     /**
      * Get请求

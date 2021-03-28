@@ -71,9 +71,9 @@ public  class AppConstants {
     public static final String CLEAN_DATA_PASSWORD = "202102";
 
     // 云南准爆文件的下载地址
-    public static final String YunNanFileDownload = "https://47.117.132.63:6062/api/handset/yunnan/getSqwjBdl";
+    public static final String YunNanFileDownload = "https://47.117.132.63:6062/api/handset/yunnan/getSqwjBdl?dwdm=%1$s&sqm=%2$s";
 
     // 云南起爆文件的上传地址
-    public static final String YunNanFileUpload = "https://47.117.132.63:6062/api/handset/yunnan/uploadQbwjBdl";
+    public static final String YunNanFileUpload = "https://47.117.132.63:6062/api/handset/yunnan/uploadQbwjBdl?dwdm=%1$s&sqm=%2$s";
 
 }

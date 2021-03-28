@@ -177,7 +177,7 @@ public class PendingProject {
         myDao = daoSession != null ? daoSession.getPendingProjectDao() : null;
     }
 
-    String date;//创建日期
+    String date;//爆破日期
 
     String projectCode;// 工程编号
 
@@ -202,9 +202,30 @@ public class PendingProject {
     private String reportStatus ; //上报状态
     private String controllerId ; //起爆器设备编号(Sbbh)
 
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getAuthCode() {
+        return authCode;
+    }
+
+    public void setAuthCode(String authCode) {
+        this.authCode = authCode;
+    }
+
     private long locationTime;// 定位的时间
 
     private String fileId;// 规则文件的id
+
+    private String createTime; // 项目创建时间
+
+    private String authCode;// 授权码
+
 
     public long getLocationTime() {
         return locationTime;
@@ -273,11 +294,11 @@ public class PendingProject {
     @Generated(hash = 796773759)
     private transient PendingProjectDao myDao;
 
-    @Generated(hash = 1360227072)
+    @Generated(hash = 1930657479)
     public PendingProject(Long id, String date, String projectCode, int projectStatus, String proCode,
             String proName, String companyCode, String companyName, String contractCode,
             String contractName, String fileSn, double longitude, double latitude, String reportStatus,
-            String controllerId, long locationTime, String fileId) {
+            String controllerId, long locationTime, String fileId, String createTime, String authCode) {
         this.id = id;
         this.date = date;
         this.projectCode = projectCode;
@@ -295,6 +316,8 @@ public class PendingProject {
         this.controllerId = controllerId;
         this.locationTime = locationTime;
         this.fileId = fileId;
+        this.createTime = createTime;
+        this.authCode = authCode;
     }
 
     @Generated(hash = 1532219714)

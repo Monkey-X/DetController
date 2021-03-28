@@ -15,6 +15,10 @@ public class AppSpSaveConstant {
      * 用户信息设置界面
      */
     public static final String USER_INFO = "user_info";
+    /**
+     * 用户的单位代码
+     */
+    public static final String USER_COMPANY_CODE = "user_company_code";
 
     /**
      * 登陆界面

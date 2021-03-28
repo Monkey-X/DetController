@@ -25,6 +25,7 @@ import com.etek.controller.dto.ServerResult;
 import com.etek.controller.entity.DetController;
 import com.etek.controller.enums.ReportServerEnum;
 import com.etek.controller.enums.ResultErrEnum;
+import com.etek.controller.hardware.test.HttpCallback;
 import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.minaclient.DetMessage;
 import com.etek.controller.persistence.DBManager;
@@ -36,8 +37,12 @@ import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.SommerUtils;
 import com.etek.controller.activity.BaseActivity;
+import com.etek.controller.yunnan.bean.YunUploadBean;
+import com.etek.controller.yunnan.bean.YunUploadResponse;
+import com.etek.controller.yunnan.util.DataTransformUtil;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.NetUtil;
+import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
@@ -86,6 +91,7 @@ public class ReportDetailActivity2 extends BaseActivity {
 
     private final String TAG = "ReportDetailActivity2";
     private ReportDto2 reportDotInfo;
+    private YunUploadBean yunUploadData;
 
 
     @Override
@@ -152,7 +158,9 @@ public class ReportDetailActivity2 extends BaseActivity {
             controllerTime.setText(projectInfoEntity.getDate());
             String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
             // 上报的信息
-            reportDotInfo = getReportDot(userinfo, projectInfoEntity);
+//            reportDotInfo = getReportDot(userinfo, projectInfoEntity);
+
+            yunUploadData = DataTransformUtil.getYunUploadData(projectInfoEntity, detonatorEntityList);
 
             DetLog.writeLog(TAG,projectInfoEntity.toString());
 
@@ -232,13 +240,62 @@ public class ReportDetailActivity2 extends BaseActivity {
         builder.setIcon(R.mipmap.ic_launcher);
         builder.setPositiveButton("确认", (dialog, which) -> {
             dialog.dismiss();
-            sendReport();
+//            sendReport();
+            sendreportToYun();
         });
         builder.setNegativeButton("取消", null);
         builder.setCancelable(true); //设置按钮是否可以按返回键取消,false则不可以取消
         AlertDialog dialog = builder.create(); //创建对话框
         dialog.setCanceledOnTouchOutside(false); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
         dialog.show();
+    }
+
+    // 上报云南的数据
+    private void sendreportToYun() {
+        if (NetUtil.getNetType(mContext) < 0) {
+            showStatusDialog("请去设置网络！");
+            return;
+        }
+        showProDialog("正在上传数据...");
+        Gson gson = new Gson();
+        String uploadString = gson.toJson(yunUploadData);
+        String companyCode = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_COMPANY_CODE);
+        String authCode = projectInfoEntity.getAuthCode();
+        String url = String.format(AppConstants.YunNanFileUpload,companyCode,authCode);
+        AsyncHttpCilentUtil.httpPostJson(this, url, uploadString, new HttpCallback() {
+            @Override
+            public void onFaile(IOException e) {
+                missProDialog();
+                showSendRptMessage(null, "2");
+                showPreportStatus();
+                showStatusDialog("上报失败！");
+            }
+
+            @Override
+            public void onSuccess(Response response) {
+                missProDialog();
+                try {
+                    String string = response.body().string();
+                    if (TextUtils.isEmpty(string)) {
+                        showSendRptMessage(null, "2");
+                        showStatusDialog("上报失败！");
+                        return;
+                    }
+
+                    YunUploadResponse yunUploadResponse = new Gson().fromJson(string, YunUploadResponse.class);
+                    if (yunUploadResponse!=null && yunUploadResponse.isOk()) {
+                        showSendRptMessage(null, "1");
+                        showStatusDialog("上报成功！");
+                        return;
+                    }
+                } catch (IOException e) {
+                    Logger.w("sendreportToYun faile");
+                }
+                showSendRptMessage(null, "2");
+                showStatusDialog("上报失败！");
+                showPreportStatus();
+            }
+        });
     }
 
     /**

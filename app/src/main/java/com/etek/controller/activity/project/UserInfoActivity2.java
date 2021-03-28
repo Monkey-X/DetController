@@ -154,6 +154,7 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
         Globals.user = user;
 //        setStringInfo("userInfo", JSON.toJSONString(user));
         SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_INFO,JSON.toJSONString(user));
+        SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_COMPANY_CODE,comCode);
         showToast("信息已保存！");
     }
 }
