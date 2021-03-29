@@ -18,23 +18,30 @@ import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.eventbus.MessageEvent;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.activity.service.DownloadUtil;
+import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.common.ETEKOnlinePassword;
 import com.etek.controller.common.Globals;
+import com.etek.controller.common.HandesetInfo;
 import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.entity.AppUpdateBean;
 import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.hardware.command.DetApp;
+import com.etek.controller.hardware.test.HttpCallback;
 import com.etek.controller.hardware.test.InitialCheckCallBack;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.model.User;
 import com.etek.controller.scan.ScannerBase;
 import com.etek.controller.scan.ScannerFactory;
 import com.etek.controller.utils.AppUtils;
+import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.UpdateAppUtils;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.utils.FileUtils;
@@ -46,13 +53,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jsoup.helper.StringUtil;
 
 import java.io.File;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * 首页
  */
 public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
-
-
     private String TAG = "HomeActivity2";
     private RelativeLayout projectManage;
     private RelativeLayout projectImplement;
@@ -332,23 +342,8 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
             Log.d(TAG,String.format("上电"));
             DetApp.getInstance().MainBoardPowerOn();
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//            }
-//
-//            //  1.0.0.12版本的OS，启动后是拉低
-//            Log.d(TAG,String.format("电平拉高"));
-//            DetApp.getInstance().MainBoardSetBL(true);
-
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
 
             Log.d(TAG,String.format("初始化"));
-
             int result = mainBoardInit();
             return result;
         }
@@ -392,6 +387,9 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                 });
                 builder.create().show();
             }
+
+            //  主板初始化成功后上传
+            UploadHandsetInfo();
         }
     }
 
@@ -509,9 +507,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         super.onTitleChanged(this.getString(R.string.home), color);
     }
 
-
-
-
     // add: detect screen status, false for power off, ture for power up.
     ScreenStatusReceiver mScreenStatusReceiver;//全局广播接受对象
     //广播接受类
@@ -545,6 +540,40 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
             unregisterReceiver(mScreenStatusReceiver);//注销监听
             mScreenStatusReceiver = null;//清空对象
         }
+    }
+
+    /**
+     *  上报设备信息
+     */
+    private void UploadHandsetInfo(){
+        String userStr = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
+        if (TextUtils.isEmpty(userStr)) {
+            return;
+        }
+        HandesetInfo hi = new HandesetInfo();
+        hi.initData(getStringInfo(getString(R.string.controller_sno)));
+        String rptJson = JSON.toJSONString(hi, SerializerFeature.WriteMapNullValue);
+        Log.d(TAG,"上报设备状态："+rptJson);
+        String url = AppConstants.ETEK_UPLOAD_HANDSET_INFO;
+        AsyncHttpCilentUtil.httpsPostJson(url, rptJson, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "上报状态失败1: " + e.toString());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String respStr = null;
+                try {
+                    respStr = response.body().string();
+                    Log.d(TAG, "上报状态成功: " + respStr);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d(TAG,"上报状态失败2：" + e.getMessage());
+                }
+
+            }
+        });
     }
 
 }

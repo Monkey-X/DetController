@@ -72,4 +72,5 @@ public  class AppConstants {
 
     public static final String ETEK_ONLINE_GET_PSWD ="https://47.117.132.63:6062/sms/pword/reset?phone=%s";
 
+    public static final String ETEK_UPLOAD_HANDSET_INFO="https://47.117.132.63:6062/handsets/info";
 }

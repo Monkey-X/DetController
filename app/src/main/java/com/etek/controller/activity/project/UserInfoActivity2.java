@@ -2,6 +2,7 @@ package com.etek.controller.activity.project;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -9,19 +10,28 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
+import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
+import com.etek.controller.common.HandesetInfo;
 import com.etek.controller.model.User;
+import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.IdCardUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class UserInfoActivity2 extends BaseActivity implements View.OnClickListener {
 
@@ -30,6 +40,8 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
     private EditText personalIdCode;
     private EditText companyName;
     private EditText companyCode;
+
+    private final String TAG ="UserInfoActivity2";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,5 +170,38 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
 //        setStringInfo("userInfo", JSON.toJSONString(user));
         SpManager.getIntance().saveSpString(AppSpSaveConstant.USER_INFO,JSON.toJSONString(user));
         showToast("信息已保存！");
+
+        UploadHandsetInfo();
+    }
+
+    /**
+     *  上报设备信息
+     */
+    private void UploadHandsetInfo(){
+
+        HandesetInfo hi = new HandesetInfo();
+        hi.initData(getStringInfo(getString(R.string.controller_sno)));
+        String rptJson = JSON.toJSONString(hi, SerializerFeature.WriteMapNullValue);
+        Log.d(TAG,"上报设备状态："+rptJson);
+        String url = AppConstants.ETEK_UPLOAD_HANDSET_INFO;
+        AsyncHttpCilentUtil.httpsPostJson(url, rptJson, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "上报状态失败1: " + e.toString());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String respStr = null;
+                try {
+                    respStr = response.body().string();
+                    Log.d(TAG, "上报状态成功: " + respStr);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d(TAG,"上报状态失败2：" + e.getMessage());
+                }
+
+            }
+        });
     }
 }

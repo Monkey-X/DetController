@@ -53,8 +53,11 @@ public class ConnectTestAdapter extends ProjectDetailAdapter {
             view.setText("OK");
             view.setTextColor(view.getContext().getColor(R.color.palegreen));
         } else if (teststatus == -1){
-            view.setText("未注册");
+            view.setText("--");
             view.setTextColor(view.getContext().getColor(R.color.lightgrey));
+        } else if (teststatus == 3){
+            view.setText("未注册");
+            view.setTextColor(view.getContext().getColor(R.color.red_normal));
         }else{
             view.setText("X");
             view.setTextColor(view.getContext().getColor(R.color.red_normal));

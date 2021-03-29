@@ -656,6 +656,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 boolean b = detSingleCheck(i);
                 if(!b){
                     lostDetData.add(connectData.get(i));
+                    playSound(false);
                 }
 
                 publishProgress(i);
@@ -738,7 +739,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     det.setHolePosition(str);
                     det.setRelay(m_nMaxRelayTime);
                     det.setDownLoadStatus(-1);
-                    det.setTestStatus(-1);
+                    det.setTestStatus(3);
                     det.setProjectInfoId(proId);
 
                     misConnectData.add(det);

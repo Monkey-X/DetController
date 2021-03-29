@@ -308,4 +308,25 @@ public class AsyncHttpCilentUtil {
         }).start();
     }
 
+    public static void httpsPostJson(final String url, final String jsonStr, final Callback callback) {
+        new Thread(() -> {
+            HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLogger());
+            logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .hostnameVerifier(new TrustAllHostnameVerifier())
+                    .sslSocketFactory(createSSLSocketFactory())
+                    .addNetworkInterceptor(logInterceptor)
+                    .build();
+            RequestBody body = RequestBody.create(JSON, jsonStr);
+            Request request = new Request
+                    .Builder()
+                    .post(body)
+                    .url(url)
+                    .build();
+            //Response response = null;
+            okHttpClient.newCall(request).enqueue(callback);
+        }).start();
+    }
+
 }

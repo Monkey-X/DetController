@@ -61,7 +61,6 @@ import com.etek.controller.persistence.gen.ProjectDetonatorDao;
 import com.etek.controller.persistence.gen.ProjectInfoEntityDao;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
-import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.RptUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -69,7 +68,6 @@ import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -877,15 +875,6 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
 
         DetLog.writeLog(TAG,projectInfo.toString());
 
-        //  离线不检查F99起爆器
-        Log.d(TAG,"起爆器厂商："+strControllerId.substring(0,3));
-        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
-            if (!checkControllerData(projectInfo)) {
-                showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆2",strControllerId));
-                return;
-            }
-        }
-
         if (checkForbiddenZone(projectInfo)) {
             showStatusDialog("在禁爆区域");
             return;
@@ -1011,8 +1000,9 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         projectInfoEntity.setLongitude(getCacheLongitude());
         projectInfoEntity.setLatitude(getCacheLatitude());
 
+        //  要使用界面上的起爆器编号
+        projectInfoEntity.setControllerId(controllerId.getText().toString().trim());
         Log.d(TAG,String.format("上报ETEK 经纬度:%.5f,%.5f",projectInfoEntity.getLongitude(),projectInfoEntity.getLatitude()));
-
 
         String rptJson = getReportDto(projectInfoEntity);
         String url = AppConstants.ETEKTestServer + AppConstants.CheckoutReport;
