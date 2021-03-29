@@ -578,6 +578,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             //全部检测测功了，更新项目状态和，提示进去延时下载
             updateAndHint();
         } else {
+            playSound(false);
             // 未全部检测成功，展示检测结果
             if (!isCancelTest) {
                 showTestResult(projectDetonators.size(), successNum, faileNum,nMisCount);
@@ -747,13 +748,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             });
 
             Log.d(TAG,"result = "+result);
-            if(0==result){
-                if(connectData.size()>0) {
-                    playSound(false);
-                }
-                return 0;
-            }
-
             return result;
         }
 

@@ -416,6 +416,12 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         detonatorList = findViewById(R.id.check_detonator_list);
         getLocation.setOnClickListener(this);
         detonatorList.setLayoutManager(new LinearLayoutManager(this));
+
+        // 初始化工程中的雷管状态
+        for (int i = 0; i < projectDetonatorList.size(); i++) {
+            ProjectDetonator projectDetonator = projectDetonatorList.get(i);
+            projectDetonator.setStatus(-1);
+        }
         checkDetailAdapter = new CheckDetailAdapter(R.layout.detonator_list_item, projectDetonatorList);
         detonatorList.setAdapter(checkDetailAdapter);
 
@@ -619,7 +625,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     public void run() {
                         missProDialog();
                         DetLog.writeLog(TAG,"请求服务器失败，" + e.toString());
-                        showStatusDialog("请求服务器失败，" + e.toString());
+                        showStatusDialog("与服务器通信失败！");
                     }
                 });
             }
@@ -869,6 +875,13 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             showStatusDialog("没有找到雷管规则所对应的项目2");
             return;
         }
+
+        //  检查起爆器
+        if (!checkControllerData(projectInfo)) {
+            showStatusDialog(String.format("起爆器[%s]未注册，不允许起爆2",strControllerId));
+            return;
+        }
+
         // 离线检查的合同编号和项目编号需要设置
         contractCode.setText(projectInfo.getContractCode());
         proCode.setText(projectInfo.getProCode());
@@ -884,7 +897,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
             return;
         }
 
-        // 最后检查雷管的数量
+        // 最后检查雷管
         checkDetonatorData(projectInfo,detInProjectId);
 
     }
@@ -950,7 +963,8 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                     }
                 }
                 if(isUnReigstered) {
-                    Log.d(TAG, String.format("雷管4：%s\t不存在", projectDetonator.getCode()));
+                    Log.d(TAG, String.format("雷管4：%s\t未注册", projectDetonator.getCode()));
+                    projectDetonator.setStatus(4);
                     unRegiestCount++;
                 }
             }

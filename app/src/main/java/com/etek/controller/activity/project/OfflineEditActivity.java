@@ -354,7 +354,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             public void onFaile(IOException e) {
                 missProDialog();
                 DetLog.writeLog(TAG,String.format("校验服务器出错：%s",e.getMessage()));
-                showStatusDialog("校验服务器出错：" + e.getMessage());
+                showStatusDialog("与服务器通信失败！");
             }
 
             @Override
