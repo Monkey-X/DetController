@@ -294,7 +294,17 @@ public class LocationUtil {
         public void setMaxLat(Double maxLat) {
             this.maxLat = maxLat;
         }
-    }
+
+            @Override
+            public String toString() {
+                return "LocationRange{" +
+                        "minLng=" + minLng +
+                        ", maxLng=" + maxLng +
+                        ", minLat=" + minLat +
+                        ", maxLat=" + maxLat +
+                        '}';
+            }
+        }
 
     /**
      * 通过网络等获取定位信息

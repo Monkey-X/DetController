@@ -103,7 +103,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      */
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
-        Logger.d("proId: " + proId);
+        Log.d(TAG,"proId: " + proId);
     }
 
     /**
@@ -173,6 +173,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         buttonid = v.getId();
+
         switch (v.getId()) {
             case R.id.back_img://返回
                 if(isCancelTest){
@@ -253,7 +254,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         connectData.clear();
         connectData.addAll(misConnectData);
         connectTestAdapter.notifyDataSetChanged();
-
     }
 
     // 筛选失联 状态
@@ -273,6 +273,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         }else{
             shouPopuWindow(view, position);
         }
+
+
     }
 
     private void shouPopuWindow(View view, int position) {
@@ -537,7 +539,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         Log.d(TAG, "detSingleCheck: testResult = " + testResult);
         detonatorEntity.setTestStatus(testResult);
         DBManager.getInstance().getProjectDetonatorDao().save(detonatorEntity);
-        playSound(testResult == 0);
+        //  Halt
+        DetApp.getInstance().ModuleSetDormantStatus(Integer.parseInt(detId));
         return testResult == 0;
     }
 
@@ -572,6 +575,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             //全部检测测功了，更新项目状态和，提示进去延时下载
             updateAndHint();
         } else {
+            playSound(false);
             // 未全部检测成功，展示检测结果
             if (!isCancelTest) {
                 showTestResult(projectDetonators.size(), successNum, faileNum,nMisCount);
@@ -641,14 +645,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public class TestAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
         protected Integer doInBackground(String... strings) {
-            for (int i = 0; i < connectData.size(); i++) {
+            lostDetData.clear();
 
+            for (int i = 0; i < connectData.size(); i++) {
                 if (isCancelTest) {
                     return null;
                 }
                 boolean b = detSingleCheck(i);
                 if(!b){
                     lostDetData.add(connectData.get(i));
+                    playSound(false);
                 }
 
                 publishProgress(i);
@@ -665,19 +671,15 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-
-            mistask = new MisDetonatorTask();
-            mistask.execute();
-
+            updateTestProgress(values[0]);
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-            connectTestAdapter.notifyDataSetChanged();
-            changeProgressView(true);
-            setSelectBtnVisible(true);
-            updateProjectStatus();
+
+            mistask = new MisDetonatorTask();
+            mistask.execute();
         }
     }
 
@@ -735,7 +737,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     det.setHolePosition(str);
                     det.setRelay(m_nMaxRelayTime);
                     det.setDownLoadStatus(-1);
-                    det.setTestStatus(-1);
+                    det.setTestStatus(3);
                     det.setProjectInfoId(proId);
 
                     misConnectData.add(det);
@@ -743,13 +745,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             });
 
             Log.d(TAG,"result = "+result);
-            if(0==result){
-                if(connectData.size()>0) {
-                    playSound(false);
-                }
-                return 0;
-            }
-
             return result;
         }
 
@@ -815,7 +810,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
         }
     }
-
 
     @Override
     public void showProgressDialog(String msg, int type) {
