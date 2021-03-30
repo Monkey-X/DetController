@@ -235,7 +235,9 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                                 if (flag == appUpdate) {
                                     UpdateAppUtils.installApk(HomeActivity2.this, file);
                                 } else if (flag == mainBoardupdate) {
-                                    HomeActivity2.this.startActivity(new Intent(HomeActivity2.this, MainBoardUpdateActivity.class));
+                                    Intent intent = new Intent(HomeActivity2.this, MainBoardUpdateActivity.class);
+                                    intent.putExtra("AUTODOWNLOAD","1");
+                                    HomeActivity2.this.startActivity(intent);
                                 }
                             }
                         });

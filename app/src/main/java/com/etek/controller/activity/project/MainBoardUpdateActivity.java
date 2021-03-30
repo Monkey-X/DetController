@@ -1,5 +1,6 @@
 package com.etek.controller.activity.project;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +33,8 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
     private TextView sno;
     private MainboardTask mainboardTask;
     private MainboardTask mainboardTask1;
+
+    private boolean bAutoUpgrade = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +87,24 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                 XLog.e(e.getMessage());
             }
         }
+
+        Intent intent = getIntent();
+        String  str =intent.getStringExtra("AUTODOWNLOAD");
+        Log.d(TAG,"AUTODOWNLOAD = "+str);
+        if(StringUtil.isBlank(str)){
+            bAutoUpgrade = false;
+        }else{
+            bAutoUpgrade = true;
+        }
+
     }
 
     @Override
     public void onClick(View v) {
+        mainboardUpgrade();
+    }
 
+    private void mainboardUpgrade(){
         File targetFile = new File( FileUtils.ExternalStorageDirectory + File.separator + "test"+ File.separator + "MainBoard.bin");
         if (!targetFile.exists()) {
             ToastUtils.showShort(this,"已是最新版本！");
@@ -165,6 +181,7 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                 } else {
                     ToastUtils.show(MainBoardUpdateActivity.this, "升级失败！");
                 }
+                bAutoUpgrade = false;
             }
         });
     }
@@ -213,7 +230,15 @@ public class MainBoardUpdateActivity extends BaseActivity implements View.OnClic
                 updateHardwareVer.setText("v" + mainBoardInfoBean.getStrUpdateHardwareVer());
                 softwareVer.setText("v" + mainBoardInfoBean.getStrSoftwareVer());
                 sno.setText(mainBoardInfoBean.getStrSNO());
+
+                if(bAutoUpgrade)
+                    mainboardUpgrade();
+
             }
+        }
+
+        public void setAutoUpgrade(boolean bAuto){
+            bAutoUpgrade = bAuto;
         }
     }
 }
