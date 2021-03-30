@@ -137,7 +137,9 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                       ToastUtils.showShort(AboutActivity.this,"已是最新版本！");
+                        ToastUtils.showShort(AboutActivity.this,"已是最新版本！");
+                        m_bUpgrading = false;
+                        m_btnUpdate.setVisibility(View.VISIBLE);
                     }
                 });
                 Log.e(TAG, "check app update error");

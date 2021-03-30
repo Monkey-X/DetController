@@ -160,6 +160,8 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
 
         //  HTTP请求
         AsyncHttpClient client = new AsyncHttpClient();
+        client.setConnectTimeout(3000);
+
         RequestParams params = new RequestParams();
         try{
             params.put("file",logfile);

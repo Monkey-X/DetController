@@ -46,6 +46,7 @@ public class AsyncHttpCilentUtil {
         if (client == null) {
             client = new AsyncHttpClient();
             client.setLoggingEnabled(true);
+            client.setTimeout(3000);
 //            PersistentCookieStore myCookieStore = new PersistentCookieStore(paramContext);
 //            client.setCookieStore(myCookieStore);
         }
