@@ -31,6 +31,8 @@ public class LoginInInfoResetActivity extends BaseActivity implements View.OnCli
 
     private void initView() {
         txtLoginID = findViewById(R.id.login_id);
+        txtLoginID.setKeyListener(null);
+
         txtLoginPswd = findViewById(R.id.login_password);
         txtNewPassword = findViewById(R.id.new_passowrd);
         txtNewPasswordConfirm = findViewById(R.id.new_passowrd_confirm);

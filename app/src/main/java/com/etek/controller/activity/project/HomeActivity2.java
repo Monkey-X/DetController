@@ -74,15 +74,10 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         Logger.d("onCreate: initialize= " + initialize);
         initView();
 
-        initMainBoard();
-
         unlockScanKey();
 
-        getUserInfo();
+        initMainBoard();
 
-        getMainBoardInfo();
-        // 进行app升级的检查
-        checkAppUpdate();
     }
 
     /**
@@ -357,11 +352,31 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
                     strerrmsg = String.format("主板初始化失败！ %d",result);
                     break;
             }
+
             if (result !=0) {
-                showStatusDialog(strerrmsg);
                 DetApp.getInstance().SetCommTimeout(5000);
-                finish();
+
+                // 初始化失败
+                AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HomeActivity2.this);
+                builder.setCancelable(false);
+                builder.setMessage(strerrmsg);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+                builder.create().show();
+                return;
             }
+
+            // 主板初始化成功
+            getUserInfo();
+            getMainBoardInfo();
+            // 进行app升级的检查
+            checkAppUpdate();
+            return;
         }
     }
 

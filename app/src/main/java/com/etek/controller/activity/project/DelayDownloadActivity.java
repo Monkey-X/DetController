@@ -105,7 +105,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
      */
     private void getProjectId() {
         proId = getIntent().getLongExtra(AppIntentString.PROJECT_ID, -1);
-        Logger.d("proId: " + proId);
+        Log.d(TAG,"proId: " + proId);
     }
 
     private void initView() {
@@ -361,9 +361,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 boolean b = detSingleDownload(position);
 
                 DetApp.getInstance().MainBoardBusPowerOff();
-                if(!b){
-                    playSound(false);
-                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -485,7 +483,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         Log.d(TAG, "detSingleDownload: detId = " + detId);
         // 进行雷管的链接检测
         int downloadResult = DetApp.getInstance().ModuleSetDelayTime(Integer.parseInt(detId),relayTime);
-        playSound(downloadResult == 0);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -551,6 +548,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             //全部检测测功了，更新项目状态和，提示进去延时下载
             updateAndHint();
         } else {
+            playSound(false);
             // 未全部检测成功，展示检测结果
             if (!isCancelDownLoad) {
                 showTestResult(projectDetonators.size(), successNum, faileNum);

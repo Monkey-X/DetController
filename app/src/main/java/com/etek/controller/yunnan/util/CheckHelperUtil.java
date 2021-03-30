@@ -68,7 +68,7 @@ public class CheckHelperUtil {
     public static boolean checkUsefulDate(YunnanAuthBobmEntity authDownloadFile) {
         String kssj = authDownloadFile.getKssj();
         String jssj = authDownloadFile.getJssj();
-        Logger.d("kssj= " + kssj + " jssj =" + jssj);
+        Log.d(TAG,"kssj= " + kssj + " jssj =" + jssj);
         long ksTime = DateStringUtils.getDateLong(kssj);
         long jsTime = DateStringUtils.getDateLong(jssj);
         long currTime = System.currentTimeMillis();
@@ -88,6 +88,7 @@ public class CheckHelperUtil {
      */
     public static boolean checkLocation(YunnanAuthBobmEntity authDownloadFile, Double cacheLongitude, Double cacheLatitude, PendingProject pendingProject) {
         String zbqyStr = authDownloadFile.getZbqyStr();
+        Log.d(TAG,"准爆区域： "+zbqyStr);
         if (TextUtils.isEmpty(zbqyStr)) {
             return true;
         }
@@ -95,18 +96,20 @@ public class CheckHelperUtil {
         if (qyList == null || qyList.size() == 0) {
             return true;
         }
+        Log.d(TAG,"准爆区域个数："+qyList.size());
 
-        // 缺省认为准爆报警为10km
-        if(0==authDownloadFile.getZbbj())
-            authDownloadFile.setZbbj(10);
-
-        Log.d(TAG,"准爆半径：" + authDownloadFile.getZbbj());
         for (LocationBean locationBean : qyList) {
-            LocationUtil.LocationRange range = LocationUtil.getAround(locationBean.getLatitude(), locationBean.getLongitude(), authDownloadFile.getZbbj());
+            Log.d(TAG,"准爆区域："+locationBean.toString());
+
+            //            LocationUtil.LocationRange range = LocationUtil.getAround(locationBean.getLatitude(), locationBean.getLongitude(), authDownloadFile.getZbbj());
+            LocationUtil.LocationRange range = LocationUtil.getAround(locationBean.getLatitude(), locationBean.getLongitude(), (int)locationBean.getRadius());
 
             Log.d(TAG,String.format("缓存[%.4f,%.4f], 范围[%.4f,%.4f]",
                     cacheLongitude, cacheLatitude,
                     locationBean.getLongitude(), locationBean.getLatitude()));
+
+            Log.d(TAG,"区间范围："+ range.toString());
+
             if (cacheLatitude > range.getMinLat()
                     && cacheLatitude < range.getMaxLat()
                     && cacheLongitude > range.getMinLng()

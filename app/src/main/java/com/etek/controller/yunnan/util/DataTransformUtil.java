@@ -99,7 +99,8 @@ public class DataTransformUtil {
                 String[] split1 = locationStr.split("&");
                 double longitude = Double.parseDouble(split1[0]);
                 double latitude = Double.parseDouble(split1[1]);
-                LocationBean locationBean = new LocationBean(longitude, latitude);
+                double rds = Double.parseDouble(split1[2]);
+                LocationBean locationBean = new LocationBean(longitude, latitude,rds);
                 locations.add(locationBean);
             }
         }

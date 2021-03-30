@@ -503,17 +503,22 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
     // 进行云南的规则检查
     private void yunnanCheck() {
         // 1.获取检查的文件
+        Log.d(TAG,"检查1：获取检查的文件");
         List<YunnanAuthBobmEntity> list = DBManager.getInstance().getYunnanAuthBombEntityDao().queryBuilder().orderDesc(YunnanAuthBobmEntityDao.Properties.Date).list();
         if (list == null || list.size() == 0) {
             showStatusDialog("请下载准爆清单文件！");
             return;
         }
+
+        Log.d(TAG,"检查2：获取检查的项目");
         YunnanAuthBobmEntity authDownloadFile = CheckHelperUtil.getAuthDownloadFile(list, projectDetonatorList);
         if (authDownloadFile == null) {
             showStatusDialog("没有找到雷管规则所对应的准爆清单文件！");
             return;
         }
+
         // 2.检查起爆器
+        Log.d(TAG,"检查3：检查起爆器编号");
         String strControllerId = controllerId.getText().toString().trim();
         boolean checkController = CheckHelperUtil.checkController(strControllerId, authDownloadFile);
         if (!checkController) {
@@ -522,13 +527,16 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         }
 
         // 3.时间规则的检查
+        Log.d(TAG,"检查4：检查时间规则");
         boolean usefulDate = CheckHelperUtil.checkUsefulDate(authDownloadFile);
         if (!usefulDate) {
             // 弹框提示用户
             showYunHintDialog("可能违反起爆规则，是否继续起爆", 1, authDownloadFile);
             return;
         }
+
         // 4.起爆区域的检查
+        Log.d(TAG,"检查5：检查起爆区域");
         checkYunLocation(authDownloadFile);
     }
 
