@@ -26,7 +26,7 @@ public class DetApplication extends BaseApplication {
         DBManager.init(getApplicationContext());
 
         Logger.addLogAdapter(new AndroidLogAdapter());
-        Logger.addLogAdapter(new DiskLogAdapter());
+//        Logger.addLogAdapter(new DiskLogAdapter());
 
     }
 }
