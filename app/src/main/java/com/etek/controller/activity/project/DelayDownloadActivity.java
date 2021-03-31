@@ -58,7 +58,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private DelayDownloadTask delayDownloadTask;
     private ProgressDialog progressValueDialog;
     private SoundPoolHelp soundPoolHelp;
-    private boolean isCancelDownLoad = true;
+
     private TextView allDet;
     private TextView downLoadFail;
     private ProgressDialog busChargeProgressDialog;
@@ -69,6 +69,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private TextView allEdit;
     private RelativeLayout layoutDownloadBtn;
     private PendingProject projectInfoEntity;
+
+    private boolean bCancelDownload = false;        //  是否取消下载
+    private boolean bDownloading = false;           //  是否在下载中
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +182,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_img:
-                if (isCancelDownLoad) {
+                if (!bDownloading) {
                     finish();
                 } else {
                     ToastUtils.show(this, "按取消暂停或下载完成后才能退出");
@@ -205,13 +208,16 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 layoutDownloadBtn.setVisibility(View.GONE);
                 break;
             case R.id.cancel_test:
-                // 放弃检测
-                isCancelDownLoad = true;
+                // 放弃下载
+                bCancelDownload = true;
                 changeProgressView(true);
                 break;
             case R.id.startTest:
                 // 开始下载
-                allDetDownload();
+                if(!bDownloading){
+                    allDetDownload();
+                }
+
                 break;
         }
     }
@@ -278,7 +284,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onItemClick(View view, int position) {
         // 点击条目
-        if(isCancelDownLoad) {
+        if(!bDownloading) {
             shouPopuWindow(view, position);
         }
     }
@@ -322,8 +328,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         if (keyCode == 19 || keyCode == 20) {
             return true;
         }
+
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if(isCancelDownLoad){
+            if(!bDownloading){
                 allDetDownload();
                 return true;
             }
@@ -331,7 +338,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
         //  右下角的退出键
         if(4==keyCode){
-            if(isCancelDownLoad) {
+            if(!bDownloading) {
                 finish();
             }
             else{
@@ -393,7 +400,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onDelayTimeClick(int position) {
         // 下载过程不能修改
-        if(!isCancelDownLoad) {
+        if(!bDownloading) {
             return;
         }
 
@@ -505,6 +512,9 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             return;
         }
 
+        bDownloading = true;
+        bCancelDownload = false;
+
         // 延时下载前需要进行总线上电操作
         PowerOnSelfCheckTask detsBusChargeTask = new PowerOnSelfCheckTask(this);
         detsBusChargeTask.execute();
@@ -546,15 +556,15 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
         if (successNum == projectDetonators.size()) {
             //全部检测测功了，更新项目状态和，提示进去延时下载
-            updateAndHint();
-        } else {
-            playSound(false);
-            // 未全部检测成功，展示检测结果
-            if (!isCancelDownLoad) {
-                showTestResult(projectDetonators.size(), successNum, faileNum);
-                isCancelDownLoad = true;
+            if(!bCancelDownload){
+                updateAndHint();
+                return;
             }
         }
+
+        playSound(false);
+        // 未全部检测成功，展示检测结果
+        showTestResult(projectDetonators.size(), successNum, faileNum);
     }
 
     // 更新项目状态
@@ -577,12 +587,17 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                isCancelDownLoad = true;
+
+                bDownloading = false;
+                bCancelDownload = false;
             }
         });
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                bDownloading = false;
+                bCancelDownload = false;
+
                 Intent intent = new Intent(DelayDownloadActivity.this, AuthBombActivity2.class);
                 intent.putExtra(AppIntentString.PROJECT_ID, proId);
                 startActivity(intent);
@@ -603,6 +618,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                bCancelDownload = false;
+                bDownloading = false;
             }
         });
         builder.create().show();
@@ -648,6 +665,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     public void postResult(int result, int type) {
         dissProgressDialog();
         if (result == 0) {
+            //  总线上电成功
             for (ProjectDetonator connectDatum : detonators) {
                 connectDatum.setDownLoadStatus(-1);
             }
@@ -656,10 +674,14 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             delayDownloadTask = new DelayDownloadTask();
             delayDownloadTask.execute();
         }else{
+            // 总线上电失败
             playSound(false);
             showStatusDialog(strerrmsg);
 
             changeProgressView(true);
+
+            bDownloading = false;
+            bCancelDownload = false;
         }
     }
 
@@ -678,7 +700,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         @Override
         protected Integer doInBackground(String... strings) {
             for (int i = 0; i < detonators.size(); i++) {
-                if (isCancelDownLoad) {
+                if (bCancelDownload) {
                     return null;
                 }
                 detSingleDownload(i);
@@ -696,8 +718,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            showTextProgressDialog();
-            isCancelDownLoad = false;
         }
 
         @Override
@@ -719,9 +739,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     }
 
     public void updateDelayProgress(int values) {
-//        if (progressValueDialog != null) {
-//            progressValueDialog.setProgress(values);
-//        }
         if (progress !=null) {
             progress.setProgress(values + 1 );
         }
@@ -740,7 +757,6 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // TODO: 2020/12/20
-                isCancelDownLoad = true;
                 if (delayDownloadTask !=null) {
                     delayDownloadTask.cancel(true);
                 }

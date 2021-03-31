@@ -27,7 +27,7 @@ android {
         applicationId "com.etek.controller"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 35
+        versionCode 36
         versionName "1.0.${defaultConfig.versionCode}"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -112,67 +112,48 @@ dependencies {
             "android.arch.persistence.room:runtime:$roomVersion",
             "android.arch.lifecycle:extensions:$archVersion",
             "android.arch.lifecycle:common-java8:$archVersion"
-
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-
     implementation 'com.github.d-max:spots-dialog:0.4@aar'
-
     implementation 'com.flyco.dialog:FlycoDialog_Lib:1.1.6@aar'
     implementation 'com.flyco.animation:FlycoAnimation_Lib:1.0.0@aar'
     implementation 'com.alibaba:fastjson:1.2.54'
-
-
     implementation 'com.google.code.gson:gson:2.8.5'
-
     implementation 'com.github.bumptech.glide:glide:4.8.0'
-
     implementation 'com.tbruyelle.rxpermissions:rxpermissions:0.8.0@aar'
-
     // TableView
     implementation "com.evrencoskun.library:tableview:$tableview_version"
-
     // Butter Knife (View Injector) - https://github.com/JakeWharton/butterknife
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
-    implementation "com.polidea.rxandroidble2:rxandroidble:1.11.1"
-
+    implementation 'com.polidea.rxandroidble2:rxandroidble:1.11.1'
     implementation 'org.jsoup:jsoup:1.9.2'
     implementation 'org.apache.commons:commons-lang3:3.6'
     // button ui
     compileOnly 'com.github.maning0303:MNProgressHUD:V1.1.4'
-
     implementation 'com.github.angads25:toggle:1.1.0'
-
     implementation files('libs/mina-core-2.0.13.jar')
-//    implementation files('libs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
+    //    implementation files('libs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.0'
     implementation 'com.jakewharton.rx2:replaying-share:2.1.1'
-    implementation "io.reactivex.rxjava2:rxjava:2.2.7"
-
-
-//    implementation 'com.yanzhenjie:recyclerview-swipe:1.2.2'
-//    compileOnly  'com.jakewharton.timber:timber:4.7.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
+    //    implementation 'com.yanzhenjie:recyclerview-swipe:1.2.2'
+    //    compileOnly  'com.jakewharton.timber:timber:4.7.1'
     implementation project(':sommerlibrary')
-
     testImplementation 'junit:junit:4.12'
-
     implementation 'com.github.huangyanbin:SmartTable:2.2.0'
     implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'
     implementation 'com.tencent.bugly:nativecrashreport:3.7.1'
     implementation 'com.tencent.tinker:tinker-android-lib:1.9.14'
-    implementation 'com.yanzhenjie.recyclerview:support:1.3.2'  //策划菜单 listview
-
-    implementation 'org.greenrobot:greendao:3.2.2' // 添加依赖
-
+    implementation 'com.yanzhenjie.recyclerview:support:1.3.2'
+    //策划菜单 listview
+    implementation 'org.greenrobot:greendao:3.2.2'
+    // 添加依赖
     implementation 'org.greenrobot:eventbus:3.2.0'
-
     implementation 'com.tencent:mmkv-static:1.2.7'
-
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
+    implementation files('libs/PosApi_V1.23_20200305.jar')
 }

@@ -65,8 +65,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private ProgressDialog progressValueDialog;
     private SoundPoolHelp soundPoolHelp;
 
-    // 是否取消连接检测
-    private boolean isCancelTest = true;
     private TextView missEvent;
     private TextView falseConnect;
     private TextView allDet;
@@ -83,6 +81,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     private List<ProjectDetonator> lostDetData = new ArrayList<>();     //  失联的雷管
     private int buttonid = 0;
 
+
+    private boolean bCancelCheck = false;   //  是否 取消连接检测
+    private boolean bChecking = false;      //  是否 连接检测雷管
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -179,7 +180,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
         switch (v.getId()) {
             case R.id.back_img://返回
-                if(isCancelTest){
+                if(!bChecking){
                     finish();
                 }
                 else{
@@ -210,13 +211,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
             case R.id.cancel_test:
                 // 放弃检测
-                isCancelTest = true;
+                bCancelCheck = true;
                 changeProgressView(true);
                 setSelectBtnVisible(true);
                 break;
             case R.id.startTest:
                 // 开始检测
-                allDetConnectTest();
+                if(!bChecking){
+                    allDetConnectTest();
+                }
+
                 break;
 
         }
@@ -269,7 +273,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onItemClick(View view, int position) {
         // 点击条目弹出 popuWindow 提示删除或者测试
-        if(!isCancelTest) return;
+        if(bChecking) return;
 
         if(buttonid==R.id.false_connect){
             shouMisconnectPopuWindow(view,position);
@@ -398,6 +402,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                bChecking = true;
+
                 DetApp.getInstance().MainBoardLVEnable();
                 try {
                     Thread.sleep(100);
@@ -413,6 +420,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     playSound(b);
                 }
 
+                bChecking = false;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -440,7 +448,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         }
 
         if (keyCode == KeyEvent.KEYCODE_BUTTON_1 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if(isCancelTest){
+            if(!bChecking){
                 allDetConnectTest();
                 return true;
             }
@@ -448,7 +456,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
         //  右下角返回键
         if(4==keyCode){
-            if(isCancelTest){
+            if(!bChecking){
                 finish();
             }
             else{
@@ -482,6 +490,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         if (connectData == null || connectData.size() == 0) {
             return;
         }
+
+        bChecking = true;
+        bCancelCheck = false;
+        misConnectData.clear();
+        lostDetData.clear();
+
         // 连接检测前需要进行总线上电操作
         PowerOnSelfCheckTask detsBusChargeTask = new PowerOnSelfCheckTask(this);
         detsBusChargeTask.execute();
@@ -575,16 +589,18 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
 
         int nMisCount = misConnectData.size();
         if ((successNum == projectDetonators.size())&&(nMisCount==0)) {
-            //全部检测测功了，更新项目状态和，提示进去延时下载
-            updateAndHint();
-        } else {
-            playSound(false);
-            // 未全部检测成功，展示检测结果
-            if (!isCancelTest) {
-                showTestResult(projectDetonators.size(), successNum, faileNum,nMisCount);
-                isCancelTest = true;
+            //  全部检测测功了，更新项目状态和，提示进去延时下载
+            // 并且没被取消
+            if (!bCancelCheck) {
+                updateAndHint();
+                return;
             }
         }
+
+        playSound(false);
+        // 未全部检测成功，展示检测结果
+        showTestResult(projectDetonators.size(), successNum, faileNum, nMisCount);
+
     }
 
     // 更新项目状态
@@ -600,24 +616,27 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             VibrateUtil.vibrate(ConnectTestActivity.this, 150);
         }
 
+        // 总线下电
+        Log.d(TAG,"总线下电");
+        DetApp.getInstance().MainBoardBusPowerOff();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage("检测成功，请进行延时下载！");
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                // 总线下电
-                Log.d(TAG,"总线下电");
-                DetApp.getInstance().MainBoardBusPowerOff();
-
                 dialog.dismiss();
-                isCancelTest = true;
+                bChecking = false;
+                bCancelCheck = false;
             }
         });
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                bChecking = false;
+                bCancelCheck = false;
+
                 Intent intent = new Intent(ConnectTestActivity.this, DelayDownloadActivity.class);
                 intent.putExtra(AppIntentString.PROJECT_ID, proId);
                 startActivity(intent);
@@ -637,6 +656,9 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                bChecking = false;
+                bCancelCheck = false;
+
                 dialog.cancel();
             }
         });
@@ -648,10 +670,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public class TestAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
         protected Integer doInBackground(String... strings) {
-            lostDetData.clear();
-
             for (int i = 0; i < connectData.size(); i++) {
-                if (isCancelTest) {
+                if (bCancelCheck) {
                     return null;
                 }
                 boolean b = detSingleCheck(i);
@@ -668,7 +688,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            isCancelTest = false;
         }
 
         @Override
@@ -681,8 +700,13 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
 
-            mistask = new MisDetonatorTask();
-            mistask.execute();
+            if(bCancelCheck){
+                updateProjectStatus();
+            }else{
+                mistask = new MisDetonatorTask();
+                mistask.execute();
+            }
+
         }
     }
 
@@ -757,7 +781,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             super.onPreExecute();
 
             showProDialog("开始查找误接雷管...");
-            misConnectData.clear();
+
 
             for (ProjectDetonator det : connectData) {
                 if(m_nMaxRelayTime<det.getRelay()){
@@ -785,7 +809,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             super.onPostExecute(integer);
             missProDialog();
 
-            isCancelTest = false;
             connectTestAdapter.notifyDataSetChanged();
             changeProgressView(true);
             setSelectBtnVisible(true);
@@ -806,9 +829,12 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     }
                 });
                 builder.create().show();
+                bChecking = false;
+
             }else{
                 updateProjectStatus();
             }
+
             return;
 
         }
@@ -854,7 +880,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
     public void postResult(int result, int type) {
         dissProgressDialog();
         if (result == 0) {
-            //  充电成功了，才进行检测
+            //  总线充电成功，进行检测
             for (ProjectDetonator connectDatum : connectData) {
                 connectDatum.setTestStatus(-1);
             }
@@ -863,11 +889,14 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             testAsyncTask = new TestAsyncTask();
             testAsyncTask.execute();
         } else {
+            //  总线充电失败
             playSound(false);
             showStatusDialog(strerrmsg);
 
             changeProgressView(true);
             setSelectBtnVisible(true);
+
+            bChecking = false;
         }
     }
 
@@ -907,7 +936,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // TODO: 2020/12/20
-                isCancelTest = true;
                 if (testAsyncTask !=null) {
                     testAsyncTask.cancel(true);
                 }
