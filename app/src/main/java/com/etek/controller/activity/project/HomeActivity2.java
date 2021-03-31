@@ -560,6 +560,10 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         }
         HandesetInfo hi = new HandesetInfo();
         hi.initData(getStringInfo(getString(R.string.controller_sno)));
+        hi.setAppVersion(AppUtils.getAppVersion(HomeActivity2.this)+"");
+        if(null!=mainBoardInfoBean){
+            hi.setMbVersion(mainBoardInfoBean.getStrSoftwareVer());
+        }
         String rptJson = JSON.toJSONString(hi, SerializerFeature.WriteMapNullValue);
         Log.d(TAG,"上报设备状态："+rptJson);
         String url = AppConstants.ETEK_UPLOAD_HANDSET_INFO;

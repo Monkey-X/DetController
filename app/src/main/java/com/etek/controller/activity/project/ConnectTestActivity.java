@@ -807,7 +807,6 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         protected void onPostExecute(Integer integer) {
             Log.d(TAG,"MisDetonatorTask onPostExecute");
             super.onPostExecute(integer);
-            missProDialog();
 
             connectTestAdapter.notifyDataSetChanged();
             changeProgressView(true);
@@ -816,6 +815,8 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             // 总线下电
             Log.d(TAG,"总线下电");
             DetApp.getInstance().MainBoardBusPowerOff();
+
+            missProDialog();
 
             if(integer!=0){
                 playSound(false);

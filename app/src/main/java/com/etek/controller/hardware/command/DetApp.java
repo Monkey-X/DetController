@@ -1995,7 +1995,7 @@ public class DetApp {
             ret = prt.RecvBlock(RESP_LEN, resp);
             if(0!=ret) {
                 if(null!=cbobj)
-                    cbobj.DisplayText("搜寻误接的雷管 超时无应答");
+                    cbobj.DisplayText("超时无应答");
                 break;
             }
 
@@ -2004,18 +2004,18 @@ public class DetApp {
 
             if(null==szdata) {
                 if(null!=cbobj)
-                    cbobj.DisplayText("搜寻误接的雷管  获取无效数据");
+                    cbobj.DisplayText("获取无效数据");
                 break;
             }
             if(szdata.length<RESP_LEN-1) {
                 if(null!=cbobj)
-                    cbobj.DisplayText("搜寻误接的雷管 获取数据长度不足");
+                    cbobj.DisplayText("获取数据长度不足");
                 break;
             }
 
             if(szdata[0]!=(byte)RESP_HEAD) {
                 if(null!=cbobj)
-                    cbobj.DisplayText("搜寻误接的雷管 首数据无效");
+                    cbobj.DisplayText("首数据无效");
                 break;
             }
 
@@ -2041,7 +2041,7 @@ public class DetApp {
 					return 0;
 
 				default:
-					cbobj.DisplayText("搜索误接雷管出错，请检查连接后重新检测");
+					cbobj.DisplayText("请检查连接后重新检测");
 					ModuleSetWakeupStatus(0);
 					//  恢复超时设置
 					m_commobj.SetTimeout(nTimeout);

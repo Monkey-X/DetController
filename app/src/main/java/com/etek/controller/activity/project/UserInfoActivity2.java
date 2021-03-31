@@ -10,14 +10,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.elvishew.xlog.XLog;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.Globals;
 import com.etek.controller.common.HandesetInfo;
+import com.etek.controller.entity.MainBoardInfoBean;
 import com.etek.controller.model.User;
+import com.etek.controller.utils.AppUtils;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.IdCardUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -181,6 +185,14 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
 
         HandesetInfo hi = new HandesetInfo();
         hi.initData(getStringInfo(getString(R.string.controller_sno)));
+        hi.setAppVersion(AppUtils.getAppVersion(UserInfoActivity2.this)+"");
+
+        MainBoardInfoBean mainBoardInfoBean = getMainBoardInfo();
+        if(null!=mainBoardInfoBean){
+            hi.setMbVersion(mainBoardInfoBean.getStrSoftwareVer());
+        }
+
+
         String rptJson = JSON.toJSONString(hi, SerializerFeature.WriteMapNullValue);
         Log.d(TAG,"上报设备状态："+rptJson);
         String url = AppConstants.ETEK_UPLOAD_HANDSET_INFO;
@@ -203,5 +215,19 @@ public class UserInfoActivity2 extends BaseActivity implements View.OnClickListe
 
             }
         });
+    }
+
+    private MainBoardInfoBean getMainBoardInfo() {
+        MainBoardInfoBean mbib = null;
+        String preInfo = getPreInfo(getString(R.string.mainBoardInfo_sp));
+        if (!StringUtil.isBlank(preInfo)) {
+            try {
+                mbib = JSON.parseObject(preInfo, MainBoardInfoBean.class);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                XLog.e(e.getMessage());
+            }
+        }
+        return mbib;
     }
 }
