@@ -17,6 +17,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 
 import com.etek.controller.common.HandsetWorkMode;
@@ -2079,6 +2081,43 @@ public class DetApp {
 
         return 0;
     }
+
+	/***
+	 *
+	 * @param nSec
+	 * @param cbobj
+	 * @return
+	 */
+    public int DetsDelayTime(int nSec,DetCallback cbobj){
+		long nt0 = System.currentTimeMillis()/1000;
+
+		m_bDelaying = true;
+
+		while(m_bDelaying){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			long nt1 = System.currentTimeMillis()/1000;
+
+			if((nt1-nt0)>nSec){
+				break;
+			}
+
+			if(null!=cbobj){
+				cbobj.SetProgressbarValue((int)((nt1-nt0)/nSec));
+				cbobj.DisplayText(String.format("剩余 %d 秒",nSec-(nt1-nt0)));
+			}
+		}
+
+		if(!m_bDelaying) return -1;
+		return 0;
+	}
+	private boolean m_bDelaying = false;
+    public void StopDelay(){
+    	m_bDelaying = false;
+	}
 
 
 	public void testDetAPP() {

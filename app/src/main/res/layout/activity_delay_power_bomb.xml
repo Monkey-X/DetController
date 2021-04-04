@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:padding="20dp"
+        android:textSize="18sp"
+        android:id="@+id/delay_showString"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </TextView>
+
+    <TextView
+        android:layout_marginEnd="25dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/delay_showString"
+        android:textColor="@color/coral"
+        android:layout_marginStart="25dp"
+        android:id="@+id/delay_toast_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:id="@+id/delay_power_bank"
+        android:layout_below="@+id/delay_toast_text"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/project_power_bomb">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/project_delay_power_bomb"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_below="@+id/delay_power_bank"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/delay_det_disCharge"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/un_project_power_bomb">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="雷管放电"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+</RelativeLayout>

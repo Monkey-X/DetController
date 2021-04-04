@@ -67,6 +67,7 @@
         android:background="@drawable/project_power_bomb">
 
         <TextView
+            android:id="@+id/charge_bomb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

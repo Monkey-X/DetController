@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,6 +41,9 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
     private final String TAG="SettingsActivity2";
     private TextView serverAddress;
 
+    private LabeledSwitch bombModeSwitch;
+    private AlertDialog alertDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +68,9 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             straddr = "中爆黔南";
         }
         serverAddress.setText(straddr);
+
+        Boolean isDelayBomb = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.DELAY_BOMB_MODE);
+        bombModeSwitch.setOn(isDelayBomb);
     }
 
     private void initView() {
@@ -85,6 +92,9 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         setPassWord.setOnClickListener(this);
         loginReset.setOnClickListener(this);
         recoverData.setOnClickListener(this);
+
+        bombModeSwitch = findViewById(R.id.bomb_mode_switch);
+        bombModeSwitch.setOnToggledListener(this);
     }
 
     @Override
@@ -104,6 +114,10 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
             case R.id.etek_switch:
                 etekSwitch.setOn(isOn);
                 SpManager.getIntance().saveSpBoolean(AppSpSaveConstant.SEVER_ETEK_ON,isOn);
+                break;
+
+            case R.id.bomb_mode_switch:
+                switchBombMode(isOn);
                 break;
             default:
                 break;
@@ -258,4 +272,50 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         popupWindow.showAtLocation(view, Gravity.RIGHT|Gravity.TOP, 100,300);
     }
 
+    private void switchBombMode(boolean isOn){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
+        TextView textTitle = view.findViewById(R.id.text_title);
+
+        String strPrompt ="延时起爆开关？";
+        if(isOn)
+            strPrompt="开启" + strPrompt;
+        else
+            strPrompt = "关闭" + strPrompt;
+        textTitle.setText(strPrompt);
+
+        EditText delayTime = view.findViewById(R.id.changeDelayTime);
+        delayTime.setText("");
+
+
+        delayTime.setInputType(InputType.TYPE_CLASS_NUMBER);    //  只能输入数字
+        builder.setView(view);
+        builder.setCancelable(false);
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                bombModeSwitch.setOn(!isOn);
+                alertDialog.dismiss();
+            }
+        });
+
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String str0 = delayTime.getText().toString().trim();
+                if(str0.equals("88888888")){
+                    bombModeSwitch.setOn(isOn);
+                    SpManager.getIntance().saveSpBoolean(AppSpSaveConstant.DELAY_BOMB_MODE,isOn);
+                    alertDialog.dismiss();
+                }else{
+                    bombModeSwitch.setOn(!isOn);
+                    ToastUtils.show(SettingsActivity2.this, "输入密码有误！");
+                }
+            }
+        });
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
 }

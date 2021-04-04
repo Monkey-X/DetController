@@ -282,5 +282,7 @@
     <string name="delay_hole_out_time">T1：%1s ms</string>
     <string name="title_activity_login_in_info_reset">重置密码</string>
 
+    <string name="project_delay_power_bomb">延时起爆</string>
+    <string name="delay_power_bomb_switch">延时起爆开关</string>
 
 </resources>

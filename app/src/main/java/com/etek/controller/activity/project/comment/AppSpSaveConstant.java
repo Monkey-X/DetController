@@ -31,6 +31,8 @@ public class AppSpSaveConstant {
     public static final String SEVER_ZHONGBAO_ON = "isServerZhongbaoOn";
     public static final String SEVER_ETEK_ON = "isServerEtekOn";
 
-
     public static final String ZHONGBAO_ADDRESS = "zhongbaoAddress";
+
+    /*延迟起爆开关*/
+    public static final String DELAY_BOMB_MODE ="bombMode";
 }

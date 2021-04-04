@@ -26,7 +26,10 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.elvishew.xlog.XLog;
+import com.etek.controller.DelayPowerBombActivity;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.adapter.CheckDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
@@ -546,9 +549,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(CheckDetailActivity.this, PowerBombActivity.class);
-                intent.putExtra(AppIntentString.PROJECT_ID, proId);
-                startActivity(intent);
+                StartPowerBombActivity();
                 finish();
                 dialog.dismiss();
             }
@@ -556,7 +557,17 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         builder.create().show();
     }
 
-
+    private void StartPowerBombActivity(){
+        Intent intent;
+        boolean isDelayBomb = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.DELAY_BOMB_MODE);
+        if(isDelayBomb){
+            intent = new Intent(CheckDetailActivity.this, DelayPowerBombActivity.class);
+        }else{
+            intent = new Intent(CheckDetailActivity.this, PowerBombActivity.class);
+        }
+        intent.putExtra(AppIntentString.PROJECT_ID, proId);
+        startActivity(intent);
+    }
     /**
      * 获取验证结果
      */

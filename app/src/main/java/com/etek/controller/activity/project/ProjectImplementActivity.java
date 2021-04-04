@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.etek.controller.DelayPowerBombActivity;
 import com.etek.controller.R;
+import com.etek.controller.activity.project.comment.AppSpSaveConstant;
+import com.etek.controller.activity.project.manager.SpManager;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.persistence.DBManager;
@@ -28,6 +32,8 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
     private RelativeLayout checkAuthorization;
     private RelativeLayout powerBomb;
     private String controllerSno;
+
+    private TextView chargeBomb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +66,20 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
                 break;
 
             case R.id.project_power_bomb://充电起爆
-                startActivity(new Intent(this, PowerBombActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
+                StartPowerBombActivity();
                 break;
         }
     }
+
+    private void StartPowerBombActivity(){
+        boolean isDelayBomb = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.DELAY_BOMB_MODE);
+        if(isDelayBomb){
+            startActivity(new Intent(this, DelayPowerBombActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
+        }else{
+            startActivity(new Intent(this, PowerBombActivity.class).putExtra(AppIntentString.PROJECT_ID, proId));
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -94,6 +110,15 @@ public class ProjectImplementActivity extends BaseActivity implements View.OnCli
         powerBomb.setOnClickListener(this);
         // 设备序列号
         controllerSno = getStringInfo(getString(R.string.controller_sno));
+
+        chargeBomb = findViewById(R.id.charge_bomb);
+        boolean isDelayBomb = SpManager.getIntance().getSpBoolean(AppSpSaveConstant.DELAY_BOMB_MODE);
+        if(isDelayBomb){
+            chargeBomb.setText("延时起爆");
+        }
+        else {
+            chargeBomb.setText("充电起爆");
+        }
     }
 
     /**

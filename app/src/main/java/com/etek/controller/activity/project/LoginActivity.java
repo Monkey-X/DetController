@@ -287,10 +287,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     mTimer = null;
 
                     onlinepassword.setText("忘记密码");
-                }else{
-                    String str = String.format("%d 秒后重新获取",60-(ntm-m_lStartTime));
-                    onlinepassword.setText(str);
+                    return;
                 }
+
+                String str = String.format("%d 秒后重新获取",60-(ntm-m_lStartTime));
+                onlinepassword.setText(str);
+
             }
         };
 

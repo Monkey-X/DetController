@@ -117,9 +117,11 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void checkAppUpdate() {
+        showProDialog("请稍等...");
         UpdateAppUtils.checkAppUpdate(AppIntentString.APP_DOWNLOAD_URL, this, new UpdateAppUtils.AppUpdateCallback() {
             @Override
             public void onSuccess(AppUpdateBean updateInfo) {
+                missProDialog();
                 if (updateInfo != null && updateInfo.getResult() != null) {
                     AppUpdateBean.ResultBean.AppBean app = updateInfo.getResult().getApp();
                     AppUpdateBean.ResultBean.MainBoardBean mainBoard = updateInfo.getResult().getMainBoard();
@@ -134,6 +136,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void onError() {
+                missProDialog();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

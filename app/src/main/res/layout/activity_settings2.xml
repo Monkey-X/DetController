@@ -171,6 +171,38 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/set_bomb_mode"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="0.5dp"
+        android:background="@drawable/message_item_auto"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/delay_power_bomb_switch"
+            android:textColor="#111111"
+            android:textSize="16sp" />
+        <com.github.angads25.toggle.widget.LabeledSwitch
+            android:id="@+id/bomb_mode_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/dp_12"
+            android:textSize="14sp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            app:on="false"
+            app:textOn="@string/dev_on"
+            app:textOff="@string/dev_off"
+            app:colorBorder="@color/colorAccent"/>
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/set_login_in_info"
         android:layout_marginTop="5dp"
