@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.etek.controller.DelayPowerBombActivity;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;

@@ -26,7 +26,6 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.elvishew.xlog.XLog;
-import com.etek.controller.DelayPowerBombActivity;
 import com.etek.controller.R;
 import com.etek.controller.activity.project.comment.AppSpSaveConstant;
 import com.etek.controller.activity.project.manager.SpManager;
@@ -49,6 +48,7 @@ import com.etek.controller.dto.Zbqy;
 import com.etek.controller.dto.Zbqys;
 import com.etek.controller.entity.DetController;
 import com.etek.controller.entity.EntryCopyUtil;
+import com.etek.controller.entity.OnlineApplyBean;
 import com.etek.controller.enums.CheckRuleEnum;
 import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.persistence.DBManager;
@@ -136,6 +136,24 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         initBaiduLocation();
 
         initGPSLocation();
+
+        getSPData();
+    }
+
+    // 获取sp中缓存的数据
+    private void getSPData() {
+        if ("offline".equals(type)) {
+            return;
+        }
+
+        String onlineApplyInfo = getStringInfo("onlineApplyInfo");
+        if (!TextUtils.isEmpty(onlineApplyInfo)) {
+            OnlineApplyBean oab = JSON.parseObject(onlineApplyInfo, OnlineApplyBean.class);
+            if (oab!=null) {
+                contractCode.setText(oab.getHtid());
+                proCode.setText(oab.getXmbh());
+            }
+        }
     }
 
     private void initTitle() {
@@ -443,21 +461,28 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
      * 缓存界面输入
      */
     private void saveData(){
-        if (pendingProject == null)
-            return;
+        if (pendingProject != null){
+            DetLog.writeLog(TAG,"saveData 合同编号："+contractCode.getText().toString()
+                    + "项目编号："+proCode.getText().toString());
 
-        DetLog.writeLog(TAG,"saveData 合同编号："+contractCode.getText().toString()
-                + "项目编号："+proCode.getText().toString());
+            //合同编号
+            pendingProject.setContractCode(contractCode.getText().toString());
+            //起爆器编号
+            pendingProject.setControllerId(controllerId.getText().toString());
+            //项目编号
+            pendingProject.setProCode(proCode.getText().toString());
 
-        //合同编号
-        pendingProject.setContractCode(contractCode.getText().toString());
-        //起爆器编号
-        pendingProject.setControllerId(controllerId.getText().toString());
-        //项目编号
-        pendingProject.setProCode(proCode.getText().toString());
+            DBManager.getInstance().getPendingProjectDao().save(pendingProject);
+        }
 
-        DBManager.getInstance().getPendingProjectDao().save(pendingProject);
+        //  缓存上次输入的合同号和项目编号
+        OnlineApplyBean oab = new OnlineApplyBean();
+        oab.setHtid(contractCode.getText().toString());
+        oab.setXmbh(proCode.getText().toString().toUpperCase());
+        setStringInfo("onlineApplyInfo",JSON.toJSONString(oab));
     }
+
+
     /**
      * 注销
      */

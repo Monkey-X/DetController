@@ -42,6 +42,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.project.DelayPowerBombActivity"></activity>
         <activity android:name=".activity.project.LoginInInfoResetActivity" />
         <activity android:name=".activity.project.BombPassWordSettingActivity" />
         <activity

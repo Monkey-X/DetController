@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -287,9 +288,8 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
 
         EditText delayTime = view.findViewById(R.id.changeDelayTime);
         delayTime.setText("");
-
-
-        delayTime.setInputType(InputType.TYPE_CLASS_NUMBER);    //  只能输入数字
+        delayTime.setInputType(InputType.TYPE_CLASS_NUMBER);                            //  只能输入数字
+        delayTime.setTransformationMethod(PasswordTransformationMethod.getInstance());  //  显示为*
         builder.setView(view);
         builder.setCancelable(false);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -303,7 +303,6 @@ public class SettingsActivity2 extends BaseActivity implements OnToggledListener
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 String str0 = delayTime.getText().toString().trim();
                 if(str0.equals("88888888")){
                     bombModeSwitch.setOn(isOn);

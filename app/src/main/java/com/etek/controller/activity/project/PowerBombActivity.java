@@ -54,11 +54,12 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     private DetsBusChargeTask detsBusChargeTask;
     private AlertDialog startBombDialog;
 
-    private boolean isBombing = false;
     private View powerBank;
     private long proId;
     private List<ProjectDetonator> detonatorEntityList;
     private String bombPassWord;
+
+    private boolean bCanExit = true;        //  能否退出
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,12 +100,10 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             //  Z字形输入
             bombPassWord ="1235789";
             setStringInfo("BombPassWord",bombPassWord);
-            //startActivityForResult(new Intent(this, BombPassWordSettingActivity.class),200);
         }
 
         //  延时设置为5秒
         DetApp.getInstance().SetCommTimeout(5000);
-
     }
 
     @Override
@@ -133,7 +132,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         soundPoolHelp.playSound(b);
         VibrateUtil.vibrate(this, 1000);
     }
-    boolean isCanBomb = false;
 
     private void showVerifyDialog(){
         SudokuDialog sudokuDialog = new SudokuDialog();
@@ -181,18 +179,14 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
             return;
         }
 
-        // 进行网络起爆
-        isCanBomb = false;
-        if (!isBombing) {
-            // 蜂鸣+震动1秒钟
-            playSound(true);
+        // 进行起爆
+        // 蜂鸣+震动1秒钟
+        playSound(true);
 
-            isBombing = true;
-            showProDialog("起爆中...");
-            Log.d(TAG, "DetonateAllDet: ");
-            DetnoateTask detnoateTask = new DetnoateTask(this);
-            detnoateTask.execute();
-        }
+        showProDialog("起爆中...");
+        Log.d(TAG, "DetonateAllDet: ");
+        DetnoateTask detnoateTask = new DetnoateTask(this);
+        detnoateTask.execute();
     }
 
     /**
@@ -219,6 +213,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                     showToast("获取雷管数据失败！");
                     return;
                 }
+
+                bCanExit = false;
                 toastText.setText("");
                 powerAsyncTask = new PowerOnSelfCheckTask(this);
                 powerAsyncTask.execute();
@@ -230,10 +226,11 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //  右下角的退出键
         if(KeyEvent.KEYCODE_BACK==keyCode){
-//            if(!isBombing){
-//                finish();
-//            }
-            return true;
+            if(bCanExit){
+                finish();
+            }else{
+                return true;
+            }
         }
         return super.onKeyUp(keyCode, event);
     }
@@ -335,6 +332,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
             case ITaskCallback.DETONATE:
                 detonateResult(result);
+                bCanExit = true;
                 break;
 
             case ITaskCallback.MIS_CHARGE:      //  放电操作
@@ -356,6 +354,8 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                 }
 
                 powerBank.setVisibility(View.VISIBLE);
+
+                bCanExit = true;
                 break;
 
             case ITaskCallback.BL_TRUE:
@@ -386,7 +386,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
                     }
                 });
                 builder.create().show();
-
+                bCanExit = true;
                 break;
 
             case ITaskCallback.DROP_OFF:
@@ -430,7 +430,6 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
      * @param result
      */
     private void detonateResult(int result) {
-        isBombing = false;
         missProDialog();
         if (result == 0) {
             toastText.setText("起爆成功！");

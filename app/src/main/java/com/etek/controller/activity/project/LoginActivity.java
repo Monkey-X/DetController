@@ -3,7 +3,10 @@ package com.etek.controller.activity.project;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
@@ -73,10 +76,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if (!TextUtils.isEmpty(user_name)) {
             userName.setText(user_name);
         }
+
+        user_name = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_PASSWORD);
+        if (!TextUtils.isEmpty(user_name)) {
+            password.setText(user_name);
+        }
+        password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
     }
 
     private void initView() {
         userName = findViewById(R.id.user_name);
+        userName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence text, int start, int before, int count) {
+            }
+            @Override
+            public void beforeTextChanged(CharSequence text, int start, int count,int after) {
+            }
+            @Override
+            public void afterTextChanged(Editable edit) {
+                password.setText("");
+            }
+        });
+
+
         password = findViewById(R.id.password);
         TextView login = findViewById(R.id.login);
         login.setOnClickListener(this);
@@ -208,8 +231,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         return false;
     }
 
-
-
     private long m_lStartTime = 0;
     private ETEKOnlinePassword etekonlinepswd = null;
 
@@ -292,7 +313,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
                 String str = String.format("%d 秒后重新获取",60-(ntm-m_lStartTime));
                 onlinepassword.setText(str);
-
             }
         };
 

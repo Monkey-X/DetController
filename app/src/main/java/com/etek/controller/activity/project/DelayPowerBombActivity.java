@@ -1,4 +1,4 @@
-package com.etek.controller;
+package com.etek.controller.activity.project;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.etek.controller.activity.project.ReportListActivity;
+import com.etek.controller.R;
 import com.etek.controller.activity.project.dialog.SudokuDialog;
 import com.etek.controller.activity.project.view.SudokuView;
 import com.etek.controller.common.AppIntentString;
@@ -56,7 +56,6 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
     private DetsBusChargeTask detsBusChargeTask;
     private AlertDialog startBombDialog;
 
-    private boolean isBombing = false;
     private View powerBank;
     private long proId;
     private List<ProjectDetonator> detonatorEntityList;
@@ -67,6 +66,10 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
     private int nDelayTime = 5;     //  延时起爆时间（分钟）
     private DetsCountDownTask detsCountDownTask;
 
+    private boolean bCanExit = true;        //  能否退出
+
+    private final int MIN_DELAY_BOM_MINS = 1;
+    private final int MAX_DELAY_BOM_MINS = 60;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,7 +140,6 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
         soundPoolHelp.playSound(b);
         VibrateUtil.vibrate(this, 1000);
     }
-    boolean isCanBomb = false;
 
     private void showVerifyDialog(){
         SudokuDialog sudokuDialog = new SudokuDialog();
@@ -155,8 +157,7 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
         sudokuDialog.setSudoCancelListener(new SudokuDialog.SudoCancelListenr() {
             @Override
             public void onSudoCancel() {
-                // 还没有总线上电和雷管充电，无需放电
-                // StartSetBLTask(true);
+                bCanExit = true;
             }
         });
         sudokuDialog.show(getSupportFragmentManager(),"");
@@ -187,17 +188,13 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
         }
 
         // 进行网络起爆
-        isCanBomb = false;
-        if (!isBombing) {
-            // 蜂鸣+震动1秒钟
-            playSound(true);
+        // 蜂鸣+震动1秒钟
+        playSound(true);
 
-            isBombing = true;
-            showProDialog("起爆中...");
-            Log.d(TAG, "DetonateAllDet: ");
-            DetnoateTask detnoateTask = new DetnoateTask(this);
-            detnoateTask.execute();
-        }
+        showProDialog("起爆中...");
+        Log.d(TAG, "DetonateAllDet: ");
+        DetnoateTask detnoateTask = new DetnoateTask(this);
+        detnoateTask.execute();
     }
 
     /**
@@ -239,7 +236,11 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //  右下角的退出键
         if(KeyEvent.KEYCODE_BACK==keyCode){
-            return true;
+            if(bCanExit){
+                finish();
+            }else{
+                return true;
+            }
         }
         return super.onKeyUp(keyCode, event);
     }
@@ -280,7 +281,6 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
      * 进行充电取消步骤
      */
     private void chargeCancel() {
-        //toastText.setText("总线放电中...");
         // 充电取消,先进行拉低操作
         if (detsBusChargeTask != null) {
             detsBusChargeTask.cancel(true);
@@ -361,6 +361,7 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
                 }
 
                 powerBank.setVisibility(View.VISIBLE);
+                bCanExit = true;
                 break;
 
             case ITaskCallback.BL_TRUE:
@@ -373,7 +374,6 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
                 break;
 
             case ITaskCallback.POWER_ON:        //  上电自检（总线充电）
-
                 if (result == 0) {
                     // 获取延时设置
                     toastText.setText("");
@@ -394,7 +394,7 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
                     }
                 });
                 builder.create().show();
-
+                bCanExit = true;
                 break;
 
             case ITaskCallback.DROP_OFF:
@@ -438,7 +438,6 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
      * @param result
      */
     private void detonateResult(int result) {
-        isBombing = false;
         missProDialog();
         if (result == 0) {
             toastText.setText("起爆成功！");
@@ -583,6 +582,7 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 alertDialog.dismiss();
+                bCanExit = true;
             }
         });
 
@@ -598,8 +598,10 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
                     return;
                 }
 
-                if((nDelayTime>5)||(nDelayTime>60)){
-                    ToastUtils.showShort(DelayPowerBombActivity.this, "延时请设置在5到60分钟之内！");
+                if((nDelayTime<MIN_DELAY_BOM_MINS)||(nDelayTime>MAX_DELAY_BOM_MINS)){
+                    ToastUtils.showShort(DelayPowerBombActivity.this, String.format("延时请设置在%d到%d分钟之内！",
+                            MIN_DELAY_BOM_MINS,
+                            MAX_DELAY_BOM_MINS));
                     playSound(false);
                     return;
                 }
@@ -639,6 +641,7 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 alertDialog.dismiss();
+                bCanExit = true;
             }
         });
 
