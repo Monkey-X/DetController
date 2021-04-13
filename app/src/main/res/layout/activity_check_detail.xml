@@ -23,7 +23,7 @@
             android:layout_marginLeft="10dp"
             android:text="项目编号：" />
 
-        <EditText
+        <com.etek.controller.widget.ClearableEditText
             android:id="@+id/pro_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
             android:scaleType="centerCrop"
             android:text="合同备案序号: " />
 
-        <EditText
+        <com.etek.controller.widget.ClearableEditText
             android:id="@+id/contract_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

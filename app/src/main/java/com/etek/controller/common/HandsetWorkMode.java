@@ -3,6 +3,11 @@ package com.etek.controller.common;
 
 import android.util.Log;
 
+/**
+ * 设备工作模式：测试模式和正常模式
+ * 测试模式：    1. 起爆器编号前3位是F99；
+ *              2. 操作员名称为WXSCTEST
+ */
 public class HandsetWorkMode{
 
     private final static String TAG="HandsetWorkMode";

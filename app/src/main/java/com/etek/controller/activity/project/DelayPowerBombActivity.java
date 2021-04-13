@@ -68,7 +68,7 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
 
     private boolean bCanExit = true;        //  能否退出
 
-    private final int MIN_DELAY_BOM_MINS = 1;
+    private final int MIN_DELAY_BOM_MINS = 2;
     private final int MAX_DELAY_BOM_MINS = 60;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -572,9 +572,10 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
         AlertDialog.Builder builder = new AlertDialog.Builder(DelayPowerBombActivity.this);
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_view, null, false);
         TextView textTitle = view.findViewById(R.id.text_title);
-        textTitle.setText("请输入起爆延时(分钟)：");
+        textTitle.setText("请输入起爆延时【分钟】：");
         EditText delayTime = view.findViewById(R.id.changeDelayTime);
         delayTime.setText("5");
+        delayTime.setMaxEms(3);
         delayTime.setInputType(InputType.TYPE_CLASS_NUMBER);    //  只能输入数字
         builder.setView(view);
         builder.setCancelable(false);
@@ -593,13 +594,13 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
                 try{
                     nDelayTime = Integer.parseInt(strDelayTime);
                 }catch (Exception e){
-                    ToastUtils.showShort(DelayPowerBombActivity.this, "无效的起爆延时！");
+                    ToastUtils.showLongCustom(DelayPowerBombActivity.this, "无效的起爆延时！");
                     playSound(false);
                     return;
                 }
 
                 if((nDelayTime<MIN_DELAY_BOM_MINS)||(nDelayTime>MAX_DELAY_BOM_MINS)){
-                    ToastUtils.showShort(DelayPowerBombActivity.this, String.format("延时请设置在%d到%d分钟之内！",
+                    ToastUtils.showLongCustom(DelayPowerBombActivity.this, String.format("延时请设置在【%d】到【%d】分钟之内！",
                             MIN_DELAY_BOM_MINS,
                             MAX_DELAY_BOM_MINS));
                     playSound(false);
@@ -673,34 +674,45 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
     public class DetsCountDownTask extends AsyncTask<String, Integer, Integer>{
         @Override
         protected Integer doInBackground(String... strings) {
-            int result = DetApp.getInstance().DetsDelayTime(nDelayTime*60, new DetCallback() {
+            // 检查雷管是否脱落
+            StringBuilder strData = new StringBuilder();
+            int ret  = DetApp.getInstance().DetsCheckDropOff(strData);
+            Log.d(TAG, String.format("DetsCheckDropOff: %d",ret));
+            // 通信不通
+            if(0!=ret){
+                resultString = "检测到雷管脱落或短路！";
+                return -1;
+            }
+            //  返回数据不对
+            Log.d(TAG, String.format("DetsCheckDropOff返回: %s",strData.toString()));
+            String checkString = strData.substring(8);
+            Log.d(TAG, String.format("DetsCheckDropOff checkString: %s",checkString.toString()));
+            int checkInt = Integer.parseInt(checkString, 16);
+            if (checkInt != 1) {
+                resultString = "检测到雷管脱落或短路！";
+                return -1;
+            }
+
+            // 计算真正的延时
+            int n = nDelayTime*60 - getChargeEstimateTime(detonatorEntityList.size());
+            if(n<=0){
+                n = 30;
+            }
+            Log.d(TAG,"实际延时："+n);
+            int result = DetApp.getInstance().DetsDelayTime(n, new DetCallback() {
                 @Override
                 public void DisplayText(String strText) {
+                    int ntime = 0;
+                    try{
+                        ntime = Integer.parseInt(strText);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    ntime = ntime+getChargeEstimateTime(detonatorEntityList.size());
+                    String str = String.format(String.format("剩余 %d 秒",ntime));
                     //  展示信息
-                    setProDialogText(strText);
+                    setProDialogText(str);
                     Log.d(TAG,"DetsDelayTime" + strText);
-
-                    StringBuilder strData = new StringBuilder();
-                    int ret  = DetApp.getInstance().DetsCheckDropOff(strData);
-                    Log.d(TAG, String.format("DetsCheckDropOff: %d",ret));
-
-                    // 通信不通
-                    if(0!=ret){
-                        resultString = "检测到雷管脱落或短路！";
-                        DetApp.getInstance().StopDelay();
-                        return;
-                    }
-
-                    //  返回数据不对
-                    Log.d(TAG, String.format("DetsCheckDropOff返回: %s",strData.toString()));
-                    String checkString = strData.substring(8);
-                    Log.d(TAG, String.format("DetsCheckDropOff checkString: %s",checkString.toString()));
-                    int checkInt = Integer.parseInt(checkString, 16);
-                    if (checkInt != 1) {
-                        resultString = "检测到雷管脱落或短路！";
-                        DetApp.getInstance().StopDelay();
-                        return;
-                    }
                 }
 
                 @Override
@@ -752,5 +764,29 @@ public class DelayPowerBombActivity extends BaseActivity implements View.OnClick
 
             return;
         }
+    }
+
+    /***
+     * 预估充电时间
+     * @param nDetsCount
+     * @return
+     *
+     * 雷管数量：
+     * 1. 小于等于50： 延时算65
+     * 2. 50——100： 延时算80
+     * 3. 100——200： 延时算88
+     * 4. 大于200： 延时算96
+     */
+    private int getChargeEstimateTime(int nDetsCount){
+        if(nDetsCount<=50)
+            return 65;
+
+        if((nDetsCount>50)&&(nDetsCount<=100))
+            return 80;
+
+        if((nDetsCount>100)&&(nDetsCount<=200))
+            return 88;
+
+        return 96;
     }
 }

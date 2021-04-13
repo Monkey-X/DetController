@@ -27,6 +27,7 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="硬件版本："
+            android:textStyle="bold"
             android:textSize="18sp" />
 
 
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="5dp"
+            android:textStyle="bold"
             android:textSize="18sp" />
 
     </LinearLayout>
@@ -52,6 +54,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="5dp"
+            android:textStyle="bold"
             android:text="固件版本："
             android:textSize="18sp" />
 
@@ -61,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="5dp"
+            android:textStyle="bold"
             android:textSize="18sp" />
 
     </LinearLayout>
@@ -77,6 +81,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="5dp"
+            android:textStyle="bold"
             android:text="软件版本："
             android:textSize="18sp" />
 
@@ -85,6 +90,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textStyle="bold"
             android:padding="5dp"
             android:textSize="18sp" />
 
@@ -102,6 +108,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="5dp"
+            android:textStyle="bold"
             android:text="模块序列号："
             android:textSize="18sp" />
 
@@ -111,6 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="5dp"
+            android:textStyle="bold"
             android:textSize="18sp" />
 
     </LinearLayout>

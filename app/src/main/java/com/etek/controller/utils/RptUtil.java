@@ -12,15 +12,11 @@ public class RptUtil {
         try {
             byte[]  paramArr = DES3Utils.encryptMode(rptJson.getBytes(),DES3Utils.PASSWORD_CRYPT_KEY);
             encode = Base64Utils.getEncodeBytes(paramArr);
-//            XLog.d("old:"+new String(encode));
-//            urlString = URLEncoder.encode(new String(encode), "GBK");
-//            XLog.d("new:"+urlString);
             return Result.successOf(new String(encode).trim());
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error(e.getMessage());
         }
-//        return Result.successOf(new String(encode));
     }
 
     public static Result getRptDecode(String rspStr){

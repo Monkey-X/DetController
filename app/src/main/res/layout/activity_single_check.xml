@@ -60,6 +60,7 @@
 
     <TextView
         android:text="点 击 检 测"
+        android:textStyle="bold"
         android:id="@+id/clickTest"
         android:padding="8dp"
         android:gravity="center"

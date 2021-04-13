@@ -44,6 +44,7 @@
         android:background="@drawable/normal"
         android:gravity="center"
         android:padding="10dp"
+        android:textStyle="bold"
         android:text="总线短路与漏电检测"
         android:textSize="18sp" />
 
@@ -64,6 +65,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="10dp"
+            android:textStyle="bold"
             android:text="电压：" />
 
         <TextView
@@ -71,6 +73,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textStyle="bold"
             android:padding="10dp">
 
         </TextView>
@@ -90,6 +93,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="10dp"
+            android:textStyle="bold"
             android:text="电流：" />
 
         <TextView
@@ -97,6 +101,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textStyle="bold"
             android:padding="10dp">
 
         </TextView>
@@ -115,6 +120,7 @@
         android:padding="10dp"
         android:layout_marginBottom="15dp"
         android:layout_alignParentBottom="true"
+        android:textStyle="bold"
         android:text="取  消"
         android:textSize="18sp" />
 

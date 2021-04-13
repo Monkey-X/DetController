@@ -606,8 +606,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if(!TextUtils.isEmpty(strcontractid)){
             bOk = pattern.matcher(strcontractid).matches();
             if(!bOk){
-                DetLog.writeLog(TAG,"合同备案序号不符合规定！"+strcontractid);
-                ToastUtils.show(mContext, "合同备案序号不符合规定！");
+                showDialogMessage("合同备案序号不符合规定！");
                 return;
             }
         }
@@ -617,8 +616,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         if(!TextUtils.isEmpty(strprojectid)) {
             bOk = pattern.matcher(strprojectid).matches();
             if(!bOk){
-                DetLog.writeLog(TAG,"项目编号不符合规定！"+strprojectid);
-                ToastUtils.show(mContext, "项目编号不符合规定！");
+                showDialogMessage("项目编号不符合规定！");
                 return;
             }
         }

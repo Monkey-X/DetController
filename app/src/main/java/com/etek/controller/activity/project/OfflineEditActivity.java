@@ -1,14 +1,19 @@
 package com.etek.controller.activity.project;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -38,10 +43,13 @@ import com.etek.controller.dto.ProjectFileDto;
 import com.etek.controller.dto.Sbbhs;
 import com.etek.controller.dto.Zbqy;
 import com.etek.controller.dto.Zbqys;
+import com.etek.controller.entity.DetCacheInput;
 import com.etek.controller.entity.Detonator;
 import com.etek.controller.entity.OfflineDownloadBean;
 import com.etek.controller.hardware.test.HttpCallback;
+import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.hardware.util.DetLog;
+import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.model.User;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ControllerEntity;
@@ -49,12 +57,14 @@ import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ForbiddenZoneEntity;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
+import com.etek.controller.scan.ScannerBase;
+import com.etek.controller.scan.ScannerFactory;
 import com.etek.controller.utils.AppUtils;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.BeanPropertiesUtil;
-import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.JsonUtil;
 import com.etek.controller.utils.RptUtil;
+import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.ToastUtils;
@@ -93,6 +103,15 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
     private String TAG = "OfflineEditActivity";
     private long proId;
 
+    private DetCacheInput detCacheInput;
+    private OfflineDownloadBean offlineDownloadBean;
+    private boolean bSuccess=false;
+
+    private ScannerBase scanner;
+    private static final String RES_ACTION = "android.intent.action.SCANRESULT";
+    private ScannerResultReceiver scanReceiver;
+    private SoundPoolHelp soundPoolHelp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,18 +120,50 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         initData();
 
         getSPData();
+
+        initSoundPool();
     }
 
     // 获取sp中缓存的数据
     private void getSPData() {
+        detList = new ArrayList<>();
+
         String offlineEditInfo = getStringInfo("offlineEditInfo");
+        Log.d(TAG,"授权下载缓存:"+offlineEditInfo);
         if (!TextUtils.isEmpty(offlineEditInfo)) {
-            OfflineDownloadBean offlineDownloadBean = JSON.parseObject(offlineEditInfo, OfflineDownloadBean.class);
+            offlineDownloadBean = JSON.parseObject(offlineEditInfo, OfflineDownloadBean.class);
             if (offlineDownloadBean!=null) {
                 proCode.setText(offlineDownloadBean.getXmbh());
                 contractCode.setText(offlineDownloadBean.getHtid());
+
+                 if(null!=offlineDownloadBean.getDets())
+                     detList = offlineDownloadBean.getDets();
             }
         }
+
+        Intent intent = getIntent();
+        String  strMode =intent.getStringExtra("projectMode");
+        if(null!=strMode){
+            if(strMode.equals("NEW")){
+                detList.clear();
+            }
+        }
+
+        Log.d(TAG,"缓存雷管数量："+detList.size());
+        offlineEditAdapter = new OfflineEditAdapter(this, detList);
+        offlineEditAdapter.setOnItemClickListener(this);
+        offlineRecycleView.setLayoutManager(new LinearLayoutManager(OfflineEditActivity.this));
+        offlineRecycleView.setAdapter(offlineEditAdapter);
+
+        offlineEditInfo = getStringInfo("detCacheInput");
+        if (!TextUtils.isEmpty(offlineEditInfo)) {
+            detCacheInput = JSON.parseObject(offlineEditInfo, DetCacheInput.class);
+            if (detCacheInput==null) {
+                detCacheInput = new DetCacheInput();
+                detCacheInput.init();
+            }
+        }
+
     }
 
     private void initView() {
@@ -146,11 +197,14 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
 
         // 设置界面的数据
-        detList = new ArrayList<>();
-        offlineEditAdapter = new OfflineEditAdapter(this, detList);
-        offlineEditAdapter.setOnItemClickListener(this);
-        offlineRecycleView.setLayoutManager(new LinearLayoutManager(OfflineEditActivity.this));
-        offlineRecycleView.setAdapter(offlineEditAdapter);
+//        detList = new ArrayList<>();
+//        offlineEditAdapter = new OfflineEditAdapter(this, detList);
+//        offlineEditAdapter.setOnItemClickListener(this);
+//        offlineRecycleView.setLayoutManager(new LinearLayoutManager(OfflineEditActivity.this));
+//        offlineRecycleView.setAdapter(offlineEditAdapter);
+
+        View clearDet = findViewById(R.id.clear_det);
+        clearDet.setOnClickListener(this);
     }
 
     @Override
@@ -196,14 +250,23 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_img:
-                finish();
+                areYouQuit();
                 break;
             case R.id.text_btn:
                 // 提示生成校验
                 createOfflineData();
                 break;
             case R.id.add_det:
+                bSuccess = false;
                 showDetOfflineDialog();
+                break;
+
+            case  R.id.clear_det:
+                if(null==detList)
+                    break;
+                if(detList.size()>0){
+                    clearAllDets();
+                }
                 break;
         }
     }
@@ -263,25 +326,27 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         saveData();
+        releaseSound();
         super.onDestroy();
     }
 
     private void saveData() {
-        OfflineDownloadBean offlineDownloadBean = new OfflineDownloadBean();
         String strContractCode = contractCode.getText().toString();
         String strProCode = proCode.getText().toString().toUpperCase();
-        proCode.setText(strProCode);
-
         offlineDownloadBean.setHtid(strContractCode);
         offlineDownloadBean.setXmbh(strProCode);
+
+        offlineDownloadBean.setDets(detList);
+
         setStringInfo("offlineEditInfo",JSON.toJSONString(offlineDownloadBean));
+
+        setStringInfo("detCacheInput",JSON.toJSONString(detCacheInput));
     }
 
     /**
      * 生成离线文件
      */
     private void createOfflineData() {
-        OfflineDownloadBean offlineDownloadBean = new OfflineDownloadBean();
         offlineDownloadBean.setDwdm(companyCode.getText().toString());
         String strContractCode = contractCode.getText().toString();
         String strProCode = proCode.getText().toString();
@@ -295,8 +360,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             if (!TextUtils.isEmpty(strProCode)) {
                 bOk = pattern.matcher(strProCode).matches();
                 if(!bOk){
-                    DetLog.writeLog(TAG,"项目编号不符合规定！"+strProCode);
-                    ToastUtils.show(mContext, "项目编号不符合规定！");
+                    showDialogMessage("项目编号不符合规定！");
                     return;
                 }
             }
@@ -304,8 +368,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             if (!TextUtils.isEmpty(strContractCode)) {
                 bOk = pattern.matcher(strContractCode).matches();
                 if(!bOk){
-                    DetLog.writeLog(TAG,"合同备案序号不符合规定！"+strContractCode);
-                    ToastUtils.show(mContext, "合同备案序号不符合规定！");
+                    showDialogMessage("合同备案序号不符合规定！");
                     return;
                 }
             }
@@ -321,8 +384,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         } else {
             offlineDownloadBean.setSbbh(controller.toUpperCase());
         }
-        // sp缓存编辑的信息
-        setStringInfo("offlineEditInfo",JSON.toJSONString(offlineDownloadBean));
+//        // sp缓存编辑的信息
+//        setStringInfo("offlineEditInfo",JSON.toJSONString(offlineDownloadBean));
 
         if (detList == null || detList.isEmpty()) {
             showToast("请输入雷管数");
@@ -333,7 +396,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         showProDialog("正在得到检验数据中。。。");
         String rptJson = JSON.toJSONString(offlineDownloadBean, SerializerFeature.WriteMapNullValue);
         DetLog.writeLog(TAG,String.format("授权下载申请:%s",rptJson));
-//        rptJson = " {\"dwdm\":\"5227224300086\",\"fbh\":\"\",\"htid\":\"522722320120002\",\"htm\":\"\",\"sbbh\":\"F61A8190423\",\"xmbh\":\"\",\"xtm\":\"I610c01K201014\"}";
+
         Result result = RptUtil.getRptEncode(rptJson);
         if (!result.isSuccess()) {
             missProDialog();
@@ -345,9 +408,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
         url = AppConstants.DanningServer + AppConstants.OfflineDownload;
         LinkedHashMap params = new LinkedHashMap();
-        params.put("param", result.getData());    //
-//        String newUrl = SommerUtils.attachHttpGetParams(url, params, "UTF-8");
-//        Log.d(TAG,String.format("newUrl:%s",newUrl));
+        params.put("param", result.getData());
+
         AsyncHttpCilentUtil.httpPostNew(this, url, params, new HttpCallback() {
 
             @Override
@@ -410,6 +472,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                                 DetLog.writeLog(TAG,String.format("雷管信息异常！"));
                                 showStatusDialog("雷管信息异常！");
                                 offlineEditAdapter.notifyDataSetChanged();
+                            }else{
+                                bSuccess = true;
                             }
                             ProjectFileDto projectFile = new ProjectFileDto();
                             projectFile.setCompany(Globals.user.getCompanyName());
@@ -433,6 +497,13 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                             } else {
                                 showStatusDialog("项目保存失败！");
                             }
+
+                            // 缓存输入
+                            if(!TextUtils.isEmpty(strContractCode))
+                                detCacheInput.appendContractCode(strContractCode);
+                            if(!TextUtils.isEmpty(strProCode))
+                                detCacheInput.appendUnitCode(strProCode);
+
                         } else {
                             if (!StringUtils.isEmpty(onlineCheckStatusResp.getCwxxms())) {
                                 showStatusDialog(onlineCheckStatusResp.getCwxxms());
@@ -643,8 +714,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             return;
         }
 
-        if (!DetUtil.isValidFbh(detCodeStr)) {
-            showToast("请输入有效的雷管发编号！");
+        if(!DetIDConverter.isValidMID(detCodeStr.substring(0,2))){
+            showToast("不支持的雷管厂商："+detCodeStr.substring(0,2));
             return;
         }
 
@@ -670,6 +741,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         if (tube % 2 != 0) {
             isOdd = true;
         }
+
+        int nrepeatnum = 0;
         for (int i = 0; i < num; i++) {
             if (num >= 1000) {
                 showToast("一次编辑雷管少于1000！");
@@ -677,17 +750,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             }
             String newFbh = detCodeStr.substring(0, 9) + String.format(Locale.CHINA, "%04d", tube);
             Detonator detonator = new Detonator(newFbh);
-            Log.d(TAG,"detCodeStr.substring(0, 9)"+detCodeStr.substring(0, 9));
+            detonator.getDetonatorByFbh(newFbh);
 
-            int status = detonator.getDetonatorByFbh(newFbh);
-            Log.d(TAG,"tube is "+tube);
-
-            if (status == 1) {
-                detonator.setStatus(0);
-            } else {
-                showToast("请输入有效的雷管编号！");
-                break;
-            }
             if (selectedItemPosition == 0) {
                 tube++;
             } else if (selectedItemPosition == 1) {
@@ -704,8 +768,215 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                     tube += 2;
                 }
             }
-            detList.add(detonator);
+
+            if(isDetonatorExist(detonator.getDetCode())){
+                Log.d(TAG,"雷管已经存在："+detonator.getDetCode());
+                nrepeatnum++;
+            }else{
+                detList.add(detonator);
+            }
         }
+
         offlineEditAdapter.notifyDataSetChanged();
+        if(nrepeatnum>0){
+            playSound(false);
+            showDialogMessage(String.format("%d 颗雷管号重复！",nrepeatnum));
+        }
+    }
+
+    /**
+     * 清除所有输入的雷管信息
+     */
+    private void clearAllDets(){
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("是否要清除所有雷管？");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                detList.clear();
+                offlineEditAdapter.notifyDataSetChanged();
+            }
+        });
+        builder.create().show();
+        return;
+    }
+
+    private void areYouQuit(){
+        //  如果校验成功or没有雷管信息，直接退出
+        if(bSuccess||detList.size()==0){
+            finish();
+            return;
+        }
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("离线项目编辑完成？");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG,String.format("KeyCode=%d",keyCode));
+
+        //  右下角的退出键
+        if(KeyEvent.KEYCODE_BACK==keyCode){
+            areYouQuit();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    private void initSoundPool() {
+        soundPoolHelp = new SoundPoolHelp(this);
+        soundPoolHelp.initSound();
+    }
+
+    private void playSound(boolean b) {
+        if (soundPoolHelp != null ) {
+            soundPoolHelp.playSound(b);
+        }
+
+        //  成功也要震动
+        VibrateUtil.vibrate(this,150);
+        return;
+    }
+
+
+    private void releaseSound() {
+        if (soundPoolHelp != null) {
+            soundPoolHelp.releaseSound();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initScanner();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //取消接收扫描广播，并恢复输出模式为默认
+
+        if (scanReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(scanReceiver);
+            unregisterReceiver(scanReceiver);
+        }
+
+        if (scanner != null) {
+            scanner.unlockScanKey();
+            scanner.setOutputMode(0);
+        }
+    }
+
+    private void initScanner() {
+        scanner = ScannerFactory.getScannerObject(this);
+        scanner.setOutputMode(1);
+        scanner.lockScanKey();
+        //  扫描失败是否发送广播
+        scanner.SetErrorBroadCast(false);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RES_ACTION);
+
+        //注册广播接受者
+        scanReceiver = new ScannerResultReceiver();
+        registerReceiver(scanReceiver, intentFilter);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(scanReceiver,intentFilter);
+    }
+
+    /**
+     * 扫描结果广播接收
+     */
+    //*********重要
+    private class ScannerResultReceiver extends BroadcastReceiver {
+        public synchronized void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "intent.getAction()-->" + intent.getAction());//
+
+            //*******重要，注意Extral为"value"
+            final String scanResult = intent.getStringExtra("value");
+
+            Log.d(TAG, "onReceive: scanResult = " + scanResult);
+
+            //*******重要
+            if (!intent.getAction().equals(RES_ACTION)) {
+                return;
+            }
+
+            //获取扫描结果
+            if (scanResult.length() > 0 && DetIDConverter.VerifyQRCheckValue(scanResult)) { //如果条码长度>0，解码成功。如果条码长度等于0解码失败。
+                // 扫描成功
+                String strgm="";
+                //  12位条码
+                if(scanResult.length()==12){
+                    byte[] dc = DetIDConverter.GetDCByOldQRString(scanResult);
+                    strgm = DetIDConverter.GetDisplayDC(dc);
+                } else{
+                    strgm = scanResult.substring(0, 13);
+                }
+
+                Log.d(TAG,"扫描得到："+strgm);
+
+                Detonator detonator = new Detonator(strgm);
+                detonator.getDetonatorByFbh(strgm);
+
+                if(isDetonatorExist(detonator.getDetCode())){
+                    showToast(String.format("雷管【%s】已经存在列表中！",strgm));
+                    playSound(false);
+                    return;
+                }else{
+                    playSound(true);
+                    detList.add(detonator);
+                }
+                offlineEditAdapter.notifyDataSetChanged();
+
+                setStringInfo(AppSpSaveConstant.OFFLINE_EDIT_DET_CODE,strgm);
+                return;
+            }
+
+            Log.d(TAG,String.format("扫描结果:%s",scanResult));
+            if (scanResult.length() > 0){
+                playSound(false);
+            }
+            return;
+        }
+    }
+
+    /**
+     * 雷管是否已经存在于列表中
+     * @param detcode
+     * @return
+     */
+    private boolean isDetonatorExist(String detcode){
+        for (Detonator detonator : detList) {
+            if(detcode.equals(detonator.getDetCode()))
+                return true;
+        }
+        return false;
     }
 }

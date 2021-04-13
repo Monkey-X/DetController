@@ -49,6 +49,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private TextView onlinepassword;
     private Timer mTimer;
+    private TextView controllerNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         onlinepassword.setAutoLinkMask(Linkify.ALL);
         onlinepassword.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         onlinepassword.setOnClickListener(this);
+
+        controllerNo = findViewById(R.id.controller_no);
+        String strsno = getPreInfo(getString(R.string.controller_sno));
+        controllerNo.setText(String.format("起爆器: %s",strsno));
     }
 
     @Override

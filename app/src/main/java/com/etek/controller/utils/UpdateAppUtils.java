@@ -16,7 +16,6 @@ import com.elvishew.xlog.XLog;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.dto.AppResp;
 import com.etek.controller.entity.AppUpdateBean;
-import com.etek.controller.model.UpdateAppResp;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -25,8 +24,6 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-
-import static com.etek.controller.utils.UploadHelper.TAG;
 
 
 /**
@@ -38,6 +35,7 @@ public class UpdateAppUtils {
 
 //    http://192.168.0.7:12018/api/DingJPackage/ERPGetExcel?strSheetId=M586-TFME2003020003&modelId=0
 
+    private static final String TAG="UpdateAppUtils";
     /**
      * 检查更新
      */

@@ -10,74 +10,79 @@
 
 
 
-        <LinearLayout
-            android:id="@+id/title"
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/seleted_status"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/seleted_status"
-            android:orientation="horizontal">
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="@string/serial_number"
+            android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textColor="@color/black"
-                android:text="@string/serial_number"
-                android:textSize="16sp" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/btn_gray_normal" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/btn_gray_normal" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/black"
+            android:text="@string/tube_code"
+            android:textStyle="bold"
+            android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textColor="@color/black"
-                android:text="@string/tube_code"
-                android:textSize="16sp" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/btn_gray_normal" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/btn_gray_normal" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/hole_location"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="@string/hole_location"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/btn_gray_normal" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/btn_gray_normal" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="状态"
+            android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textColor="@color/black"
-                android:text="状态"
-                android:textSize="16sp" />
-
-        </LinearLayout>
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycleView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:textStyle="bold"
         android:layout_below="@+id/title"
         android:layout_weight="1" />
 
@@ -115,6 +120,7 @@
                 android:paddingTop="5dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="5dp"
+                android:textStyle="bold"
                 android:text="取消" />
 
         </LinearLayout>
@@ -125,6 +131,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/seleted_status"
             android:gravity="center"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:text="开 始 检 测" />
 
@@ -143,6 +150,7 @@
             android:padding="5dp"
             android:textColor="@color/black"
             android:layout_width="0dp"
+            android:textStyle="bold"
             android:text="全部"
             android:textSize="18sp" />
 
@@ -156,6 +164,7 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="失联"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="18sp" />
 
@@ -169,6 +178,7 @@
             android:padding="5dp"
             android:textColor="@color/black"
             android:background="@drawable/seleted_status"
+            android:textStyle="bold"
             android:text="误接"
             android:textSize="18sp" />
 

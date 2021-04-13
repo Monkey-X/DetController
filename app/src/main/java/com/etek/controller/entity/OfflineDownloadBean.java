@@ -26,6 +26,8 @@ public class OfflineDownloadBean {
     // 单位代码
     String dwdm;
 
+    ArrayList<Detonator> dets;
+
     public String getXtm() {
         return xtm;
     }
@@ -82,19 +84,35 @@ public class OfflineDownloadBean {
         this.dwdm = dwdm;
     }
 
-    public void setDets(List<Detonator> detonators) {
+    public void setDets(ArrayList<Detonator> detonators) {
         if(detonators ==null || detonators.isEmpty()){
             fbh = "";
+            dets = new ArrayList<Detonator>();
             return;
         }
-        List<String> dets = new ArrayList<>();
+        dets = detonators;
+
+        List<String> detcodes = new ArrayList<>();
         for (Detonator detonator : detonators) {
             XLog.d(detonator);
-            dets.add(detonator.getDetCode());
-
+            detcodes.add(detonator.getDetCode());
         }
-        fbh =  StringUtils.join(dets, ",");
+        fbh =  StringUtils.join(detcodes, ",");
     }
+
+    public void clearDets(){
+        fbh ="";
+        if(null==dets){
+            dets = new ArrayList<Detonator>();
+            return;
+        }
+        dets.clear();
+    }
+
+    public ArrayList<Detonator> getDets(){
+        return dets;
+    }
+
 
     @Override
     public String toString() {

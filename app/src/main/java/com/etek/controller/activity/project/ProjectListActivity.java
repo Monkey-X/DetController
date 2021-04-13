@@ -82,7 +82,13 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         Collections.reverse(pendingProjects);
         if (pendingProjects != null && pendingProjects.size() > 0) {
             noDataView.setVisibility(View.GONE);
-            projectInfos.addAll(pendingProjects);
+            for(PendingProject pp:pendingProjects){
+                Log.d(TAG,"项目："+pp.getId() +"\t项目状态："+pp.getProjectStatus()+"\t上报状态："+pp.getReportStatus());
+                if(pp.getProjectStatus()<AppIntentString.PROJECT_IMPLEMENT_DATA_DELETE){
+                    projectInfos.add(pp);
+                }
+            }
+            //projectInfos.addAll(pendingProjects);
         } else {
             noDataView.setVisibility(View.VISIBLE);
         }
@@ -237,10 +243,29 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //删除数据
-                DBManager.getInstance().getPendingProjectDao().delete(pendingProject);
-                List<ProjectDetonator> projectDetonators = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(pendingProject.getId());
-                DBManager.getInstance().getProjectDetonatorDao().deleteInTx(projectDetonators);
+
+                Log.d(TAG,"项目："+pendingProject.getId()
+                        + "项目状态："+ pendingProject.getProjectStatus()
+                        + "上报状态："+ pendingProject.getReportStatus());
+
+                if(pendingProject.getProjectStatus()<AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1){
+                    // 如果还未起爆，就可以删除项目
+                    DBManager.getInstance().getPendingProjectDao().delete(pendingProject);
+
+                    List<ProjectDetonator> projectDetonators = DBManager.getInstance().getProjectDetonatorDao()._queryPendingProject_DetonatorList(pendingProject.getId());
+                    DBManager.getInstance().getProjectDetonatorDao().deleteInTx(projectDetonators);
+                }else{
+                    if((pendingProject.getProjectStatus()==AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1)
+                        &&(!pendingProject.getReportStatus().equals("1"))){
+                        // 已经起爆了，但未上报成功
+                        showDialogMessage("项目未上报成功，不能删除！");
+                        return;
+                    }else{
+                        // 更新项目状态为  PROJECT_IMPLEMENT_DATA_DELETE
+                        pendingProject.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DATA_DELETE);
+                        DBManager.getInstance().getPendingProjectDao().save(pendingProject);
+                    }
+                }
                 projectInfos.remove(position);
                 projectListAdapter.notifyDataSetChanged();
                 dialog.dismiss();

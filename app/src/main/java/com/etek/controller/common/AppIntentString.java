@@ -16,12 +16,12 @@ public class AppIntentString {
     public static final String PROJECT_IMPLEMENT_DATA_REPORT = "5";//数据上传
 
 
-    public static final int PROJECT_IMPLEMENT_CONNECT_TEST1 = 1;//连接检测
-    public static final int PROJECT_IMPLEMENT_DELAY_DOWNLOAD1 = 2;//延时下载
-    public static final int PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1 = 3;//检查授权
-    public static final int PROJECT_IMPLEMENT_POWER_BOMB1 = 4;//充电起爆
-    public static final int PROJECT_IMPLEMENT_DATA_REPORT1 = 5;//数据上传
-
+    public static final int PROJECT_IMPLEMENT_CONNECT_TEST1 = 1;        //连接检测
+    public static final int PROJECT_IMPLEMENT_DELAY_DOWNLOAD1 = 2;      //延时下载
+    public static final int PROJECT_IMPLEMENT_ONLINE_AUTHORIZE1 = 3;    //检查授权
+    public static final int PROJECT_IMPLEMENT_POWER_BOMB1 = 4;          //充电起爆
+    public static final int PROJECT_IMPLEMENT_DATA_REPORT1 = 5;         //数据上传
+    public static final int PROJECT_IMPLEMENT_DATA_DELETE = 6;          //项目删除
 
     public static final String[] permissions = new String[]{
             Manifest.permission.BLUETOOTH,

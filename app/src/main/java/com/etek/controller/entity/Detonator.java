@@ -1,8 +1,8 @@
 package com.etek.controller.entity;
 
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.etek.controller.enums.DetStatusEnum;
+import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.persistence.entity.ChkDetonatorEntity;
 import com.etek.controller.persistence.entity.DetonatorEntity;
 import com.etek.controller.persistence.entity.ProjectDetonator;
@@ -15,11 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 
 public class Detonator implements Serializable {
@@ -40,77 +37,6 @@ public class Detonator implements Serializable {
     private String zBDetCodeStr;
     private String zbDetCode;   // 中爆管码
 
-
-     @JSONField(serialize = false)
-    final public static int RanYiCode = 61;
-    final public static int QianJingCode = 38;
-    final public static int QingHuaCode = 64;
-    final public static int LeiMingCode = 28;
-    final public static int JiuLianCode = 60;
-    public final static Map<String, Integer> RanYiCodeMap = new HashMap<String, Integer>() {{
-        put("D", 0);
-        put("2", 1);
-        put("3", 2);
-        put("4", 3);
-        put("5", 4);
-        put("6", 5);
-        put("7", 6);
-        put("8", 7);
-        put("9", 8);
-
-    }};
-
-    public final static Map<String, Integer> QianJingCodeMap = new HashMap<String, Integer>() {{
-        put("6", 0);
-        put("1", 1);
-        put("2", 2);
-        put("3", 3);
-        put("4", 4);
-        put("5", 5);
-        put("7", 6);
-        put("8", 7);
-        put("9", 8);
-
-    }};
-
-    public final static Map<String, Integer> QingHuaCodeMap = new HashMap<String, Integer>() {{
-        put("A", 0);
-        put("R", 1);
-        put("P", 2);
-        put("N", 3);
-        put("T", 4);
-        put("H", 5);
-        put("K", 6);
-        put("S", 7);
-        put("1", 8);
-
-    }};
-
-    public final static Map<String, Integer> LeiMingCodeMap = new HashMap<String, Integer>() {{
-        put("B", 0);
-        put("C", 1);
-        put("D", 2);
-        put("E", 3);
-        put("F", 4);
-        put("G", 5);
-        put("H", 6);
-        put("I", 7);
-        put("J", 8);
-
-    }};
-
-    public final static Map<String, Integer> JiuLianCodeMap = new HashMap<String, Integer>() {{
-        put("5", 0);
-        put("4", 1);
-        put("6", 2);
-        put("7", 3);
-        put("8", 4);
-        put("9", 5);
-        put("a", 6);
-        put("b", 7);
-        put("c", 8);
-
-    }};
 
 
 
@@ -158,73 +84,9 @@ ExtID 说明 例子
     }
 
     public int getDetonatorByFbh(String fbh){
-        int cCodeType = 0;
-        if(fbh.length()!=13){
-            return 0;
-        }
-        String companyCode = fbh.substring(0,2);
-        try {
-            int cCode = Integer.parseInt(companyCode);
-            if(cCode ==RanYiCode){
-                cCodeType = 0;
-            }else if(cCode ==QianJingCode){
-                cCodeType = 1;
-            }else if(cCode ==QingHuaCode){
-                cCodeType = 2;
-            }else if(cCode ==LeiMingCode){
-                cCodeType = 3;
-            }else if(cCode ==JiuLianCode){
-                cCodeType = 4;
-            }else {
-                return 0;
-            }
-            String nianStr = fbh.substring(2,3);
-            int nian = Integer.parseInt(nianStr);
-            String yueStr = fbh.substring(3,5);
-            int yue = Integer.parseInt(yueStr);
-            String riStr = fbh.substring(5,7);
-            int ri = Integer.parseInt(riStr);
-            int count = yue*1000+ri*10+nian;
-            String spc = fbh.substring(7,8);
-            int spcNum = 0;
-            if(cCodeType==0){
-              spcNum =    RanYiCodeMap.get(spc);
-
-            }else if( cCodeType ==1){
-                spcNum =    QianJingCodeMap.get(spc);
-            }else if( cCodeType ==2){
-                spcNum =    QingHuaCodeMap.get(spc);
-            }else if( cCodeType ==3){
-                spcNum =    LeiMingCodeMap.get(spc);
-            }else if( cCodeType ==4){
-                spcNum =    JiuLianCodeMap.get(spc);
-            }
-//            String boxStr =fbh.substring(8,11);
-//            int box = Integer.parseInt(boxStr);
-//            String tubeStr =fbh.substring(11,13);
-//            int tube = Integer.parseInt(tubeStr);
-            String numStr =fbh.substring(8,13);
-            int num = Integer.parseInt(numStr);
-            int dc = (count << 17) +num + (spcNum << 28);
-            byte[] ids = SommerUtils.intToBytes2(dc);
-            this.ids = ids;
-            this.time= new Date();
-            valid = true;
-            byte[] c1 = SommerUtils.intToBytes(cCode);
-            String uidStr = String.format(Locale.CHINA, "%02d", c1[0]);
-            if(nian==0){
-                uidStr += String.format(Locale.CHINA, "%02d", 20);
-            }else {
-                uidStr += String.format(Locale.CHINA, "%02d", 10+nian);
-            }
-            uidStr += "A8";
-            uidStr += SommerUtils.bytesToHexString(ids);
-            this.uid = uidStr.toUpperCase();
-        } catch (NullPointerException | NumberFormatException e){
-            e.printStackTrace();
-            return 0;
-        }
+        this.uid = DetIDConverter.getDetUidFromDC(fbh);
         this.detCode = fbh;
+        setStatus(0);
         return 1;
     }
 

@@ -161,7 +161,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 //        scanner = new ScannerInterface(this);
         scanner = ScannerFactory.getScannerObject(this);
         scanner.setOutputMode(1);
-        scanner.lockScanKey();
+        if(projectCanEditable()) scanner.lockScanKey();
         //  扫描失败是否发送广播
         scanner.SetErrorBroadCast(false);
 
@@ -281,18 +281,22 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             case R.id.text_btn:
                 break;
             case R.id.hole_in:
+                if(!projectCanEditable()) break;
                 // 设置孔内延时
                 setDelayDialog("孔内延时", HOLE_IN_TYPE, holeTimeIn);
                 break;
             case R.id.hole_out:
+                if(!projectCanEditable()) break;
                 // 设置孔间延时
                 setDelayDialog("孔间延时", HOLE_OUT_TYPE, holeTimeOut);
                 break;
             case R.id.delay_edit:
+                if(!projectCanEditable()) break;
                 // 弹出修改延时的对话框
                 setDelayDialog("起始延时", START_TIME_TYPE, delayStartTime);
                 break;
             case R.id.project_handle:
+                if(!projectCanEditable()) break;
                 // 跳转操作界面，连接检测，延时下载,检查授权
                 if (detonators.size() == 0) {
                     showStatusDialog("请先进行雷管组网！");
@@ -396,12 +400,15 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onItemClick(View view, int position) {
+        if(!projectCanEditable()) return;
         // 点击条目
         shouPopuWindow(view, position);
     }
 
     @Override
     public void onDelayTimeClick(int position) {
+        if(!projectCanEditable()) return;
+
         // 点击修改 延时
         ProjectDetonator detonatorEntity = detonators.get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -440,6 +447,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onHolePostionClick(int position) {
+        if(!projectCanEditable()) return;
+
         //  设置孔位
         ProjectDetonator detonatorEntity = detonators.get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -604,7 +613,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         }
         int nAction = event.getAction();
 
-        if(KeyEvent.ACTION_DOWN==nAction){
+        // 如果项目已经起爆，就不能修改
+        boolean bCanEdit = projectCanEditable();
+        if((KeyEvent.ACTION_DOWN==nAction)&&bCanEdit){
             // 只处理Key_DOWNW消息
             // 左边189 右边190  中间188
             if ((keyCode == 189) || ( 284 == keyCode)){
@@ -681,6 +692,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             if (isInsertItem) {
                 if (progressDialog!=null) {
                     progressDialog.dismiss();
+                    progressDialog = null;
                 }
             }
 
@@ -996,6 +1008,20 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         return i;
     }
 
+    /**
+     * 项目是否能编辑（充电起爆完成后就不能编辑）
+     * @return
+     */
+    private boolean projectCanEditable(){
+        if(null==projectInfoEntity)
+            return true;
+
+        Log.d(TAG,"getProjectStatus"+projectInfoEntity.getProjectStatus());
+        if(projectInfoEntity.getProjectStatus()<AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1)
+            return true;
+
+        return false;
+    }
 
 
 }

@@ -510,4 +510,19 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
+    public void showDialogMessage(String strtext){
+        android.app.AlertDialog.Builder builder = null;
+        builder = new android.app.AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage(strtext);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+
 }

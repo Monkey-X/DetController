@@ -2107,7 +2107,7 @@ public class DetApp {
 
 			if(null!=cbobj){
 				cbobj.SetProgressbarValue((int)((nt1-nt0)/nSec));
-				cbobj.DisplayText(String.format("剩余 %d 秒",nSec-(nt1-nt0)));
+				cbobj.DisplayText(String.format("%d",nSec-(nt1-nt0)));
 			}
 		}
 

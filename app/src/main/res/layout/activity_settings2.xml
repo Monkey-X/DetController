@@ -24,6 +24,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:text="ETEK"
+            android:textStyle="bold"
             android:textColor="#111111"
             android:textSize="16sp" />
         <com.github.angads25.toggle.widget.LabeledSwitch
@@ -36,6 +37,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             app:on="false"
+            android:textStyle="bold"
             app:textOn="@string/dev_on"
             app:textOff="@string/dev_off"
             app:colorBorder="@color/colorAccent"/>
@@ -57,6 +59,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
+            android:textStyle="bold"
             android:text="@string/server_danling"
             android:textColor="#111111"
             android:textSize="16sp" />
@@ -69,6 +72,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:textStyle="bold"
             app:on="false"
             app:textOn="@string/dev_on"
             app:textOff="@string/dev_off"
@@ -92,6 +96,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
+            android:textStyle="bold"
             android:text="@string/server_zhongbao"
             android:textColor="#111111"
             android:textSize="16sp" />
@@ -104,6 +109,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:textStyle="bold"
             app:on="false"
             app:textOn="@string/dev_on"
             app:textOff="@string/dev_off"
@@ -126,6 +132,7 @@
             android:textColor="#111111"
             android:textSize="16sp"
             android:layout_marginLeft="20dp"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -146,6 +153,7 @@
             android:textColor="#111111"
             android:textSize="16sp"
             android:layout_marginLeft="20dp"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -166,6 +174,7 @@
             android:textSize="16sp"
             android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
+            android:textStyle="bold"
             android:layout_height="wrap_content">
         </TextView>
 
@@ -186,6 +195,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:text="@string/delay_power_bomb_switch"
+            android:textStyle="bold"
             android:textColor="#111111"
             android:textSize="16sp" />
         <com.github.angads25.toggle.widget.LabeledSwitch
@@ -213,6 +223,7 @@
         android:layout_height="45dp">
         <TextView
             android:text="登录密码重置"
+            android:textStyle="bold"
             android:textColor="#111111"
             android:textSize="16sp"
             android:layout_marginLeft="20dp"
@@ -233,6 +244,7 @@
         android:layout_height="45dp">
         <TextView
             android:text="恢复出厂设置"
+            android:textStyle="bold"
             android:textColor="#111111"
             android:textSize="16sp"
             android:layout_marginLeft="20dp"

@@ -360,4 +360,35 @@ public class DetIDConverter {
         struid = struid + stry + "A8" + String.format("%08X", nid);
         return struid;
     }
+
+    public static String getDetUidFromDC(String strdc){
+        byte[] dc = GetDCByString(strdc);
+        byte[] id = Conv_DC2ID(dc);
+        long lid = DataConverter.lsbBytes2Int(id);
+        return getDetUid(lid+"",strdc);
+    }
+
+    /***
+     * 是否设备支持的厂商
+     * @param strmid
+     * @return
+     */
+    public static boolean isValidMID(String strmid){
+        int nval = 0;
+        try{
+            nval = Integer.parseInt(strmid);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(HandsetWorkMode.MODE_TEST==HandsetWorkMode.getInstance().getWorkMode()){
+            String str = m_mapDeskCode.get(nval);
+            if(null==str) return false;
+            return true;
+        }
+        if(m_bMID==nval) return true;
+        return false;
+    }
+
+
 }

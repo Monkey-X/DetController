@@ -19,6 +19,8 @@ import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.ProjectInfoEntity;
 import com.etek.sommerlibrary.activity.BaseActivity;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,16 +54,19 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.text_btn:
-                goToOfflineEditActivity();
+            case R.id.new_project:
+                goToOfflineEditActivity(true);
                 break;
             case R.id.back_img:
                 finish();
                 break;
+            case R.id.continue_project:
+                goToOfflineEditActivity(false);
+                break;
         }
     }
 
-    private void goToOfflineEditActivity() {
+    private void goToOfflineEditActivity(boolean bnew) {
         String userStr = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
         if (TextUtils.isEmpty(userStr)) {
             Intent intent = new Intent(this, UserInfoActivity2.class);
@@ -69,6 +74,8 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
             return;
         }
         Intent intent = new Intent(this, OfflineEditActivity.class);
+        if(bnew)
+            intent.putExtra("projectMode","NEW");
         startActivityForResult(intent,200);
     }
 
@@ -77,12 +84,13 @@ public class AuthorizedDownloadActivity extends BaseActivity implements BaseQuic
      */
     private void initView() {
         TextView textTitle = findViewById(R.id.text_title);
-        TextView textBtn = findViewById(R.id.text_btn);
+        TextView textNewProject = findViewById(R.id.new_project);
+        TextView textContinueProject = findViewById(R.id.continue_project);
         View backImg = findViewById(R.id.back_img);
         textTitle.setText("授权下载");
-        textBtn.setText("添加项目");
         backImg.setOnClickListener(this);
-        textBtn.setOnClickListener(this);
+        textNewProject.setOnClickListener(this);
+        textContinueProject.setOnClickListener(this);
         recycleView = findViewById(R.id.authorized_download_recycleView);
         noDataView = findViewById(R.id.nodata_view);
         recycleView.setLayoutManager(new LinearLayoutManager(this));

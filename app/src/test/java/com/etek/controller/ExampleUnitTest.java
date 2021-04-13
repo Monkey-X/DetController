@@ -16,10 +16,8 @@ import com.etek.controller.dto.ReportDto;
 import com.etek.controller.entity.Detonator;
 import com.etek.controller.persistence.entity.PermissibleZoneEntity;
 import com.etek.controller.utils.CRCUtil;
-import com.etek.controller.utils.DetUtil;
 import com.etek.controller.utils.LocationUtil;
 import com.etek.controller.utils.SommerUtils;
-import com.etek.sommerlibrary.dto.Result;
 import com.etek.sommerlibrary.utils.Base64Utils;
 import com.etek.sommerlibrary.utils.DES3Utils;
 import com.etek.sommerlibrary.utils.DateUtil;
@@ -221,7 +219,6 @@ public class ExampleUnitTest {
                 0x00,0x00};
         Detonator detonator = new Detonator(data);
         System.out.println(detonator);
-        DetUtil.getExtid(detonator.getDetCode());
     }
     String u1 = "{\"bprysfz\":\"533421198207090717\",\"bpsj\":\"2020-07-16 14:48:32\",\"dwdm\":\"5301034300004\",\"htid\":\"533421319120010\",\"jd\":\"99.895200\",\"sbbh\":\"F61A8200045\",\"uid\":\"6120A82F80B229,6120A82F80B23E,6120A82F80B23F,6120A82F80B239,6120A82F80B235,6120A82F80B231,6120A82F80B236,6120A82F80B23D,6120A82F80B23B,6120A82F80B227,6120A82F80B22A,6120A82F80B228,6120A82F80B22E,6120A82F80B232,6120A82F80B224,6120A82F80B237,6120A82F80B238,6120A82F80B23A,6120A82F80B22F,6120A82F80B22B,6120A82F80B225,6120A82F80B226,6120A82F80B230,6120A82F80B22C,6120A82F80B22D,6120A82F80B23C,6120A82F80B233,6120A82F80B234\",\"wd\":\"28.119450\",\"xmbh\":\"\"}";
 

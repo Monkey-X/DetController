@@ -27,6 +27,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:text="@string/user_name"
+            android:textStyle="bold"
             android:textColor="@color/gray" />
 
         <EditText
@@ -38,7 +39,7 @@
             android:singleLine="true"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_name"
-
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black" />
 
     </RelativeLayout>
@@ -59,6 +60,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
+            android:textStyle="bold"
             android:text="@string/user_id_code"
             android:textColor="@color/gray" />
 
@@ -71,7 +73,7 @@
             android:singleLine="true"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_id_code"
-
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black" />
     </RelativeLayout>
 
@@ -92,6 +94,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
+            android:textStyle="bold"
             android:text="@string/company_name"
             android:textColor="@color/gray" />
 
@@ -104,7 +107,7 @@
             android:singleLine="true"
             android:layout_marginLeft="@dimen/dp_40"
             android:layout_toRightOf="@id/tv_company_name"
-
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black" />
     </RelativeLayout>
 
@@ -123,6 +126,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
+            android:textStyle="bold"
             android:text="@string/company_code"
             android:textColor="@color/gray" />
 
@@ -134,7 +138,7 @@
             android:layout_marginLeft="@dimen/dp_40"
             android:singleLine="true"
             android:layout_toRightOf="@id/tv_company_code"
-
+            android:textStyle="bold"
             android:inputType="number"
             android:textColor="@color/eighty_per_trans_black" />
 
@@ -153,6 +157,7 @@
             android:id="@+id/personal_info_modify"
             style="@style/style_button_normal_big"
             android:focusable="true"
+            android:textStyle="bold"
             android:text="@string/modify" />
     </LinearLayout>
 

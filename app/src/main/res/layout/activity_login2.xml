@@ -126,7 +126,7 @@
             android:id="@+id/get_online_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:textAlignment="textEnd"
             android:textSize="14dp"
             android:gravity="center"
@@ -136,7 +136,22 @@
             tools:ignore="RtlCompat">
         </TextView>
 
+        <TextView
+            android:id="@+id/controller_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textAlignment="textStart"
+            android:textSize="14dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="起爆器：F99A8010203"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            tools:ignore="RtlCompat">
+        </TextView>
     </LinearLayout>
+
 
 
 </RelativeLayout>

@@ -36,7 +36,7 @@ public class ReportListActivity extends BaseActivity implements BaseQuickAdapter
     }
 
     private void getProjectData() {
-        List<PendingProject> list = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.ProjectStatus.eq(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT)).list();
+        List<PendingProject> list = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.ProjectStatus.ge(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT)).list();
         if (list != null && list.size() != 0) {
             projects.clear();
             Collections.reverse(list);

@@ -27,6 +27,7 @@
             android:ellipsize="end"
             android:maxEms="15"
             android:singleLine="true"
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black"
             android:textSize="15sp" />
 
@@ -40,6 +41,7 @@
             android:ellipsize="end"
             android:maxEms="15"
             android:singleLine="true"
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black"
             android:textSize="15sp" />
 
@@ -57,6 +59,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:scaleType="centerCrop"
+            android:textStyle="bold"
             android:text="@string/device_id" />
 
         <TextView
@@ -68,6 +71,7 @@
             android:ellipsize="end"
             android:maxEms="15"
             android:singleLine="true"
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black"
             android:textSize="15sp" />
 
@@ -85,6 +89,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:scaleType="centerCrop"
+            android:textStyle="bold"
             android:text="@string/dev_location" />
 
         <TextView
@@ -93,6 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="105dp"
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black"
             android:textSize="15sp" />
 
@@ -111,6 +117,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:scaleType="centerCrop"
+            android:textStyle="bold"
             android:text="@string/dev_time" />
 
         <TextView
@@ -119,6 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="105dp"
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black"
             android:textSize="15sp" />
     </RelativeLayout>
@@ -136,6 +144,7 @@
             android:layout_weight="0.8"
             android:gravity="center"
             android:padding="5dp"
+            android:textStyle="bold"
             android:text="@string/serial_number"
             android:textSize="16sp" />
 
@@ -150,6 +159,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:padding="5dp"
+            android:textStyle="bold"
             android:text="雷管编码"
             android:textSize="16sp" />
 
@@ -164,6 +174,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="5dp"
+            android:textStyle="bold"
             android:text="@string/status"
             android:textSize="16sp" />
 

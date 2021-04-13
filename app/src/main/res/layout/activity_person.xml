@@ -40,6 +40,7 @@
         android:background="@drawable/seleted_status"
         android:padding="8dp"
         android:text="用户管理"
+        android:textStyle="bold"
         android:textSize="16sp" />
 
     <View
@@ -53,6 +54,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/seleted_status"
         android:padding="8dp"
+        android:textStyle="bold"
         android:text="参数设置"
         android:textSize="16sp" />
 
@@ -68,6 +70,7 @@
         android:background="@drawable/seleted_status"
         android:padding="8dp"
         android:text="应用升级"
+        android:textStyle="bold"
         android:textSize="16sp" />
 
     <View
@@ -82,6 +85,7 @@
         android:background="@drawable/seleted_status"
         android:padding="8dp"
         android:text="上传日志"
+        android:textStyle="bold"
         android:textSize="16sp" />
 
     <View
@@ -96,6 +100,7 @@
         android:background="@drawable/seleted_status"
         android:padding="8dp"
         android:text="当前定位"
+        android:textStyle="bold"
         android:textSize="16sp" />
 
     <View
@@ -110,6 +115,7 @@
         android:background="@drawable/seleted_status"
         android:padding="8dp"
         android:text="关于"
+        android:textStyle="bold"
         android:textSize="16sp" />
 
 </LinearLayout>
