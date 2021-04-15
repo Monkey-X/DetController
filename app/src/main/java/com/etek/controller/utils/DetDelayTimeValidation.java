@@ -45,7 +45,7 @@ public class DetDelayTimeValidation {
         }
 
         //  这里允许输入负数？
-        if (Math.abs(intTime) > MAX_DELAY_TIME_MSECOND) {
+        if ((intTime> MAX_DELAY_TIME_MSECOND)||(intTime<0)) {
             ToastUtils.showShort(context, String.format("延时请设置在0-%dms范围内",MAX_DELAY_TIME_MSECOND));
             return -1;
         }

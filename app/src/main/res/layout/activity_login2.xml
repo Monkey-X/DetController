@@ -20,7 +20,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="90dp"
         android:gravity="center"
-        android:text="雷管E联_D"
+        android:text="雷管E联"
         android:textColor="@color/white"
         android:textSize="28sp" />
 
@@ -141,12 +141,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:textAlignment="textStart"
-            android:textSize="14dp"
+            android:textAlignment="center"
+            android:textSize="16dp"
             android:gravity="center"
             android:padding="5dp"
             android:text="起爆器：F99A8010203"
-            android:textStyle="bold"
             android:textColor="@color/black"
             tools:ignore="RtlCompat">
         </TextView>

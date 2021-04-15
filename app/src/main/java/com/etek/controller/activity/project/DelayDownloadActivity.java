@@ -71,7 +71,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     private PendingProject projectInfoEntity;
 
     private boolean bCancelDownload = false;        //  是否取消下载
-    private boolean bDownloading = false;           //  是否在下载中
+    private boolean bDownloading = false;           //  是否在下载中，true表示下载中，false表示未下载
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,6 +192,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
                 break;
             case R.id.all_edit:
+                showAllDet();
                 // 批量编辑
                 checkShow(3);
                 changeAllEdit();
@@ -400,7 +401,7 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onDelayTimeClick(int position) {
         // 下载过程不能修改
-        if(!bDownloading) {
+        if(bDownloading) {
             return;
         }
 

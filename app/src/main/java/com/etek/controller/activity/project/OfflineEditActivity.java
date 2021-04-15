@@ -170,7 +170,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         TextView textTitle = findViewById(R.id.text_title);
         TextView textBtn = findViewById(R.id.text_btn);
         View backImg = findViewById(R.id.back_img);
-        textTitle.setText("离线项目编辑");
+        textTitle.setText("离线授权编辑");
         textBtn.setText("校验");
         backImg.setOnClickListener(this);
         textBtn.setOnClickListener(this);
@@ -817,7 +817,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         builder.setCancelable(false);
-        builder.setMessage("离线项目编辑完成？");
+        builder.setMessage("离线授权编辑完成？");
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

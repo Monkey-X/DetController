@@ -34,6 +34,7 @@
             android:textSize="16sp"
             android:padding="5dp"
             android:textColor="@color/black"
+            android:typeface="serif"
             android:gravity="center"
             android:text="管码" />
 
@@ -85,8 +86,5 @@
             android:padding="5dp"
             android:text="状态"
             android:textSize="16sp" />
-
     </LinearLayout>
-
-
 </LinearLayout>

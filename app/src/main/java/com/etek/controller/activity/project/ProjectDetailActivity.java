@@ -31,6 +31,7 @@ import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectDetailAdapter;
 import com.etek.controller.common.AppConstants;
 import com.etek.controller.common.AppIntentString;
+import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.entity.DetDelayBean;
 import com.etek.controller.fragment.DelaySettingDialog;
 import com.etek.controller.hardware.command.DetApp;
@@ -134,16 +135,10 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (soundPoolHelp != null ) {
             soundPoolHelp.playSound(b);
         }
-
         //  成功也要震动
         VibrateUtil.vibrate(ProjectDetailActivity.this,150);
-
-//        if(!b){
-//            VibrateUtil.vibrate(ProjectDetailActivity.this,150);
-//        }
         return;
     }
-
 
     private void releaseSound() {
         if (soundPoolHelp != null) {
@@ -158,7 +153,6 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void initScanner() {
-//        scanner = new ScannerInterface(this);
         scanner = ScannerFactory.getScannerObject(this);
         scanner.setOutputMode(1);
         if(projectCanEditable()) scanner.lockScanKey();
@@ -1013,6 +1007,11 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
      * @return
      */
     private boolean projectCanEditable(){
+        //  测试模式下，不限制对项目的编辑
+        if(HandsetWorkMode.MODE_TEST==HandsetWorkMode.getInstance().getWorkMode()){
+            return true;
+        }
+
         if(null==projectInfoEntity)
             return true;
 

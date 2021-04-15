@@ -445,6 +445,7 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
         if (projectInfoEntity != null) {
             projectInfoEntity.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1);
             projectInfoEntity.setDate(DateStringUtils.getCurrentTime());        //  起爆时间
+            projectInfoEntity.setReportStatus("0");
             DBManager.getInstance().getPendingProjectDao().save(projectInfoEntity);
         }
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);

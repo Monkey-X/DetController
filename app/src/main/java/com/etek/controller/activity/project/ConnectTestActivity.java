@@ -12,9 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
@@ -30,7 +28,6 @@ import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.test.DetMisconnectionCallback;
-import com.etek.controller.hardware.test.PowerCheckCallBack;
 import com.etek.controller.hardware.util.DetIDConverter;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
@@ -337,7 +334,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 android.app.AlertDialog.Builder builder = null;
                 builder = new android.app.AlertDialog.Builder(ConnectTestActivity.this);
                 builder.setCancelable(false);
-                builder.setMessage("雷管["+detonatorEntity.getCode()
+                builder.setMessage("["+detonatorEntity.getCode()
                         +"]加入到工程? "
                         + "\r\n延时："+detonatorEntity.getRelay()
                         + "\r\n孔位："+detonatorEntity.getHolePosition());

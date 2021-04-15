@@ -18,6 +18,7 @@ import com.etek.controller.R;
 import com.etek.controller.adapter.ProjectListAdapter;
 import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.Globals;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
@@ -243,10 +244,13 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                Log.d(TAG,"项目："+pendingProject.getId()
+                String strReportStatus = pendingProject.getReportStatus();
+                if(null==strReportStatus){
+                    strReportStatus = new String("-1");
+                }
+                DetLog.writeLog(TAG,"项目：" + pendingProject.getId()
                         + "项目状态："+ pendingProject.getProjectStatus()
-                        + "上报状态："+ pendingProject.getReportStatus());
+                        + "上报状态："+ strReportStatus);
 
                 if(pendingProject.getProjectStatus()<AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1){
                     // 如果还未起爆，就可以删除项目
@@ -256,14 +260,14 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
                     DBManager.getInstance().getProjectDetonatorDao().deleteInTx(projectDetonators);
                 }else{
                     if((pendingProject.getProjectStatus()==AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1)
-                        &&(!pendingProject.getReportStatus().equals("1"))){
-                        // 已经起爆了，但未上报成功
-                        showDialogMessage("项目未上报成功，不能删除！");
-                        return;
-                    }else{
-                        // 更新项目状态为  PROJECT_IMPLEMENT_DATA_DELETE
+                        &&(strReportStatus.equals("1"))){
+                        // 数据上报成功，更新项目状态为：PROJECT_IMPLEMENT_DATA_DELETE
                         pendingProject.setProjectStatus(AppIntentString.PROJECT_IMPLEMENT_DATA_DELETE);
                         DBManager.getInstance().getPendingProjectDao().save(pendingProject);
+                    }else{
+                        // 起爆但未上传或上传失败
+                        showDialogMessage("项目起爆但未完成数据上报，不能删除！");
+                        return;
                     }
                 }
                 projectInfos.remove(position);

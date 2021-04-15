@@ -18,7 +18,7 @@
 
         <TextView
             android:id="@+id/tv_app_name"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
@@ -50,7 +50,7 @@
 
         <TextView
             android:id="@+id/tv_version"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
@@ -82,7 +82,7 @@
 
         <TextView
             android:id="@+id/tv_site"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
@@ -99,6 +99,7 @@
             android:layout_toRightOf="@id/tv_site"
             android:layout_marginLeft="@dimen/dp_40"
             android:text="@string/office_site_data"
+            android:textStyle="bold"
             android:textColor="@color/eighty_per_trans_black" />
     </RelativeLayout>
 

@@ -96,7 +96,7 @@
     <string name="dev_on">开</string>
     <string name="dev_off">关</string>
     <string name="daning_server">丹宁服务器</string>
-    <string name="user_name">姓名:</string>
+    <string name="user_name">姓    名:</string>
     <string name="user_sex">性别:</string>
     <string name="user_age">年龄:</string>
     <string name="user_id_number">身份证号:</string>
@@ -104,8 +104,8 @@
     <string name="company_code">单位代码:</string>
     <string name="user_id_code">身份证号:</string>
     <string name="modify">修改保存</string>
-    <string name="app_index">应用名字:</string>
-    <string name="version">版本号:</string>
+    <string name="app_index">名称:</string>
+    <string name="version">版本:</string>
     <string name="office_site">官网:</string>
     <string name="office_site_data">www.etek.com.cn</string>
     <string name="zhongbao_server">中爆服务器</string>

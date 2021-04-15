@@ -1,5 +1,7 @@
 package com.etek.controller.persistence.entity;
 
+import com.etek.controller.utils.DetDelayTimeValidation;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
@@ -76,7 +78,17 @@ public class SingleCheckEntity {
     }
 
     public String getRelay() {
-        return this.relay;
+        int n =0;
+        String str = this.relay;
+        try{
+            n = Integer.parseInt(this.relay);
+            if((n> DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND)||(n<0))
+                str="未设置";
+        }catch (Exception e){
+            e.printStackTrace();
+            str = "未设置";
+        }
+        return str;
     }
 
     public void setRelay(String relay) {

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.etek.controller.R;
 import com.etek.controller.entity.FastEditBean;
+import com.etek.controller.utils.DetDelayTimeValidation;
 import com.etek.sommerlibrary.utils.ToastUtils;
 
 public class FastEditDialog extends DialogFragment implements View.OnClickListener {
@@ -106,8 +107,9 @@ public class FastEditDialog extends DialogFragment implements View.OnClickListen
         }
 
         int startTime = Integer.parseInt(startTimeString);
-        if (startTime >= 15000) {
-            ToastUtils.show(getContext(), "延时请设置在0ms---15000ms范围内！");
+        if ((startTime > DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND)||(startTime<0)) {
+            ToastUtils.show(getContext(), String.format("延时请设置在0ms---%dms范围内！",
+                    DetDelayTimeValidation.MAX_DELAY_TIME_MSECOND));
             return;
         }
 
