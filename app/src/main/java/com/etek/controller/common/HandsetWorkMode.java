@@ -38,8 +38,9 @@ public class HandsetWorkMode{
         WorkMode = workMode;
     }
 
-    public static int MODE_TEST = 0;
-    public static int MODE_NORMAL = 1;
+    public static int MODE_NORMAL = 0;      //  正常模式
+    public static int MODE_TEST = 1;        //  测试模式1：所有的限制都没有，雷管组网不限制厂商，操作步骤不限制，经纬度等可以修改
+    public static int MODE_TESTER = 2;      //  测试模式2：除【离线授权编辑】和【检查授权】中的经纬度、起爆器编号可修改外，其他和MODE_NORMAL一致。
 
     private static int WorkMode = MODE_NORMAL;
 

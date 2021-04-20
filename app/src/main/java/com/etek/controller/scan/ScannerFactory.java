@@ -14,13 +14,18 @@ public class ScannerFactory {
         String strModel = Build.MODEL.toUpperCase();
         Log.d(TAG,"MODEL:"+strModel);
 
+        ScannerBase scanobj;
         //  百富设备型号为： X3s
         if(strModel.equals("X3S")){
             Log.d(TAG,"百富 扫描仪");
-            return new PAXScanner(context);
+            scanobj =  new PAXScanner(context);
+            scanobj.lockScanKey();
+            return scanobj;
         }
 
         Log.d(TAG,"iData扫描仪");
-        return new ScannerInterface(context);
+        scanobj =  new ScannerInterface(context);
+        scanobj.unlockScanKey();
+        return scanobj;
     }
 }

@@ -16,10 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
-
 
 import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.hardware.comm.SerialCommBase;
@@ -29,8 +25,6 @@ import com.etek.controller.hardware.test.InitialCheckCallBack;
 import com.etek.controller.hardware.test.PowerCheckCallBack;
 import com.etek.controller.hardware.test.SingleCheckCallBack;
 import com.etek.controller.hardware.util.DetIDConverter;
-import com.etek.controller.hardware.util.DetLog;
-import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.test.DetCallback;
 import com.etek.controller.hardware.util.DataConverter;
 import com.szyd.jni.SerialCommFactory;
@@ -587,6 +581,19 @@ public class DetApp {
 
 		DetCmd cmd = new DetCmd(m_commobj);
 
+		//	改成绝对路径
+		String strFilePath = Environment.getExternalStorageDirectory().getPath()+strBINFileName;
+		Log.d(TAG, String.format("文件路径：%s",strFilePath));
+		File file = new File(strFilePath);
+		if (!file.exists() || !file.isFile()) {
+			if(null!=cbobj)
+				cbobj.DisplayText("文件不存在");
+
+			Log.d(TAG, String.format("文件不存在"));
+			return -1;
+		}
+		nFizeSize = (int) file.length();
+
 		//	核心板5V供电
 		Log.d(TAG, String.format("核心板5V供电"));
 		ret = cmd.BoardPowerOn();
@@ -597,20 +604,6 @@ public class DetApp {
 			Log.d(TAG, String.format("核心板5V供电失败!"));
 			return -1;
 		}
-
-		//	改成绝对路径
-		String strFilePath = Environment.getExternalStorageDirectory().getPath()+strBINFileName;
-		Log.d(TAG, String.format("文件路径：%s",strFilePath));
-        File file = new File(strFilePath);
-        if (!file.exists() || !file.isFile()) {
-        	if(null!=cbobj)
-        		cbobj.DisplayText("文件不存在");
-
-			Log.d(TAG, String.format("文件不存在"));
-            return -1;
-        }
-        nFizeSize = (int) file.length();
-
 
 		//	将BL引脚拉低
 		Log.d(TAG, String.format("BL电平拉低"));
@@ -776,20 +769,6 @@ public class DetApp {
 
 		//	超时等待（此时核心板需要做擦除动作）
     	WAIT_TIME_MS = 5000;
-//    	try {
-//    		for(k=0;k<WAIT_TIME_MS/100;k++) {
-//    			Thread.sleep(100);
-//
-//    			float f =  WAIT_TIME_MS - k*100;
-//
-//    	    	if(null!=cbobj)
-//    	    		cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
-//    		}
-//
-//		} catch (InterruptedException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
 
 		//	收到2字节参数包确认应答
 		//	5543
@@ -961,8 +940,6 @@ public class DetApp {
                 }
 				float f =  WAIT_TIME_MS - k*100;
 
-//				if(null!=cbobj)
-//					cbobj.DisplayText(String.format("等待%.1f秒", f/1000));
 			}
 		DetCmd cmd = new DetCmd(m_commobj);
 		StringBuilder strData = new StringBuilder();
@@ -1070,11 +1047,8 @@ public class DetApp {
 
 		DetCmd cmd = new DetCmd(m_commobj);
 
-//		ret = this.MainBoardBusPowerOff();
-
 		cmd.BoardPowerOff();
 		Log.d(TAG, "ShutdownProc");
-//		Log.d(TAG, "ShutdownProc: ret = "+ret);
 
 		return 0;
 	}
@@ -2042,6 +2016,13 @@ public class DetApp {
 					m_commobj.SetTimeout(nTimeout);
 					return 0;
 
+				case 0x0f:
+					cbobj.DisplayText("取消搜索");
+					ModuleSetWakeupStatus(0);
+					//  恢复超时设置
+					m_commobj.SetTimeout(nTimeout);
+					return 0x0f;
+
 				default:
 					cbobj.DisplayText("请检查连接后重新检测");
 					ModuleSetWakeupStatus(0);
@@ -2119,8 +2100,44 @@ public class DetApp {
     	m_bDelaying = false;
 	}
 
+    /***
+     * 获取起爆器编号
+     * @param strsno
+     * @return
+     */
+    public int MainBoardGetSNO(StringBuilder strsno){
+        DetCmd cmd = new DetCmd(m_commobj);
+        int ret = cmd.ModCmd36(strsno);
+        if(0!=ret) return ret;
 
-	public void testDetAPP() {
+        return 0;
+    }
+
+    /***
+     * 设置起爆器编号
+     * @param strsno
+     * @return
+     */
+    public int MainBoardSetSNO(String strsno){
+
+        if(null==strsno)
+            return -1;
+        if(strsno.length()!=11)
+            return -2;
+        if(!strsno.substring(0,1).equals("F"))
+            return -3;
+        if(!strsno.substring(3,5).equals("A8"))
+            return -4;
+
+        DetCmd cmd = new DetCmd(m_commobj);
+
+        int ret = cmd.ModCmd37(strsno);
+        if(0!=ret) return ret;
+
+        return 0;
+    }
+
+    public void testDetAPP() {
 		String strErrMsg ="";
 
 		//	ECHO测试

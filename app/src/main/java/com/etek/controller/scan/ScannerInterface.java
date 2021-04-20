@@ -116,11 +116,11 @@ public class ScannerInterface extends ScannerBase {
      * 一般在程序打开时调用一次open()或reset（）j接口，退出时调用close（）接口，或者尽量不要调用
      * 交给iScan自动控制*/
     public void open(){
-        if(mContext != null){
-            Intent intent = new Intent(KEY_BARCODE_ENABLE_ACTION);
-            intent.putExtra(KEY_BARCODE_ENABLE_ACTION, true);
-            mContext.sendBroadcast(intent);
-        }
+//        if(mContext != null){
+//            Intent intent = new Intent(KEY_BARCODE_ENABLE_ACTION);
+//            intent.putExtra(KEY_BARCODE_ENABLE_ACTION, true);
+//            mContext.sendBroadcast(intent);
+//        }
     }
 
     //2，关闭扫描头电源
@@ -128,11 +128,11 @@ public class ScannerInterface extends ScannerBase {
      * 一般在程序打开时调用一次open()或reset（）j接口，退出时调用close（）接口，或者尽量不要调用
      * 交给iScan自动控制*/
     public void  close(){
-        if(mContext != null){
-            Intent intent = new Intent(KEY_BARCODE_ENABLE_ACTION);
-            intent.putExtra(KEY_BARCODE_ENABLE_ACTION, false);
-            mContext.sendBroadcast(intent);
-        }
+//        if(mContext != null){
+//            Intent intent = new Intent(KEY_BARCODE_ENABLE_ACTION);
+//            intent.putExtra(KEY_BARCODE_ENABLE_ACTION, false);
+//            mContext.sendBroadcast(intent);
+//        }
 
     }
 

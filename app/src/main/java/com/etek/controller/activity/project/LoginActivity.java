@@ -11,6 +11,7 @@ import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -25,6 +26,8 @@ import com.etek.controller.common.AppIntentString;
 import com.etek.controller.common.ETEKOnlinePassword;
 import com.etek.controller.common.HandsetWorkMode;
 import com.etek.controller.hardware.test.HttpCallback;
+import com.etek.controller.scan.ScannerBase;
+import com.etek.controller.scan.ScannerFactory;
 import com.etek.controller.utils.AsyncHttpCilentUtil;
 import com.etek.controller.utils.GeneralDisplayUI;
 import com.etek.sommerlibrary.activity.BaseActivity;
@@ -50,6 +53,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private TextView onlinepassword;
     private Timer mTimer;
     private TextView controllerNo;
+    private ImageView imglogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         initData();
 
         getPermission();
+
+        unlockScanKey();
     }
 
     private void getPermission() {
@@ -117,7 +123,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         controllerNo = findViewById(R.id.controller_no);
         String strsno = getPreInfo(getString(R.string.controller_sno));
-        controllerNo.setText(String.format("起爆器: %s",strsno));
+        controllerNo.setText(String.format("起爆器编号: %s",strsno));
+
+        setLoginLogo(strsno);
+    }
+    /**
+     * 解除扫描对按间的占用
+     */
+    private void unlockScanKey() {
+        //ScannerBase scannerInterface = new ScannerInterface(this);
+        ScannerBase scannerInterface = ScannerFactory.getScannerObject(this);
+        //scannerInterface.unlockScanKey();
     }
 
     @Override
@@ -125,10 +141,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         int ntype = GeneralDisplayUI.NETWORK_WIFI;
         switch (checkedId) {
             case R.id.wifi:
-                ntype = GeneralDisplayUI.NETWORK_WIFI;
+                ntype = GeneralDisplayUI.NETWORK_4G;
                 break;
             case R.id.mobileData:
-                ntype = GeneralDisplayUI.NETWORK_4G;
+                ntype = GeneralDisplayUI.NETWORK_WIFI;
                 break;
         }
         GeneralDisplayUI.showSettingNetworkSelect(this,ntype);
@@ -155,12 +171,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         String userStrName = userName.getText().toString().trim();
         String strPassword = password.getText().toString().trim();
 
+        //  TEST模式
         if(isTestUser(userStrName,strPassword)){
             HandsetWorkMode.getInstance().setWorkMode(HandsetWorkMode.MODE_TEST);
             startActivity(new Intent(this, HomeActivity2.class));
             finish();
             return;
         }
+
+        //  TESTER模式
+        if(isTester(userStrName,strPassword)){
+            HandsetWorkMode.getInstance().setWorkMode(HandsetWorkMode.MODE_TESTER);
+            startActivity(new Intent(this, HomeActivity2.class));
+            finish();
+            return;
+        }
+
 
         if(!isValidCellphoneNo(userStrName)){
             Toast.makeText(mContext, "请输入有效手机号！", Toast.LENGTH_LONG).show();
@@ -230,6 +256,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         //  测试用户，进入到测试模式
         if(userStrName.toUpperCase().equals("WXSCTEST")
+                && strPassword.equals(ret+"")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isTester(String userStrName,String strPassword){
+        // 先判断是否测试用户
+        Calendar calendar = Calendar.getInstance();
+        int ret =  calendar.get(Calendar.YEAR);
+        ret = ret + calendar.get(Calendar.MONTH)+1;     // MONTH是从0-11
+        ret = ret + calendar.get(Calendar.DAY_OF_MONTH);
+        ret = ret + calendar.get(Calendar.HOUR_OF_DAY);
+
+        //  测试用户，进入到测试模式
+        if(userStrName.toUpperCase().equals("TESTER")
                 && strPassword.equals(ret+"")) {
             return true;
         }
@@ -324,4 +366,40 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         mTimer.schedule(task,0,1000);
     }
 
+    private void setLoginLogo(String strcno){
+        imglogo = findViewById(R.id.login_logo);
+
+        String strMID = strcno.substring(0,3);
+        switch (strMID){
+            case "F07":
+                imglogo.setImageResource(R.drawable.f07);
+                break;
+            case "F09":
+                imglogo.setImageResource(R.drawable.f09);
+                break;
+            case "F28":
+                imglogo.setImageResource(R.drawable.f28);
+                break;
+            case "F30":
+                imglogo.setImageResource(R.drawable.f30);
+                break;
+            case "F38":
+                imglogo.setImageResource(R.drawable.f38);
+                break;
+            case "F60":
+                imglogo.setImageResource(R.drawable.f60);
+                break;
+            case "F61":
+                imglogo.setImageResource(R.drawable.f61);
+                break;
+            case "F64":
+                imglogo.setImageResource(R.drawable.f64);
+                break;
+            default:
+                imglogo.setImageResource(R.drawable.f99);
+                break;
+        }
+        //imglogo.setAlpha(0.6f);
+        return;
+    }
 }

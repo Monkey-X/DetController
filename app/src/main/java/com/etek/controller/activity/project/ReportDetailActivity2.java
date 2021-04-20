@@ -1,5 +1,6 @@
 package com.etek.controller.activity.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -387,7 +388,7 @@ public class ReportDetailActivity2 extends BaseActivity {
                 try {
                     //  返回： {"success":0,"cwxx":"成功"}
                     ServerResult serverResult = JSON.parseObject(respStr, ServerResult.class);
-                    if (!serverResult.getSuccess().contains("0")) {
+                    if (!serverResult.getSuccess().equals("0")) {
                         Integer code = Integer.parseInt(serverResult.getSuccess());
                         ResultErrEnum errEnum = ResultErrEnum.getBycode(code);
                         DetLog.writeLog(TAG, "力芯错误代码：" + errEnum.getMessage());

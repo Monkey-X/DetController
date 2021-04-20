@@ -12,7 +12,6 @@ import android.util.Log;
 import com.etek.controller.hardware.comm.SerialCommBase;
 import com.szyd.jni.HandSetSerialComm;
 import com.etek.controller.hardware.util.DataConverter;
-import com.etek.controller.hardware.util.DetLog;
 
 public class DetCmd {
 	private SerialCommBase m_commobj;
@@ -172,11 +171,7 @@ public class DetCmd {
 	public int BoardPowerOff() {
 
 		boolean b = m_commobj.ctlPowerSupply(6);
-//		try {
-//			Thread.sleep(50);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+
 		boolean c = m_commobj.ctlPowerSupply(2);
 
 		if(b)
@@ -576,6 +571,53 @@ public class DetCmd {
 		StringBuilder strData = new StringBuilder();
 		strData.setLength(0);
 		return BoardCmd(bcmd,szID,0,0xa0,strData);
+	}
+
+	/***
+	 *
+	 *
+	 * > 36 00 87
+	 * < A1 06 46 99 A8 01 02 03 57
+	 * @param strsno
+	 * @return
+	 */
+	public int ModCmd36(StringBuilder strsno){
+		byte bcmd = 0x36;
+
+		StringBuilder strData = new StringBuilder();
+		int ret =  BoardCmd(bcmd,null,0x06,0xA1,strData);
+		if(0!=ret) return ret;
+
+		byte[] szdata = DataConverter.hexStringToBytes(strData.toString());
+
+		String sno = String.format("%c%02X%02X%02X%02X%02X",szdata[0],szdata[1],szdata[2],szdata[3],szdata[4],szdata[5]);
+
+		strsno.setLength(0);
+		strsno.append(sno);
+
+		return 0;
+	}
+
+	/***
+	 *
+	 * > 37 06 46 99 A8 01 02 03 B5
+	 * < A0 00 18
+	 * @param strsno
+	 * @return
+	 */
+	public int ModCmd37(String strsno){
+		byte bcmd = 0x37;
+
+		byte[] szno = DataConverter.hexStringToBytes(strsno.substring(1));
+		byte[] szdata = new byte[6];
+		szdata[0]=0x46;
+		System.arraycopy(szno,0,szdata,1,5);
+
+		StringBuilder strData = new StringBuilder();
+		int ret =  BoardCmd(bcmd,szdata,0x06,0xa0,strData);
+		if(0!=ret) return ret;
+
+		return 0;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 

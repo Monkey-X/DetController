@@ -58,6 +58,7 @@ public class PAXScanner extends ScannerBase {
         }
 
         try {
+            lockScanKey();
             mScannerManagerHw.scanClose();
         } catch (ScannerHwException e) {
             e.printStackTrace();
@@ -101,6 +102,8 @@ public class PAXScanner extends ScannerBase {
             Intent intent = new Intent(KEY_OUTPUT_ACTION);
             intent.putExtra(KEY_OUTPUT_ACTION, mode);
             mContext.sendBroadcast(intent);
+        }else{
+            Log.d(TAG,"mContext is NULL");
         }
     }
 
@@ -205,6 +208,7 @@ public class PAXScanner extends ScannerBase {
         } catch (ScannerHwException e) {
             e.printStackTrace();
             Log.d(TAG,e.getMessage());
+            return;
         }
 
         if(mContext != null){

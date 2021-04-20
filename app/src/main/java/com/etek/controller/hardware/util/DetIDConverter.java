@@ -204,6 +204,25 @@ public class DetIDConverter {
         return nval;
     }
 
+    public static boolean isValidDC(String strdc){
+        int ret = 0;
+        try{
+            ret = Integer.parseInt(strdc.substring(0,2));
+        }catch (NumberFormatException e){
+            String strmsg = String.format("VerifyQRCheckValue: 无效的起爆器编号！%s",strdc);
+            Log.d(TAG, strmsg);
+            return false;
+        }
+
+        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
+            if(ret!=m_bMID){
+                String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",ret,m_bMID);
+                Log.d(TAG, strmsg);
+                return false;
+            }
+        }
+        return true;
+    }
     /***
      * 检测雷管二维码的检验有效性
      * @param strQRCode    二维码字符串，长度必须大于等于17
@@ -233,21 +252,8 @@ public class DetIDConverter {
         for (i = 0; i < 15; i++) nval[i] = DataConverter.getByteValue((byte) charr[i]);
 
 
-        int ret = 0;
-        try{
-            ret = Integer.parseInt(strQRCode.substring(0,2));
-        }catch (NumberFormatException e){
-            String strmsg = String.format("VerifyQRCheckValue: 无效的起爆器编号！%s",strQRCode);
-            Log.d(TAG, strmsg);
-            return false;
-        }
-
-        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
-            if(ret!=m_bMID){
-                String strmsg = String.format("VerifyQRCheckValue: 和起爆器厂商编码不一致！%d,%d",ret,m_bMID);
-                Log.d(TAG, strmsg);
-                return false;
-            }
+        if(!isValidDC(strQRCode)){
+            return  false;
         }
 
         //	计算校验值

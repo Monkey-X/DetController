@@ -23,36 +23,36 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(Database db, boolean ifNotExists) {
         ProjectDownLoadEntityDao.createTable(db, ifNotExists);
         ChkControllerEntityDao.createTable(db, ifNotExists);
-        ReportEntityDao.createTable(db, ifNotExists);
-        ProjectInfoEntityDao.createTable(db, ifNotExists);
-        DetReportEntityDao.createTable(db, ifNotExists);
         ChkDetonatorEntityDao.createTable(db, ifNotExists);
-        ProjectDetonatorDao.createTable(db, ifNotExists);
-        PendingProjectDao.createTable(db, ifNotExists);
-        ForbiddenZoneEntityDao.createTable(db, ifNotExists);
-        SingleCheckEntityDao.createTable(db, ifNotExists);
-        RptDetonatorEntityDao.createTable(db, ifNotExists);
-        PermissibleZoneEntityDao.createTable(db, ifNotExists);
         ControllerEntityDao.createTable(db, ifNotExists);
         DetonatorEntityDao.createTable(db, ifNotExists);
+        DetReportEntityDao.createTable(db, ifNotExists);
+        ForbiddenZoneEntityDao.createTable(db, ifNotExists);
+        PendingProjectDao.createTable(db, ifNotExists);
+        PermissibleZoneEntityDao.createTable(db, ifNotExists);
+        ProjectDetonatorDao.createTable(db, ifNotExists);
+        ProjectInfoEntityDao.createTable(db, ifNotExists);
+        ReportEntityDao.createTable(db, ifNotExists);
+        RptDetonatorEntityDao.createTable(db, ifNotExists);
+        SingleCheckEntityDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         ProjectDownLoadEntityDao.dropTable(db, ifExists);
         ChkControllerEntityDao.dropTable(db, ifExists);
-        ReportEntityDao.dropTable(db, ifExists);
-        ProjectInfoEntityDao.dropTable(db, ifExists);
-        DetReportEntityDao.dropTable(db, ifExists);
         ChkDetonatorEntityDao.dropTable(db, ifExists);
-        ProjectDetonatorDao.dropTable(db, ifExists);
-        PendingProjectDao.dropTable(db, ifExists);
-        ForbiddenZoneEntityDao.dropTable(db, ifExists);
-        SingleCheckEntityDao.dropTable(db, ifExists);
-        RptDetonatorEntityDao.dropTable(db, ifExists);
-        PermissibleZoneEntityDao.dropTable(db, ifExists);
         ControllerEntityDao.dropTable(db, ifExists);
         DetonatorEntityDao.dropTable(db, ifExists);
+        DetReportEntityDao.dropTable(db, ifExists);
+        ForbiddenZoneEntityDao.dropTable(db, ifExists);
+        PendingProjectDao.dropTable(db, ifExists);
+        PermissibleZoneEntityDao.dropTable(db, ifExists);
+        ProjectDetonatorDao.dropTable(db, ifExists);
+        ProjectInfoEntityDao.dropTable(db, ifExists);
+        ReportEntityDao.dropTable(db, ifExists);
+        RptDetonatorEntityDao.dropTable(db, ifExists);
+        SingleCheckEntityDao.dropTable(db, ifExists);
     }
 
     /**
@@ -73,18 +73,18 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(ProjectDownLoadEntityDao.class);
         registerDaoClass(ChkControllerEntityDao.class);
-        registerDaoClass(ReportEntityDao.class);
-        registerDaoClass(ProjectInfoEntityDao.class);
-        registerDaoClass(DetReportEntityDao.class);
         registerDaoClass(ChkDetonatorEntityDao.class);
-        registerDaoClass(ProjectDetonatorDao.class);
-        registerDaoClass(PendingProjectDao.class);
-        registerDaoClass(ForbiddenZoneEntityDao.class);
-        registerDaoClass(SingleCheckEntityDao.class);
-        registerDaoClass(RptDetonatorEntityDao.class);
-        registerDaoClass(PermissibleZoneEntityDao.class);
         registerDaoClass(ControllerEntityDao.class);
         registerDaoClass(DetonatorEntityDao.class);
+        registerDaoClass(DetReportEntityDao.class);
+        registerDaoClass(ForbiddenZoneEntityDao.class);
+        registerDaoClass(PendingProjectDao.class);
+        registerDaoClass(PermissibleZoneEntityDao.class);
+        registerDaoClass(ProjectDetonatorDao.class);
+        registerDaoClass(ProjectInfoEntityDao.class);
+        registerDaoClass(ReportEntityDao.class);
+        registerDaoClass(RptDetonatorEntityDao.class);
+        registerDaoClass(SingleCheckEntityDao.class);
     }
 
     public DaoSession newSession() {

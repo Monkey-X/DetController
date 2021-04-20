@@ -154,6 +154,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
 
     private void initScanner() {
         scanner = ScannerFactory.getScannerObject(this);
+        scanner.open();
         scanner.setOutputMode(1);
         if(projectCanEditable()) scanner.lockScanKey();
         //  扫描失败是否发送广播
@@ -188,6 +189,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         if (scanner != null) {
             scanner.unlockScanKey();
             scanner.setOutputMode(0);
+            scanner.close();
         }
     }
 
@@ -853,7 +855,8 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             Log.d(TAG, "doInBackground: detId = "+detId.toString());
             bScanDetOver =true;
             if (result == 0) {
-                return detNum.toString();
+                if(DetIDConverter.isValidMID(detNum.toString().substring(0,2)))
+                    return detNum.toString();
             }
             return "";
         }
@@ -1016,7 +1019,7 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
             return true;
 
         Log.d(TAG,"getProjectStatus"+projectInfoEntity.getProjectStatus());
-        if(projectInfoEntity.getProjectStatus()<AppIntentString.PROJECT_IMPLEMENT_POWER_BOMB1)
+        if(projectInfoEntity.getProjectStatus()<AppIntentString.PROJECT_IMPLEMENT_DATA_REPORT1)
             return true;
 
         return false;

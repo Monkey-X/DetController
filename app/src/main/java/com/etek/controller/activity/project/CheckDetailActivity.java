@@ -164,8 +164,10 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         textbtn.setText("检查");
         textbtn.setOnClickListener(this);
         if ("online".equals(type)) {
+            DetLog.writeLog(TAG,"在线详情");
             textTitle.setText("在线详情");
         } else if ("offline".equals(type)) {
+            DetLog.writeLog(TAG,"离线详情");
             textTitle.setText("离线详情");
         }
     }
@@ -424,7 +426,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         locationLatitude = findViewById(R.id.ctrl_location_latitude);
 
         //  经纬度禁止输入
-        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
+        if(HandsetWorkMode.MODE_TEST>HandsetWorkMode.getInstance().getWorkMode()){
             locationLongitude.setKeyListener(null);
             locationLatitude.setKeyListener(null);
             controllerId.setKeyListener(null);
@@ -628,7 +630,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
         projectInfoEntity.setProCode(strProCode);
 
         OnlineCheckDto onlineCheckDto = new OnlineCheckDto();
-        onlineCheckDto.setDwdm(projectInfoEntity.getCompanyCode());
+        onlineCheckDto.setDwdm(Globals.user.getCompanyCode());
         onlineCheckDto.setHtid(projectInfoEntity.getContractCode());
 
         // 使用界面获取到的经纬度
@@ -701,7 +703,7 @@ public class CheckDetailActivity extends BaseActivity implements View.OnClickLis
                 Log.d(TAG, "resp:" + data);
                 serverResult = JSON.parseObject(data, OnlineCheckResp.class);
                 Log.d(TAG, "serverResult: " + serverResult.toString());
-                if (serverResult.getCwxx().contains("0")) {
+                if (serverResult.getCwxx().equals("0")) {
                     ProjectFileDto projectFile = new ProjectFileDto();
                     projectFile.setCompany(Globals.user.getCompanyName());
                     projectFile.setDwdm(Globals.user.getCompanyCode());

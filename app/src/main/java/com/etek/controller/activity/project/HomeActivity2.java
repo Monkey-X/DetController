@@ -91,7 +91,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
         initMainBoard();
 
-        unlockScanKey();
 
         getUserInfo();
 
@@ -318,7 +317,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
         //  右下角的退出键
         if(KeyEvent.KEYCODE_BACK==keyCode){
             finish();
-//            return true;
         }
         if (keyCode == event. KEYCODE_HOME) {
             return true;
@@ -342,14 +340,32 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
 
         @Override
         protected Integer doInBackground(String... strings) {
-
             DetApp.getInstance().SetCommTimeout(1000);
+
+            Log.d(TAG,String.format("下电"));
+            DetApp.getInstance().MainBoardPowerOff();
+            try{
+                Thread.sleep(500);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            Log.d(TAG,String.format("上电"));
+            DetApp.getInstance().MainBoardPowerOn();
+            try{
+                Thread.sleep(100);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
             Log.d(TAG,String.format("电平拉高"));
             DetApp.getInstance().MainBoardSetBL(true);
 
-            Log.d(TAG,String.format("上电"));
-            DetApp.getInstance().MainBoardPowerOn();
+            try{
+                Thread.sleep(100);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
             Log.d(TAG,String.format("初始化"));
             int result = mainBoardInit();
@@ -399,15 +415,6 @@ public class HomeActivity2 extends BaseActivity implements ActivityCompat.OnRequ
             //  主板初始化成功后上传
             UploadHandsetInfo();
         }
-    }
-
-    /**
-     * 解除扫描对按间的占用
-     */
-    private void unlockScanKey() {
-        //ScannerBase scannerInterface = new ScannerInterface(this);
-        ScannerBase scannerInterface = ScannerFactory.getScannerObject(this);
-        scannerInterface.unlockScanKey();
     }
 
     private int mainBoardInit() {

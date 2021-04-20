@@ -725,6 +725,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 public void DisplayText(String strText) {
                     //  展示信息
                     setProDialogText(strText);
+                    Log.d(TAG,strText);
                     m_strmsg = strText;
                 }
 
@@ -733,16 +734,20 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                     // 是否已经存在于工程内
                     if(connectData.size()>0){
                         for(ProjectDetonator det0:connectData){
-                            if(strDC.equals(det0.getCode()))
+                            if(strDC.equals(det0.getCode())){
+                                DetApp.getInstance().MainBoardSetBL(false);
                                 return;
+                            }
                         }
                     }
 
                     //  是否已经存在于失联
                     if(misConnectData.size()>0){
                         for(ProjectDetonator det0:misConnectData){
-                            if(strDC.equals(det0.getCode()))
+                            if(strDC.equals(det0.getCode())){
+                                DetApp.getInstance().MainBoardSetBL(false);
                                 return;
+                            }
                         }
                     }
 
@@ -809,6 +814,7 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             changeProgressView(true);
             setSelectBtnVisible(true);
 
+            DetApp.getInstance().MainBoardSetBL(true);
             // 总线下电
             Log.d(TAG,"总线下电");
             DetApp.getInstance().MainBoardBusPowerOff();

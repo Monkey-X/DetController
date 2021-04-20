@@ -278,26 +278,25 @@ public class PAXSerialComm extends SerialCommBase {
         Log.d(TAG,str1);
         switch (operationValue){
             case 1:
+                m_comobj.execRootCmdSilent("echo 1 > " + cmd_power);
+                str1 = "设置后电源状态:    " + m_comobj.execRootCmd("cat " + cmd_power);
+                Log.d(TAG,str1);
+                break;
             case 3:
             case 5:
-                m_comobj.execRootCmdSilent("echo 1 > " + cmd_power);
                 break;
             case 2:
+                m_comobj.execRootCmdSilent("echo 0 > " + cmd_power);
+                str1 = "设置后电源状态:    " + m_comobj.execRootCmd("cat " + cmd_power);
+                Log.d(TAG,str1);
+                break;
             case 4:
             case 6:
-                m_comobj.execRootCmdSilent("echo 0 > " + cmd_power);
                 break;
-        }
-        str1 = "设置后电源状态:    " + m_comobj.execRootCmd("cat " + cmd_power);
-        Log.d(TAG,str1);
-
-        try{
-            Thread.sleep(1000);
-        }catch (Exception e){
-            e.printStackTrace();
         }
         return true;
     }
+
     // true 拉高，false拉低
     public boolean controlGpio73(boolean ifpullHigh) {
         if(null==m_comobj) {

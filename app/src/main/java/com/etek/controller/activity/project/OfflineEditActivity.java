@@ -136,9 +136,12 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
                 proCode.setText(offlineDownloadBean.getXmbh());
                 contractCode.setText(offlineDownloadBean.getHtid());
 
-                 if(null!=offlineDownloadBean.getDets())
-                     detList = offlineDownloadBean.getDets();
+                if(null!=offlineDownloadBean.getDets())
+                    detList = offlineDownloadBean.getDets();
             }
+        }
+        if(null==offlineDownloadBean){
+            offlineDownloadBean = new OfflineDownloadBean();
         }
 
         Intent intent = getIntent();
@@ -181,7 +184,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         //contractCode.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         companyCode = findViewById(R.id.company_code);
         controllerSn = findViewById(R.id.controller_sn);
-        if(HandsetWorkMode.MODE_TEST!=HandsetWorkMode.getInstance().getWorkMode()){
+        if(HandsetWorkMode.MODE_TEST>HandsetWorkMode.getInstance().getWorkMode()){
             controllerSn.setKeyListener(null);
         }
 
@@ -844,6 +847,29 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             areYouQuit();
             return true;
         }
+
+        int nAction = event.getAction();
+
+        // 如果项目已经起爆，就不能修改
+        if((KeyEvent.ACTION_DOWN==nAction)){
+            // 只处理Key_DOWNW消息
+            // 左边189 右边190  中间188
+            if ((keyCode == 189) || ( 284 == keyCode)){
+                scanner.doScan();
+                return true;
+            }
+            // 中间按钮
+            if ((keyCode == 188)||(288 == keyCode)) {
+                scanner.doScan();
+                return true;
+            }
+            // 右边按钮
+            if ((keyCode == 190)||( 285 == keyCode)) {
+                scanner.doScan();
+                return true;
+            }
+        }
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -887,14 +913,18 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             unregisterReceiver(scanReceiver);
         }
 
+        Log.d(TAG,"scanner close");
         if (scanner != null) {
             scanner.unlockScanKey();
             scanner.setOutputMode(0);
+            scanner.close();
         }
     }
 
     private void initScanner() {
+        Log.d(TAG,"initScanner");
         scanner = ScannerFactory.getScannerObject(this);
+        scanner.open();
         scanner.setOutputMode(1);
         scanner.lockScanKey();
         //  扫描失败是否发送广播
@@ -909,6 +939,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
         LocalBroadcastManager.getInstance(this).registerReceiver(scanReceiver,intentFilter);
     }
+
 
     /**
      * 扫描结果广播接收
