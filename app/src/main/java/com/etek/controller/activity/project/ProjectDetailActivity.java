@@ -38,6 +38,7 @@ import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.test.PowerCheckCallBack;
 import com.etek.controller.hardware.util.DataConverter;
 import com.etek.controller.hardware.util.DetIDConverter;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -111,6 +112,9 @@ public class ProjectDetailActivity extends BaseActivity implements View.OnClickL
         initRecycleView();
         initIntentData();
         initSoundPool();
+
+        DetLog.writeLog(TAG,"雷管组网");
+        DetLog.writeLog(TAG,"项目ID："+projectInfoEntity.getId());
     }
 
     private void initDelaySetting() {

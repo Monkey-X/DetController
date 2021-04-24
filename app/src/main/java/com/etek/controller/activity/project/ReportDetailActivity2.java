@@ -29,7 +29,6 @@ import com.etek.controller.enums.ReportServerEnum;
 import com.etek.controller.enums.ResultErrEnum;
 import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.minaclient.DetMessage;
-import com.etek.controller.minaclient.MessageCodecFactory;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
 import com.etek.controller.persistence.entity.ProjectDetonator;
@@ -118,6 +117,11 @@ public class ReportDetailActivity2 extends BaseActivity {
         XLog.d(TAG,"proIds: " + proId);
         projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
         detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
+
+        DetLog.writeLog(TAG,"projectInfoEntity ID:"+projectInfoEntity.getId()
+                + "\t工程:"+projectInfoEntity.getProjectCode()
+                + "\t数量："+projectInfoEntity.getDetonatorList().size());
+        DetLog.writeLog(TAG,"detonatorEntityList 数量："+detonatorEntityList.size());
     }
 
     /**
@@ -158,9 +162,6 @@ public class ReportDetailActivity2 extends BaseActivity {
             String userinfo = SpManager.getIntance().getSpString(AppSpSaveConstant.USER_INFO);
             // 上报的信息
             reportDotInfo = getReportDot(userinfo, projectInfoEntity);
-
-            DetLog.writeLog(TAG,projectInfoEntity.toString());
-
         }
     }
 
@@ -196,9 +197,10 @@ public class ReportDetailActivity2 extends BaseActivity {
         if (detonatorEntityList != null && !detonatorEntityList.isEmpty()) {
             reportDto.setDetControllerWithoutDet2(userInfo, projectInfoEntity);
             reportDto.setDets2(detonatorEntityList);
-            if (StringUtils.isEmpty(reportDto.getDwdm())) {
-                reportDto.setDwdm(Globals.user.getCompanyCode());
-            }
+            reportDto.setDwdm(Globals.user.getCompanyCode());
+//            if (StringUtils.isEmpty(reportDto.getDwdm())) {
+//                reportDto.setDwdm(Globals.user.getCompanyCode());
+//            }
         }
         return reportDto;
     }

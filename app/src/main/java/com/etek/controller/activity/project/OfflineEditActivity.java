@@ -67,7 +67,6 @@ import com.etek.controller.utils.RptUtil;
 import com.etek.controller.utils.VibrateUtil;
 import com.etek.sommerlibrary.activity.BaseActivity;
 import com.etek.sommerlibrary.dto.Result;
-import com.etek.sommerlibrary.utils.ToastUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -82,7 +81,6 @@ import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Response;
-import com.etek.controller.utils.SommerUtils;
 
 public class OfflineEditActivity extends BaseActivity implements View.OnClickListener, OfflineEditAdapter.OnItemClickListener {
 
@@ -661,7 +659,8 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
 
         //设置对话框标题
         dialog.setPositiveButton("确认", (dialog1, which) -> {
-            String detCodeStr = etDetCode.getText().toString().trim();
+            String detCodeStr = etDetCode.getText().toString().trim().toUpperCase();
+            etDetCode.setText(detCodeStr);
             String detNumStr = etDetNum.getText().toString().trim();
             int selectedItemPosition = spDetSpinner.getSelectedItemPosition();
             createDetInfo(detCodeStr, detNumStr, selectedItemPosition);
@@ -705,23 +704,57 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
             return;
         }
 
-        String substring = detCodeStr.substring(0, 7);
-        if (!isNumeric(substring)) {
-            showToast("请输入正确的雷管发编号！");
-            return;
-        }
-
-        String subDatestring = detCodeStr.substring(3, 7);
-        if (!isDateString(subDatestring)) {
-            showToast("请输入正确的有效期内雷管发编号！");
-            return;
-        }
-
+        //  厂家代码（HEX）
         if(!DetIDConverter.isValidMID(detCodeStr.substring(0,2))){
             showToast("不支持的雷管厂商："+detCodeStr.substring(0,2));
             return;
         }
+        //  生产年份尾数（0~9）
+        String substring = detCodeStr.substring(2, 3);
+        if (!isNumeric(substring)) {
+            showToast("请输入正确的雷管生产年份！");
+            return;
+        }
 
+        //        生产月份（1~12）
+        substring = detCodeStr.substring(3, 5);
+        if (!isNumeric(substring)) {
+            showToast("请输入正确的雷管生产年份！");
+            return;
+        }
+        int n = Integer.parseInt(substring);
+        if(n<1||n>12){
+            showToast("请输入正确的雷管生产年份！");
+            return;
+        }
+
+        //        生产日期（1~31）
+        substring = detCodeStr.substring(5, 7);
+        if (!isNumeric(substring)) {
+            showToast("请输入正确的雷管生产月份！");
+            return;
+        }
+        n = Integer.parseInt(substring);
+        if(n<1||n>31){
+            showToast("请输入正确的雷管生产月份！");
+            return;
+        }
+
+        //        特征码/机台号（ASCII）
+        if(!DetIDConverter.isValidDeskIndex(detCodeStr.substring(0,2),detCodeStr.substring(7,8))){
+            showToast("请输入正确的雷管机台码！");
+            return;
+        }
+
+        //  当前的盒号（0~999）+ 当前的管号（0~99）
+        substring = detCodeStr.substring(8, 13);
+        if (!isNumeric(substring)) {
+            showToast("请输入正确的雷管盒号和管号！");
+            return;
+        }
+
+
+        //  数量
         if (TextUtils.isEmpty(detNumStr)) {
             showToast("请输入有效的雷管数！");
             return;
@@ -732,7 +765,7 @@ public class OfflineEditActivity extends BaseActivity implements View.OnClickLis
         }
 
         int num = Integer.parseInt(detNumStr);
-        if (num <= 0) {
+        if ((num <= 0)||(num>999)) {
             showToast("请输入有效的雷管数！");
             return;
         }

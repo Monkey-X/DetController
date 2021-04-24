@@ -28,6 +28,7 @@ import com.etek.controller.fragment.FastEditDialog;
 import com.etek.controller.hardware.command.DetApp;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -156,12 +157,15 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
 
     private void initProject() {
+        DetLog.writeLog(TAG,"延时下载");
         //根据项目id获取雷管并展示页面
         if (proId >= 0) {
             projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
             detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             Collections.sort(detonatorEntityList);
             detonators.addAll(detonatorEntityList);
+
+            DetLog.writeLog(TAG,"项目ID："+projectInfoEntity.getId());
         }
     }
 
@@ -192,6 +196,8 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
 
                 break;
             case R.id.all_edit:
+                if(bDownloading)
+                    break;
                 showAllDet();
                 // 批量编辑
                 checkShow(3);
@@ -199,11 +205,15 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 layoutDownloadBtn.setVisibility(View.GONE);
                 break;
             case R.id.all_det:
+                if(bDownloading)
+                    break;
                 showAllDet();
                 checkShow(1);
                 layoutDownloadBtn.setVisibility(View.VISIBLE);
                 break;
             case R.id.download_fail:
+                if(bDownloading)
+                    break;
                 showDownloadFail();
                 checkShow(2);
                 layoutDownloadBtn.setVisibility(View.GONE);
@@ -214,11 +224,10 @@ public class DelayDownloadActivity extends BaseActivity implements View.OnClickL
                 changeProgressView(true);
                 break;
             case R.id.startTest:
+                if(bDownloading)
+                    break;
                 // 开始下载
-                if(!bDownloading){
-                    allDetDownload();
-                }
-
+                allDetDownload();
                 break;
         }
     }

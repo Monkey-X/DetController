@@ -26,7 +26,7 @@ public class DetIDConverter {
         m_mapDeskCode.put(38, "612345789");
         m_mapDeskCode.put(64, "ARPNTHKS1");
         m_mapDeskCode.put(28, "BCDEFGHIJ");
-        m_mapDeskCode.put(60, "546789abd");
+        m_mapDeskCode.put(60, "546789ABD");
         m_mapDeskCode.put(9, "ADXYZ1234");
         m_mapDeskCode.put(7, "9        ");
         m_mapDeskCode.put(30, "6        ");
@@ -388,13 +388,31 @@ public class DetIDConverter {
         }
 
         if(HandsetWorkMode.MODE_TEST==HandsetWorkMode.getInstance().getWorkMode()){
-            String str = m_mapDeskCode.get(nval);
-            if(null==str) return false;
-            return true;
+            return  true;
         }
+        String str = m_mapDeskCode.get(nval);
+        if(null==str) return false;
         if(m_bMID==nval) return true;
         return false;
     }
 
+    /***
+     * 判断机台号是否正常
+     * @param mid
+     * @param dskcode
+     * @return
+     */
+    public static boolean isValidDeskIndex(String mid,String dskcode){
+        Log.d(TAG,"MID:"+mid+" 机台号:"+dskcode);
+
+        Integer nval = Integer.parseInt(mid);
+        String str = m_mapDeskCode.get(nval);
+        if (null == str) return false;
+
+        nval = str.indexOf(dskcode);
+        if(nval>=0)
+            return true;
+        return false;
+    }
 
 }

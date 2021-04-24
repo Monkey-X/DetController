@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.etek.controller.R;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.persistence.entity.PendingProject;
 
 import java.util.List;
@@ -19,6 +20,12 @@ public class ProjectReportAdapter extends BaseQuickAdapter<PendingProject, BaseV
 
     @Override
     protected void convert(BaseViewHolder helper, PendingProject item) {
+        String strlog =String.format("工程:%s\tID:%d\t数量：%d",
+                item.getProjectCode(),
+                item.getId(),
+                item.getDetonatorList().size());
+        DetLog.writeLog("数据上报",strlog);
+
         helper.setText(R.id.contrl_sn, item.getProjectCode());
         helper.setText(R.id.det_size, item.getDetonatorList().size() + "");
         helper.setText(R.id.rpt_time, item.getDate());

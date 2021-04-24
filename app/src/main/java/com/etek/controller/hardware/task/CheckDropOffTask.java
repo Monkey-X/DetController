@@ -56,7 +56,8 @@ public class CheckDropOffTask extends AsyncTask<String, Integer, Integer> {
                         DisplayText("总线雷管模组脱落，开路");
                         break;
                     default:
-                        DisplayText("检查雷管是否脱落失败"+checkInt);
+                        //DisplayText("检查雷管是否脱落失败"+checkInt);
+                        DisplayText("总线短路、漏电、或者总线脱落");
                         break;
                 }
 

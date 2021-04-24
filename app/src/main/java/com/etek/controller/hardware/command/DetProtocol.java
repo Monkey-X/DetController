@@ -138,7 +138,7 @@ public class DetProtocol {
 		long t1 = System.currentTimeMillis();
 
 		if(DEBUG_PRINT) {
-			DetLog.writeLog(TAG,"SendRecv: " + String.format("命令：%02X\t耗时:%d ms", bCmd, t1 - t0));
+//			DetLog.writeLog(TAG,"SendRecv: " + String.format("命令：%02X\t耗时:%d ms", bCmd, t1 - t0));
 			if (null == data)
 				DetLog.writeLog(TAG, "SendRecv: 应答: 无");
 			else {

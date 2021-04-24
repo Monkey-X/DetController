@@ -24,6 +24,7 @@ import com.etek.controller.hardware.task.DetsBusChargeTask;
 import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.task.SetBLTask;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -104,6 +105,9 @@ public class PowerBombActivity extends BaseActivity implements View.OnClickListe
 
         //  延时设置为5秒
         DetApp.getInstance().SetCommTimeout(5000);
+
+        DetLog.writeLog(TAG,"充电起爆");
+        DetLog.writeLog(TAG,"项目ID："+proId);
     }
 
     @Override

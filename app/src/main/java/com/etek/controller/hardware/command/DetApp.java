@@ -2017,7 +2017,7 @@ public class DetApp {
 					return 0;
 
 				case 0x0f:
-					cbobj.DisplayText("取消搜索");
+					cbobj.DisplayText("连接异常退出误接搜索");
 					ModuleSetWakeupStatus(0);
 					//  恢复超时设置
 					m_commobj.SetTimeout(nTimeout);

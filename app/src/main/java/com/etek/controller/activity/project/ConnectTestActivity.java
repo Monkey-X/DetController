@@ -29,6 +29,7 @@ import com.etek.controller.hardware.task.ITaskCallback;
 import com.etek.controller.hardware.task.PowerOnSelfCheckTask;
 import com.etek.controller.hardware.test.DetMisconnectionCallback;
 import com.etek.controller.hardware.util.DetIDConverter;
+import com.etek.controller.hardware.util.DetLog;
 import com.etek.controller.hardware.util.SoundPoolHelp;
 import com.etek.controller.persistence.DBManager;
 import com.etek.controller.persistence.entity.PendingProject;
@@ -111,12 +112,16 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
      * 页面展示的数据
      */
     private void initDate() {
+        DetLog.writeLog(TAG,"连接检测");
+
         //根据项目id获取雷管并展示
         if (proId >= 0) {
             projectInfoEntity = DBManager.getInstance().getPendingProjectDao().queryBuilder().where(PendingProjectDao.Properties.Id.eq(proId)).unique();
             detonatorEntityList = DBManager.getInstance().getProjectDetonatorDao().queryBuilder().where(ProjectDetonatorDao.Properties.ProjectInfoId.eq(proId)).list();
             Collections.sort(detonatorEntityList);
             connectData.addAll(detonatorEntityList);
+
+            DetLog.writeLog(TAG,"项目ID："+projectInfoEntity.getId());
         }
     }
 
@@ -187,18 +192,26 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
             case R.id.text_btn://筛选
                 break;
             case R.id.miss_event:
+                if(bChecking)
+                    break;
                  //筛选失联
                 changeMissEvent();
                 checkShow(1);
                 layoutTestBtn.setVisibility(View.GONE);
                 break;
             case R.id.false_connect:
+                if(bChecking)
+                    break;
+
                 // 筛选误接
                 changeFalseConnect();
                 checkShow(2);
                 layoutTestBtn.setVisibility(View.GONE);
                 break;
             case R.id.all_det:
+                if(bChecking)
+                    break;
+
                 // 展示全部
                 changeProgressView(true);
                 showAllDet();
@@ -213,11 +226,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
                 setSelectBtnVisible(true);
                 break;
             case R.id.startTest:
+                if(bChecking)
+                    break;
                 // 开始检测
-                if(!bChecking){
-                    allDetConnectTest();
-                }
-
+                allDetConnectTest();
                 break;
 
         }
@@ -505,7 +517,10 @@ public class ConnectTestActivity extends BaseActivity implements View.OnClickLis
         }
         releaseSound();
         // 必须总线下电
-        DetApp.getInstance().MainBoardBusPowerOff();
+        if(null!=DetApp.getInstance()){
+            DetApp.getInstance().MainBoardBusPowerOff();
+        }
+
         super.onDestroy();
     }
 

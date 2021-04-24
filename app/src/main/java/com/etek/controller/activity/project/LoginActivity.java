@@ -369,7 +369,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void setLoginLogo(String strcno){
         imglogo = findViewById(R.id.login_logo);
 
-        String strMID = strcno.substring(0,3);
+        String strMID="F99";
+        if(strcno.length()>3){
+            strMID = strcno.substring(0,3);
+        }
+
         switch (strMID){
             case "F07":
                 imglogo.setImageResource(R.drawable.f07);

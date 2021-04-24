@@ -94,6 +94,8 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
             noDataView.setVisibility(View.VISIBLE);
         }
         projectListAdapter.notifyDataSetChanged();
+
+        DetLog.writeLog(TAG,"工程实施");
     }
 
     @Override
@@ -160,6 +162,9 @@ public class ProjectListActivity extends BaseActivity implements View.OnClickLis
                 addNewProject(pendingProject);
                 recycleView.scrollToPosition(0);
                 dialog.dismiss();
+
+                DetLog.writeLog(TAG,"项目ID:"+pendingProject.getId()
+                                    + "工程编号："+pendingProject.getProjectCode());
             }
         });
         alertDialog = builder.create();
